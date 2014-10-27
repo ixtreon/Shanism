@@ -23,5 +23,9 @@ namespace Engine.Common
         {
             return rnd.Next(minValue, maxValue);
         }
+        public static double NextDouble(double minValue = 0, double maxValue = 1)
+        {
+            return rnd.NextDouble() * (maxValue - minValue) + minValue;
+        }
     }
 }

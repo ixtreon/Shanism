@@ -5,39 +5,58 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Engine.Objects;
+using IO.Common;
 using ScriptLib;
 
 namespace Engine.Systems
 {
     class Scenario : ScenarioCompiler
     {
-        readonly Dictionary<string, Ability> abilityPrototypes = new Dictionary<string, Ability>();
+        const int SCENARIO_ITEMS = 6;
 
-        readonly Dictionary<string, ShanoMonster> creaturePrototypes = new Dictionary<string, ShanoMonster>();
+        readonly Dictionary<Type, Dictionary<string, Type>> prototypes = new Dictionary<Type, Dictionary<string, Type>>();
 
 
-        public Scenario(string fileDir)
-            : base(fileDir) { }
+        readonly internal ModelManager Models = new ModelManager();
 
-        public Ability CreateAbility(string abilityName)
+        private readonly List<CustomScript> customScripts = new List<CustomScript>();
+        internal IEnumerable<CustomScript> CustomScripts
         {
-            var t = abilityPrototypes[abilityName];
-            var obj = Activator.CreateInstance(t.GetType()) as Ability;
+            get { return customScripts; }
+        }
 
-            return obj;
+        /// <summary>
+        /// An engine can create a scenario from some directory. 
+        /// </summary>
+        /// <param name="fileDir"></param>
+        internal Scenario(string fileDir)
+            : base(fileDir)
+        {
+
         }
 
         public bool TryCompile()
         {
-            var res = this.Compile();
+            var result = this.Compile();
 
-            if (res.Success)
-                loadTypes();
-
-            if (!res.Success)
+            if (result != null)
+            {
+                Console.WriteLine(result);
                 throw new Exception();
+            }
 
-            return res.Success;
+            loadTypes();
+            RunScripts(s => s.LoadModels(Models));
+            return true;
+        }
+
+        public bool IsStarted { get; private set; }
+        public void StartScenario()
+        {
+            if (IsStarted)
+                throw new Exception("Scenario is already running!");
+            IsStarted = true;
+
         }
 
         /// <summary>
@@ -47,26 +66,55 @@ namespace Engine.Systems
         {
             var assembly = Assembly.LoadFile(getLocalDir(OutputFile));
 
-            //abils
-            loadAbilities(assembly);
+            createPrototypes<Ability>(assembly);
+            createPrototypes<Unit>(assembly);
+            createPrototypes<Buff>(assembly);
+
+            loadScripts(assembly);
+            createPrototypes<CustomScript>(assembly);
         }
 
-        private void loadAbilities(Assembly a)
+        private void loadScripts(Assembly assembly)
         {
-            createPrototypes(a, abilityPrototypes);
-        }
+            var t = typeof(CustomScript);
+            var declaredTypes = assembly.GetTypes()
+                .Where(ty => t.IsAssignableFrom(ty));
 
-        private void createPrototypes<T>(Assembly a, Dictionary<string, T> protoDict)
-            where T : class
-        {
-            var declaredTypes = a.GetTypes()
-                .Where(t => typeof(T).IsAssignableFrom(t));
-
-            foreach (var t in declaredTypes)
+            foreach (var ty in declaredTypes)
             {
-                var prototype = Activator.CreateInstance(t) as T;
-                protoDict.Add(t.ToString(), prototype);
+                var script = Activator.CreateInstance(ty) as CustomScript;
+                customScripts.Add(script);
             }
+        }
+
+        internal void RunScripts(Action<CustomScript> act)
+        {
+            foreach (var s in customScripts)
+                act(s);
+        }
+
+
+        private T createThing<T>(string name)
+            where T : ScenarioObject
+        {
+            var proto = prototypes[typeof(T)][name];
+            var obj = Activator.CreateInstance(proto) as T;
+            return obj;
+        }
+
+        private void createPrototypes<T>(Assembly a)
+            where T : ScenarioObject
+        {
+            var t = typeof(T);
+            var declaredTypes = a.GetTypes()
+                .Where(ty => t.IsAssignableFrom(ty));
+
+            if (!prototypes.ContainsKey(t))
+                prototypes.Add(t, new Dictionary<string, Type>());
+
+            var protoDict = prototypes[t];
+            foreach (var ty in declaredTypes)
+                protoDict.Add(ty.ToString(), ty);
         }
     }
 }

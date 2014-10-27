@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IO.Commands;
+using IO.Common;
+using IO.Objects;
 
 namespace IO
 {
@@ -19,16 +22,12 @@ namespace IO
         IHero LocalHero { get; }
 
         /// <summary>
-        /// Sets the direction our hero is heading in. 
+        /// Sets (or gets) the direction our hero is heading in. 
         /// </summary>
         MovementState MovementState { get; set; }
 
-        /// <summary>
-        /// Registers a special action: a command followed by a variable number of parameters. 
-        /// </summary>
-        /// <param name="action"></param>
-        /// <param name="param"></param>
-        void RegisterAction(Command action, byte[] p);
+
+        void RegisterAction(ActionArgs p);
 
 
         void GetNearbyTiles(ref MapTile[,] tiles, out double x, out double y);
@@ -37,6 +36,8 @@ namespace IO
         /// Gets all entities in range of our hero. 
         /// </summary>
         IEnumerable<IUnit> GetUnits();
+
+        IEnumerable<IGameObject> GetGameObjects();
     }
 }
  

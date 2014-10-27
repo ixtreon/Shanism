@@ -9,17 +9,17 @@ namespace Engine.Objects
 {
     public class Item
     {
-        public string ItemName;
-        public string ItemIcon;
-        public Buff ItemBonuses;
-        public EquipSlot ItemType;
+        public string Name;
+        public string Icon;
+        public Buff Bonuses;
+        public EquipSlot Type;
 
         public Item(string itemName, string itemIcon, Buff itemBonuses, EquipSlot itemType)
         {
-            this.ItemName = itemName;
-            this.ItemIcon = itemIcon;
-            this.ItemBonuses = itemBonuses;
-            this.ItemType = itemType;
+            this.Name = itemName;
+            this.Icon = itemIcon;
+            this.Bonuses = itemBonuses;
+            this.Type = itemType;
         }
     }
 }

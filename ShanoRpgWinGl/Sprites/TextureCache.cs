@@ -18,6 +18,7 @@ namespace ShanoRpgWinGl.Sprites
         const string ContentDir = @"Content\";
 
         public static TextureFont MainFont { get; private set; }
+        public static TextureFont UiFont { get; private set; }
 
 
         static ContentManager content;
@@ -30,7 +31,8 @@ namespace ShanoRpgWinGl.Sprites
             loadTextures();
 
             //load fonts
-            MainFont = new TextureFont(content, "Fonts\\UI", 0.5f);
+            MainFont = new TextureFont(content, "Fonts\\UI", 0.5, 1.5);
+            UiFont = new TextureFont(content, "Fonts\\ui-text", 0.5);
         }
 
         /// <summary>
@@ -57,7 +59,7 @@ namespace ShanoRpgWinGl.Sprites
         }
 
         /// <summary>
-        /// Gets the texture with the specified name
+        /// Gets the texture with the specified raw name. 
         /// </summary>
         /// <param name="tName"></param>
         /// <returns></returns>
@@ -66,7 +68,13 @@ namespace ShanoRpgWinGl.Sprites
             return textures[tName];
         }
 
-        public static Texture2D Get(ResourceType t, string name)
+        /// <summary>
+        /// Gets the texture with the specified name, relative for the specified <see cref="TextureType"/>. 
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static Texture2D Get(TextureType t, string name)
         {
             var tName = Path.Combine(t.GetDirectory(), name);
             return textures[tName];

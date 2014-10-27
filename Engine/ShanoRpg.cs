@@ -6,109 +6,128 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using IO;
-using IO;
 using ScriptLib;
 using Engine.Systems;
+using IO.Common;
+using Engine.Network;
 //using Input;
 
 namespace Engine
 {
     public class ShanoRpg
     {
+        public static ShanoRpg Current { get; private set; }
+
         /// <summary>
         /// The frames per second we aim to run at. 
         /// </summary>
         const int FPS = 60;
 
-        //public InputDevice LocalInput;
 
-        public readonly Thread MainThread;
+        private readonly Thread MainThread;
 
         /// <summary>
         /// The current world map containing the terrain info. 
         /// </summary>
-        WorldMap WorldMap;
+        internal WorldMap WorldMap { get; private set; }
 
         /// <summary>
         /// The current game map containing unit/doodad/sfx info. 
         /// </summary>
-        GameMap GameMap;
+        internal GameMap GameMap { get; private set; }
 
 
         /// <summary>
         /// A list of all players currently in game. 
         /// </summary>
-        List<Player> Players;
+        internal List<Player> Players;
 
 
-        Scenario scenario;
+        internal Scenario Scenario { get; private set; }
+
+        internal NetworkManager Network;
+
+        /// <summary>
+        /// Gets whether this game is open to online play. 
+        /// </summary>
+        /// <returns></returns>
+        public bool IsOnline
+        {
+            get { return Network != null; }
+        }
 
 
         public ShanoRpg(int mapSeed, Player localPlayer)
         {
-            if (!loadScenario("Abilities"))
-            {
-                throw new Exception("Unable to compile some of the abilities!");
-            }
+            // f!@k hacks like this.. 
+            // TODO: fix it somehow :|
+            if (Current != null)
+                throw new Exception("Please run only one instance of the server!");
+            Current = this;
+
             this.WorldMap = new WorldMap(mapSeed);
 
             this.Players = new List<Player>();
 
             this.GameMap = new GameMap();
 
-            this.AddPlayer(localPlayer);
+            Scenario = new Scenario("!DefaultScenario");
 
+            if (!Scenario.TryCompile())
+            {
+                throw new Exception("Unable to compile the scenario!");
+            }
 
+            //run scripts
+            Scenario.RunScripts(s => s.GameStart());
 
-            //start the update thread
-            this.MainThread = new Thread(updateLoop)
+            // add the player
+            AddPlayer(localPlayer);
+
+            // start the update thread
+            MainThread = new Thread(updateLoop)
             {
                 IsBackground = true
             };
             MainThread.Start();
 
-            //add a random fuckin monster. 
-            var c = new ShanoMonster("Goshko", 1)
-            {
-                Location = new Vector(5, 5),
-            };
-            c.CurrentLife = c.CurrentMaxLife;
-
-            AddCreature(c);
         }
 
-        public bool loadScenario(string scName)
-        {
-            scenario = new Scenario(scName);
-
-            return scenario.TryCompile();
-        }
-
-        public void AddAbility(Hero h, string ability)
-        {
-            var a = scenario.CreateAbility(ability);
-
-            a.Hero = h;
-            a.Game = this;
-            a.Map = GameMap;
-
-            h.AddAbility(a);
-        }
-
-        public void AddPlayer(Player p)
+        private void AddPlayer(Player p)
         {
             this.Players.Add(p);
+            //run scripts
+            Scenario.RunScripts(s => s.OnPlayerJoined(p));
 
             //add his hero to the map. 
-            this.GameMap.AddUnit(p.Hero);
-
-            //add a placeholder spell till we figure something better. 
-            AddAbility(p.Hero, "Attack");
+            spawnHero(p.Hero);
         }
 
-        public void AddCreature(ShanoMonster c)
+        private void AddClient(IClient d)
         {
-            this.GameMap.AddUnit(c);
+            throw new NotImplementedException();
+        }
+
+        private void spawnHero(Hero h)
+        {
+            //next line is important for local heroes
+            h.Game = this;
+
+            GameMap.AddUnit(h);
+
+            //run scripts
+            Scenario.RunScripts(s => s.OnHeroSpawned(h));
+        }
+
+        public void OpenToNetwork(int port = 18881)
+        {
+            if (IsOnline)
+            {
+                Console.WriteLine("Trying to open the server for network play but it is already online!");
+                return;
+            }
+
+            Network = new NetworkManager(port);
         }
 
         /// <summary>
@@ -148,6 +167,12 @@ namespace Engine
             return GameMap.GetUnitsInRect(h.Location - unitRange, unitRange * 2);
         }
 
+        public IEnumerable<IGameObject> GetNearbyObjects(Hero h)
+        {
+            var unitRange = (Vector)Constants.ClientParams.WindowSize / 2 + 1;
+            return GameMap.GetObjectsInRect(h.Location - unitRange, unitRange * 2);
+        }
+
         public void GetNearbyTiles(IHero h, ref MapTile[,] tileMap, out double heroX, out double heroY)
         {
             heroX = h.Location.X;
@@ -166,13 +191,6 @@ namespace Engine
                 throw new ArgumentOutOfRangeException("Tile array should be larger than the given. ");
 
             WorldMap.GetMap(x, y, xSendSize, ySendSize, ref tileMap);
-        }
-
-
-
-        public void AddClient(IClient d)
-        {
-            throw new NotImplementedException();
         }
     }
 }

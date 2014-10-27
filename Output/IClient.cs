@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IO.Common;
+using IO.Commands;
 
 namespace IO
 {
@@ -16,7 +18,7 @@ namespace IO
         /// <summary>
         /// The event which is raised whenever a command is received. 
         /// </summary>
-        event Action<Command, byte[]> OnSpecialAction;
+        event Action<ActionArgs> OnSpecialAction;
 
         /// <summary>
         /// Gets the current movement state of the player. 

@@ -7,6 +7,10 @@ using System.Text;
 
 namespace ShanoRpgWinGl
 {
+    /// <summary>
+    /// A specific instance of a texture intended for drawing. 
+    /// Supports slicing up a texture to display it frames, control of the frame duration and tint.  
+    /// </summary>
     class Sprite
     {
         public readonly Texture2D Texture;
@@ -109,8 +113,8 @@ namespace ShanoRpgWinGl
         }
         public void DrawUi(SpriteBatch spriteBatch, Vector2 uiLocation, Vector2 uiSize, Color color)
         {
-            var pLoc = ScreenInfo.UiToScreen(uiLocation);
-            var farPos = ScreenInfo.UiToScreen(uiLocation + uiSize);
+            var pLoc = Screen.UiToScreen(uiLocation);
+            var farPos = Screen.UiToScreen(uiLocation + uiSize);
             var pSize = farPos - pLoc;
 
             Draw(spriteBatch, pLoc, pSize, color);
@@ -123,8 +127,8 @@ namespace ShanoRpgWinGl
 
         public void DrawInGame(SpriteBatch spriteBatch, Vector2 gameLocation, Vector2 gameSize, Color color)
         {
-            var pLoc = ScreenInfo.GameToScreen(gameLocation);
-            var farPos = ScreenInfo.GameToScreen(gameLocation + gameSize);
+            var pLoc = Screen.GameToScreen(gameLocation);
+            var farPos = Screen.GameToScreen(gameLocation + gameSize);
             var pSize = farPos - pLoc;
 
             Draw(spriteBatch, pLoc, pSize, color);

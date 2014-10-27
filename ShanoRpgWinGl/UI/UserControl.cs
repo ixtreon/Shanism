@@ -14,6 +14,17 @@ namespace ShanoRpgWinGl.UI
     /// </summary>
     abstract class UserControl : IEnumerable<UserControl>
     {
+
+        protected static MouseState
+            oldMouseState = Mouse.GetState(),
+            mouseState = Mouse.GetState();
+
+        protected static KeyboardState
+            oldKeyboardState = Keyboard.GetState(),
+            keyboardState = Keyboard.GetState();
+
+        protected static UserControl HoverControl;
+
         /// <summary>
         /// A constant specifying the default distance between elements. 
         /// </summary>
@@ -39,6 +50,8 @@ namespace ShanoRpgWinGl.UI
                 this.AbsolutePosition = ParentPosition + value;
             }
         }
+
+        public string TooltipText { get; set; }
 
         /// <summary>
         /// Gets the absolute position of this control's parent. 
@@ -86,7 +99,7 @@ namespace ShanoRpgWinGl.UI
         {
             get
             {
-                return ScreenInfo.UiToScreen(absolutePosition);
+                return Screen.UiToScreen(absolutePosition);
             }
         }
         /// <summary>
@@ -96,7 +109,7 @@ namespace ShanoRpgWinGl.UI
         {
             get
             {
-                return ScreenInfo.UiToScreen(AbsolutePosition + Size) - ScreenPosition;
+                return Screen.UiToScreen(AbsolutePosition + Size) - ScreenPosition;
             }
         }
 
@@ -131,7 +144,10 @@ namespace ShanoRpgWinGl.UI
         /// </summary>
         public bool Locked = true;
 
-        public bool MouseOver { get; private set; }
+        public bool MouseOver
+        {
+            get { return HoverControl == this; }
+        }
 
         private Keys moveAroundKey = Keys.LeftAlt;
 
@@ -175,13 +191,10 @@ namespace ShanoRpgWinGl.UI
                 c.RelativePosition = pos;
         }
 
-        protected MouseState 
-            oldMouseState = Mouse.GetState(),
-            mouseState = Mouse.GetState();
-
-        protected KeyboardState 
-            oldKeyboardState = Keyboard.GetState(),
-            keyboardState = Keyboard.GetState();
+        public void Remove(UserControl c)
+        {
+            this.Controls.Remove(c);
+        }
 
         /// <summary>
         /// Updates the control's state and fires the appropriate events in response to user input. 
@@ -192,60 +205,68 @@ namespace ShanoRpgWinGl.UI
             foreach (var c in this.Controls)
                 c.Update(msElapsed);
 
-            mouseState = Mouse.GetState();
-            keyboardState = Keyboard.GetState();
-
-            //check mouse events
-            var mp = ScreenInfo.ScreenToUi(mouseState.Position);
-            var omp = ScreenInfo.ScreenToUi(oldMouseState.Position);
-
-            MouseOver = this.isHover(mp);
-            var oldMouseOver = this.isHover(omp);
-
             if (mouseState.LeftButton == ButtonState.Released)
                 dragPoint = Vector2.Zero;
-
-            if (dragPoint != Vector2.Zero)  //the control is being moved around by the user. 
+            else if (dragPoint != Vector2.Zero)  //the control is being moved around by the user. 
             {
-                var d = mp - dragPoint;
+                var d = Screen.ScreenToUi(mouseState.Position) - dragPoint;
                 this.RelativePosition += d;
                 dragPoint += d;
 
 
                 //don't trigger events now. 
             }
-            else if (MouseOver) // check if the mouse is over the control. 
+        }
+
+        public void UpdateMain(int msElapsed)
+        {
+            //span the whole window
+            var min = Screen.ScreenToUi(Point.Zero);
+            var max = Screen.ScreenToUi(new Point(Screen.ScreenSize.X, Screen.ScreenSize.Y));
+            //use the lowercase field so we don't move children..
+            this.absolutePosition = min;
+            this.Size = max - min;
+
+            //update static mouse info
+            mouseState = Mouse.GetState();
+            keyboardState = Keyboard.GetState();
+
+            //get hovered control
+            var oldHover = HoverControl ?? this;
+            var newHover = GetHoverControl();
+
+            var mPos = Screen.ScreenToUi(mouseState.Position);
+            var oldMPos = Screen.ScreenToUi(oldMouseState.Position);
+
+            var btnDown = mouseState.LeftButton == ButtonState.Pressed || mouseState.RightButton == ButtonState.Pressed;
+
+            //fire events
+            if (!btnDown)
             {
-                if (!oldMouseOver)  // if it wasn't over before, fire the Mouse event. 
+                if (newHover != null)
                 {
-                    if (MouseEnter != null)
+                    if (newHover != oldHover)
                     {
-                        MouseEnter();
-                        Console.WriteLine("MouseEnter " + this.GetType().Name);
+                        if (oldHover.MouseLeave != null)
+                            oldHover.MouseLeave();
+                        if (newHover.MouseLeave != null)
+                            newHover.MouseEnter();
                     }
-                }
-                else
-                {
-                    if (mp != omp)  // if the mouse was here and the cursor was moved, fire the MouseMove event
-                        if (MouseMove != null)
-                            MouseMove(mp);
+                    if (mPos != oldMPos
+                        && newHover.MouseMove != null)
+                        newHover.MouseMove(mPos);
+
+                    if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released
+                        && newHover.MouseDown != null)  // if we *just* pressed the mouse button, fire the MouseDown event. 
+                        newHover.MouseDown(mPos);
+
+                    else if (oldMouseState.LeftButton == ButtonState.Pressed && mouseState.LeftButton == ButtonState.Released
+                        && newHover.MouseUp != null)    // if we *just* released the mouse button, fire the MouseUp event. 
+                        newHover.MouseUp(mPos);
                 }
 
-                if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
-                {
-                    if (MouseDown != null)  // if we *just* pressed the mouse button, fire the MouseDown event. 
-                        MouseDown(mp);
-                }
-                else if (oldMouseState.LeftButton == ButtonState.Pressed && mouseState.LeftButton == ButtonState.Released)
-                {
-                    if (MouseUp != null)    // if we *just* released the mouse button, fire the MouseUp event. 
-                        MouseUp(mp);
-                }
+                HoverControl = newHover;
             }
-            else if (oldMouseOver)      //MouseLeave
-                if(MouseLeave != null)
-                    MouseLeave();
-
             oldMouseState = mouseState;
             oldKeyboardState = keyboardState;
         }
@@ -260,7 +281,8 @@ namespace ShanoRpgWinGl.UI
         public bool Contains(Vector2 p)
         {
             var localP = p - AbsolutePosition;
-            return localP.X >= 0 && localP.Y >= 0 && localP.X < Size.X && localP.Y < Size.Y;
+            var inside = localP.X >= 0 && localP.Y >= 0 && localP.X < Size.X && localP.Y < Size.Y;
+            return inside;
         }
 
         /// <summary>
@@ -289,6 +311,28 @@ namespace ShanoRpgWinGl.UI
         IEnumerator IEnumerable.GetEnumerator()
         {
             return Controls.GetEnumerator();
+        }
+
+        public IEnumerable<UserControl> Controlz
+        {
+            get { return Controls; }
+        }
+
+        protected UserControl GetHoverControl()
+        {
+            foreach (var c in Controls)
+            {
+                var hc = c.GetHoverControl();
+                if (hc != null)
+                    return hc;
+            }
+
+            if (this.Contains(Screen.ScreenToUi(mouseState.Position)))
+                return this;
+
+            return null;
+            //return Controls.Select(c => c.GetHoverControl()).FirstOrDefault() ?? 
+            //    (!this.ClickThrough && this.Contains(ScreenInfo.ScreenToUi(mouseState.Position)) ? this : null);
         }
     }
 }

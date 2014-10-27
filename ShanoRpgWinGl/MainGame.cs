@@ -2,21 +2,16 @@
 using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Storage;
-using Microsoft.Xna.Framework.GamerServices;
 using IO;
-using IO;
-using System.Xml;
 using ShanoRpgWinGl.UI;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using ShanoRpgWinGl.Objects;
 using ShanoRpgWinGl.Sprites;
 using ShanoRpgWinGl.Properties;
+using MapTile = IO.Common.MapTile;
+using MovementState = IO.Common.MovementState;
 #endregion
 
 namespace ShanoRpgWinGl
@@ -36,7 +31,7 @@ namespace ShanoRpgWinGl
         /// <summary>
         /// The main UI window. 
         /// </summary>
-        MainForm mainInterface;
+        UiManager mainInterface;
 
         /// <summary>
         /// Gets the local hero. 
@@ -75,10 +70,10 @@ namespace ShanoRpgWinGl
 
             base.Initialize();
 
-            mainInterface = new MainForm(localHero, Server);
+            mainInterface = new UiManager(localHero, Server);
 
-            ScreenInfo.CenterPoint = new Vector2((float)localHero.Location.X, (float)localHero.Location.Y);
-            ScreenInfo.ScreenSize = new Point(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
+            Screen.CenterPoint = new Vector2((float)localHero.Location.X, (float)localHero.Location.Y);
+            Screen.ScreenSize = new Point(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
 
             this.IsMouseVisible = true;
             this.Window.AllowUserResizing = true;
@@ -87,12 +82,11 @@ namespace ShanoRpgWinGl
         }
 
 
-        int sizeChangeCounter = 0;
 
         Rectangle lastWindowBounds;
         private ObjectManager ObjectManager;
 
-        private async void Window_ClientSizeChanged(object sender, EventArgs e)
+        private void Window_ClientSizeChanged(object sender, EventArgs e)
         {
             var s = this.Window.ClientBounds;
             if (s != lastWindowBounds)
@@ -121,6 +115,10 @@ namespace ShanoRpgWinGl
             SpriteCache.Load();
 
             this.ObjectManager = new ObjectManager(localHero);
+            ObjectManager.UnitClicked += (u) =>
+            {
+                mainInterface.Target = u;
+            };
 
             // TODO: use this.Content to load your game content here
         }
@@ -151,9 +149,9 @@ namespace ShanoRpgWinGl
             //check local hero keys
             UpdateKeys();
 
-            //update units
-            var us = Server.GetUnits();
-            ObjectManager.Update(msElapsed, us);
+            //update the object manager
+            var objs = Server.GetGameObjects();
+            ObjectManager.Update(msElapsed, objs);
 
             //update UI
             mainInterface.Update(msElapsed);
@@ -182,21 +180,15 @@ namespace ShanoRpgWinGl
             double x, y;
             Server.GetNearbyTiles(ref mapTiles, out x, out y);
 
-            //units
-            entities = Server.GetUnits()
-                .Where(h => h != localHero);
-
-            //doodads and sfx?
-
 
             // overrides the hero position to the one we've just received. 
             // this is a problem in local games since the ObjectManager
             // queries a unit's more up-to-date position than in the update. 
-            ObjectManager.LocalGameHero.CustomLocation = new Vector2((float)x, (float)y);
+            ObjectManager.LocalHero.CustomLocation = new Vector2((float)x, (float)y);
 
             //update cameraInfo
-            ScreenInfo.CenterPoint = new Vector2((float)x, (float)y);
-            ScreenInfo.ScreenSize = new Point(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
+            Screen.CenterPoint = new Vector2((float)x, (float)y);
+            Screen.ScreenSize = new Point(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
         }
 
         /// <summary>
@@ -216,15 +208,15 @@ namespace ShanoRpgWinGl
                 drawTerrain();
 
                 //hero n units
+                //doodads and effects?
                 ObjectManager.Draw(spriteBatch);
 
-                //doodads and effects?
 
                 //interface
                 mainInterface.Draw(spriteBatch);
 
                 //debug stuff
-                var mp = ScreenInfo.ScreenToUi(Mouse.GetState().Position);
+                var mp = Screen.ScreenToUi(Mouse.GetState().Position);
                 var sFps =
                     "FPS: " + (1000 / gameTime.ElapsedGameTime.TotalMilliseconds).ToString("00");
                 var sUiCoord = string.Format(
@@ -232,9 +224,9 @@ namespace ShanoRpgWinGl
                 var sGameCoord = string.Format(
                     "Game: {0} {1}", localHero.Location.X.ToString("0.00"), localHero.Location.Y.ToString("0.00"));
 
-                TextureCache.MainFont.DrawString(spriteBatch, sFps, Color.Goldenrod, 24, 18);
-                TextureCache.MainFont.DrawString(spriteBatch, sGameCoord, Color.Black, 24, 2 * 24);
-                TextureCache.MainFont.DrawString(spriteBatch, sUiCoord, Color.Black, 24, 3 * 24);
+                TextureCache.MainFont.DrawString(spriteBatch, sFps, Color.Goldenrod, new Point(24, 18));
+                TextureCache.MainFont.DrawString(spriteBatch, sGameCoord, Color.Black, new Point(24, 2 * 24));
+                TextureCache.MainFont.DrawString(spriteBatch, sUiCoord, Color.Black, new Point(24, 3 * 24));
 
                 //end drawing
                 spriteBatch.End();
@@ -244,14 +236,13 @@ namespace ShanoRpgWinGl
         }
 
 
-        MapTile[,] drawnTiles;
         private void drawTerrain()
         {
             int xRange = Constants.Game.ScreenWidth / 2,
                 yRange = Constants.Game.ScreenHeight / 2;
 
-            int xHero = (int)Math.Floor(ScreenInfo.CenterPoint.X),
-                yHero = (int)Math.Floor(ScreenInfo.CenterPoint.Y);
+            int xHero = (int)Math.Floor(Screen.CenterPoint.X),
+                yHero = (int)Math.Floor(Screen.CenterPoint.Y);
 
             //draw the terrain
             for (int ix = -xRange; ix <= xRange; ix++)

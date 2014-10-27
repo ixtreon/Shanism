@@ -47,7 +47,7 @@ namespace ShanoRpgWinGl.UI
             if (!string.IsNullOrEmpty(text))
             {
                 var textPos = position + size.DivideBy(2);
-                TextureCache.MainFont.DrawString(sb, text, Color.White, textPos.X, textPos.Y, 0.5f, 0.5f);
+                TextureCache.UiFont.DrawString(sb, text, Color.White, textPos, 0.5f, 0.5f);
             }
         }
     }

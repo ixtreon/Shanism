@@ -1,0 +1,274 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Engine.Common.Rnd" Collapsed="true">
+    <Position X="31" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>Common\Rnd.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Constants" Collapsed="true">
+    <Position X="25.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Constants.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.ModelManager">
+    <Position X="5.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAKAAAAAAAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>ModelManager.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="models" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Engine.Player" Collapsed="true">
+    <Position X="19" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAABAAAAAACAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Player.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Hero" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Engine.ShanoRpg">
+    <Position X="17" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gIQAEAEAAAAAIAAAAACAAAAQIACgAAAAAggCACQgAAI=</HashCode>
+      <FileName>ShanoRpg.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="Network" />
+      <Property Name="GameMap" />
+      <Property Name="Scenario" />
+      <Property Name="WorldMap" />
+      <Property Name="Current" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Field Name="Players" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Engine.Maps.GameMap" Collapsed="true">
+    <Position X="14.25" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQBAQQIAgAAAAgAAASIAAAEAQAQACEAEAAEAAAAEAA=</HashCode>
+      <FileName>Maps\GameMap.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Doodads" />
+      <Property Name="Effects" />
+      <Property Name="Units" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Engine.Maps.HashMap&lt;T&gt;" Collapsed="true">
+    <Position X="30.75" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgIIQAAAGAAwKAAAABAABAAAAEAAAEEAAAAAAAAQAAA=</HashCode>
+      <FileName>Maps\HashMap.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Maps.WorldMap">
+    <Position X="11.75" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ARAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAEIAAAAAAAA=</HashCode>
+      <FileName>Maps\WorldMap.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Network.NetworkClient" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="25.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAIEAAMAAAACAAIAAAAAAAGAABAAAAAAAA=</HashCode>
+      <FileName>Network\NetworkClient.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.1" />
+  </Class>
+  <Class Name="Engine.Network.NetworkManager" BaseTypeListCollapsed="true">
+    <Position X="25.75" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACACAAAAAAAAAAAAAgCCAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Network\NetworkManager.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="clients" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Engine.Objects.Buff" Collapsed="true">
+    <Position X="21" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAkAgAACAAABAAAAAAAAAABCAAABAAAAJgABAAA=</HashCode>
+      <FileName>Objects\Buff.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Objects.Constants" Collapsed="true">
+    <Position X="27.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIQAAAAACABAAABAAiBACAAAQAQEAgAAAAAACAA=</HashCode>
+      <FileName>Objects\Constants.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Objects.Inventory" Collapsed="true">
+    <Position X="24.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAABAAAAAAAAABAABEAAAAAICAgAAACEAA=</HashCode>
+      <FileName>Objects\Inventory.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="Backpack" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Engine.Objects.Item" Collapsed="true">
+    <Position X="24.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAAAAAAAAAAAAQAAAAAAAAAAQAAAAEAAAA=</HashCode>
+      <FileName>Objects\Item.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="Bonuses" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Engine.Objects.GameObject" Collapsed="true">
+    <Position X="14.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAAggAQAAIAAAQSAABABAAQAAwAAAKAAIA=</HashCode>
+      <FileName>Objects\level0\GameObject.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Engine.Objects.Doodad" Collapsed="true">
+    <Position X="10.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAEA=</HashCode>
+      <FileName>Objects\level1\Doodad.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Engine.Objects.Effect" Collapsed="true">
+    <Position X="14.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAIAABAAAAAAAAAAAAAABAggA=</HashCode>
+      <FileName>Objects\level1\Effect.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Objects.Unit" Collapsed="true">
+    <Position X="17.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BABACQQiggAAAJQAAAAEGAEACAACSEAhAQgJIogBEUA=</HashCode>
+      <FileName>Objects\level1\Unit.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Engine.Objects.GameItem" Collapsed="true">
+    <Position X="9.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Objects\level2\GameItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Objects.Hero" Collapsed="true">
+    <Position X="19" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IABAgYkAAAgAkgADAAAgBQAAAkFAAAABQAAAQAAAQAE=</HashCode>
+      <FileName>Objects\level2\Hero.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Engine.Objects.Projectile" Collapsed="true">
+    <Position X="12" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAIAgACACAAAAABAAAAAgAAAAAAAAAABAA=</HashCode>
+      <FileName>Objects\level2\Projectile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Objects.UnitHelper" Collapsed="true">
+    <Position X="30" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAADA=</HashCode>
+      <FileName>Objects\UnitHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Properties.Settings" Collapsed="true">
+    <Position X="29" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAAAAAAAAAIAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.Ability" Collapsed="true">
+    <Position X="5.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAgEAAAAAgAABEAAAAAAQAAAAAAAAgAAAAAgEAADA=</HashCode>
+      <FileName>Systems\Ability.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Engine.Systems.CustomScript" Collapsed="true">
+    <Position X="7.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAQAAEAAAAAAAAAAAAEAAAAAAAAAAJA=</HashCode>
+      <FileName>Systems\CustomScript.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.NPCCombat" Collapsed="true">
+    <Position X="30.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Systems\NPCCombat.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.Scenario">
+    <Position X="7.75" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAggAAAAAAAAAIAAAgAABAAAAAAQgAAJAAACA=</HashCode>
+      <FileName>Systems\Scenario.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="Models" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="CustomScripts" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Engine.Systems.ScenarioObject" Collapsed="true">
+    <Position X="13" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAAAAAAAAAAAAAAAgAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>Systems\ScenarioObject.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="IO.Common.Model">
+    <Position X="0.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier />
+  </Struct>
+  <Enum Name="Engine.Common.AttackResult" Collapsed="true">
+    <Position X="32" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Common\AttackResult.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Engine.Common.DamageType" Collapsed="true">
+    <Position X="33.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAgAAAAAAAAJAAAAAAAAAAAA=</HashCode>
+      <FileName>Common\DamageType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Engine.Common.EquipSlot" Collapsed="true">
+    <Position X="35.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAIAAAAAAAAAAAAAAAAAAIAAAAAEAAAA=</HashCode>
+      <FileName>Common\EquipSlot.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Engine.Maps.MapObject" Collapsed="true">
+    <Position X="35.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Maps\MapObject.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Tahoma" Size="8.25" />
+</ClassDiagram>

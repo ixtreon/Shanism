@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Engine.Systems;
 
 namespace Engine.Objects
 {
     /// <summary>
     /// Represents any in-game effect which has a temporary or permanent effect on a unit's statistics. 
     /// </summary>
-    public class Buff
+    public class Buff : ScenarioObject
     {
         public readonly int MoveSpeedPerc,
             AttackSpeedPerc;

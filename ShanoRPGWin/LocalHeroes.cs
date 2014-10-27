@@ -11,11 +11,11 @@ namespace ShanoRpgWin
     {
         const string HeroDir = "Heroes";
 
-        readonly static List<Hero> heroes = new List<Hero>();
+        readonly static Dictionary<Hero, string> heroes = new Dictionary<Hero, string>();
 
         public static IEnumerable<Hero> Heroes
         {
-            get { return heroes; }
+            get { return heroes.Keys; }
         }
 
         static LocalHeroes()
@@ -32,7 +32,7 @@ namespace ShanoRpgWin
                 try
                 {
                     var h = Hero.Load(fn);
-                    heroes.Add(h);
+                    heroes.Add(h, fn);
                 }
                 catch
                 {
@@ -43,12 +43,18 @@ namespace ShanoRpgWin
 
         public static void Save(this Hero h)
         {
-            h.Save(Path.Combine(HeroDir, h.Name + ".hero"));
-            if(!heroes.Contains(h))
+            var saveDir = Path.Combine(HeroDir, h.Name + ".hero");
+            h.Save(saveDir);
+            if(!heroes.ContainsKey(h))
             {
                 Console.WriteLine("Warning: Saving a newly created hero!");
-                heroes.Add(h);
+                heroes.Add(h, saveDir);
             }
+        }
+
+        public static string GetDirectory(this Hero h)
+        {
+            return heroes[h];
         }
 
     }

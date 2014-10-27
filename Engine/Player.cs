@@ -23,7 +23,7 @@ namespace Engine
 
 
             //link events
-            inputDevice.OnSpecialAction += Hero.OnSpecialAction;
+            inputDevice.OnSpecialAction += Hero.OnAction;
         }
 
         /// <summary>

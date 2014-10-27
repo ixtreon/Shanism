@@ -33,7 +33,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable">
+      <HintPath>..\packages\Microsoft.Bcl.Immutable.1.1.20-beta\lib\portable-net45+win8\System.Collections.Immutable.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.Reflection.Metadata">
+      <HintPath>..\packages\Microsoft.Bcl.Metadata.1.0.12-alpha\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -53,6 +59,9 @@
     <Compile Include="LocalHeroes.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\Common\IntegerBox.cs">
+      <SubType>component</SubType>
+    </Compile>
     <Compile Include="UI\InputBox.cs" />
     <Compile Include="UI\Login\HeroListPanel.cs">
       <SubType>UserControl</SubType>
@@ -65,12 +74,6 @@
     </Compile>
     <Compile Include="UI\Login\HeroSelectPanel.Designer.cs">
       <DependentUpon>HeroSelectPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\StartPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\StartPanel.Designer.cs">
-      <DependentUpon>StartPanel.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
@@ -91,9 +94,7 @@
     <EmbeddedResource Include="UI\Login\HeroSelectPanel.resx">
       <DependentUpon>HeroSelectPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\StartPanel.resx">
-      <DependentUpon>StartPanel.cs</DependentUpon>
-    </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

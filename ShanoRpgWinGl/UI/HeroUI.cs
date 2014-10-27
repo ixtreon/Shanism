@@ -12,7 +12,7 @@ namespace ShanoRpgWinGl.UI
     /// <summary>
     /// Represents the in-game panel showing a hero's statistics. 
     /// </summary>
-    class HeroUI : UserControl
+    class HeroUi : UserControl
     {
         public readonly IHero Hero;
 
@@ -58,7 +58,7 @@ namespace ShanoRpgWinGl.UI
 
         public readonly ValueBar xpBar;
 
-        public HeroUI(IHero h)
+        public HeroUi(IHero h)
         {
             Size = new Vector2(1.2f, 0.45f);
             AbsolutePosition = new Vector2(0 - Size.X / 2, 1 - Size.Y);
@@ -115,20 +115,28 @@ namespace ShanoRpgWinGl.UI
 
         public override void Update(int msElapsed)
         {
-            strength.Value = Hero.CurrentStrength.ToString("0");
-            agility.Value = Hero.CurrentAgility.ToString("0");
-            intellect.Value = Hero.CurrentIntellect.ToString("0");
-            vitality.Value = Hero.CurrentVitality.ToString("0");
+            //update the displayed stats
+            strength.Value = Hero.Strength.ToString("0");
+            strength.TooltipText = "Your current strength. ";
+            agility.Value = Hero.Agility.ToString("0");
+            agility.TooltipText = "Your current agility. ";
+            intellect.Value = Hero.Intellect.ToString("0");
+            intellect.TooltipText = "Your current intellect. ";
+            vitality.Value = Hero.Vitality.ToString("0");
+            vitality.TooltipText = "Your current vitality. ";
 
-            moveSpeed.Value = Hero.CurrentMoveSpeed.ToString("0.0");
-            armor.Value = Hero.CurrentDefense.ToString("0.0");
-            damage.Value = Hero.CurrentMinDamage + "-" + Hero.CurrentMaxDamage;
+            moveSpeed.Value = Hero.MoveSpeed.ToString("0.0");
 
-            hpBar.Value = Hero.CurrentLife;
-            hpBar.MaxValue = Hero.CurrentMaxLife;
+            armor.Value = Hero.Defense.ToString("0.0");
 
-            manaBar.Value = Hero.CurrentMana;
-            manaBar.MaxValue = Hero.CurrentMaxMana;
+            damage.Value = Hero.MinDamage + "-" + Hero.MaxDamage;
+
+
+            hpBar.Value = Hero.Life;
+            hpBar.MaxValue = Hero.MaxLife;
+
+            manaBar.Value = Hero.Mana;
+            manaBar.MaxValue = Hero.MaxMana;
 
             base.Update(msElapsed);
         }

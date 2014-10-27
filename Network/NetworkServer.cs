@@ -6,7 +6,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using IO;
-using IO;
+using IO.Commands;
+using IO.Common;
 
 namespace Network
 {
@@ -27,6 +28,7 @@ namespace Network
         }
 
         private MovementState movementState;
+
         public MovementState MovementState
         {
             get { return movementState; }
@@ -59,7 +61,7 @@ namespace Network
 
             //TODO: start reading from the server
         }
-        public void RegisterAction(Command action, byte[] p)
+        public void RegisterAction(ActionArgs args)
         {
             //TODO: send a command to the server
             throw new NotImplementedException();
@@ -74,6 +76,11 @@ namespace Network
         public IEnumerable<IUnit> GetUnits()
         {
             //TODO: should be sent and updated by the server in the background
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IGameObject> GetGameObjects()
+        {
             throw new NotImplementedException();
         }
     }

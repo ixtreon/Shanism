@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Engine.Common;
+using IO.Common;
 
 namespace Engine.Objects
 {
-    class Inventory
+    public class Inventory
     {
         const int BackpackWidth = 5;
         const int BackpackHeight = 4;
@@ -15,7 +16,7 @@ namespace Engine.Objects
 
         private int backpackItemCount;  //numberOfItemsInBackpack
 
-        Item[,] Backpack;
+        internal Engine.Objects.Item[,] Backpack;
 
         Dictionary<EquipSlot, Item> EquippedItems = new Dictionary<EquipSlot, Item>();
 
@@ -47,7 +48,7 @@ namespace Engine.Objects
         public bool TryEquipItem(Point backpackSlot, EquipSlot slot)
         {
             //continue only if there is an item in this slot and it is equippable. 
-            if (Backpack[backpackSlot.X, backpackSlot.Y] == null || Backpack[backpackSlot.X, backpackSlot.Y].ItemType == EquipSlot.None)
+            if (Backpack[backpackSlot.X, backpackSlot.Y] == null || Backpack[backpackSlot.X, backpackSlot.Y].Type == EquipSlot.None)
                 return false;
 
             Item oldItem = null;
@@ -60,7 +61,8 @@ namespace Engine.Objects
         {
             if (Backpack[backpackSlot.X, backpackSlot.Y] != null)
                 return Backpack[backpackSlot.X, backpackSlot.Y];
-            else return null;
+
+            return null;
         }
         public Item DropItem(EquipSlot slot)
         {

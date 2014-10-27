@@ -5,7 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Engine.Objects;
-using Bin = Engine.Objects.Point;
+using IO.Common;
+using Bin = IO.Common.Point;
 
 namespace Engine.Maps
 {
@@ -164,8 +165,6 @@ namespace Engine.Maps
             //continue only if we need to change the entry for this item. 
             if (oldId == newId)
                 return;
-
-            Console.WriteLine("Someone entered bin " + newId);
 
             //add n remove entry
             var removed = hashTable[oldId].Remove(item);

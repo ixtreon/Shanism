@@ -15,7 +15,8 @@ namespace Engine.Objects
 
         public static bool IsNonPlayable(this Unit u)
         {
-            return typeof(ShanoMonster).IsAssignableFrom(u.GetType());
+            return !u.IsHero();
         }
+
     }
 }

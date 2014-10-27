@@ -21,7 +21,7 @@ namespace ShanoRpgWinGl.UI
 
         public string Value = string.Empty;
 
-        public TextureFont Font { get; set; }
+        //public TextureFont Font { get; set; }
 
         public ValueLabel()
         {
@@ -34,8 +34,8 @@ namespace ShanoRpgWinGl.UI
         {
             SpriteCache.BlankTexture.Draw(sb, ScreenPosition, ScreenSize, BackColor);
 
-            TextureCache.MainFont.DrawString(sb, Text, TextColor, ScreenPosition.X + 6, ScreenPosition.Y + ScreenSize.Y / 2, yAnchor: 0.5f);
-            TextureCache.MainFont.DrawString(sb, Value, ValueColor, ScreenPosition.X + ScreenSize.X - 6, ScreenPosition.Y + ScreenSize.Y / 2, xAnchor: 1.0f, yAnchor: 0.5f);
+            TextureCache.MainFont.DrawString(sb, Text, TextColor, ScreenPosition.Add(6, ScreenSize.Y / 2), yAnchor: 0.5f);
+            TextureCache.UiFont.DrawString(sb, Value, ValueColor, ScreenPosition.Add(ScreenSize.X - 6, ScreenSize.Y / 2), xAnchor: 1.0f, yAnchor: 0.5f);
 
         }
     }

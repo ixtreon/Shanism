@@ -9,15 +9,15 @@ namespace IO
     {
         bool IsDead { get; }
 
-        double CurrentLife { get; }
-        double CurrentMaxLife { get; }
+        double Life { get; }
+        double MaxLife { get; }
 
-        double CurrentMana { get; }
-        double CurrentMaxMana { get; }
+        double Mana { get; }
+        double MaxMana { get; }
 
-        double CurrentMoveSpeed { get; }
-        double CurrentDefense { get; }
-        double CurrentMinDamage { get; }
-        double CurrentMaxDamage { get; }
+        double MoveSpeed { get; }
+        double Defense { get; }
+        double MinDamage { get; }
+        double MaxDamage { get; }
     }
 }

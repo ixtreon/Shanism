@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MapTile = IO.Common.MapTile;
 
 namespace ShanoRpgWinGl.Sprites
 {
@@ -37,8 +38,8 @@ namespace ShanoRpgWinGl.Sprites
 
             internal static void Load()
             {
-                Grass = New(ResourceType.Terrain, "grass");
-                Dirt = New(ResourceType.Terrain, "dirt");
+                Grass = New(TextureType.Terrain, "grass");
+                Dirt = New(TextureType.Terrain, "dirt");
             }
         }
 
@@ -47,11 +48,14 @@ namespace ShanoRpgWinGl.Sprites
             public static Sprite Border { get; private set; }
             public static Sprite BorderHover { get; private set; }
 
+            public static Sprite Nothing { get; private set; }
+
 
             public static void Load()
             {
-                Border = New(ResourceType.Icon, "border");
-                BorderHover = New(ResourceType.Icon, "border_hover");
+                Border = New(TextureType.Icon, "border");
+                BorderHover = New(TextureType.Icon, "border_hover");
+                Nothing = New(TextureType.Icon, "none");
             }
         }
 
@@ -62,35 +66,16 @@ namespace ShanoRpgWinGl.Sprites
         {
             Icon.Load();
             Terrain.Load();
-
             BlankTexture = new Sprite(TextureCache.Get("1"));
-
-            InitSpecialSprites();
         }
 
-        /// <summary>
-        /// Sets the default sizes for the default animated sprites. 
-        /// </summary>
-        private static void InitSpecialSprites()
+        public static Sprite NewModel(IO.Common.Model m)
         {
-            SetDefaultSize(ResourceType.Model, "hero", 1, 3);
-        }
-        
-
-        /// <summary>
-        /// Sets the default size for the specified texture. 
-        /// </summary>
-        /// <param name="texPath"></param>
-        /// <param name="r"></param>
-        /// <param name="c"></param>
-        public static void SetDefaultSize(ResourceType t, string texName, int r, int c)
-        {
-            var tex = TextureCache.Get(t, texName);
-
-            defaultSizes[tex] = new Point(r, c);
+            var tex = TextureCache.Get(TextureType.Model, m.Name);
+            return new Sprite(tex, m.Size.X, m.Size.Y, m.Period);
         }
 
-        public static Sprite New(ResourceType t, string texName)
+        public static Sprite New(TextureType t, string texName)
         {
             var tex = TextureCache.Get(t, texName);
 

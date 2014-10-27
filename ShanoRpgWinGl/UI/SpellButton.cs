@@ -11,7 +11,7 @@ using ShanoRpgWinGl.Sprites;
 
 namespace ShanoRpgWinGl.UI
 {
-    class SpellButton : UserControl
+    class SpellButton : Button
     {
         private IAbility ability;
 
@@ -19,13 +19,17 @@ namespace ShanoRpgWinGl.UI
 
         private void OnAbilityChanged()
         {
+            this.TooltipText =
+                string.Format("{0}\n\nCooldown: {1}s\nMana: {2}\n\n{3}",
+                ability.Name,
+                ((double)Ability.Cooldown / 1000).ToString("0.0"),
+                Ability.ManaCost,
+                ability.Description);
+            this.Texture = TextureCache.Get(TextureType.Icon, ability.Icon);
+
             if (AbilityChanged != null)
                 AbilityChanged();
         }
-
-        public Keys Keybind { get; set; }
-
-        public bool Clickable { get; set; }
 
         public IAbility Ability
         {
@@ -40,10 +44,12 @@ namespace ShanoRpgWinGl.UI
             }
         }
 
-        public SpellButton(Keys k = Keys.None)
+        public SpellButton(Keys k = Keys.None, float sz = 0.12f)
         {
-            this.Size = new Vector2(0.12f, 0.12f);
+            this.Texture = SpriteCache.Icon.Nothing.Texture;
+            this.Size = new Vector2(sz, sz);
             this.Keybind = k;
+            this.HasBorder = true;
 
             this.MouseDown += onMouseDown;
         }
@@ -55,20 +61,16 @@ namespace ShanoRpgWinGl.UI
 
         public override void Draw(SpriteBatch sb)
         {
-            var tex = TextureCache.Get(ResourceType.Icon, Ability.Icon);
-            sb.Draw(tex, ScreenPosition, ScreenSize);
+            base.Draw(sb);
 
-            var border = MouseOver ? SpriteCache.Icon.BorderHover : SpriteCache.Icon.Border;
+            var cooldown = (Ability != null) ? (ability.CurrentCooldown) : (0);
 
-            border.Draw(sb, ScreenPosition, ScreenSize);
-
-            var cdHeight = ScreenSize.Y * Ability.CurrentCooldown / Ability.Cooldown;
-            if (cdHeight > 0)
+            if (cooldown > 0)
             {
+                var cdHeight = ScreenSize.Y * cooldown / Ability.Cooldown;
                 var cdPos = new Point(ScreenPosition.X, ScreenPosition.Y + ScreenSize.Y - cdHeight);
                 SpriteCache.BlankTexture.Draw(sb, cdPos, new Point(ScreenSize.X, cdHeight), Color.Black.SetAlpha(120));
             }
-            base.Draw(sb);
         }
     }
 }

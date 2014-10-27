@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Engine;
 using Engine.Objects;
 using IO;
+using IO.Commands;
+using IO.Common;
 using ShanoRpgWinGl;
 
 namespace Local
@@ -25,7 +28,7 @@ namespace Local
             get { return LocalHero; }
         }
 
-        public event Action<Command, byte[]> OnSpecialAction;
+        public event Action<ActionArgs> OnSpecialAction;
 
         /// <summary>
         /// Gets the game engine. 
@@ -47,18 +50,24 @@ namespace Local
             MovementState = new MovementState();
             LocalHero = h;
 
-            //create the local game client
-            ShanoClient = new MainGame(h);
-
             //create the game engine
             //hack: should accept IHero?
             ShanoGame = new ShanoRpg(mapSeed, new Player(h, this));
+
+            //create the local game client
+            ShanoClient = new MainGame(h);
+
 
             //link them
             ShanoClient.Server = this;
 
             //start the client
             ShanoClient.Running = true;
+        }
+
+        public void OpenToNetwork(int port)
+        {
+            ShanoGame.OpenToNetwork(port);
         }
 
 
@@ -72,10 +81,15 @@ namespace Local
             return ShanoGame.GetNearbyUnits(LocalHero);
         }
 
-        public void RegisterAction(Command action, byte[] p)
+        public IEnumerable<IGameObject> GetGameObjects()
+        {
+            return ShanoGame.GetNearbyObjects(LocalHero);
+        }
+
+        public void RegisterAction(ActionArgs arg)
         {
             if (OnSpecialAction != null)
-                OnSpecialAction(action, p);
+                OnSpecialAction(arg);
         }
     }
 }

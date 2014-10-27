@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Engine.Objects;
+using IO.Common;
 
 namespace Engine.Maps
 {
@@ -19,7 +20,7 @@ namespace Engine.Maps
 
         private IModule terrainModule;
 
-        public WorldMap(int seed)
+        internal WorldMap(int seed)
         {
             this.Seed = seed;
 
@@ -27,7 +28,7 @@ namespace Engine.Maps
         }
 
 
-        public void GetMap(int x, int y, int w, int h, ref MapTile[,] outMap)
+        internal void GetMap(int x, int y, int w, int h, ref MapTile[,] outMap)
         {
             for(int i = 0; i < w; i++)
                 for (int j = 0; j < h; j++)
@@ -76,7 +77,6 @@ namespace Engine.Maps
                 Frequency = mountainTerrain.Frequency / 2,
                 Primitive3D = (IModule3D)flatPrimitive,
             };
-
             var mountainMixer = new LibNoise.Modifier.ScaleBias(mountainMixerBase, 1f, -0.95f);
 
             //mix flat/mountains here

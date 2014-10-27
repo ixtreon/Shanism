@@ -8,6 +8,7 @@ namespace Engine.Common
 {
     public enum DamageType
     {
-        Physical, Fire, Ice
+        Physical,
+        Light, Dark, Shadow   // unused
     }
 }

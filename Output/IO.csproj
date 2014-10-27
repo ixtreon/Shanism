@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="protobuf-net">
+      <HintPath>..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -41,19 +44,30 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ByteHelper.cs" />
-    <Compile Include="Command.cs" />
+    <Compile Include="Commands\ActionArgs.cs" />
+    <Compile Include="Commands\CommandArgs.cs" />
+    <Compile Include="Commands\CommandType.cs" />
+    <Compile Include="Commands\MovementArgs.cs" />
+    <Compile Include="Common\AbilityType.cs" />
+    <Compile Include="Common\Model.cs" />
+    <Compile Include="Common\Point.cs" />
+    <Compile Include="Common\Rectangle.cs" />
+    <Compile Include="Common\Vector.cs" />
+    <Compile Include="Network\MessageSocket.cs" />
     <Compile Include="Objects\IAbility.cs" />
     <Compile Include="IServer.cs" />
+    <Compile Include="Objects\IDoodad.cs" />
     <Compile Include="Objects\IGameObject.cs" />
     <Compile Include="Objects\IUnit.cs" />
     <Compile Include="Objects\IHero.cs" />
-    <Compile Include="Common\IVector.cs" />
     <Compile Include="Common\MapTile.cs" />
     <Compile Include="IClient.cs" />
     <Compile Include="Common\MovementState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

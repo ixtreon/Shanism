@@ -10,7 +10,7 @@
   <Class Name="ShanoRpgWinGl.Ext" Collapsed="true">
     <Position X="7" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAEAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAgAEAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Ext.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -23,16 +23,16 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="ShanoRpgWinGl.MainGame">
-    <Position X="7.25" Y="2.5" Width="1.5" />
+    <Position X="9" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQCEEAgAAAAAxABCBAAAAQAggAAAQgIAAAAAggAAAQ=</HashCode>
+      <HashCode>AAQCEEAAAAAAAxABAAAAAAQAggAAAQgIIAAAAggAAAQ=</HashCode>
       <FileName>MainGame.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ShanoRpgWinGl.Sprite" Collapsed="true">
     <Position X="2" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AASAgAAAAAAACkAAAAAAAABAAGAAAAAAAAIAAAiAABI=</HashCode>
+      <HashCode>AASAgAAAAAAACkAAAQAAAABAAGAAAAAAAAIAAAqAABI=</HashCode>
       <FileName>Sprites\Sprite.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -49,24 +49,52 @@
   <Class Name="ShanoRpgWinGl.TextureFont" Collapsed="true">
     <Position X="3.25" Y="3.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAJAIDAAAAAIAAgAAAAAAAAAAABIAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAACBJAIDAAAAIIAAgAAAAAAAAAABAIAAAAAAAA=</HashCode>
       <FileName>TextureFont.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ShanoRpgWinGl.UI.HeroUI" Collapsed="true">
+  <Class Name="ShanoRpgWinGl.UI.HeroUi" Collapsed="true">
     <Position X="8.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>CQQAAAAAEgAAggBAAAAAAQAAAAAAAAAAQAAAAJAAAAA=</HashCode>
+      <HashCode>CQQAAAIAEgAAggBAAAAAAQAAAAAAAAAAQAAAAJAAAAA=</HashCode>
       <FileName>UI\HeroUI.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ShanoRpgWinGl.ScreenInfo" Collapsed="true">
     <Position X="10.75" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAIACAAEAAACAAAABAAAAAAAAAA=</HashCode>
+      <HashCode>AAIAAAAAAAACAIAAAAIACAAEAAACCKAABAACAAAAAAA=</HashCode>
       <FileName>ScreenInfo.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="IO.ByteHelper" Collapsed="true">
+    <Position X="11.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="IO.Commands.ActionArgs" Collapsed="true">
+    <Position X="9.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="IO.Commands.CommandArgs" Collapsed="true">
+    <Position X="8.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="IO.Commands.MovementArgs" Collapsed="true">
+    <Position X="7" Y="1.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Struct Name="IO.Common.MovementState" Collapsed="true">
+    <Position X="11.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier />
+  </Struct>
+  <Struct Name="IO.Common.Point" Collapsed="true">
+    <Position X="13.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier />
+  </Struct>
+  <Struct Name="IO.Common.Vector" Collapsed="true">
+    <Position X="11.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier />
+  </Struct>
   <Interface Name="Output.OutputDevice" Collapsed="true">
     <Position X="12.5" Y="3.25" Width="1.5" />
     <TypeIdentifier />
@@ -75,8 +103,48 @@
     <Position X="12.5" Y="2.25" Width="1.5" />
     <TypeIdentifier />
   </Interface>
+  <Interface Name="IO.IClient" Collapsed="true">
+    <Position X="10.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="IO.IServer">
+    <Position X="8" Y="8.5" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="IO.IAbility" Collapsed="true">
+    <Position X="11.75" Y="4" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="IO.IGameObject" Collapsed="true">
+    <Position X="4" Y="8" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="IO.IHero" Collapsed="true">
+    <Position X="4.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="IO.IUnit" Collapsed="true">
+    <Position X="5.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="IO.Objects.IDoodad" Collapsed="true">
+    <Position X="2.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
   <Enum Name="Output.MapTile" Collapsed="true">
     <Position X="12.5" Y="4" Width="1.5" />
+    <TypeIdentifier />
+  </Enum>
+  <Enum Name="IO.CommandType" Collapsed="true">
+    <Position X="13.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier />
+  </Enum>
+  <Enum Name="IO.Common.AbilityType" Collapsed="true">
+    <Position X="11.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier />
+  </Enum>
+  <Enum Name="IO.Common.MapTile" Collapsed="true">
+    <Position X="11.75" Y="6.5" Width="1.5" />
     <TypeIdentifier />
   </Enum>
   <Font Name="Tahoma" Size="8.25" />

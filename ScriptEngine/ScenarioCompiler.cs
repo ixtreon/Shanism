@@ -1,38 +1,44 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Roslyn.Compilers;
-using Roslyn.Compilers.CSharp;
 using System.IO;
+using Microsoft.CodeAnalysis.Emit;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace ScriptLib
 {
+    /// <summary>
+    /// Compiles a bunch of files referencing IO/Engine
+    /// </summary>
     public class ScenarioCompiler
     {
-        public const string OutputFile = "abilities.dll";
+        public const string OutputFile = "scenario.dll";
 
-        public readonly string AbilityDir;
+        public readonly string ScenarioDir;
 
 
         public ScenarioCompiler(string scenarioDir)
         {
-            this.AbilityDir = scenarioDir;
+            this.ScenarioDir = scenarioDir;
         }
 
-        protected EmitResult Compile()
+        protected string Compile()
         {
             //get all the files in AbilityDir and compile them
-            var files = Directory.EnumerateFiles(AbilityDir, "*.cs");
-
-            return CompileFiles(files, OutputFile);
+            var files = Directory.EnumerateFiles(ScenarioDir, "*.cs", SearchOption.AllDirectories);
+            var res = CompileFiles(files, OutputFile);
+            return res.Success ? null : res.Diagnostics.Aggregate("", (acc, d) => acc + "\r\n" + d.ToString());
         }
 
         public EmitResult CompileFiles(IEnumerable<string> inFiles, string outFile)
         {
             //get the syntax tree
-            var syntaxTrees = inFiles.Select(f => SyntaxTree.ParseFile(f));
+            
+            var syntaxTrees = inFiles.Select(f => SyntaxFactory.ParseSyntaxTree(File.ReadAllText(f)));
 
             //create the compilation unit. 
-            var compilation = Compilation.Create(outFile, 
+            var compilation = CSharpCompilation.Create(outFile,
+                    options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
                     syntaxTrees: syntaxTrees,
                     references: new[] {
                         new MetadataFileReference(getAssemblyDir("mscorlib.dll")),
@@ -40,9 +46,7 @@ namespace ScriptLib
                         new MetadataFileReference(getAssemblyDir("System.dll")),
                         new MetadataFileReference(getLocalDir("Engine.dll")),
                         new MetadataFileReference(getLocalDir("IO.dll")),
-                    },
-
-                    options: new CompilationOptions(OutputKind.DynamicallyLinkedLibrary)
+                    }
                 );
 
             //do the compilation
@@ -53,7 +57,7 @@ namespace ScriptLib
         }
 
         protected static string getAssemblyDir(string path)
-        {
+       {    
             var assemblyDir = Path.GetDirectoryName(typeof(object).Assembly.Location);
             return Path.Combine(assemblyDir, path);
         }

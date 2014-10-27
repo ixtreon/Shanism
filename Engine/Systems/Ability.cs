@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 using Engine.Maps;
 using Engine.Objects;
 using IO;
+using IO.Common;
 
 namespace Engine.Systems
 {
-    public abstract class Ability : IAbility
+    public abstract class Ability : ScenarioObject, IAbility
     {
         public class CastEventArgs
         {
@@ -21,10 +22,9 @@ namespace Engine.Systems
 
         }
 
+
         public Hero Hero { get; internal set; }
 
-        public ShanoRpg Game { get; internal set; }
-        public GameMap Map { get; internal set; }
 
         public string Name { get; set; }
 
@@ -34,18 +34,17 @@ namespace Engine.Systems
         public int CurrentCooldown { get; set; }
 
 
-        public readonly SpellType AbilityType;
+        public readonly AbilityType AbilityType;
 
         public int Cooldown { get; set; }
-        public virtual int ManaCost { get { return 5; } }
+        public int ManaCost { get; set; }
 
-        /// <summary>
-        /// Creates an ability host for the given hero. 
-        /// </summary>
-        public Ability(SpellType abilityType)
+
+        public Ability(AbilityType abilityType)
         {
             this.AbilityType = abilityType;
             this.Icon = "default";
+            this.ManaCost = 1;
         }
 
 
@@ -54,13 +53,13 @@ namespace Engine.Systems
             var e = new CastEventArgs();
             switch (AbilityType)
             {
-                case SpellType.NoTarget:
+                case AbilityType.NoTarget:
                     OnCast(e);
                     break;
-                case SpellType.PointTarget:
-                    OnCast(e, Vector.Zero);
+                case AbilityType.PointTarget:
+                    OnCast(e, (Vector)target);
                     break;
-                case SpellType.UnitTarget:
+                case AbilityType.UnitTarget:
                     OnCast(e, (Unit)target);
                     break;
                 default:
@@ -101,6 +100,11 @@ namespace Engine.Systems
         public virtual void OnUpdate(int msElapsed)
         {
 
+        }
+
+        public override string ToString()
+        {
+            return this.Name;
         }
     }
 }

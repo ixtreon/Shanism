@@ -1,10 +1,16 @@
+using IO.Common;
+
 namespace IO
 {
     public interface IGameObject
     {
         int Guid { get; }
-        IVector Location { get; set; }
-        string Model { get; set; }
-        double Size { get; set; }
+        Vector Location { get; }
+
+        Model Model { get; }
+        double Size { get; }
+
+        string Name { get; }
+
     }
 }

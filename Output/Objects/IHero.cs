@@ -7,10 +7,10 @@ namespace IO
 {
     public interface IHero : IUnit
     {
-        double CurrentStrength { get; }
-        double CurrentAgility { get; }
-        double CurrentVitality { get; }
-        double CurrentIntellect { get; }
+        double Strength { get; }
+        double Agility { get; }
+        double Vitality { get; }
+        double Intellect { get; }
 
         IEnumerable<IAbility> Abilities { get; }
     }
