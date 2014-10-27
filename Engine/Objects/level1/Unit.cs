@@ -181,7 +181,7 @@ namespace Engine.Objects
         /// <para>Override in derived class to provide buff handling. </para>
         /// </summary>
         /// <param name="msElapsed"></param>
-        public override void UpdateEffects(int msElapsed)
+        internal override void UpdateEffects(int msElapsed)
         {
             this.UpdateBuffs(msElapsed);
 

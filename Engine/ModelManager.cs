@@ -7,6 +7,9 @@ using IO.Common;
 
 namespace Engine
 {
+    /// <summary>
+    /// Specifies all textures used within the game, their frame
+    /// </summary>
     public class ModelManager
     {
         private readonly Model Default;

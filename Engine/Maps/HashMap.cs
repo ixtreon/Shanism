@@ -185,7 +185,7 @@ namespace Engine.Maps
                 .Select(binId => hashTable[binId]);
 
             // go thru the collected bin entries 
-            // and check whether each unit is inside the rect
+            // and check whether each unit is inside the actual rect
             return bins.SelectMany(bin => bin.Where(u => currentPos[u].Inside(pos, size)));
         }
     }

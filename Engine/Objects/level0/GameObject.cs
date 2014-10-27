@@ -37,7 +37,7 @@ namespace Engine.Objects
         public string Name { get; protected set; }
 
         /// <summary>
-        /// Gets or sets the size of this entity. 
+        /// Gets or sets the size of the object. 
         /// </summary>
         [ProtoMember(5)]
         public double Size { get; set; }
@@ -74,7 +74,7 @@ namespace Engine.Objects
         }
 
         /// <summary>
-        /// The event that fires when this GameObject's Location changes. 
+        /// Raised whenever this object changes its location. 
         /// </summary>
         public event Action<GameObject> LocationChanged;
 
@@ -118,8 +118,19 @@ namespace Engine.Objects
                 Destroyed(this);
         }
 
-        public virtual void UpdateLocation(int msElapsed) { }
+        /// <summary>
+        /// The function to update an object's position as game progresses. 
+        /// It should not calculate any effects or collision as not all objects
+        /// will have moved yet. 
+        /// </summary>
+        internal virtual void UpdateLocation(int msElapsed) { }
 
-        public virtual void UpdateEffects(int msElapsed) { }
+        /// <summary>
+        /// The function to update this object's effects as the game progresses. 
+        /// It should not move the object around the map as other objects may
+        /// have already applied effects onto it. 
+        /// </summary>
+        /// <param name="msElapsed"></param>
+        internal virtual void UpdateEffects(int msElapsed) { }
     }
 }

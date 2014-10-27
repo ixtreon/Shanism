@@ -7,9 +7,9 @@ using Engine.Common;
 using IO.Common;
 using System.Collections.Generic;
 
-public class Javelin : Ability
+public class Spark : Ability
 {
-    public Javelin()
+    public Spark()
         : base(AbilityType.PointTarget)
     {
         Icon = "lightning-1";
@@ -31,7 +31,6 @@ public class Javelin : Ability
             Speed = 7,
             DestroyOnCollision = true,
         };
-
         p["damage"] = Hero.DamageRoll();
 
         Map.AddDoodad(p);
@@ -41,7 +40,6 @@ public class Javelin : Ability
 
     private void onProjectileCollision(Projectile p, Unit u)
     {
-        //TODO: roll on a javelin is throw. 
         var dmgAmount = (double)p["damage"];
 
         Hero.DamageUnit(u, DamageType.Physical, dmgAmount);

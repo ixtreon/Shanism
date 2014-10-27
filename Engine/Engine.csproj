@@ -90,7 +90,7 @@
     <Compile Include="Common\EquipSlot.cs" />
     <Compile Include="Common\Rnd.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="!DefaultScenario\Abilities\Javelin.cs">
+    <Compile Include="!DefaultScenario\Abilities\Spark.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Maps\GameMap.cs" />

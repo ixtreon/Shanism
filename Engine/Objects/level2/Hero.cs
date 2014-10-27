@@ -15,18 +15,15 @@ namespace Engine.Objects
     [ProtoContract]
     public class Hero : Unit, IHero
     {
-        //used by scripts
-        //todo: make partial class
-
+        //multiply by _level to obtain the Xp needed to level up. 
         private const int XpPerLevel = 100;
 
         private int _experience;
         private int _level;
 
         /// <summary>
-        /// The experience needed to reach the next level. 
+        /// Gets the experience needed to reach the next level. 
         /// </summary>
-        /// <returns></returns>
         public int ExperienceNeeded
         {
             get
@@ -35,6 +32,10 @@ namespace Engine.Objects
             }
         }
 
+        /// <summary>
+        /// Gets the current level of this hero. 
+        /// </summary>
+        /// <returns></returns>
         public override int Level
         {
             get { return _level; }
@@ -60,32 +61,62 @@ namespace Engine.Objects
             }
         }
 
+        /// <summary>
+        /// Gets or sets the base strength of this hero. 
+        /// </summary>
         [ProtoMember(2)]
         public double BaseStrength;
+        /// <summary>
+        /// Gets or sets the base vitality of this hero. 
+        /// </summary>
         [ProtoMember(3)]
         public double BaseVitality;
+        /// <summary>
+        /// Gets or sets the base intellect of this hero. 
+        /// </summary>
         [ProtoMember(4)]
         public double BaseIntellect;
+        /// <summary>
+        /// Gets or sets the base agility of this hero. 
+        /// </summary>
         [ProtoMember(5)]
         public double BaseAgility;
 
 
         private Dictionary<string, Ability> abilities = new Dictionary<string, Ability>();
 
+        /// <summary>
+        /// Gets the current strength of this hero. 
+        /// </summary>
+        /// <returns></returns>
         public double Strength { get; protected set; }
+        /// <summary>
+        /// Gets the current vitality of this hero. 
+        /// </summary>
         public double Vitality { get; protected set; }
+        /// <summary>
+        /// Gets the current intellect of this hero. 
+        /// </summary>
         public double Intellect { get; protected set; }
+        /// <summary>
+        /// Gets the current agility of this hero. 
+        /// </summary>
         public double Agility { get; protected set; }
 
-
+        /// <summary>
+        /// Gets a list of all the abilities of this hero. 
+        /// </summary>
         public IEnumerable<IAbility> Abilities
         {
             get { return abilities.Values; }
         }
 
-        public MovementState MovementState;
+        /// <summary>
+        /// Gets the movement state of this hero. 
+        /// </summary>
+        public MovementState MovementState { get; internal set; }
 
-        public Hero()
+        internal Hero()
             : base()
         {
             this.BaseMana = 5;
@@ -93,7 +124,7 @@ namespace Engine.Objects
         }
 
         /// <summary>
-        /// run by script
+        /// Adds the given ability to the spellbook of this hero. 
         /// </summary>
         /// <param name="a"></param>
         public void AddAbility(Ability a)
@@ -101,6 +132,7 @@ namespace Engine.Objects
             if (a.Hero != null)
             {
                 //fuck this shit...
+                throw new Exception(":(");
             }
             a.Hero = this;
             abilities.Add(a.Name, a);
@@ -149,10 +181,10 @@ namespace Engine.Objects
 
 
         /// <summary>
-        /// Uses this.MovementState to update the position of the hero. 
+        /// Uses <see cref="MovementState"/> to update the position of the hero. 
         /// </summary>
         /// <param name="msElapsed"></param>
-        public override void UpdateLocation(int msElapsed)
+        internal override void UpdateLocation(int msElapsed)
         {
             var dx = Math.Sign(MovementState.XDirection);   // make sure its [-1; 1]
             var dy = Math.Sign(MovementState.YDirection);
@@ -224,7 +256,7 @@ namespace Engine.Objects
         /// Updates hero's abilities 
         /// in addition to the default buff handling provided by <see cref="Unit"/>
         /// </summary>
-        public override void UpdateEffects(int msElapsed)
+        internal override void UpdateEffects(int msElapsed)
         {
             foreach (var a in abilities.Values)
                 a.Update(msElapsed);

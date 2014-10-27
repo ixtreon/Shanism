@@ -10,19 +10,25 @@ namespace Engine.Objects
 {
     public class Projectile : Doodad
     {
+        /// <summary>
+        /// Gets or sets the speed of the projectile in game units per second. 
+        /// </summary>
         public double Speed = 3;
 
+        /// <summary>
+        /// Gets or sets the direction (in radians) this projectile is traveling at. 
+        /// </summary>
         public double Direction = 0;
 
         /// <summary>
-        /// Gets or sets the maximum distance the Projectile will travel before getting destroyed. 
+        /// Gets or sets the maximum distance the projectile will travel before getting destroyed. 
         /// <para>Has a default value of 10. </para>
         /// </summary>
         public double MaxRange = 10;
 
         /// <summary>
-        /// Gets or sets whether this Projectile will be automatically destroyed when it collides with a unit. 
-        /// <para>Has a default value of true. </para>
+        /// Gets or sets whether the projectile will be automatically destroyed after it collides with a unit. 
+        /// The default value is true. 
         /// </summary>
         public bool DestroyOnCollision = true;
 
@@ -37,9 +43,15 @@ namespace Engine.Objects
         /// </summary>
         public event Action<Projectile, Unit> OnUnitCollision;
 
-
+        /// <summary>
+        /// Contains all units we have hit so far. 
+        /// </summary>
         private HashSet<Unit> unitsHit = new HashSet<Unit>();
 
+        /// <summary>
+        /// Gets or sets the owner of this projectile. 
+        /// </summary>
+        /// <returns></returns>
         public Hero Owner { get; set; }
 
         public Projectile(string model, Hero owner = null, string name = "streli mreli")
@@ -49,7 +61,8 @@ namespace Engine.Objects
             this.Invulnerable = true;
             this.Model = model;
         }
-        public override void UpdateLocation(int msElapsed)
+
+        internal override void UpdateLocation(int msElapsed)
         {
             var dNow = (Speed * msElapsed / 1000);
             var unit = new Vector(Math.Sin(Direction), Math.Cos(Direction));
@@ -62,9 +75,9 @@ namespace Engine.Objects
             this.Location += unit * dNow;
         }
 
-        public override void UpdateEffects(int msElapsed)
+        internal override void UpdateEffects(int msElapsed)
         {
-            var units = Map.GetUnitsInRange(Location, Size)
+            var units = Map.GetUnitsInRange(Location, Size / 2)
                 .Where(u => u.IsNonPlayable() && !u.IsDead);
 
             if(units.Any())

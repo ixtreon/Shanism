@@ -22,12 +22,10 @@ namespace ShanoRpgWinGl.Objects
         public DoodadControl(IDoodad d)
             : base(d)
         {
-            Sprite.Period = 100;
         }
 
         public override void Update(int msElapsed)
         {
-            // ...
             base.Update(msElapsed);
         }
 

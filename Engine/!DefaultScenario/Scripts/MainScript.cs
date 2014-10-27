@@ -11,13 +11,16 @@ class MainScript : CustomScript
     public override void LoadModels(ModelManager manager)
     {
         manager.Include("hero", 1, 3);
-        manager.Include("lightning_ball", 1, 20);
+        manager.Include("lightning_ball", 1, 20, 100);
     }
 
     public override void OnPlayerJoined(Player p)
     {
-        var javelinSpell = new Javelin();
-        p.Hero.AddAbility(javelinSpell);
-        //javelinSpell.$ganja = "das";
+        var spellz = new[]
+        {
+            new Spark(),
+        };
+        foreach(var s in spellz)
+            p.Hero.AddAbility(s);
     }
 }

@@ -36,8 +36,8 @@ public class Monster : Unit
         get { return _level; }
     }
 
-    public override void UpdateLocation(int msElapsed)
-    {
-        //throw new NotImplementedException();
-    }
+    //internal override void UpdateLocation(int msElapsed)
+    //{
+    //    //throw new NotImplementedException();
+    //}
 }
