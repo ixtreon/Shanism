@@ -9,7 +9,7 @@ using ShanoRpgWinGl.Sprites;
 
 namespace ShanoRpgWinGl.UI
 {
-    class ValueLabel : UserControl
+    class ValueLabel : Control
     {
         public string Text = string.Empty;
 

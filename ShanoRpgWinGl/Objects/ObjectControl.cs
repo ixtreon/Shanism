@@ -11,7 +11,7 @@ using ShanoRpgWinGl.UI;
 
 namespace ShanoRpgWinGl.Objects
 {
-    abstract class ObjectControl : UserControl
+    abstract class ObjectControl : Control
     {
         public Sprite Sprite { get; private set; }
 

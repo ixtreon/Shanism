@@ -13,7 +13,7 @@ namespace ShanoRpgWinGl.UI
     /// <summary>
     /// A button that shows an image and can be clicked. 
     /// </summary>
-    class Button : UserControl
+    class Button : Control
     {
         public Texture2D Texture { get; set; }
 

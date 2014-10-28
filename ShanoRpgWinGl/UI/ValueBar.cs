@@ -9,7 +9,7 @@ using ShanoRpgWinGl.Sprites;
 
 namespace ShanoRpgWinGl.UI
 {
-    class ValueBar : UserControl
+    class ValueBar : Control
     {
         public bool ShowText = false;
 

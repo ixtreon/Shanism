@@ -12,7 +12,7 @@ namespace ShanoRpgWinGl.UI
     /// <summary>
     /// Represents a user interface control. 
     /// </summary>
-    abstract class UserControl : IEnumerable<UserControl>
+    abstract class Control : IEnumerable<Control>
     {
 
         protected static MouseState
@@ -23,7 +23,7 @@ namespace ShanoRpgWinGl.UI
             oldKeyboardState = Keyboard.GetState(),
             keyboardState = Keyboard.GetState();
 
-        protected static UserControl HoverControl;
+        protected static Control HoverControl;
 
         /// <summary>
         /// A constant specifying the default distance between elements. 
@@ -33,7 +33,7 @@ namespace ShanoRpgWinGl.UI
         /// <summary>
         /// All children of this control. 
         /// </summary>
-        List<UserControl> Controls = new List<UserControl>();
+        List<Control> Controls = new List<Control>();
 
 
         /// <summary>
@@ -167,9 +167,9 @@ namespace ShanoRpgWinGl.UI
         public event Action MouseLeave;
         public event Action<Keys> KeyDown;
         
-        public UserControl Parent { get; private set; }
+        public Control Parent { get; private set; }
        
-        public UserControl()
+        public Control()
         {
             MouseDown += UserControl_MouseDown;
         }
@@ -191,7 +191,7 @@ namespace ShanoRpgWinGl.UI
         /// </summary>
         /// <param name="c"></param>
         /// <param name="relativeAnchor">True to position the control according to its relative position, false to keep the absolute one. </param>
-        public void Add(UserControl c, bool relativeAnchor = true)
+        public void Add(Control c, bool relativeAnchor = true)
         {
             var pos = c.RelativePosition;
             this.Controls.Add(c);
@@ -200,7 +200,7 @@ namespace ShanoRpgWinGl.UI
                 c.RelativePosition = pos;
         }
 
-        public void Remove(UserControl c)
+        public void Remove(Control c)
         {
             this.Controls.Remove(c);
         }
@@ -309,7 +309,7 @@ namespace ShanoRpgWinGl.UI
 
         // Implement IEnumerable<UserControl> interface for children. 
 
-        public IEnumerator<UserControl> GetEnumerator()
+        public IEnumerator<Control> GetEnumerator()
         {
             return Controls.GetEnumerator();
         }
@@ -319,12 +319,12 @@ namespace ShanoRpgWinGl.UI
             return Controls.GetEnumerator();
         }
 
-        public IEnumerable<UserControl> Controlz
+        public IEnumerable<Control> Controlz
         {
             get { return Controls; }
         }
 
-        protected UserControl GetHoverControl()
+        protected Control GetHoverControl()
         {
             foreach (var c in Controls)
             {

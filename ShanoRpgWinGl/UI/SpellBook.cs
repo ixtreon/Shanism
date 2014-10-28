@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ShanoRpgWinGl.UI
 {
-    class SpellBook : UserControl
+    class SpellBook : Window
     {
         private readonly IHero Hero;
 

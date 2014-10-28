@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ShanoRpgWinGl.UI
 {
-    class Window : UserControl
+    abstract class Window : Control
     {
         public readonly Button CloseButton = new Button()
         {

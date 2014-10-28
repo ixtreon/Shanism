@@ -14,7 +14,7 @@ namespace ShanoRpgWinGl.Objects
     /// <summary>
     /// Keeps an up-to-date list of all nearby units (TODO: objects too!) and displays them on the screen. 
     /// </summary>
-    class ObjectManager : UserControl
+    class ObjectManager : Control
     {
 
         public UnitControl LocalHero { get; private set; }

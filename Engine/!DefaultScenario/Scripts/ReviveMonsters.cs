@@ -18,16 +18,15 @@ class ReviveMonsters : CustomScript
         };
 
         Map.AddUnit(m1);
-
-
-        base.GameStart();
     }
     public override async void OnUnitDeath(Unit unit)
     {
         if (unit.GetType() == typeof(Monster))
         {
             const double revive_range = 3;
+
             var nu = new Monster((Monster)unit);
+
             var pos = unit.Location;
             var dx = Rnd.NextDouble(-revive_range, revive_range);
             var dy = Rnd.NextDouble(-revive_range, revive_range);

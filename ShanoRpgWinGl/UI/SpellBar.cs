@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework;
 
 namespace ShanoRpgWinGl.UI
 {
-    class SpellBar : UserControl
+    class SpellBar : Control
     {
         const int MaxButtonCount = 20;
 

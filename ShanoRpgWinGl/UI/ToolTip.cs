@@ -9,13 +9,13 @@ using ShanoRpgWinGl.Sprites;
 
 namespace ShanoRpgWinGl.UI
 {
-    class ToolTip : UserControl
+    class ToolTip : Control
     {
         string Text;
 
         Color BackColor = Color.DarkGray.SetAlpha(100);
 
-        public UserControl AssociatedControl;
+        public Control AssociatedControl;
 
         public bool Shown { get; private set; }
 

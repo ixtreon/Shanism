@@ -12,7 +12,7 @@ namespace ShanoRpgWinGl.UI
     /// <summary>
     /// Represents the in-game panel showing a hero's statistics. 
     /// </summary>
-    class HeroUi : UserControl
+    class HeroUi : Control
     {
         public readonly IHero Hero;
 
@@ -117,17 +117,18 @@ namespace ShanoRpgWinGl.UI
         {
             //update the displayed stats
             strength.Value = Hero.Strength.ToString("0");
-            strength.TooltipText = "Your current strength. ";
+            strength.TooltipText = "Your current strength.";
             agility.Value = Hero.Agility.ToString("0");
-            agility.TooltipText = "Your current agility. ";
+            agility.TooltipText = "Your current agility.";
             intellect.Value = Hero.Intellect.ToString("0");
-            intellect.TooltipText = "Your current intellect. ";
+            intellect.TooltipText = "{0} + {1} intellect.";
             vitality.Value = Hero.Vitality.ToString("0");
-            vitality.TooltipText = "Your current vitality. ";
+            vitality.TooltipText = "{0} + {1} vitality.";
 
             moveSpeed.Value = Hero.MoveSpeed.ToString("0.0");
-
+            moveSpeed.TooltipText = "Your move {0} tiles per second.";
             armor.Value = Hero.Defense.ToString("0.0");
+            armor.TooltipText = "{0} + {1} defense. \nProvides {2}% reduction in physical damage.";
 
             damage.Value = Hero.MinDamage + "-" + Hero.MaxDamage;
 

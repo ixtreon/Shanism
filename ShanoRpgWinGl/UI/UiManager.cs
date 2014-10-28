@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace ShanoRpgWinGl.UI
 {
-    class UiManager : UserControl
+    class UiManager : Control
     {
         readonly HeroUi heroUi;
 

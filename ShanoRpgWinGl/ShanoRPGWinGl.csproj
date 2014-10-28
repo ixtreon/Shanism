@@ -70,7 +70,7 @@
     <Compile Include="UI\SpellButton.cs" />
     <Compile Include="UI\TargetUi.cs" />
     <Compile Include="UI\ToolTip.cs" />
-    <Compile Include="UI\UserControl.cs" />
+    <Compile Include="UI\Control.cs" />
     <Compile Include="UI\ValueBar.cs" />
     <Compile Include="UI\ValueLabel.cs" />
     <Compile Include="UI\Window.cs" />

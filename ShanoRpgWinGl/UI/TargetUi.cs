@@ -10,7 +10,7 @@ using ShanoRpgWinGl.Sprites;
 
 namespace ShanoRpgWinGl.UI
 {
-    class TargetUi : UserControl
+    class TargetUi : Control
     {
         public UnitControl Target;
 
