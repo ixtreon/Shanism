@@ -132,6 +132,12 @@ namespace ShanoRpgWinGl
             return new Point(lines.Max(l => getWidth(l)), (int)(Height * lines.Count()));
         }
 
+        public Vector2 MeasureStringUi(string text, int maxWidth = int.MaxValue)
+        {
+            var p = MeasureString(text, maxWidth);
+            return new Vector2((float)Screen.ScreenToUi(p.X), (float)Screen.ScreenToUi(p.Y));
+        }
+
         /// <summary>
         /// Gets the width of the given one-line (!) string in pixels. 
         /// </summary>

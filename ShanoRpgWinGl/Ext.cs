@@ -33,5 +33,19 @@ namespace ShanoRpgWinGl
         {
             return new Point(p.X + dx, p.Y + dy);
         }
+
+        /// <summary>
+        /// Constrains the first point between the other two. 
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="low"></param>
+        /// <param name="high"></param>
+        /// <returns></returns>
+        public static Point ConstrainWithin(this Point p, Point low, Point high)
+        {
+            var x = Math.Min(high.X, Math.Max(low.X, p.X));
+            var y = Math.Min(high.Y, Math.Max(low.Y, p.Y));
+            return new Point(x, y);
+        }
     }
 }

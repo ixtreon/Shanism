@@ -59,7 +59,7 @@ namespace ShanoRpgWinGl.UI
         /// <returns></returns>
         private Vector2 ParentPosition
         {
-            get { return Parent != null ? Parent.absolutePosition : Vector2.Zero; }
+            get { return Parent != null ? Parent._absolutePosition : Vector2.Zero; }
         }
         /// <summary>
         /// Gets the size of this control's parent. 
@@ -70,7 +70,9 @@ namespace ShanoRpgWinGl.UI
             get { return Parent != null ? Parent.Size : Vector2.Zero; }
         }
 
-        protected Vector2 absolutePosition;
+        protected Vector2 _absolutePosition;
+        protected Vector2 _size;
+
         /// <summary>
         /// Gets or sets the absolute position of this control in UI coordinates. 
         /// </summary>
@@ -78,16 +80,16 @@ namespace ShanoRpgWinGl.UI
         {
             get
             {
-                return absolutePosition;
+                return _absolutePosition;
             }
             set
             {
-                if (value != absolutePosition)
+                if (value != _absolutePosition)
                 {
-                    var d = value - absolutePosition;
+                    var d = value - _absolutePosition;
                     foreach (var c in this)
                         c.AbsolutePosition += d;
-                    this.absolutePosition = value;
+                    this._absolutePosition = value;
                 }
             }
         }
@@ -97,9 +99,21 @@ namespace ShanoRpgWinGl.UI
         /// </summary>
         public Point ScreenPosition
         {
-            get
+            get { return Screen.UiToScreen(_absolutePosition); }
+        }
+
+        /// <summary>
+        /// Gets or sets the size of the control. 
+        /// </summary>
+        public Vector2 Size
+        {
+            get { return _size; }
+            set
             {
-                return Screen.UiToScreen(absolutePosition);
+                if(_size != value)
+                {
+                    _size = value;
+                }
             }
         }
         /// <summary>
@@ -109,7 +123,7 @@ namespace ShanoRpgWinGl.UI
         {
             get
             {
-                return Screen.UiToScreen(AbsolutePosition + Size) - ScreenPosition;
+                return Screen.UiToScreen(AbsolutePosition + _size) - ScreenPosition;
             }
         }
 
@@ -128,11 +142,6 @@ namespace ShanoRpgWinGl.UI
         {
             get { return RelativePosition.X + Size.X; }
         }
-
-        /// <summary>
-        /// Gets or sets the size of the control. 
-        /// </summary>
-        public Vector2 Size;
 
         /// <summary>
         /// Gets or sets whether this control responds to mouse events. 
@@ -170,7 +179,7 @@ namespace ShanoRpgWinGl.UI
         Vector2 dragPoint = Vector2.Zero;
         void UserControl_MouseDown(Vector2 p)
         {
-            if(!Locked && oldKeyboardState.IsKeyDown(Keys.LeftShift))
+            if (!Locked && oldKeyboardState.IsKeyDown(Keys.Q))
             {
                 dragPoint = p;
             }
@@ -212,9 +221,6 @@ namespace ShanoRpgWinGl.UI
                 var d = Screen.ScreenToUi(mouseState.Position) - dragPoint;
                 this.RelativePosition += d;
                 dragPoint += d;
-
-
-                //don't trigger events now. 
             }
         }
 
@@ -224,7 +230,7 @@ namespace ShanoRpgWinGl.UI
             var min = Screen.ScreenToUi(Point.Zero);
             var max = Screen.ScreenToUi(new Point(Screen.ScreenSize.X, Screen.ScreenSize.Y));
             //use the lowercase field so we don't move children..
-            this.absolutePosition = min;
+            this._absolutePosition = min;
             this.Size = max - min;
 
             //update static mouse info
