@@ -1,0 +1,241 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0B2E9F70-7046-470A-8E5D-EBD47F030DDC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Engine</RootNamespace>
+    <AssemblyName>Engine</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Network|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Network\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Editor|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Editor\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Network|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Network\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Editor|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Editor\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Engine.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Common.Logging">
+      <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="protobuf-net">
+      <HintPath>..\..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
+    </Reference>
+    <Reference Include="ScriptCs.Contracts">
+      <HintPath>..\..\packages\ScriptCs.Contracts.0.10.2\lib\net45\ScriptCs.Contracts.dll</HintPath>
+    </Reference>
+    <Reference Include="ScriptCs.Core">
+      <HintPath>..\..\packages\ScriptCs.Core.0.10.2\lib\net45\ScriptCs.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="ScriptCs.Engine.Roslyn">
+      <HintPath>..\..\packages\ScriptCs.Engine.Roslyn.0.10.2\lib\net45\ScriptCs.Engine.Roslyn.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpNoise">
+      <HintPath>..\..\packages\SharpNoise.0.10.0.0\lib\net45\SharpNoise.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpNoise.Utilities">
+      <HintPath>..\..\packages\SharpNoise.0.10.0.0\lib\net45\SharpNoise.Utilities.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\AttackResult.cs" />
+    <Compile Include="Common\EquipSlot.cs" />
+    <Compile Include="Common\Rnd.cs" />
+    <Compile Include="Events\AbilityCastArgs.cs" />
+    <Compile Include="Events\LocationChangeArgs.cs" />
+    <Compile Include="Events\RangeArgs.cs" />
+    <Compile Include="Events\UnitDamagingArgs.cs" />
+    <Compile Include="Events\UnitDamagedArgs.cs" />
+    <Compile Include="Events\UnitDyingArgs.cs" />
+    <Compile Include="Maps\AppendOnlyList.cs" />
+    <Compile Include="Maps\GameMapRangeEvents.cs" />
+    <Compile Include="Maps\HashMap2.cs" />
+    <Compile Include="Maps\ObjectMap.cs" />
+    <Compile Include="Maps\GameMap.cs" />
+    <Compile Include="Maps\Hash.cs" />
+    <Compile Include="Maps\HashMap.cs" />
+    <Compile Include="Maps\RandomMap.cs" />
+    <Compile Include="Maps\RangeConstraint.cs" />
+    <Compile Include="ModelManager.cs" />
+    <Compile Include="Systems\Buffs\Buff.cs" />
+    <Compile Include="Objects\Game\Doodad.cs" />
+    <Compile Include="Objects\Game\GameItem.cs" />
+    <Compile Include="Objects\GameObject.cs" />
+    <Compile Include="Objects\Units\UnitBuffs.cs" />
+    <Compile Include="Objects\Units\UnitEvents.cs" />
+    <Compile Include="Objects\Units\UnitBehaviours.cs" />
+    <Compile Include="Objects\Units\UnitRangeEvents.cs" />
+    <Compile Include="Objects\Units\UnitStates.cs" />
+    <Compile Include="Systems\Abilities\Attack.cs" />
+    <Compile Include="Systems\Behaviours\AbilityBehaviour.cs" />
+    <Compile Include="Systems\Behaviours\Behaviour.cs" />
+    <Compile Include="Systems\Behaviours\AggroBehaviour.cs" />
+    <Compile Include="Systems\Behaviours\BehaviourList.cs" />
+    <Compile Include="Systems\Behaviours\FollowBehaviour.cs" />
+    <Compile Include="Systems\Behaviours\HeroBehaviour.cs" />
+    <Compile Include="Systems\Behaviours\INeedsTarget.cs" />
+    <Compile Include="Systems\Behaviours\ReturnBehaviour.cs" />
+    <Compile Include="Systems\Buffs\BuffInstance.cs" />
+    <Compile Include="Systems\Item\Inventory.cs" />
+    <Compile Include="Systems\Item\Item.cs" />
+    <Compile Include="Objects\Game\Monster.cs" />
+    <Compile Include="Objects\Game\Projectile.cs" />
+    <Compile Include="Objects\Game\Effect.cs" />
+    <Compile Include="Objects\Units\UnitHelper.cs" />
+    <Compile Include="Player.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Systems\Abilities\Ability.cs" />
+    <Compile Include="Objects\CustomScript.cs" />
+    <Compile Include="Systems\Orders\Cast.cs" />
+    <Compile Include="Systems\Orders\MoveLocation.cs" />
+    <Compile Include="Systems\Orders\MoveUnit.cs" />
+    <Compile Include="Systems\Orders\PlayerMove.cs" />
+    <Compile Include="Systems\Orders\Stand.cs" />
+    <Compile Include="Systems\Scenario.cs" />
+    <Compile Include="Systems\Orders\Order.cs" />
+    <Compile Include="ShanoEngine.cs" />
+    <Compile Include="Objects\Units\Unit.cs" />
+    <Compile Include="Objects\Game\Hero.cs" />
+    <Compile Include="Objects\Constants.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScenarioObject.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
+    <None Include="ClassDiagram3.cd" />
+    <None Include="ClassDiagram4.cd" />
+    <None Include="Engine.pfx" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IO\IO.csproj">
+      <Project>{dc89987d-5817-4f1d-95ca-80c024c8d6bb}</Project>
+      <Name>IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ScriptEngine\ScriptLib.csproj">
+      <Project>{bada50f2-93bc-4eba-949a-bf892ae4b7e5}</Project>
+      <Name>ScriptLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Network\Network.csproj">
+      <Project>{d2fa8685-b964-498d-a34f-d191be2cba6b}</Project>
+      <Name>Network</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Objects\Common\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

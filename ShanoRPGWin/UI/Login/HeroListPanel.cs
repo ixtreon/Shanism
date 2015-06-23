@@ -7,11 +7,16 @@ using System.Text;
 using System.Windows.Forms;
 using Engine.Objects;
 using ShanoRpgWin;
+using Engine.Objects.Game;
+using IO.Common;
 
 namespace ShanoRPGWin.UI
 {
     public partial class HeroListPanel : UserControl
     {
+        /// <summary>
+        /// Gets the selected hero. 
+        /// </summary>
         public HeroSelectPanel SelectedHero { get; private set; }
 
         public event Action SelectedHeroChanged;
@@ -40,9 +45,9 @@ namespace ShanoRPGWin.UI
             }
         }
 
-        private void toggleNoHero()
+        public void SelectFirstHero()
         {
-
+            pan_MouseClick(pHeroes.Controls[0], null);
         }
 
         public void AddHeroPanel(Hero h)
@@ -53,9 +58,9 @@ namespace ShanoRPGWin.UI
             };
 
 
-            this.pHeroes.Controls.Add(pan);
             pan.MouseClick += pan_MouseClick;
             pan.MouseDoubleClick += pan_MouseDoubleClick;
+            this.pHeroes.Controls.Add(pan);
 
             foreach (var lastRow in pHeroes.RowStyles.Cast<RowStyle>())
             {
@@ -114,7 +119,11 @@ namespace ShanoRPGWin.UI
                     return;
                 }
 
-                new Hero(name).Save();
+                var theHero = new Hero(Vector.Zero)
+                {
+                    Name = name,
+                };
+                theHero.Save();
             }
             ReloadHeroes();
         }

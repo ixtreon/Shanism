@@ -71,6 +71,45 @@
     <Report>
       <Path>ShanoRPGWin141017.vsp</Path>
     </Report>
+    <Report>
+      <Path>ShanoRPGWin150120.vspx</Path>
+    </Report>
+    <Report>
+      <Path>ShanoRPGWin150120(1).vspx</Path>
+    </Report>
+    <Report>
+      <Path>ShanoRPGWin150120(3).vspx</Path>
+    </Report>
+    <Report>
+      <Path>ShanoRPGWin150129.vspx</Path>
+    </Report>
+    <Report>
+      <Path>ShanoRPGWin150131.vspx</Path>
+    </Report>
+    <Report>
+      <Path>ShanoRPGWin150131(1).vspx</Path>
+    </Report>
+    <Report>
+      <Path>ShanoRPGWin150219.vspx</Path>
+    </Report>
+    <Report>
+      <Path>ShanoRPGWin150219(1).vspx</Path>
+    </Report>
+    <Report>
+      <Path>ShanoRPGWin150219(2).vspx</Path>
+    </Report>
+    <Report>
+      <Path>ShanoRPGWin150219(3).vspx</Path>
+    </Report>
+    <Report>
+      <Path>ShanoRPGWin150227.vspx</Path>
+    </Report>
+    <Report>
+      <Path>ShanoRPGWin150302.vspx</Path>
+    </Report>
+    <Report>
+      <Path>ShanoRPGWin150404.vspx</Path>
+    </Report>
   </Reports>
   <Launches>
     <ProjBinary>

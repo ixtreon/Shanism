@@ -7,18 +7,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Engine.Objects.Game;
 
 namespace ShanoRPGWin.UI
 {
     public partial class HeroSelectPanel : UserControl
     {
-        public readonly Engine.Objects.Hero Hero;
+        public readonly Hero Hero;
         public HeroSelectPanel()
         {
             InitializeComponent();
 
         }
-        public HeroSelectPanel(Engine.Objects.Hero h)
+        public HeroSelectPanel(Hero h)
         {
             this.Hero = h;
             InitializeComponent();

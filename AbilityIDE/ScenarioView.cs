@@ -8,19 +8,20 @@ using System.Windows.Forms;
 
 namespace AbilityIDE
 {
-    class ScenarioView : TreeView
+    class ScenarioTreeView : TreeView
     {
         
-
         public TreeNode ProjectRoot { get; private set; }
+
         public Dictionary<TreeNode, string> LoadScenario(string dir)
         {
             this.Nodes.Clear();
 
             ProjectRoot = new TreeNode(Path.GetDirectoryName(dir));
+
             this.Nodes.Add(ProjectRoot);
 
-            var csFiles = Directory.EnumerateFiles(dir, "*.cs");
+            var csFiles = Directory.EnumerateFiles(dir, "*.cs", SearchOption.AllDirectories);
 
             var openedFiles = new Dictionary<TreeNode, string>();
 

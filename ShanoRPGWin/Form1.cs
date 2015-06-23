@@ -9,10 +9,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Engine.Objects;
-using Local;
 using ShanoRpgWin;
 using ShanoRPGWin.Properties;
 using ShanoRPGWin.UI;
+using IO;
+using Client;
+using Local;
 
 namespace ShanoRPGWin
 {
@@ -25,46 +27,81 @@ namespace ShanoRPGWin
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            nbPort.Value = Settings.Default.LastRemotePort;
-            txtRemoteIp.Text = Settings.Default.LastRemoteIp;
+            //Restore the last IP and port values. 
+            restoreSettings();
+            Size = MinimumSize;
+//#if DEBUG
+//            heroList.SelectFirstHero();
+//            forceStartGame();
+//#endif
         }
 
-        private void heroListPanel1_SelectedHeroChanged()
+        private void restoreSettings()
         {
-            btnPlay.Enabled = heroList.SelectedHero != null;
+            txtRemoteIp.Text = Settings.Default.RemoteIp;
+            txtPlayerName.Text = Settings.Default.PlayerName;
+            if (Settings.Default.IsRemoteGame)
+                btnRemoteGame.Checked = true;
+            else
+                btnLocalGame.Checked = true;
         }
-
-        private void btnCreate_Click(object sender, EventArgs e)
-        {
-        }
-
-        static Random rnd = new Random();
 
         private void btnPlay_Click(object sender, EventArgs e)
         {
-
-            if (heroList.SelectedHero == null)
-                return;
-
-            var h = heroList.SelectedHero.Hero;
-
-            int mapSeed = (int)nbMapSeed.Value;
-
-            new Thread(() =>
+            //Start the game when the "Play" button is clicked. 
+            var playerName = txtPlayerName.Text;
+            if (btnLocalGame.Checked)
             {
-                LocalShano theGame = new LocalShano(mapSeed, h);
-                if (cbLocalNetworked.Checked)
-                    theGame.OpenToNetwork((int)nbPort.Value);
-            }).Start();
+                Settings.Default.PlayerName = playerName;
+                Settings.Default.IsRemoteGame = false;
 
-            if (btnRemoteGame.Checked)
-            {
-                Settings.Default.LastRemotePort = (int)nbPort.Value;
-                Settings.Default.LastRemoteIp = txtRemoteIp.Text;
-                Settings.Default.Save();
+                StartLocalGame(playerName);
             }
+            else
+            {
+                var ipAddress = txtRemoteIp.Text;
+
+                Settings.Default.RemoteIp = ipAddress;
+                Settings.Default.PlayerName = playerName;
+                Settings.Default.IsRemoteGame = true;
+
+                StartRemoteGame(playerName, ipAddress);
+            }
+            Settings.Default.Save();
 
             Application.ExitThread();
+
+        }
+
+        //Starts connecting to the specified server. 
+        private void StartRemoteGame(string playerName, string ipAddress)
+        {
+            //create the NetworkServer object
+            var serv = new Network.LClient(ipAddress, playerName);
+
+            var client = new MainGame(playerName, serv.Update);
+
+            client.Server = serv;
+
+            //start the client
+            client.Running = true;
+
+        }
+
+        private void StartLocalGame(string playerName)
+        {
+
+            // get the selected map seed
+            int mapSeed = (int)nbMapSeed.Value;
+
+            // start the local game
+            new Thread(() =>
+            {
+                var theGame = new LocalShano(playerName, mapSeed);
+
+                //if (chkLocalNetworked.Checked)
+                //    theGame.OpenToNetwork((int)nbPort.Value);
+            }).Start();
         }
 
         private void btnBack_Click(object sender, EventArgs e)
@@ -72,7 +109,7 @@ namespace ShanoRPGWin
             Application.Exit();
         }
 
-        private void heroList_ForceStartGame()
+        private void forceStartGame()
         {
             btnPlay_Click(null, null);
         }
@@ -85,6 +122,22 @@ namespace ShanoRPGWin
         private void btnRemoteGame_CheckedChanged(object sender, EventArgs e)
         {
             pRemoteGame.Visible = btnRemoteGame.Checked;
+        }
+
+        private void resizeSettings()
+        {
+            var left = lblBasic.Left + pSettings.Left;
+            lblBasic.Width = ClientSize.Width - 2 * left;
+        }
+
+        private void comboBox1_TextChanged(object sender, EventArgs e)
+        {
+            btnPlay.Enabled = txtPlayerName.Text != null;
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            resizeSettings();
         }
     }
 }
