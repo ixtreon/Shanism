@@ -1,4 +1,5 @@
 ﻿using Engine.Events;
+using Engine.Systems.Orders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,26 @@ namespace Engine.Objects
         /// </summary>
         public event Action<RangeArgs> UnitInVisionRange;
 
+
+        public static event Action<RangeArgs> AnyUnitInVisionRange;
+
+        /// <summary>
+        /// The event executed whenever any unit's order is changed. 
+        /// </summary>
+        public static event Action<Unit, Order> AnyOrderChanged;
+
+        /// <summary>
+        /// The event executed whenever the unit's order is changed. 
+        /// </summary>
+        public event Action<Order> OrderChanged;
+
+        private void RaiseOrderChangedEvent()
+        {
+            OrderChanged?.Invoke(Order);
+            AnyOrderChanged?.Invoke(this, Order);
+        }
+
+
         //unused
         public event Action OnAbilityCast;
 
@@ -57,22 +78,22 @@ namespace Engine.Objects
 
                     visionRange = value;
 
-                    unitInRangeHandlerId = Map.RegisterRangeEvent(this, visionRange, Maps.EventType.EntersRange, raiseUnitInVisionEvent);
+                    unitInRangeHandlerId = Map.RegisterRangeEvent(this, visionRange, Maps.EventType.EntersRange, RaiseUnitInVisionEvent);
                 }
             }
         }
 
         //TODO: add seeing checks?
-        public bool InVisionRange(GameObject o)
+        public bool IsInVisionRange(GameObject o)
         {
             return (Location.DistanceTo(o.Location) <= VisionRange);
         }
 
 
-        internal void raiseUnitInVisionEvent(RangeArgs args)
+        private void RaiseUnitInVisionEvent(RangeArgs args)
         {
-            if (UnitInVisionRange != null)
-                UnitInVisionRange(args);
+            UnitInVisionRange?.Invoke(args);
+            AnyUnitInVisionRange?.Invoke(args);
         }
     }
 }

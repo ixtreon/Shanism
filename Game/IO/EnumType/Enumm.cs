@@ -4,14 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IO.Common
+namespace IO.EnumType
 {
-    public enum OrderType
+    abstract class Enumm<T>
+        where T : Enumm<T>
     {
-        Stand,
-        HoldPosition,
-        Move,
-        Casting,
-        Attack,
     }
 }

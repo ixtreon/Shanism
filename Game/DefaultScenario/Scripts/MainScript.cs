@@ -38,6 +38,7 @@ class MainScript : CustomScript
         if (!p.HasHero)
         {
             var h = new Hero(new Vector(0, 0));
+            Map.Units.Add(h);
 
             p.SetMainHero(h);
         }

@@ -12,13 +12,14 @@ using System.Diagnostics;
 using Engine.Objects.Game;
 using System.Security;
 using System.IO;
+using IO.Objects;
 
 namespace Engine
 {
     /// <summary>
     /// The game engine lies here. 
     /// </summary>
-    public class ShanoEngine
+    public class ShanoEngine : IGameEngine
     {
         public static ShanoEngine Current { get; private set; }
 
@@ -94,6 +95,19 @@ namespace Engine
             Scenario.RunScripts(s => s.GameStart());
         }
 
+        event Action<IUnit, OrderType> IGameEngine.AnyUnitOrderChanged
+        {
+            add { Unit.AnyOrderChanged += (u, o) => value(u, o.Type); }
+            remove { Unit.AnyOrderChanged += (u, o) => value(u, o.Type); }
+        }
+
+        event Action<IUnit, IUnit> IGameEngine.AnyUnitEntersVisionRange
+        {
+            add { Unit.AnyUnitInVisionRange += (args) => value(args.OriginUnit, args.TriggerUnit); }
+            remove { Unit.AnyUnitInVisionRange -= (args) => value(args.OriginUnit, args.TriggerUnit); }
+        }
+
+
         /// <summary>
         /// Starts the game server by executing the main game loop. 
         /// </summary>
@@ -156,7 +170,7 @@ namespace Engine
             }
 
             IsOnline = true;
-            NetworkServer = new Network.LServer();
+            NetworkServer = new Network.LServer(this);
             NetworkServer.ClientConnectHandler = handleNetClient;
         }
 

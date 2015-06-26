@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IO.Message.Server;
+using System.Threading;
 
 namespace Engine
 {
@@ -21,20 +22,20 @@ namespace Engine
     /// </summary>
     public class Player : IGameReceptor
     {
-        /// <summary>
-        /// Gets the client handle for the player. 
-        /// </summary>
-        public readonly IGameClient InputDevice;
+        public static readonly Player NeutralAggressive = new Player(0);
+        public static readonly Player NeutralFriendly = new Player(1);
+
+        public static int LastPlayerId = 1;
 
         readonly ShanoEngine Engine;
 
-        /// <summary>
-        /// Gets the player's hero, if he has one. 
-        /// </summary>
-        public Hero MainHero { get; private set; }
-
 
         Vector customCameraPosition;
+
+        /// <summary>
+        /// All units controlled by the player. 
+        /// </summary>
+        private HashSet<Unit> controlledUnits = new HashSet<Unit>();
 
 
         /// <summary>
@@ -43,9 +44,17 @@ namespace Engine
         public MovementState MovementState { get; set; }
 
         /// <summary>
-        /// All units controlled by the player. 
+        /// Gets the client handle for the player. 
         /// </summary>
-        private HashSet<Unit> controlledUnits = new HashSet<Unit>();
+        public readonly IGameClient InputDevice;
+
+        public readonly int PlayerId;
+
+
+        /// <summary>
+        /// Gets the player's hero, if he has one. 
+        /// </summary>
+        public Hero MainHero { get; private set; }
 
         /// <summary>
         /// The event raised whenever a chunk is received. 
@@ -58,7 +67,7 @@ namespace Engine
         public bool HasHero { get { return MainHero != null; } }
 
         //a player is always connected to the server
-        public bool Connected { get; } = true;
+        public bool Connected { get { return true; } }
 
         IHero IGameReceptor.MainHero
         {
@@ -73,9 +82,12 @@ namespace Engine
             get { return MainHero?.Location ?? customCameraPosition; }
         }
 
+        private Player(int id) { PlayerId = id; }
 
         public Player(ShanoEngine engine, IGameClient inputDevice)
         {
+            PlayerId = Interlocked.Increment(ref LastPlayerId);
+
             this.Engine = engine;
             this.InputDevice = inputDevice;
         }

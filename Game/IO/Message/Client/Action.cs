@@ -40,10 +40,7 @@ namespace IO.Message.Client
         [ProtoMember(4)]
         public readonly Vector TargetLocation;
 
-        private ActionMessage() : base(MessageType.Action) 
-        { 
-
-        }
+        private ActionMessage() { }
 
         /// <summary>
         /// Creates a new message for the specified unit-targeted action. 
@@ -51,7 +48,6 @@ namespace IO.Message.Client
         /// <param name="abilityId">The string id of the action to perform. </param>
         /// <param name="targetGuid"></param>
         public ActionMessage(string abilityId, int targetGuid)
-            : this()
         {
             this.HasTarget = true;
             TargetType = AbilityTargetType.UnitTarget;

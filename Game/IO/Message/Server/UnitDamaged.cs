@@ -27,12 +27,9 @@ namespace IO.Message.Server
             get { return NewValue - ValueChange; }
         }
 
-        private UnitDamageMessage() 
-            : base(MessageType.UnitDamage)
-        { }
+        private UnitDamageMessage() { }
 
         public UnitDamageMessage(IUnit u, double change, bool isHealth)
-            :this()
         {
             UnitId = u.Guid;
             IsHealth = isHealth;

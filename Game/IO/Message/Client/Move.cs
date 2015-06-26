@@ -14,11 +14,9 @@ namespace IO.Message.Client
         [ProtoMember(1)]
         public readonly MovementState Direction;
 
-        private MoveMessage()
-            : base(MessageType.MovementUpdate) { }
+        private MoveMessage() { }
 
         public MoveMessage(MovementState st)
-            : this()
         {
             Direction = st;
         }

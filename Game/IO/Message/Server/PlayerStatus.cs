@@ -17,16 +17,13 @@ namespace IO.Message.Server
         [ProtoMember(2)]
         public readonly Vector CameraPosition;
 
-        private PlayerStatusMessage()
-            : base(MessageType.PlayerStatusUpdate)
-        { }
+        private PlayerStatusMessage() { }
 
         /// <summary>
         /// Informs the client of the id of its hero. 
         /// </summary>
         /// <param name="hero"></param>
         public PlayerStatusMessage(IHero hero)
-            : this()
         {
             HeroId = hero.Guid;
             CameraPosition = hero.Location;

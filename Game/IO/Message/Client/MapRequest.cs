@@ -13,14 +13,9 @@ namespace IO.Message.Client
         [ProtoMember(1)]
         public MapChunkId Chunk;
 
-        private MapRequestMessage()
-            : base(MessageType.MapRequest)
-        {
-
-        }
+        private MapRequestMessage() { }
 
         public MapRequestMessage(MapChunkId chunk)
-            : this()
         {
             this.Chunk = chunk;
         }

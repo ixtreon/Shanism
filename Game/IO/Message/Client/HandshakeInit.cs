@@ -13,10 +13,7 @@ namespace IO.Message.Client
         public string PlayerName;
 
 
-        private HandshakeInitMessage()
-            : base(MessageType.HandshakeInit)
-        {
-        }
+        private HandshakeInitMessage() { }
 
         public HandshakeInitMessage(string playerName)
             : this()

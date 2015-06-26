@@ -15,6 +15,7 @@ namespace Network.Objects
         //TODO: these 3 are PROBLEFUCKINGMATIC
         public IEnumerable<IBuffInstance> Buffs { get; set; }
         public IEnumerable<IAbility> Abilities { get; set; }
+
         public IAbility CastingAbility { get; set; }
 
 
@@ -59,7 +60,8 @@ namespace Network.Objects
         public UnitStub(int guid)
             : base(guid)
         {
-
+            Buffs = Enumerable.Empty<IBuffInstance>();
+            Abilities = Enumerable.Empty<IAbility>();
         }
     }
 }

@@ -12,10 +12,10 @@ using Engine.Objects.Game;
 class SpawnMonsters : CustomScript
 {
     private int N_UNITS = 1;
+    static readonly Vector center = new Vector(2, 2);
 
     public override void GameStart()
     {
-        var center = new Vector(2, 2);
 
         for (int i = 0; i < N_UNITS; i++)
         {

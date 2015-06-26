@@ -65,7 +65,7 @@ namespace Client.UI
             if (Visible)
             {
                 //get the new buffs
-                BuffList = Target.Buffs.Take(MaxBuffs) ?? Enumerable.Empty<IBuffInstance>();
+                BuffList = Target.Buffs?.Take(MaxBuffs) ?? Enumerable.Empty<IBuffInstance>();
 
                 //update the underlying controls
                 buffDict.SyncValues(BuffList, addBuff);

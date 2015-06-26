@@ -232,11 +232,7 @@ namespace Client
             //movement
             var dx = b2i(KeyManager.IsDown(Keybind.MoveRight)) - b2i(KeyManager.IsDown(Keybind.MoveLeft));
             var dy = b2i(KeyManager.IsDown(Keybind.MoveDown)) - b2i(KeyManager.IsDown(Keybind.MoveUp));
-            Server.MovementState = new MovementState()
-            {
-                XDirection = dx,
-                YDirection = dy,
-            };
+            Server.MovementState = new MovementState(dx, dy);
 
             //health bars
             if(KeyManager.IsActivated(Keybind.ShowHealthBars))

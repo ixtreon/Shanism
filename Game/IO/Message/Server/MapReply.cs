@@ -19,11 +19,7 @@ namespace IO.Message.Server
         [ProtoMember(2)]
         public readonly ProtoArray<TerrainType> Data;
 
-        private MapReplyMessage()
-            : base(MessageType.MapReply)
-        {
-
-        }
+        private MapReplyMessage() { }
 
         public MapReplyMessage(MapChunkId chunkId, TerrainType[,] data)
             : this()

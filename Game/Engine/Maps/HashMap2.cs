@@ -40,7 +40,10 @@ namespace Engine.Maps
         public void Add(T item, Vector position)
         {
             var binId = getBin(position);
-            hashTable[binId].Add(item, position);
+            Dictionary<T, Vector> underList;
+            if (!hashTable.TryGetValue(binId, out underList))
+                hashTable[binId] = (underList = new Dictionary<T, Vector>());
+            underList.Add(item, position);
             Count++;
         }
 
@@ -89,16 +92,20 @@ namespace Engine.Maps
             var cellStart = getBin(pos);
             var cellEnd = getBin(pos + size);
 
-            return SelectBins(cellStart, cellEnd)
-                .AsParallel()
-                .SelectMany(b =>
-                {
-                    Dictionary<T, Vector> t;
-                    if (hashTable.TryGetValue(b, out t))
-                        return t.Where(u => u.Value.Inside(pos, size)).Select(u => u.Key);
-                    else
-                        return Enumerable.Empty<T>();
-                });
+            var bins = SelectBins(cellStart, cellEnd);
+
+            Dictionary<T, Vector> dict;
+            foreach (var b in bins)
+                if (hashTable.TryGetValue(b, out dict))
+                    foreach (var kvp in dict)
+                        if (kvp.Value.Inside(pos, size))
+                            yield return kvp.Key;
+            //return bins
+            //    .SelectMany(b => 
+            //        hashTable.TryGet(b)?
+            //            .Where(u => u.Value.Inside(pos, size))
+            //            .Select(u => u.Key)
+            //            ?? Enumerable.Empty<T>());
 
         }
 

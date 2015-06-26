@@ -34,12 +34,9 @@ namespace IO.Message.Server
         public readonly string ScenarioHash;
 
 
-        public HandshakeReplyMessage()
-            : base(MessageType.HandshakeReply)
-        { }
+        public HandshakeReplyMessage() { }
 
         public HandshakeReplyMessage(bool isSuccessful)
-            : this()
         {
             Success = isSuccessful;
         }

@@ -2,6 +2,7 @@
 using IO.Message;
 using IO.Message.Client;
 using IO.Message.Server;
+using IO.Objects;
 using Lidgren.Network;
 using Network.Server;
 using System;
@@ -29,7 +30,6 @@ namespace Network
         public delegate IGameReceptor ClientGeneratorCallback(IGameClient client);
 
 
-
         public event Action<NetGameClient> ClientConnected;
 
         public event Action<NetGameClient> ClientDisconnected;
@@ -37,13 +37,14 @@ namespace Network
 
         public ClientGeneratorCallback ClientConnectHandler { get; set; }
 
-        readonly NetPeerConfiguration netConfig;
+        readonly IGameEngine engine;
 
+        readonly NetPeerConfiguration netConfig;
         readonly NetServer server;
 
         readonly Dictionary<NetConnection, NetGameClient> clients;
 
-        public LServer()
+        public LServer(IGameEngine engine)
         {
             clients = new Dictionary<NetConnection, NetGameClient>();
 
@@ -55,6 +56,23 @@ namespace Network
             Log.Info("Server started!");
         }
 
+
+        // starts listening to events from the server
+        private void hookToEngine()
+        {
+            engine.AnyUnitEntersVisionRange += Engine_AnyUnitEntersVisionRange;
+            engine.AnyUnitOrderChanged += Engine_AnyUnitOrderChanged;
+        }
+
+        private void Engine_AnyUnitOrderChanged(IUnit u, IO.Common.OrderType ord)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Engine_AnyUnitEntersVisionRange(IUnit origin, IUnit trigger)
+        {
+            throw new NotImplementedException();
+        }
 
         public void Update(int msElapsed)
         {
@@ -154,7 +172,7 @@ namespace Network
                     client.HandleMapRequest((MapRequestMessage)msg);
                     break;
 
-                case MessageType.MovementUpdate:
+                case MessageType.MoveUpdate:
                     client.HandleMoveUpdate((MoveMessage)msg);
                     break;
 

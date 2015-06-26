@@ -67,8 +67,10 @@ namespace Engine.Objects
 
             // change to a new order?
             if (!CustomOrder && Behaviour != null && Behaviour.CurrentOrder != Order)
+            {
                 Order = Behaviour?.CurrentOrder;
-
+                RaiseOrderChangedEvent();
+            }
 
             //update the active order
             updateOrder(msElapsed);
@@ -87,7 +89,7 @@ namespace Engine.Objects
                 var cont = Order.Update(this, msElapsed);
 
                 if (!cont)
-                    Order = null;
+                    Order = new Stand();
             }
         }
 

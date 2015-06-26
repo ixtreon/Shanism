@@ -162,7 +162,7 @@ namespace IO
             yield return item;
         }
 
-        public static TVal GetOrCreate<TKey, TVal>(this Dictionary<TKey, TVal> dict, TKey key)
+        public static TVal AddOrGet<TKey, TVal>(this Dictionary<TKey, TVal> dict, TKey key)
             where TVal : new()
         {
             TVal val;
@@ -183,6 +183,7 @@ namespace IO
             return result;
         }
 
+
         public static IEnumerable<T> ToEnumerable<T>(this T[,] arr)
         {
             foreach (var z in arr)
@@ -201,6 +202,18 @@ namespace IO
             foreach (var o in e)
                 i++;
             return i;
+        }
+
+        public static int GetValue(this Enum val)
+        {
+            //TODO FUCKING CHANGE
+            return (int)Convert.ChangeType(val, TypeCode.Int32);
+        }
+
+        public static short GetShortValue(this Enum val)
+        {
+            //TODO FUCKING CHANGE
+            return (short)Convert.ChangeType(val, TypeCode.Int16);
         }
     }
 }

@@ -34,6 +34,8 @@ namespace Engine.Objects
             get { return (int)(1000 / AttacksPerSecond); }
         }
 
+        public Player Owner { get; private set; }
+
         /// <summary>
         /// Gets the maximum life of the unit. 
         /// </summary>

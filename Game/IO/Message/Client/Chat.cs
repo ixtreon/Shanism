@@ -16,7 +16,6 @@ namespace IO.Message.Client
         public readonly string Message;
 
         public ChatMessage(string channel, string message)
-            : base(MessageType.SendChat)
         {
             this.Channel = channel;
             this.Message = message;

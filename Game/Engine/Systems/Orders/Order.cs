@@ -14,6 +14,5 @@ namespace Engine.Systems.Orders
         bool Update(Unit u, int msElapsed);
 
         OrderType Type { get; }
-
     }
 }

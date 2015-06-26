@@ -23,12 +23,6 @@ namespace IO.Message
         MapReply,
 
         /// <summary>
-        /// The message the server sends to a client to relay another client's message, such as a chat message. 
-        /// </summary>
-        Relay,
-
-
-        /// <summary>
         /// The message a client sends to the server to request a map chunk. 
         /// </summary>
         MapRequest,
@@ -36,7 +30,7 @@ namespace IO.Message
         /// <summary>
         /// The message a client sends to update its state
         /// </summary>
-        MovementUpdate,
+        MoveUpdate,
 
         /// <summary>
         /// The message a client sends to perform an action. 
@@ -72,5 +66,11 @@ namespace IO.Message
         /// A message sent by the server to inform of a nearby unit being damaged. 
         /// </summary>
         UnitDamage,
+
+        /// <summary>
+        /// Relay an issued order to all nearby players. 
+        /// </summary>
+        RelayOrder,
+
     }
 }

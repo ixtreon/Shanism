@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using IO.Common;
 using IO;
 using System.Diagnostics;
+using IO.Message;
 
 namespace UnitTests
 {
@@ -19,6 +20,16 @@ namespace UnitTests
             var protoArr = tutka.ToProtoArray<TerrainType>();
 
             var oldArr = protoArr.ToArray();
+        }
+
+        [TestMethod]
+        public void testEnumConvert()
+        {
+            MessageType msg = MessageType.Action;
+
+            var u = msg.GetShortValue();
+
+            Assert.AreEqual((short)msg, u);
         }
     }
 }

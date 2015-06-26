@@ -27,6 +27,7 @@ namespace Network
         {
             var len = msg.ReadInt32();
             var bytes = msg.ReadBytes(len);
+
             return IOMessage.Deserialize(bytes);
         }
     }

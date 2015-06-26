@@ -155,7 +155,7 @@
     <Compile Include="Objects\GameObject.cs" />
     <Compile Include="Objects\Units\UnitBuffs.cs" />
     <Compile Include="Objects\Units\UnitEvents.cs" />
-    <Compile Include="Objects\Units\UnitBehaviours.cs" />
+    <Compile Include="Objects\Units\UnitOrders.cs" />
     <Compile Include="Objects\Units\UnitRangeEvents.cs" />
     <Compile Include="Objects\Units\UnitStates.cs" />
     <Compile Include="Systems\Abilities\Attack.cs" />

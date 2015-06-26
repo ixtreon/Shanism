@@ -41,8 +41,15 @@ namespace Engine.Maps
         public void Add(T item, Vector position)
         {
             var binId = getBin(position);
+
             var z = hashTable.AddOrUpdate(binId,
-                (Func<Vector, ConcurrentDictionary<T, Vector>>)((v) => (new ConcurrentDictionary<T, Vector>(new[] { new KeyValuePair<T, Vector>(item, position) }))),
+                ((v) =>
+                {
+                    var d = new ConcurrentDictionary<T, Vector>();
+                    if (d.TryAdd(item, position))
+                        Count++;
+                    return d;
+                }),
                 (v, t) =>
                 {
                     if (t.TryAdd(item, position))

@@ -11,42 +11,34 @@ namespace IO.Common
     {
         public static MovementState Stand = new MovementState(0, 0);
 
-        private int dx, dy;
-
         [ProtoMember(1)]
-        public int XDirection
-        {
-            get { return dx; }
-            set { dx = Math.Sign(value); }
-        }
+        private bool isMoving;
 
         [ProtoMember(2)]
-        public int YDirection
-        {
-            get { return dy; }
-            set { dy = Math.Sign(value); }
-        }
+        private double angle;
+
 
         public Vector DirectionVector
         {
-            get { return new Vector(dx, dy).Normalize(); }
-        }
-
-        public MovementState(int px, int py)
-        {
-            dx = Math.Sign(px);
-            dy = Math.Sign(py);
+            get { return Vector.Zero.PolarProjection(angle, 1); }
         }
 
         public bool IsMoving
         {
-            get { return XDirection != 0 || YDirection != 0; }
+            get { return isMoving; }
+        }
+
+        public MovementState(int px, int py)
+        {
+            isMoving = (px != 0 || py != 0);
+            angle = Math.Atan2(py, px);
         }
 
         public static bool operator ==(MovementState a, MovementState b)
         {
-            return a.XDirection == b.XDirection && a.YDirection == b.YDirection;
+            return a.isMoving == b.isMoving && a.angle.AlmostEqualTo(b.angle, 0.0005);
         }
+
         public static bool operator != (MovementState a, MovementState b)
         {
             return !(a == b);
@@ -54,7 +46,7 @@ namespace IO.Common
 
         public override int GetHashCode()
         {
-            return dx + 2 * dy; //9 possible options
+            return (isMoving ? (2 * Math.PI + angle).GetHashCode() : -1);
         }
 
         public override bool Equals(object obj)

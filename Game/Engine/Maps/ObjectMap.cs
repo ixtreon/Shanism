@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Engine.Maps
 {
     /// <summary>
-    /// Represents a map which keeps track of game objects of type T. 
+    /// A map which keeps track of game objects of type T. 
     /// 
     /// Internally uses a <see cref="HashMap<T>"/>. 
     /// </summary>
