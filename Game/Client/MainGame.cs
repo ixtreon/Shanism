@@ -1,5 +1,4 @@
-﻿#region Using Statements
-using System;
+﻿using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -7,7 +6,6 @@ using Microsoft.Xna.Framework.Input;
 using IO;
 using Client.UI;
 using System.Collections.Generic;
-using Client.Objects;
 using Client.Sprites;
 using Client.Properties;
 using MovementState = IO.Common.MovementState;
@@ -15,7 +13,6 @@ using Client.Map;
 using Client.Controls;
 using Client.Textures;
 using IO.Message.Client;
-#endregion
 
 namespace Client
 {
@@ -24,10 +21,6 @@ namespace Client
     /// </summary>
     public class MainGame : Game, IGameClient
     {
-        public IGameReceptor Server;
-
-        public GameStatus GameState = GameStatus.Loading;
-
         GraphicsDeviceManager graphics;
 
         SpriteBatch spriteBatch;
@@ -36,6 +29,11 @@ namespace Client
         /// The main UI window. 
         /// </summary>
         UiManager mainInterface;
+
+        public IGameReceptor Server { get; private set; }
+
+        public GameStatus GameState { get; private set; } = GameStatus.Loading;
+
 
         public readonly string PlayerName;
 
@@ -74,9 +72,6 @@ namespace Client
         private MapManager MapManager;
 
 
-        private readonly bool hasLocalServer = false;
-        private readonly Action<int> localServerUpdateFunc;
-
         //hack so we can start the game without referencing monogame. duh
         public bool Running
         {
@@ -96,11 +91,17 @@ namespace Client
         }
 
         // Also accepts a method to update the local server's state. 
-        public MainGame(string playerName, Action<int> localServerUpdate)
+        public MainGame(string playerName, IGameReceptor server)
             : this(playerName)
         {
-            hasLocalServer = true;
-            localServerUpdateFunc = localServerUpdate;
+            Server = server;
+        }
+
+        public void SetServer(IGameReceptor server)
+        {
+            if (Server != null)
+                throw new InvalidOperationException("Already got a server!");
+            Server = server;
         }
 
         /// <summary>
@@ -188,8 +189,7 @@ namespace Client
             var msElapsed = (int)gameTime.ElapsedGameTime.TotalMilliseconds;
 
             //update the local server
-            if (hasLocalServer)
-                localServerUpdateFunc(msElapsed);
+            Server.Update(msElapsed);
 
             if (!Server.Connected)
                 return;
@@ -204,7 +204,7 @@ namespace Client
             UpdateKeys();
 
             // object manager
-            var objs = Server.GetNearbyGameObjects();
+            var objs = Server.VisibleObjects;
             ObjectManager.Update(msElapsed, objs);
             ObjectManager.SendToBack();
 
@@ -267,15 +267,15 @@ namespace Client
             if (Server != null)
             {
                 GraphicsDevice.Clear(Color.CornflowerBlue);
-                //draw terrain (basiceffect)
+
+                //1. draw terrain (basiceffect)
                 MapManager.DrawTerrain();
 
                 //start spritebatch drawing
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.DepthRead, RasterizerState.CullNone);
 
-                //interface
-                //hero n units
-                //doodads and effects?
+                // 2. draw interface + gameobjects 
+                // TODO: effects
                 mainInterface.DoDraw(spriteBatch);
 
                 //draw debug
@@ -283,6 +283,9 @@ namespace Client
 
                 //end drawing
                 spriteBatch.End();
+
+                //draw shadow
+                //Server.
             }
 
             base.Draw(gameTime);

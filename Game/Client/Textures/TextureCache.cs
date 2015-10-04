@@ -8,6 +8,7 @@ using System.Xml;
 using System.IO;
 using IO;
 using IO.Content;
+using IO.Common;
 
 namespace Client.Textures
 {

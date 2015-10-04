@@ -10,11 +10,15 @@ using IO.Message;
 namespace IO
 {
     /// <summary>
-    /// Represents a client connected to the server. 
+    /// A prpospective client looking to play on the server.
+    ///  
     /// It could be either a local or remote (network'd) one. 
     /// </summary>
     public interface IGameClient
     {
+        /// <summary>
+        /// Gets the name of the client. 
+        /// </summary>
         string Name { get; }
 
     }

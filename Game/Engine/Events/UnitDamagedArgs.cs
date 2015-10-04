@@ -5,6 +5,9 @@ using System;
 
 namespace Engine.Events
 {
+    /// <summary>
+    /// Contains all information related to a damage related event. 
+    /// </summary>
     public class UnitDamagedArgs : EventArgs
     {
         /// <summary>

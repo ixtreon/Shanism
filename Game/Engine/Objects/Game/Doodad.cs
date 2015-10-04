@@ -15,6 +15,12 @@ namespace Engine.Objects.Game
     /// </summary>
     public class Doodad : GameObject, IDoodad
     {
+
+        public override ObjectType ObjectType
+        {
+            get { return ObjectType.Doodad; }
+        }
+
         private double _maxLife = 5;
 
         public double MaxLife

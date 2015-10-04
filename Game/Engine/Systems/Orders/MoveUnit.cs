@@ -9,7 +9,7 @@ namespace Engine.Systems.Orders
     /// <summary>
     /// Moves to or starts following a given unit. 
     /// </summary>
-    struct MoveUnit : Order
+    struct MoveUnit : IMoveOrder
     {
         /// <summary>
         /// Gets or sets the distance from the target to stop at. 
@@ -24,6 +24,7 @@ namespace Engine.Systems.Orders
             }
         }
 
+
         public readonly Unit TargetUnit;
 
         /// <summary>
@@ -31,11 +32,16 @@ namespace Engine.Systems.Orders
         /// </summary>
         public bool KeepFollowing { get; set; }
 
+        public double Direction { get; private set; }
+        public Vector SuggestedLocation { get; private set; }
+
         public MoveUnit(Unit target, double distThreshold = 0.05, bool keepFollowing = true)
         {
             this.KeepFollowing = keepFollowing;
             this.TargetUnit = target;
             this.DistanceThrehsold = distThreshold;
+            Direction = -1;
+            SuggestedLocation = target.Position;
         }
 
 
@@ -45,23 +51,18 @@ namespace Engine.Systems.Orders
             if (TargetUnit.IsDead)
                 return false;
 
-
             //get the distance to the target
-            var uLoc = unit.Location;
-            var targetLoc = TargetUnit.Location;
-            var dist = uLoc.DistanceTo(targetLoc);
+            var uLoc = unit.Position;
+            var targetLoc = TargetUnit.Position;
+            var distanceLeft = uLoc.DistanceTo(targetLoc);
 
             //return if already there
-            if (dist < DistanceThrehsold)
+            if (distanceLeft < DistanceThrehsold)
                 return KeepFollowing;
 
-            //get the new position of the unit
-            var ang = uLoc.AngleTo(targetLoc);
-            var moveDist = Math.Min(dist, unit.MoveSpeed * msElapsed / 1000);
-            var pos = uLoc.PolarProjection(ang, moveDist);
-
             //and move it
-            unit.Location = pos;
+            Direction = uLoc.AngleTo(targetLoc);
+            unit.Move(msElapsed, Direction, distanceLeft);
 
             //keep on
             return true;

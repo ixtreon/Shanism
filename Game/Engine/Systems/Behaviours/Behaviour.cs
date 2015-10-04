@@ -16,17 +16,26 @@ namespace Engine.Systems.Behaviours
     /// </summary>
     public abstract class Behaviour
     {
-        private readonly Unit unit;
+        readonly Unit unit;
 
+
+        /// <summary>
+        /// Gets the unit this behaviour controls. 
+        /// </summary>
         public IUnit Unit
         {
             get { return unit; }
         }
 
-        public Order CurrentOrder { get; set; }
+        /// <summary>
+        /// Gets the current order suggested by the behaviour. 
+        /// </summary>
+        public IOrder CurrentOrder { get; protected set; }
 
-        public bool IsActive { get; protected set; }
-
+        /// <summary>
+        /// Creates a new behaviour for the given unit. 
+        /// </summary>
+        /// <param name="u"></param>
         public Behaviour(Unit u)
         {
             this.unit = u;
@@ -39,9 +48,15 @@ namespace Engine.Systems.Behaviours
          : this(b.unit)
         { }
 
+        /// <summary>
+        /// The event fired whenever the controlled unit takes damage. 
+        /// </summary>
         protected virtual void OnDamageReceived(UnitDamagedArgs args) { }
 
-        protected virtual void OnUnitInVisionRange(RangeArgs args) { }
+        /// <summary>
+        /// The event fired whenever the controlled unit takes damage. 
+        /// </summary>
+        protected virtual void OnUnitInVisionRange(RangeArgs<Unit> args) { }
 
         /// <summary>
         /// Returns whether the current behaviour should take control of the character. 

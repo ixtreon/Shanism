@@ -9,6 +9,7 @@ using Client.Objects;
 using Client.Sprites;
 using Client.Textures;
 using IO;
+using Client.UI.Common;
 
 namespace Client.UI
 {

@@ -155,10 +155,6 @@
       <Project>{dc89987d-5817-4f1d-95ca-80c024c8d6bb}</Project>
       <Name>IO</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ScriptEngine\ScriptLib.csproj">
-      <Project>{bada50f2-93bc-4eba-949a-bf892ae4b7e5}</Project>
-      <Name>ScriptLib</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

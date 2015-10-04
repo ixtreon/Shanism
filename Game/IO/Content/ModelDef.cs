@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ProtoBuf;
+using IxSerializer.Modules;
 using IO.Common;
 
 namespace IO.Content
@@ -11,15 +11,18 @@ namespace IO.Content
     /// <summary>
     /// Represents an animation definition as used by model definitions (see <see cref="ModelDef"/>) to display object animations. 
     /// </summary>
+    [SerialKiller]
     public class AnimationDef
     {
-        //public static readonly ModelDef Default = new StaticModel(new TextureDef("default"));
+        public static readonly AnimationDef Default = new AnimationDef(new TextureDef(TextureType.Model, @"default"));
 
+        [SerialMember]
         public readonly TextureDef File;
 
         /// <summary>
         /// Gets whether this model is animated. 
         /// </summary>
+        [SerialMember]
         public readonly bool IsAnimated;
 
         /// <summary>
@@ -27,15 +30,20 @@ namespace IO.Content
         /// <para/>
         /// Defined only if <see cref="IsAnimated"/> is true. 
         /// </summary>
+        [SerialMember]
         public readonly int Period;
 
 
-        public readonly Rectangle Bounds;
+        [SerialMember]
+        public readonly Rectangle SizeAndLocation;
+
+
+        AnimationDef() { }
 
         private AnimationDef(TextureDef f) 
         { 
             this.File = f;
-            this.Bounds = new Rectangle(0, 0, 1, 1);
+            this.SizeAndLocation = new Rectangle(0, 0, 1, 1);
         }
 
         /// <summary>
@@ -56,7 +64,7 @@ namespace IO.Content
         {
             if (span.Position.X < 0 || span.Position.Y < 0 || span.FarPosition.X > f.Splits.X || span.FarPosition.Y > f.Splits.Y)
                 throw new ArgumentOutOfRangeException("Span must be valid for the given file with size {0}".Format(f.Splits));
-            this.Bounds = span;
+            this.SizeAndLocation = span;
         }
 
         public AnimationDef(TextureDef f, Point p)

@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using IO.Common;
 using Client.Controls;
+using Client.UI.Common;
 
 namespace Client.UI
 {
@@ -18,9 +19,9 @@ namespace Client.UI
 
         public IHero Target { get; set; }
 
-        private int _currentPage = 0;
+        int _currentPage = 0;
 
-        private SortedSet<SpellButton> spellButtons = new SortedSet<SpellButton>(
+        SortedSet<SpellButton> spellButtons = new SortedSet<SpellButton>(
             new GenericComparer<SpellButton>((x,y) => x.Ability.Name.CompareTo(y.Ability.Name)));
 
         public int Pages

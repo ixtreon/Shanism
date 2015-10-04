@@ -30,12 +30,6 @@ namespace Client
         /// </summary>
         public event Action<UnitControl> UnitClicked;
 
-
-        public ObjectManager()
-        {
-
-        }
-
         public void Update(int msElapsed, IEnumerable<IGameObject> newObjects)
         { 
             // mark all units for removal at first
@@ -63,7 +57,7 @@ namespace Client
             base.Update(msElapsed);
         }
 
-        private void removeObject(int guid)
+        void removeObject(int guid)
         {
             //never remove the local hero
             if (LocalHero != null && guid == LocalHero.Unit.Guid)
@@ -73,7 +67,7 @@ namespace Client
             Objects.Remove(guid);
         }
 
-        private ObjectControl addObject(IGameObject o)
+        ObjectControl addObject(IGameObject o)
         {
             //TODO: fix for doodads, sfx
             ObjectControl gameObject = null;

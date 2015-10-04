@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using IO.Common;
-using ProtoBuf;
+using IxSerializer.Modules;
 using System.IO;
 
 namespace IO.Message.Client
@@ -11,33 +11,38 @@ namespace IO.Message.Client
     /// <summary>
     /// The message passed whenever the client wishes to perform an action
     /// </summary>
-    [ProtoContract]
+    [SerialKiller]
     public class ActionMessage : IOMessage
     {
+        public override MessageType Type
+        {
+            get { return MessageType.Action; }
+        }
+
         public bool HasTarget;
 
         /// <summary>
         /// The type of the action that is being performed. 
         /// </summary>
-        [ProtoMember(1)]
+        [SerialMember]
         public readonly AbilityTargetType TargetType;
 
         /// <summary>
         /// The string id of the action being performed. 
         /// </summary>
-        [ProtoMember(2)]
+        [SerialMember]
         public readonly string AbilityId;
 
         /// <summary>
         /// The Guid of the target, if there is one. 
         /// </summary>
-        [ProtoMember(3)]
+        [SerialMember]
         public readonly int TargetGuid;
 
         /// <summary>
         /// The target location, if there is one. 
         /// </summary>
-        [ProtoMember(4)]
+        [SerialMember]
         public readonly Vector TargetLocation;
 
         private ActionMessage() { }

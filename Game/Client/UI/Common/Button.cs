@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Client.Textures;
 
-namespace Client.UI
+namespace Client.UI.Common
 {
     /// <summary>
     /// A button that shows an image and can be clicked. 

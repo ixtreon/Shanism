@@ -63,10 +63,17 @@ namespace Client.Map
             var rect = chunk.Span;
 
             var chunkData = new ChunkData(chunk, tiles);
-            chunkData.BuildBuffer(effect.GraphicsDevice);
 
             ChunksAvailable[chunkData.Chunk] = chunkData;
+            chunkData.BuildBuffer(effect.GraphicsDevice, GetTile);
             RemoveOldChunks();
+        }
+
+        public TerrainType GetTile(int x, int y)
+        {
+            var id = MapChunkId.ChunkOf(new Vector(x, y) + new Vector(0.5));
+            var chunk = GetChunk(id);
+            return chunk?.GetTile(x, y) ?? TerrainType.None;
         }
 
         public void Update()
@@ -92,7 +99,7 @@ namespace Client.Map
         /// Sends a request to the server for the given chunk. 
         /// </summary>
         /// <param name="chunkId"></param>
-        private void requestChunk(MapChunkId chunk)
+        void requestChunk(MapChunkId chunk)
         {
             if (ChunksAvailable.ContainsKey(chunk))
                 return;
@@ -134,7 +141,7 @@ namespace Client.Map
             {
                 if (ChunksAvailable.Count > MaxChunks)
                 {
-                    var heroPos = server.MainHero.Location;
+                    var heroPos = server.MainHero.Position;
                     var toRemove = ChunksAvailable.Keys
                         .OrderBy(chunk => ((Vector)chunk.Center).DistanceTo(heroPos))
                         .Skip(MaxChunks * 3 / 4);
@@ -143,7 +150,7 @@ namespace Client.Map
                         var chunk = ChunksAvailable[id];
                         ChunksAvailable.TryRemove(id, out chunk);
                         chunkRequests.Remove(id);
-                        chunk.Dispose();
+                        //chunk.Dispose();
                     }
                     Console.WriteLine("Remove chunks!");
                 }
@@ -159,12 +166,14 @@ namespace Client.Map
 
             var device = effect.GraphicsDevice;
 
+            //setup texturestuff
             effect.Set2DMatrices();
             effect.World = Microsoft.Xna.Framework.Matrix.CreateTranslation((float)-cameraLoc.X, (float)-cameraLoc.Y, 0);
             effect.VertexColorEnabled = false;
-            effect.Texture = SpriteFactory.Terrain.TerrainAtlas.Texture;
             effect.TextureEnabled = true;
+            effect.Texture = SpriteFactory.Terrain.TerrainAtlas.Texture;
 
+            //draw all chunks around us
             foreach (var chunkId in EnumerateNearbyChunks())
             {
                 var chunk = GetChunk(chunkId);

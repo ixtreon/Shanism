@@ -11,116 +11,91 @@ using IO.Common;
 using ProtoBuf;
 using IO.Content;
 using Engine.Objects.Game;
+using System.Diagnostics;
+using System.Threading;
 
 namespace Engine.Objects
 {
     /// <summary>
     /// A base class for all entities on the map. 
-    /// Currently this includes doodads, units, special effects. 
+    /// Currently this includes doodads, units, effects. 
     /// </summary>
-    [ProtoContract]
-    [ProtoInclude(1, typeof(Unit))]
-    [ProtoInclude(2, typeof(Doodad))]
-    [ProtoInclude(3, typeof(Effect))]
     public abstract class GameObject : ScenarioObject, IGameObject
     {
-        public const double MaximumSize = 3;
 
-        private static int guidCount = 0;
-        private static int GetGuid()
+        static int guidCount = 0;
+        static int GetFreshGuid()
         {
-            return ++guidCount;
+            return Interlocked.Increment(ref guidCount);
+        }
+
+
+        Vector _newPosition;
+        Vector _position;
+        Vector _oldPosition;
+
+        protected internal bool _customPosition;
+
+        //fucking circular reference
+        protected internal readonly HashSet<Unit> SeenBy = new HashSet<Unit>();
+
+        /// <summary>
+        /// Gets the list of players who currently see this object. 
+        /// </summary>
+        public IEnumerable<Player> SeenByPlayers
+        {
+            get
+            {
+                return SeenBy.Select(u => u.Owner).Distinct();
+            }
         }
 
         /// <summary>
         /// Gets the name of the game object. 
         /// </summary>
-        [ProtoMember(4)]
         public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the size of the object. 
         /// </summary>
-        [ProtoMember(5)]
         public double Size { get; set; }
 
-        [ProtoMember(6)]
         public string Model { get; set; }
-
-        //[ProtoMember(7)]
-        public Color Tint { get; set; }
 
         /// <summary>
         /// Gets the globally unique identifier of the object. 
         /// </summary>
         public int Guid { get; private set; }
 
-        internal Vector OldLocation { get; private set; }
+        /// <summary>
+        /// Gets or sets the custom data for this object. 
+        /// </summary>
+        public dynamic Data { get; set; }
 
-        private Vector _location;
-
-        private Vector newLocation { get; set; }
+        public abstract ObjectType ObjectType { get; }
 
         /// <summary>
         /// Gets or sets the location of the game object. 
-        /// 
-        /// Changes will not take effect until the next cycle. 
+        /// Changes will not take effect until the next game cycle. 
         /// </summary>
-        public Vector Location
+        public Vector Position
         {
-            get { return _location; }
-            set
-            {
-                // do not update the location directly
-                if (newLocation != value)
-                    newLocation = value;
-            }
+            get { return _position; }
+            set { setLocation(value, false); }
         }
+
+        internal Vector OldPosition { get { return _oldPosition; } }
+
+        internal Vector NewPosition {  get { return _newPosition; } }
 
         /// <summary>
-        /// Updates the external 
+        /// Gets whether the unit was moved by magix this turn. 
         /// </summary>
-        internal void SyncLocation()
-        {
-            if (this.IsDestroyed)
-                throw new Exception();
-
-            // check if we have moved
-            if (_location == newLocation)
-                return;
-
-            //update our location records
-            OldLocation = _location;
-            _location = newLocation;
-
-            //fire the event
-            if (LocationChanged != null)
-                LocationChanged(this);
-        }
+        public bool HasCustomPosition {  get { return _customPosition; } }
 
         /// <summary>
-        /// Raised whenever this object changes its location. 
-        /// The old location is passed as an argument. 
+        /// Gets the model of the object. 
         /// </summary>
-        public event Action<GameObject> LocationChanged;
-
-        protected GameObject()
-        {
-            this.Size = 0.4;
-            this.Model = "default";
-            this.Tint = Color.White;
-            Guid = GetGuid();
-        }
-
-        public GameObject(string model, Vector location)
-            : this()
-        {
-            this.Name = "Dummy";
-            this.Model = model;
-            OldLocation = _location = newLocation = location;
-        }
-
-
         AnimationDef IGameObject.Model
         {
             get
@@ -129,10 +104,47 @@ namespace Engine.Objects
             }
         }
 
+
+        protected GameObject()
+        {
+            this.Size = 0.4;
+            this.Model = "default";
+            Guid = GetFreshGuid();
+            _oldPosition = new Vector(double.NaN);
+        }
+
+        public GameObject(string model, Vector location)
+            : this()
+        {
+            this.Name = "Dummy";
+            this.Model = model;
+            _position = _newPosition = location;
+        }
+
+
         /// <summary>
-        /// The function to update this object's effects as the game progresses. 
+        /// Updates the externally visible <see cref="Position"/> and <see cref="OldPosition"/> values. 
+        /// Returns whether the unit moved. 
         /// </summary>
-        /// <param name="msElapsed"></param>
-        //internal virtual void Update(int msElapsed) { }
+        internal bool UpdateLocation()
+        {
+            Debug.Assert(!IsDestroyed);
+
+            //update only if we moved or we were in the NaN-zone
+            if (_position == _newPosition && !OldPosition.IsNan())
+                return false;
+
+            _customPosition = false;
+            _oldPosition = _position;
+            _position = _newPosition;
+            return true;
+        }
+
+
+        protected internal void setLocation(Vector loc, bool isRegularMove)
+        {
+            _newPosition = loc;
+            _customPosition = !isRegularMove;
+        }
     }
 }

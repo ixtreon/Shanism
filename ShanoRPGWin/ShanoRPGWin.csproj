@@ -130,6 +130,34 @@
     <Compile Include="UI\Login\HeroSelectPanel.Designer.cs">
       <DependentUpon>HeroSelectPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\ScenarioDirForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\ScenarioDirForm.Designer.cs">
+      <DependentUpon>ScenarioDirForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Scenarios\DirectoryInfo.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Scenarios\DirectoryInfo.Designer.cs">
+      <DependentUpon>DirectoryInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Scenarios\Scenario.cs" />
+    <Compile Include="UI\Scenarios\ScenarioDetails.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Scenarios\ScenarioDetails.Designer.cs">
+      <DependentUpon>ScenarioDetails.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Scenarios\ScenarioLibrary.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Scenarios\ScenarioList.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Scenarios\ScenarioList.Designer.cs">
+      <DependentUpon>ScenarioList.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -148,6 +176,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Login\HeroSelectPanel.resx">
       <DependentUpon>HeroSelectPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ScenarioDirForm.resx">
+      <DependentUpon>ScenarioDirForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Scenarios\ScenarioList.resx">
+      <DependentUpon>ScenarioList.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -184,9 +218,11 @@
       <Name>Network</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /d /S /Y /I "$(SolutionDir)\Game\DefaultScenario\*.cs" "$(SolutionDir)ShanoRPGWin\bin\Debug\DefaultScenario"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

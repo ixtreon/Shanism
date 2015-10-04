@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using IO.Common;
+using Client.UI.Common;
 
 namespace Client.UI
 {

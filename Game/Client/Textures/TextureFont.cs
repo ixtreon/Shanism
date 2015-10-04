@@ -158,8 +158,12 @@ namespace Client.Textures
 
         public Point MeasureString(string text, int maxWidth = int.MaxValue)
         {
+            if (string.IsNullOrEmpty(text))
+                return Point.Zero;
             var lines = getLines(text, maxWidth);
-            return new Point(lines.Max(l => getWidth(l)), (int)(ScreenHeight * lines.Count()));
+            var w = lines.Max(l => getWidth(l));
+            var h = ScreenHeight * lines.Count();
+            return new Point(w, h);
         }
 
         public Vector2 MeasureStringUi(string text = "WOW LOOK AT THAT STRING", int maxWidth = int.MaxValue)

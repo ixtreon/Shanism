@@ -13,30 +13,27 @@ namespace AbilityIDE
         
         public TreeNode ProjectRoot { get; private set; }
 
+        //Loads the given scenarios to the scenariotree and returns a dictionary of them. 
         public Dictionary<TreeNode, string> LoadScenario(string dir)
         {
-            this.Nodes.Clear();
-
             ProjectRoot = new TreeNode(Path.GetDirectoryName(dir));
 
-            this.Nodes.Add(ProjectRoot);
+            Nodes.Clear();
+            Nodes.Add(ProjectRoot);
 
             var csFiles = Directory.EnumerateFiles(dir, "*.cs", SearchOption.AllDirectories);
-
             var openedFiles = new Dictionary<TreeNode, string>();
 
             foreach (var filePath in csFiles)
             {
                 var fileName = Path.GetFileName(filePath);
-
-                var fNode = new TreeNode()
+                var fNode = new TreeNode
                 {
                     Name = filePath,
                     Text = fileName,
                 };
+
                 openedFiles[fNode] = File.ReadAllText(filePath);
-
-
                 ProjectRoot.Nodes.Add(fNode);
             }
 

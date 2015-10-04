@@ -1,4 +1,4 @@
-﻿using ProtoBuf;
+﻿using IxSerializer.Modules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,31 +6,36 @@ using System.Text;
 
 namespace IO.Message.Server
 {
-    [ProtoContract]
+    [SerialKiller]
     public class HandshakeReplyMessage : IOMessage
     {
+        public override MessageType Type
+        {
+            get { return MessageType.HandshakeReply; }
+        }
+
         /// <summary>
         /// Gets whether the handshake was successful. 
         /// </summary>
-        [ProtoMember(1)]
+        [SerialMember]
         public readonly bool Success;
 
         /// <summary>
         /// Gets the scenario name. 
         /// </summary>
-        [ProtoMember(2)]
+        [SerialMember]
         public readonly string ScenarioName;
 
         /// <summary>
         /// Gets the size of the scenario, in bytes. 
         /// </summary>
-        [ProtoMember(3)]
+        [SerialMember]
         public readonly long ScenarioSize;
 
         /// <summary>
         /// Gets the hash value for the scenario. 
         /// </summary>
-        [ProtoMember(4)]
+        [SerialMember]
         public readonly string ScenarioHash;
 
 

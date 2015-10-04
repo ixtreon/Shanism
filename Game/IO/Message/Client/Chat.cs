@@ -1,4 +1,4 @@
-﻿using ProtoBuf;
+﻿using IxSerializer.Modules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,13 +6,18 @@ using System.Text;
 
 namespace IO.Message.Client
 {
-    [ProtoContract]
+    [SerialKiller]
     class ChatMessage : IOMessage
     {
-        [ProtoMember(1)]
+        public override MessageType Type
+        {
+            get { return MessageType.SendChat; }
+        }
+
+        [SerialMember]
         public readonly string Channel;
 
-        [ProtoMember(2)]
+        [SerialMember]
         public readonly string Message;
 
         public ChatMessage(string channel, string message)

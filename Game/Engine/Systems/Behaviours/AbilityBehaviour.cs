@@ -33,7 +33,7 @@ namespace Engine.Systems.Behaviours
                     return TargetUnit;
 
                 if (Ability.CanTargetGround())
-                    return TargetUnit.Location;
+                    return TargetUnit.Position;
 
                 throw new NotImplementedException();
 

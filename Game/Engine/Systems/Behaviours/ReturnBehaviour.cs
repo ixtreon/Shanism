@@ -35,7 +35,7 @@ namespace Engine.Systems.Behaviours
 
         public override bool TakeControl(int msElapsed)
         {
-            var pos = Unit.Location;
+            var pos = Unit.Position;
             return Returning || pos.DistanceTo(OriginPosition) > Distance;
         }
 
@@ -53,7 +53,7 @@ namespace Engine.Systems.Behaviours
             }
 
             //if returning and back at the origin, say we are back. 
-            if (Unit.Location.DistanceTo(OriginPosition) < 0.05)
+            if (Unit.Position.DistanceTo(OriginPosition) < 0.05)
             {
                 Returning = false;
                 OnReturnFinished?.Invoke();

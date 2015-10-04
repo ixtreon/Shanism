@@ -96,14 +96,12 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>ShanoRPG.IO.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="protobuf-net">
-      <HintPath>..\..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -122,13 +120,13 @@
     <Compile Include="Common\MapChunkDef.cs" />
     <Compile Include="Common\ObjectType.cs" />
     <Compile Include="Common\OrderType.cs" />
+    <Compile Include="INetworkReceptor.cs" />
+    <Compile Include="Objects\IEffect.cs" />
+    <Compile Include="TextureType.cs" />
     <Compile Include="Common\UnitState.cs" />
     <Compile Include="Common\UnitStateExt.cs" />
     <Compile Include="Content\TextureDef.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="EnumType\Enumm.cs" />
-    <Compile Include="EnumType\EnumType.cs" />
-    <Compile Include="EnumType\EnumTypeRegistry.cs" />
     <Compile Include="Ext.cs" />
     <Compile Include="Common\GenericComparer.cs" />
     <Compile Include="Common\AbilityType.cs" />
@@ -147,14 +145,16 @@
     <Compile Include="Message\Server\HandshakeReply.cs" />
     <Compile Include="Message\Server\MapReply.cs" />
     <Compile Include="Message\Server\MoveUpdateRelay.cs" />
+    <Compile Include="Message\Server\ObjectSeenMessage.cs" />
     <Compile Include="Message\Server\PlayerStatus.cs" />
     <Compile Include="Message\Server\UnitDamaged.cs" />
     <Compile Include="Objects\IAbility.cs" />
     <Compile Include="IGameReceptor.cs" />
     <Compile Include="Objects\IBuffInstance.cs" />
     <Compile Include="Objects\IDoodad.cs" />
-    <Compile Include="Objects\IGameEngine.cs" />
+    <Compile Include="Objects\INetworkEngine.cs" />
     <Compile Include="Objects\IGameObject.cs" />
+    <Compile Include="Objects\IPlayer.cs" />
     <Compile Include="Objects\IUnit.cs" />
     <Compile Include="Objects\IHero.cs" />
     <Compile Include="Common\TerrainType.cs" />
@@ -162,7 +162,6 @@
     <Compile Include="Common\MovementState.cs" />
     <Compile Include="Objects\UnitType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ProtoExt.cs" />
     <Compile Include="Tests\ChunkTests.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -170,9 +169,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="ShanoRPG.IO.pfx" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\!lib\IxSerializer\IxSerializer.csproj">
+      <Project>{41be9dd9-644c-4a90-8d47-667b4323df7a}</Project>
+      <Name>IxSerializer</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="EnumType\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

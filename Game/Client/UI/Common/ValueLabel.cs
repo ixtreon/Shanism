@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Client.Sprites;
 using Client.Textures;
 
-namespace Client.UI
+namespace Client.UI.Common
 {
     class ValueLabel : Control
     {

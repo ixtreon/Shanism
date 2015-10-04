@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.UI
+namespace Client.UI.Common
 {
     class Label : Control
     {
@@ -18,6 +18,9 @@ namespace Client.UI
 
         public TextureFont Font { get; set; }
 
+        /// <summary>
+        /// Gets or sets whether this label automatically fits to the text inside it. 
+        /// </summary>
         public bool AutoSize { get; set; }
 
         public Label()

@@ -19,7 +19,7 @@ namespace UnitTests
         [TestMethod]
         public void TestListPerformance()
         {
-            const int ptsPerIter = 10000;
+            const int ptsPerIter = 1000;
             const int n_tests = 10;
             for(int i = 0; i < n_tests; i++)
                 testLists(ptsPerIter * (i+1));
@@ -59,8 +59,8 @@ namespace UnitTests
             for (int i = 0; i < nIters; i++)
             {
                 var list = new List<Vector>();
-                var map = new HashMap<Vector>(new Vector(7));
-                var map2 = new HashMap2<Vector>(new Vector(7));
+                var map = new Engine.Maps.Concurrent.HashMap<Vector>(new Vector(7));
+                var map2 = new HashMap<Vector>(new Vector(7));
 
                 var pts = mkPts(i);
 

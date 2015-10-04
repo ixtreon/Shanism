@@ -37,7 +37,7 @@ namespace ShanoRpgWin
                 }
                 catch
                 {
-                    //Console.WriteLine("Error reading hero {1}", Path.GetFileNameWithoutExtension(fn));
+                    Console.WriteLine("Error reading hero {1}", Path.GetFileNameWithoutExtension(fn));
                 }
             }
         }

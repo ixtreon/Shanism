@@ -25,7 +25,10 @@ namespace IO
         double ManaRegen { get; }
         double MagicDamage { get; }
 
+        
+
         IEnumerable<IBuffInstance> Buffs { get; }
+        IEnumerable<IAbility> Abilities { get; }
 
         double BaseDefense { get; }
 
@@ -41,5 +44,11 @@ namespace IO
         IAbility CastingAbility { get; }
 
         int Level { get; }
+
+        IPlayer Owner { get; }
+
+        bool IsMoving { get; }
+
+        double MoveDirection { get; }
     }
 }

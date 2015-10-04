@@ -85,6 +85,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=4.0.4.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\AutoMapper.4.0.4\lib\net45\AutoMapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="C5">
       <HintPath>..\..\packages\C5.2.3.0.1\lib\net40\C5.dll</HintPath>
     </Reference>
@@ -104,27 +108,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Objects\AbilityStub.cs" />
-    <Compile Include="Objects\BuffStub.cs" />
-    <Compile Include="Objects\DoodadStub.cs" />
-    <Compile Include="Objects\HeroStub.cs" />
-    <Compile Include="Objects\Serializers\Enum.cs" />
-    <Compile Include="Objects\Serializers\Enumerable.cs" />
-    <Compile Include="Objects\Serializers\GameObject.cs" />
-    <Compile Include="Objects\Serializers\Primitive.cs" />
-    <Compile Include="Objects\Serializers\SerializerExt.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="Common\Objects\AbilityStub.cs" />
+    <Compile Include="Common\Objects\BuffStub.cs" />
+    <Compile Include="Common\Objects\DoodadStub.cs" />
+    <Compile Include="Common\Objects\HeroStub.cs" />
+    <Compile Include="Common\Serializers\GameObject.cs" />
     <Compile Include="NetworkExt.cs" />
-    <Compile Include="Objects\ObjectFactory.cs" />
-    <Compile Include="Objects\ObjectStub.cs" />
-    <Compile Include="Objects\UnitStub.cs" />
-    <Compile Include="Objects\GameObject.cs" />
-    <Compile Include="LClient.cs" />
-    <Compile Include="LServer.cs" />
+    <Compile Include="Common\Objects\ObjectFactory.cs" />
+    <Compile Include="Common\Objects\ObjectStub.cs" />
+    <Compile Include="Common\Serializers\SerializerInit.cs" />
+    <Compile Include="Common\Objects\UnitStub.cs" />
+    <Compile Include="Client\LClient.cs" />
+    <Compile Include="Server\LServer.cs" />
+    <Compile Include="Common\LPeer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\NetGameClient.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\!lib\IxSerializer\IxSerializer.csproj">
+      <Project>{41be9dd9-644c-4a90-8d47-667b4323df7a}</Project>
+      <Name>IxSerializer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\IO\IO.csproj">
       <Project>{dc89987d-5817-4f1d-95ca-80c024c8d6bb}</Project>
       <Name>IO</Name>
@@ -133,11 +138,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Client\" />
-    <Folder Include="Common\" />
-    <Folder Include="ObjectManager\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

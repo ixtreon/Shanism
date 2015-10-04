@@ -1,4 +1,5 @@
-﻿using ProtoBuf;
+﻿using IxSerializer.Modules;
+using IxSerializer.Modules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace IO.Common
 {
-    [ProtoContract]
+    [SerialKiller]
     public struct Point
     {
         public static readonly Point Empty = new Point();
 
-        [ProtoMember(1)]
+        [SerialMember]
         public int X;
-        [ProtoMember(2)]
+        [SerialMember]
         public int Y;
 
         public Point(int v)

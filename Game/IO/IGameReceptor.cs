@@ -11,14 +11,14 @@ using IO.Message.Server;
 namespace IO
 {
     /// <summary>
-    /// Represents an interface to a (local or remote) game server as seen from the game client.  
+    /// A (local or remote) game server as visible by the game client.  
     /// Supports updating movement state, registering special actions (abilities), 
     /// as well as providing the client with information about the game. 
     /// </summary>
     public interface IGameReceptor
     {
         /// <summary>
-        /// Gets whether has a connected to the server. 
+        /// Gets whether we are connected to the server. 
         /// </summary>
         bool Connected { get; }
 
@@ -43,11 +43,7 @@ namespace IO
         MovementState MovementState { set; }
 
 
-
-        /// <summary>
-        /// Gets all game objects in range of the main hero. 
-        /// </summary>
-        IEnumerable<IGameObject> GetNearbyGameObjects();
+        IEnumerable<IGameObject> VisibleObjects { get; }
 
         /// <summary>
         /// Requests the specified chunk from the server. 
@@ -56,13 +52,18 @@ namespace IO
         void RequestChunk(MapChunkId chunk);
 
         /// <summary>
-        /// Sends the provided action to the server. 
+        /// Registers the given action with the server. 
         /// </summary>
         /// <param name="p"></param>
         void RegisterAction(ActionMessage p);
 
         /// <summary>
-        /// The event raised whenever a chunk is received. 
+        /// Causes the server object to update.  
+        /// </summary>
+        void Update(int msElapsed);
+
+        /// <summary>
+        /// The event raised whenever a new chunk is received. 
         /// </summary>
         event Action<MapChunkId, TerrainType[,]> ChunkReceived;
     }

@@ -23,7 +23,7 @@ namespace Engine.Systems.Behaviours
             if (Target == null)
                 return false;
 
-            return Unit.Location.DistanceTo(Target.Location) > Distance;
+            return Unit.Position.DistanceTo(Target.Position) > Distance;
         }
 
         public override void Update(int msElapsed)

@@ -25,12 +25,12 @@ namespace ShanoModel
 
         }
 
-        private void loadModels(string dir)
+        void loadModels(string dir)
         {
 
         }
 
-        private void saveModels(string dir)
+        void saveModels(string dir)
         {
 
         }

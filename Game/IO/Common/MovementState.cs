@@ -1,21 +1,24 @@
-﻿using System;
+﻿using IxSerializer.Modules;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ProtoBuf;
 
 namespace IO.Common
 {
-    [ProtoContract]
+    /// <summary>
+    /// The movement state of a unit. Tells whether the unit is moving and if so, in what direction. 
+    /// </summary>
+    [SerialKiller]
     public struct MovementState
     {
         public static MovementState Stand = new MovementState(0, 0);
 
-        [ProtoMember(1)]
-        private bool isMoving;
+        [SerialMember]
+        readonly bool isMoving;
 
-        [ProtoMember(2)]
-        private double angle;
+        [SerialMember]
+        readonly double angle;
 
 
         public Vector DirectionVector
@@ -28,11 +31,13 @@ namespace IO.Common
             get { return isMoving; }
         }
 
-        public MovementState(int px, int py)
+
+        public MovementState(int dx, int dy)
         {
-            isMoving = (px != 0 || py != 0);
-            angle = Math.Atan2(py, px);
+            isMoving = (dx != 0 || dy != 0);
+            angle = Math.Atan2(dy, dx);
         }
+
 
         public static bool operator ==(MovementState a, MovementState b)
         {
@@ -43,6 +48,7 @@ namespace IO.Common
         {
             return !(a == b);
         }
+
 
         public override int GetHashCode()
         {

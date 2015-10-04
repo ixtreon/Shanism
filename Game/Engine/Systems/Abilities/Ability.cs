@@ -203,7 +203,7 @@ namespace Engine.Objects.Game
             if (!tLoc.HasValue)
                 return true;
 
-            return tLoc.Value.DistanceTo(Owner.Location) <= CastRange;
+            return tLoc.Value.DistanceTo(Owner.Position) <= CastRange;
         }
 
         private Vector? getTargetLocation(object target)
@@ -215,7 +215,7 @@ namespace Engine.Objects.Game
             var isPoint = target is Vector;
 
             if (isUnit && CanTargetUnits())
-                return ((Unit)target).Location;
+                return ((Unit)target).Position;
 
             if (isPoint && CanTargetGround())
                 return (Vector)target;

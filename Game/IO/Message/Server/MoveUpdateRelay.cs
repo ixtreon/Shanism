@@ -1,5 +1,5 @@
 ﻿using IO.Common;
-using ProtoBuf;
+using IxSerializer.Modules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,16 +8,28 @@ using System.Threading.Tasks;
 
 namespace IO.Message.Server
 {
-    [ProtoContract]
-    class RelayMovementMessage : IOMessage
-    {
-        public OrderType ty = OrderType.Attack;
+    //[Serialize]
+    //class RelayMovementMessage : IOMessage
+    //{
+    //    public override MessageType Type
+    //    {
+    //        get { return MessageType.RelayOrder; }
+    //    }
 
-        private RelayMovementMessage() {  }
+    //    public readonly Vector Position;
 
-        public RelayMovementMessage(OrderType ord)
-        {
+    //    public readonly bool IsMoving;
 
-        }
-    }
+    //    public readonly double Direction;
+
+    //    RelayMovementMessage() {  }
+
+    //    public RelayMovementMessage(IUnit unit)
+    //    {
+    //        IsMoving = false;
+    //        Position = unit.Position;
+    //        Direction = 0; 
+    //    }
+
+    //}
 }

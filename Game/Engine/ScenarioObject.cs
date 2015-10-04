@@ -13,50 +13,54 @@ namespace Engine
     /// </summary>
     public abstract class ScenarioObject
     {
-        private Dictionary<string, object> customData = new Dictionary<string, object>();
+        internal ShanoEngine Game { get; set; }
 
-        public object this[string s]
+        public EntityMap Map
         {
-            get { return customData[s]; }
-            set { customData[s] = value; }
+            get { return Game.EntityMap; }
         }
 
-        //todo: make this readonly
-        public ShanoEngine Game { get; internal set; }
-
-        public GameMap Map
+        public ITerrainMap Terrain
         {
-            get { return Game.GameMap; }
-        }
-
-        public RandomMap Terrain
-        {
-            get { return Game.WorldMap; }
+            get { return Game.TerrainMap; }
         }
 
         public ScenarioObject()
         {
-            //if (ShanoRpg.Current == null)
-            //    throw new Exception("Creating an instance of an object without an engine!");
-            this.Game = ShanoEngine.Current;
+            Game = ShanoEngine.Current;     // the ugly hack bites back
         }
 
         internal bool MarkedForDestruction { get; private set; }
 
         internal bool IsDestroyed { get; private set; }
 
-        internal event Action<ScenarioObject> Destroyed;
+        public event Action<ScenarioObject> Destroyed;
 
         /// <summary>
         /// Marks this GameObject for destruction, eventually removing it from the game. 
         /// </summary>
-        public virtual void Destroy(bool finalize = false)
+        public virtual void Destroy()
         {
             if (IsDestroyed)
                 throw new InvalidOperationException("Trying to destroy an object twice!");
-            this.MarkedForDestruction = true;
-            if (finalize)
-                this.Finalise();
+
+            MarkedForDestruction = true;
+        }
+
+        /// <summary>
+        /// Checks whether this object should be destroyed (<see cref="MarkedForDestruction"/>), 
+        /// and does so if needed by setting the <see cref="IsDestroyed"/> flag
+        /// Should be called on the main game loop. 
+        /// </summary>
+        internal bool TryFinalise()
+        {
+            if (MarkedForDestruction)
+            {
+                IsDestroyed = true;
+                Destroyed?.Invoke(this);
+            }
+
+            return IsDestroyed;
         }
 
         /// <summary>
@@ -64,17 +68,5 @@ namespace Engine
         /// </summary>
         /// <param name="msElapsed"></param>
         internal virtual void Update(int msElapsed) { }
-
-        internal void Finalise()
-        {
-            if (this.MarkedForDestruction)
-            {
-                this.IsDestroyed = true;
-
-                //fire the event. 
-                if (Destroyed != null)
-                    Destroyed(this);
-            }
-        }
     }
 }

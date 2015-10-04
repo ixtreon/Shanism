@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using ProtoBuf;
+using IxSerializer.Modules;
 using IO.Message.Client;
 using System.Reflection;
 using IO.Message.Server;
@@ -15,20 +15,21 @@ namespace IO.Message
     /// Represents any command or message sent between the server and the client. 
     /// 
     /// Implements (de)serialization using ProtoBuf on registered classes. 
-    /// To register a class add it using the <see cref="AddMessageType{T}(MessageType)"/> static method. 
     /// </summary>
-    [EnumMember(typeof(ActionMessage), (short)MessageType.Action)]
-    [EnumMember(typeof(MoveMessage), (short)MessageType.MoveUpdate)]
-    [EnumMember(typeof(HandshakeInitMessage), (short)MessageType.HandshakeInit)]
-    [EnumMember(typeof(MapRequestMessage), (short)MessageType.MapRequest)]
+    [SerialKiller]
+    [SerialKid(typeof(ActionMessage), (short)MessageType.Action)]
+    [SerialKid(typeof(MoveMessage), (short)MessageType.MoveUpdate)]
+    [SerialKid(typeof(HandshakeInitMessage), (short)MessageType.HandshakeInit)]
+    [SerialKid(typeof(MapRequestMessage), (short)MessageType.MapRequest)]
 
-    [EnumMember(typeof(MapReplyMessage), (short)MessageType.MapReply)]
-    [EnumMember(typeof(HandshakeReplyMessage), (short)MessageType.HandshakeReply)]
-    [EnumMember(typeof(PlayerStatusMessage), (short)MessageType.PlayerStatusUpdate)]
-    [EnumMember(typeof(UnitDamageMessage), (short)MessageType.UnitDamage)]
-    public abstract class IOMessage : EnumBase<IOMessage>
+    [SerialKid(typeof(HandshakeReplyMessage), (short)MessageType.HandshakeReply)]
+    [SerialKid(typeof(MapReplyMessage), (short)MessageType.MapReply)]
+    [SerialKid(typeof(ObjectSeenMessage), (short)MessageType.ObjectSeen)]
+    [SerialKid(typeof(PlayerStatusMessage), (short)MessageType.PlayerStatusUpdate)]
+    [SerialKid(typeof(UnitDamageMessage), (short)MessageType.UnitDamage)]
+    public abstract class IOMessage
     {
-        public MessageType Type { get { return (MessageType)TypeId; } }
+        public abstract MessageType Type { get; }
     }
 
 }

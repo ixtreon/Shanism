@@ -1,4 +1,5 @@
-﻿using ProtoBuf;
+﻿using IxSerializer.Modules;
+using IxSerializer.Modules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,14 +7,24 @@ using System.Text;
 
 namespace IO.Common
 {
-    [ProtoContract]
+    /// <summary>
+    /// Represents a rectangle in the 2D plane. 
+    /// </summary>
+    [SerialKiller]
     public struct Rectangle
     {
         public static readonly Rectangle Empty = new Rectangle();
 
-        [ProtoMember(1)]
+        /// <summary>
+        /// Gets or sets the position of the top-left corner of the rectangle. 
+        /// </summary>
+        [SerialMember]
         public Point Position;
-        [ProtoMember(2)]
+
+        /// <summary>
+        /// Gets or sets the size of the rectangle. 
+        /// </summary>
+        [SerialMember]
         public Point Size;
 
         public int X
@@ -35,6 +46,38 @@ namespace IO.Common
         {
             get { return Size.Y; }
             set { Size.Y = value; }
+        }
+
+        /// <summary>
+        /// Gets the left (low X) edge of the rectangle. 
+        /// </summary>
+        public int Left
+        {
+            get { return Position.X; }
+        }
+
+        /// <summary>
+        /// Gets the right (high X) edge of the rectangle. 
+        /// </summary>
+        public int Right
+        {
+            get { return Position.X + Size.X; }
+        }
+
+        /// <summary>
+        /// Gets the bottom (low Y) edge of the rectangle. 
+        /// </summary>
+        public int Bottom
+        {
+            get { return Position.Y; }
+        }
+
+        /// <summary>
+        /// Gets the top (high Y) edge of the rectangle. 
+        /// </summary>
+        public int Top
+        {
+            get { return Position.Y + Size.Y; }
         }
 
         public static Rectangle operator *(Rectangle r, Point p)

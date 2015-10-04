@@ -28,14 +28,19 @@ namespace IO
             return string.Format(format, args);
         }
 
-        public static string Format(this string format, string s, params object[] args)
+        /// <summary>
+        /// Replaces the format item in a specified string with the string representation
+        /// of a corresponding object in a specified array.
+        /// </summary>
+        /// <param name="format">A composite format string (see Remarks).</param>
+        /// <param name="args">An object array that contains zero or more objects to format.</param>
+        /// <returns>
+        /// A copy of format in which the format items have been replaced by the string
+        /// representation of the corresponding objects in args.
+        /// </returns>
+        public static string F(this string format, params object[] args)
         {
-            return string.Format(format, args.Prepend(s).ToArray());
-        }
-
-        public static string Format(this string format, string s, object o)
-        {
-            return string.Format(format, new object[] { s, o });
+            return string.Format(format, args);
         }
 
 
@@ -190,7 +195,7 @@ namespace IO
                 yield return z;
         }
 
-        public static IEnumerable<T> Select<T>(this IEnumerable e, Func<object, T> func)
+        public static IEnumerable<T> SelectRaw<T>(this IEnumerable e, Func<object, T> func)
         {
             foreach (var o in e)
                 yield return func(o);
@@ -214,6 +219,21 @@ namespace IO
         {
             //TODO FUCKING CHANGE
             return (short)Convert.ChangeType(val, TypeCode.Int16);
+        }
+
+        public static T MostCommon<T>(this IEnumerable<T> list)
+        {
+            return list
+                .GroupBy(e => e)
+                .OrderByDescending(g => g.Count())
+                .Select(g => g.Key)
+                .First();
+        }
+        public static IEnumerable<T> CreateInstanceOfEach<T>(this Assembly assembly)
+        {
+            return assembly.GetTypes()
+                .Where(ty => typeof(T).IsAssignableFrom(ty))
+                .Select(ty => (T)Activator.CreateInstance(ty));
         }
     }
 }

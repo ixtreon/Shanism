@@ -20,6 +20,5 @@ namespace IO
         int Experience { get; }
         int ExperienceNeeded { get; }
 
-        IEnumerable<IAbility> Abilities { get; }
     }
 }

@@ -11,26 +11,31 @@ using Bin = IO.Common.Point;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Collections.Concurrent;
+using System.Collections;
 
 namespace Engine.Maps
 {
     /// <summary>
     /// Maps objects in 2D space by dividing the space into equally-sized bins contained in a hash-table. 
-    /// Allows for efficient concurrent range queries of limited size. 
+    /// Allows efficient concurrent range queries of a pre-specified size. 
     /// </summary>
     /// <typeparam name="T">The type of objects to track. </typeparam>
-    public class HashMap<T>
+    public class HashMap<T> : IEnumerable<T>
     {
-
-        readonly ConcurrentDictionary<Vector, ConcurrentDictionary<T, Vector>> hashTable = new ConcurrentDictionary<Vector, ConcurrentDictionary<T, Vector>>();
+        readonly Hashtable hashTable = new Hashtable();
 
         public readonly Vector CellSize;
 
         public int Count { get; private set; }
 
+        public IEnumerable<Hashtable> Tables
+        {
+            get { return hashTable.Values.Cast<Hashtable>(); }
+        }
+
         public IEnumerable<T> Items
         {
-            get { return hashTable.SelectMany(t => t.Value.Select(it => it.Key)); }
+            get { return Tables.SelectMany(bin => bin.Keys.Cast<T>().ToArray()).ToArray(); }
         }
 
         public HashMap(Vector cellSize)
@@ -38,61 +43,78 @@ namespace Engine.Maps
             this.CellSize = cellSize;
         }
 
+        /// <summary>
+        /// A non thread-safe Add operation. 
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="position"></param>
         public void Add(T item, Vector position)
         {
             var binId = getBin(position);
 
-            var z = hashTable.AddOrUpdate(binId,
-                ((v) =>
-                {
-                    var d = new ConcurrentDictionary<T, Vector>();
-                    if (d.TryAdd(item, position))
-                        Count++;
-                    return d;
-                }),
-                (v, t) =>
-                {
-                    if (t.TryAdd(item, position))
-                        Count++;
-                    return t;
-                });
-            //if(t.TryAdd(item, position))
-            //    Count++;
+            Hashtable binTable = GetOrAdd(binId);
+
+            binTable[item] = position;
+            Count++;
         }
 
-        public bool TryRemove(T item, Vector position)
+        /// <summary>
+        /// A non thread-safe Remove operation. 
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="position"></param>
+        public void Remove(T item, Vector position)
         {
             //remove from the hashmap using the item's current key to locate it. 
             var binId = getBin(position);
-            var removed = hashTable[binId].TryRemove(item, out position);
-            if (removed)
-                Count--;
-            return removed;
+
+            if (!hashTable.ContainsKey(binId))
+                throw new Exception("Provided bin {0} for GameObject {1} does not exist in the table!".Format(binId, item));
+            var binTable = Get(binId);
+
+            if(!binTable.ContainsKey(item))
+            {
+                var kur = this.Contains(item);
+                var hui = this.hashTable.Values.SelectRaw(o => (Hashtable)o).FirstOrDefault(t => t.ContainsKey(item));
+                return;
+            }
+            binTable.Remove(item);
+
+            Count--;
         }
 
         /// <summary>
         /// Updates the recorded position of the given item in this HashMap. 
-        /// !!! NOT THREAD SAFE WHILE IT SHOULD BE !!! 
+        /// Not thread-safe. Or maybe it is?
         /// </summary>
         /// <param name="item"></param>
-        public void UpdateItem(T item, Vector oldPos, Vector newPos)
+        public void Update(T item, Vector position, Vector newPos)
         {
-            var oldId = getBin(oldPos);
-            var newId = getBin(newPos);
-            if(oldId == newId)
-            {
-                hashTable[newId][item] = newPos;
+            if (position == newPos)
                 return;
+
+            var oldId = getBin(position);
+            var newId = getBin(newPos);
+
+            if(position.IsNan() || oldId == newId)
+            {
+                var ht = Get(newId);
+                //lock (ht)
+                    ht[item] = newPos;
             }
             else
             {
-                if(TryRemove(item, oldPos)) // should be made thread-safe
-                    Add(item, newPos);
+                Get(oldId).Remove(item);
+
+                Hashtable ht = GetOrAdd(newId);
+                //lock(ht)
+                    ht[item] = newPos;
             }
         }
 
         /// <summary>
         /// Retrieves all units within the specified rectangle. 
+        /// Thread-safe. 
         /// </summary>
         /// <param name="pos"></param>
         /// <param name="size"></param>
@@ -101,29 +123,65 @@ namespace Engine.Maps
         {
             var cellStart = getBin(pos);
             var cellEnd = getBin(pos + size);
-            var l = new List<T>();
 
-            // get the distinct bin IDs of all bins inbetween (and including)
-            // the start and end points, then get their entries in the table. 
-            for(int ix = cellStart.X; ix <= cellEnd.X; ix++)
-                for(int iy = cellStart.Y; iy <= cellEnd.Y; iy++)
-                {
-                    var binId = new Bin(ix, iy);
-                    ConcurrentDictionary<T, Vector> bin;
-                    if(hashTable.TryGetValue(binId, out bin))
-                        foreach (var u in bin)
-                            if (u.Value.Inside(pos, size))
-                                l.Add(u.Key);
-                }
-            return l;
+            var bins = SelectBins(cellStart, cellEnd);
+
+            Hashtable binTable;
+            foreach (var b in bins)
+            {
+                binTable = TryGet(b);
+                if(binTable != null)
+                    foreach(DictionaryEntry kvp in binTable)
+                        if (((Vector)kvp.Value).Inside(pos, size))
+                            yield return (T)kvp.Key;
+            }
+        }
+
+        Hashtable Get(Bin id)
+        {
+            return (Hashtable)hashTable[id];
+        }
+
+        Hashtable GetOrAdd(Bin id)
+        {
+            if (hashTable.ContainsKey(id))
+                return Get(id);
+
+            Hashtable ht = new Hashtable();
+            hashTable[id] = ht;
+            return ht;
+        }
+
+        Hashtable TryGet(Bin id)
+        {
+            if (!hashTable.ContainsKey(id))
+                return null;
+            return (Hashtable)hashTable[id];
+        }
+
+        IEnumerable<Bin> SelectBins(Bin start, Bin end)
+        {
+            for (int ix = start.X; ix <= end.X; ix++)
+                for (int iy = start.Y; iy <= end.Y; iy++)
+                    yield return new Bin(ix, iy);
         }
 
         /// <summary>
         /// Returns the bin of the given item, as determined by the bin size. 
         /// </summary>
-        private Bin getBin(Vector pos)
+        Bin getBin(Vector pos)
         {
             return (pos / CellSize).Floor();
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return Items.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 

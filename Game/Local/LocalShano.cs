@@ -40,14 +40,14 @@ namespace Local
         {
             //create the local server and client
             ShanoEngine = new ShanoEngine(mapSeed);
-            ShanoClient = new MainGame(playerName, ShanoEngine.Update);
+            ShanoClient = new MainGame(playerName);
 
             //create the local player
             var pl = new Player(ShanoEngine, ShanoClient);
 
             //link them
             ShanoEngine.AddPlayer(pl);
-            ShanoClient.Server = pl;
+            ShanoClient.SetServer(pl);
 
             //start the client
             ShanoClient.Running = true;

@@ -5,39 +5,34 @@ using System.Text;
 using System.Threading.Tasks;
 using IO;
 using IO.Objects;
+using IxSerializer.Modules;
 
 namespace IO.Common
 {
     /// <summary>
     /// An enumeration of the object types that are sent over the network. 
     /// </summary>
+    [SerialKiller]
     public struct ObjectType
     {
-        private static readonly Dictionary<byte, ObjectType> objectDict = new Dictionary<byte, ObjectType>();
+        static readonly Dictionary<byte, ObjectType> objectDict = new Dictionary<byte, ObjectType>();
 
-        //public static readonly ObjectType Effect = new ObjectType(0, typeof(IEffect));
+        public static readonly ObjectType Effect = new ObjectType(0, typeof(IEffect));
         public static readonly ObjectType Doodad = new ObjectType(1, typeof(IDoodad));
         public static readonly ObjectType Unit = new ObjectType(2, typeof(IUnit));
         public static readonly ObjectType Hero = new ObjectType(3, typeof(IHero));
 
-
+        [SerialMember]
         public readonly byte Id;
 
         public readonly Type UnderlyingInterface;
 
-        private ObjectType(byte id, Type interfaceType)
+        ObjectType(byte id, Type interfaceType)
         {
             Id = id;
             UnderlyingInterface = interfaceType;
 
             objectDict[id] = this;
-        }
-
-        public static ObjectType FromGameObject(IGameObject go)
-        {
-            return objectDict
-                .Select(kvp => kvp.Value)
-                .FirstOrDefault(t => t.UnderlyingInterface.IsAssignableFrom(go.GetType()));
         }
 
         public static implicit operator byte (ObjectType ty)
@@ -75,13 +70,10 @@ namespace IO.Common
         {
             return Id.GetHashCode();
         }
-    }
 
-    public static class ObjectTypeExt
-    {
-        public static ObjectType GetObjectType(this IGameObject go)
+        public override string ToString()
         {
-            return ObjectType.FromGameObject(go);
+            return UnderlyingInterface.Name;
         }
     }
 }

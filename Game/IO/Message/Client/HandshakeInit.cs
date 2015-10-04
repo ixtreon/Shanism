@@ -1,4 +1,4 @@
-﻿using ProtoBuf;
+﻿using IxSerializer.Modules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,10 +6,15 @@ using System.Text;
 
 namespace IO.Message.Client
 {
-    [ProtoContract]
+    [SerialKiller]
     public class HandshakeInitMessage : IOMessage
     {
-        [ProtoMember(1)]
+        public override MessageType Type
+        {
+            get { return MessageType.HandshakeInit; }
+        }
+
+        [SerialMember]
         public string PlayerName;
 
 

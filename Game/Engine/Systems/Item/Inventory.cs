@@ -10,7 +10,8 @@ using Engine.Objects.Game;
 
 namespace Engine.Systems
 {
-    public class Inventory
+    //NYI
+    public class UnitInventory
     {
         const int BackpackWidth = 5;
         const int BackpackHeight = 4;
@@ -18,11 +19,11 @@ namespace Engine.Systems
 
         private int backpackItemCount;  //numberOfItemsInBackpack
 
-        internal Engine.Objects.Item[,] Backpack;
+        private Item[,] Backpack;
 
-        Dictionary<EquipSlot, Item> EquippedItems = new Dictionary<EquipSlot, Item>();
+        private Dictionary<EquipSlot, Item> EquippedItems = new Dictionary<EquipSlot, Item>();
 
-        public Inventory()
+        public UnitInventory()
         {
             Backpack = new Item[BackpackWidth, BackpackHeight];
         }

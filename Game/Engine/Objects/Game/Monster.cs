@@ -17,7 +17,7 @@ namespace Engine.Objects.Game
     public class Monster : Unit
     {
         public Monster(string model, Vector location, int level)
-            : base(model, location, level)
+            : base(model, Player.NeutralAggressive, location, level)
         {
             BaseLife = 90 + 10 * level;
             //BaseMinDamage = 5 + 3 * level;
@@ -41,7 +41,7 @@ namespace Engine.Objects.Game
             Behaviour = new AggroBehaviour(this, ab);
         }
 
-        Order lastOrder;
+        IOrder lastOrder;
 
         internal override void Update(int msElapsed)
         {
@@ -52,7 +52,7 @@ namespace Engine.Objects.Game
             }
         }
         public Monster(Monster prototype)
-            : this(prototype.Model, prototype.Location, prototype.Level)
+            : this(prototype.Model, prototype.Position, prototype.Level)
         {
 
         }

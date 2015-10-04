@@ -1,4 +1,5 @@
 ﻿using Client.Controls;
+using Client.UI.Common;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;

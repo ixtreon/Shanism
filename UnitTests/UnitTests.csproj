@@ -56,11 +56,17 @@
   </Choose>
   <ItemGroup>
     <Compile Include="HashMapPerfTest.cs" />
+    <Compile Include="HashMapTests.cs" />
+    <Compile Include="SerializerExtTest.cs" />
     <Compile Include="SerializerTest.cs" />
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="RandomTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\!lib\IxSerializer\IxSerializer.csproj">
+      <Project>{41be9dd9-644c-4a90-8d47-667b4323df7a}</Project>
+      <Name>IxSerializer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Game\Engine\Engine.csproj">
       <Project>{0b2e9f70-7046-470a-8e5d-ebd47f030ddc}</Project>
       <Name>Engine</Name>
@@ -75,6 +81,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Choose>

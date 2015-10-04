@@ -11,7 +11,8 @@ namespace Engine.Systems.Behaviours
     /// <summary>
     /// A compound aggro behaviour which keeps the aggro table of a unit and switches between following and attacking, 
     /// 
-    /// Also returns to the starting position if the target runs too far away. 
+    /// Returns the unit to the starting position if the target runs too far away. 
+    /// 
     /// </summary>
     class AggroBehaviour : BehaviourList
     {
@@ -34,7 +35,7 @@ namespace Engine.Systems.Behaviours
 
             FollowBehaviour = new FollowBehaviour(this);
             AttackBehaviour = new AbilityBehaviour(this, ab);
-            ReturnBehaviour = new ReturnBehaviour(this, u.Location, u.VisionRange * 3);
+            ReturnBehaviour = new ReturnBehaviour(this, u.Position, u.VisionRange * 3);
 
             this.AddRange(new Behaviour[]
             {
@@ -99,12 +100,12 @@ namespace Engine.Systems.Behaviours
         /// Adds to the aggro table units that come into range. 
         /// </summary>
         /// <param name="args"></param>
-        protected override void OnUnitInVisionRange(RangeArgs args)
+        protected override void OnUnitInVisionRange(RangeArgs<Unit> args)
         {
             if (ReturnBehaviour.Returning)
                 return;
 
-            var u = args.TriggerUnit as Hero;
+            var u = args.TriggerObject as Hero;
 
             //add it to the aggro table if it's a hero
             if (u != null && !aggroTable.ContainsKey(u))
@@ -134,7 +135,7 @@ namespace Engine.Systems.Behaviours
 
                 // if there was no target before, save where we currently are
                 if (Target == null)
-                    ReturnBehaviour.OriginPosition = Unit.Location;
+                    ReturnBehaviour.OriginPosition = Unit.Position;
 
                 Target = newTarget;
             }

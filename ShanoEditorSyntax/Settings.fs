@@ -10,15 +10,17 @@ open ShanoEditorSyntax.Patterns
 module Settings = 
     open System
  
-    [<Literal>]
-    let ListField = "files"   //the field in scenariobase which holds the declared files
+    // files.Add("asdasdsad");
 
-    [<Literal>]
-    let AddMethod = "Add"     // the 
+    // files.Add("asd", "asd", 5, 123);
 
+    // rec "files" "Add" line
 
-    //recognizes "files.Add(<string_literal>)"
-    let ActionExpr (n: StatementSyntax) =
+    //recognizes "field.method(<string_literal>)"
+    ///<summary>
+    ///nmz e
+    ///</summary>
+    let RecognizeMethodStringInvoke (fieldName: string) (methodName: string) (n: StatementSyntax) =
         match n with
         | ExpressionStatementSyntax(
             _, 
@@ -26,18 +28,18 @@ module Settings =
                 _, 
                 MemberAccessExpressionSyntax(
                     SyntaxKind.SimpleMemberAccessExpression, 
-                    IdentifierNameSyntax(_, expField), 
+                    IdentifierNameSyntax(_, SyntaxIdentifier(fieldName)), 
                     _, 
-                    IdentifierNameSyntax(_, expMethod)
+                    IdentifierNameSyntax(_, SyntaxIdentifier(methodName))
                 ), 
                 ArgumentListSyntax(_, _, args, _)
                 ), 
-            _) 
-            when args.Count = 1 -> 
+            _) when args.Count = 1 -> 
+
                 let arg = args.[0]
-//                let z = Seq.filter (fun a -> true) args
                 match arg with
                 | ArgumentSyntax(SyntaxKind.Argument, _, _, LiteralExpressionSyntax(SyntaxKind.StringLiteralExpression, sArg)) 
                     -> (sArg.Value.ToString())
                 | _ -> null
         | _ -> null
+        

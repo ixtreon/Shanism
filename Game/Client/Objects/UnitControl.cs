@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Client.Properties;
 using Client.Sprites;
 using Client.UI;
+using Client.UI.Common;
 
 namespace Client.Objects
 {

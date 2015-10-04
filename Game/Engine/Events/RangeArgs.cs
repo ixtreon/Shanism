@@ -10,9 +10,11 @@ using System.Threading.Tasks;
 namespace Engine.Events
 {
     /// <summary>
-    /// The arguments for whenever a unit comes in range or leaves range. 
+    /// The arguments for whenever a GameObject comes in range or leaves range from another unit or object. 
     /// </summary>
-    public class RangeArgs
+    /// <typeparam name="T">The type of GameObject that triggered the constraint. </typeparam>
+    public class RangeArgs<T>
+        where T : GameObject
     {
         public readonly EventType ConstraintType;
 
@@ -24,7 +26,7 @@ namespace Engine.Events
 
         public readonly double RangeThreshold;
 
-        public readonly Unit TriggerUnit;
+        public readonly T TriggerObject;
 
         public Unit OriginUnit
         {
@@ -36,7 +38,7 @@ namespace Engine.Events
 
         public readonly Vector OriginLocation;
 
-        internal RangeArgs(RangeConstraint c, EventType evType, Unit u)
+        internal RangeArgs(RangeConstraint c, EventType evType, T obj)
         {
             EventType = evType;
             ConstraintType = c.ConstraintType;
@@ -44,7 +46,7 @@ namespace Engine.Events
             Origin = c.Origin;
             OriginLocation = c.OriginLocation;
             RangeThreshold = c.RangeThreshold;
-            TriggerUnit = u;
+            TriggerObject = obj;
         }
 
     }

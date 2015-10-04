@@ -26,7 +26,7 @@ namespace Engine.Events
         {
             get
             {
-                return TargetUnit?.Location ?? ((Vector)Target);
+                return TargetUnit?.Position ?? ((Vector)Target);
             }
         }
 

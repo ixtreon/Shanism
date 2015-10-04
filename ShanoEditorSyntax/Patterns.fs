@@ -723,6 +723,12 @@ module Patterns =
         | :? ArgumentSyntax as t -> Some(t.Kind(), t.NameColon, t.RefOrOutKeyword, t.Expression)
         | _ -> None
  
+    let (|SyntaxIdentifier|_|) (n: SyntaxToken) = 
+        if typeof<SyntaxToken>.IsAssignableFrom(n.GetType()) then
+            Some(n.Text)
+        else
+            None
+
     let (|Argument|_|) (n: CSharpSyntaxNode) =
         match n.Kind() with
         | SyntaxKind.Argument ->

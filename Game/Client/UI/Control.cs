@@ -150,6 +150,7 @@ namespace Client.UI
         public float Top
         {
             get { return RelativePosition.Y; }
+            set { RelativePosition = new Vector2(RelativePosition.X, value); }
         }
 
         /// <summary>
@@ -158,6 +159,7 @@ namespace Client.UI
         public float Left
         {
             get { return RelativePosition.X; }
+            set { RelativePosition = new Vector2(value, RelativePosition.Y); }
         }
 
         /// <summary>

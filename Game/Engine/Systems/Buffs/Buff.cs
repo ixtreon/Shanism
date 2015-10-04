@@ -17,15 +17,31 @@ namespace Engine.Systems.Buffs
     /// </summary>
     public class Buff : ScenarioObject
     {
+        int _moveSpeed;
+
+
         /// <summary>
-        /// Gets or sets icon of the buff. Also see <see cref="HasIcon"/>
+        /// Gets or sets icon of the buff. Also see <see cref=""/>
         /// </summary>
         public string Icon { get; set; }
+
 
         /// <summary>
         /// Gets or sets the movement speed modifier of this buff. 
         /// </summary>
-        public int MoveSpeed { get; set; }
+        public int MoveSpeed
+        {
+            get
+            {
+                return _moveSpeed;
+            }
+
+            set
+            {
+                _moveSpeed = Math.Max(-100, Math.Min(100, value));
+            }
+        }
+
         public int AttackSpeed { get; set; }
 
         public string Name { get; set; }
@@ -71,14 +87,17 @@ namespace Engine.Systems.Buffs
         /// Gets the strength modifier of this buff. 
         /// </summary>
         public double Strength { get; set; }
+
         /// <summary>
         /// Gets the vitality modifier of this buff. 
         /// </summary>
         public double Vitality { get; set; }
+
         /// <summary>
         /// Gets the agility modifier of this buff. 
         /// </summary>
         public double Agility { get; set; }
+
         /// <summary>
         /// Gets the intellect modifier of this buff. 
         /// </summary>

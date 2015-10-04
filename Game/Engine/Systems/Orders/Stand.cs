@@ -11,12 +11,8 @@ namespace Engine.Systems.Orders
     /// <summary>
     /// Simply stands at a place. 
     /// </summary>
-    struct Stand : Order
+    struct Stand : IOrder
     {
-        //public Stand()
-        //{
-        //}
-
         public OrderType Type
         {
             get

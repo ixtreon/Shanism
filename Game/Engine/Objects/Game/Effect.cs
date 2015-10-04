@@ -13,6 +13,12 @@ namespace Engine.Objects.Game
     /// </summary>
     public class Effect : GameObject
     {
+
+        public override ObjectType ObjectType
+        {
+            get { return ObjectType.Effect; }
+        }
+
         /// <summary>
         /// Gets the texture file name for this effect. 
         /// </summary>
@@ -29,11 +35,6 @@ namespace Engine.Objects.Game
         public bool IsAttached { get; set; }
 
         public GameObject AttachedTo { get; set; }
-
-        /// <summary>
-        /// Gets or sets the position of the effect on the map, as long as it is not attached to a GameObject. 
-        /// </summary>
-        public Vector Position { get; set; }
 
         public Vector Offset { get; set; }
 

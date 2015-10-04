@@ -9,7 +9,7 @@ namespace Engine.Systems.Orders
     /// <summary>
     /// Moves to a specified target position. 
     /// </summary>
-    struct MoveLocation : Order
+    struct MoveLocation : IMoveOrder
     {
         /// <summary>
         /// The distance from the target to stop at. 
@@ -29,30 +29,30 @@ namespace Engine.Systems.Orders
             get { return OrderType.Move; }
         }
 
+        public double Direction { get; private set; }
+        public Vector SuggestedLocation { get; private set; }
 
         public MoveLocation(Vector target, double distanceThreshold = 0.05)
         {
             this.TargetLocation = target;
             this.DistanceThrehsold = distanceThreshold;
+            Direction = -1;
+            SuggestedLocation = target;
         }
 
         public bool Update(Unit unit, int msElapsed)
         {
             //move the unit towards its target
-            var uLoc = unit.Location;
+            var uLoc = unit.Position;
             var dist = uLoc.DistanceTo(TargetLocation);
 
             //return if already there
             if (dist < DistanceThrehsold)
                 return false;
 
-            //calculate the distance
-            var ang = uLoc.AngleTo(TargetLocation);
-            var moveDist = Math.Min(dist, unit.MoveSpeed * msElapsed / 1000);
-            var pos = uLoc.PolarProjection(ang, moveDist);
-
             //move the unit
-            unit.Location = pos;
+            Direction = uLoc.AngleTo(TargetLocation);
+            unit.Move(msElapsed, Direction, dist);
 
             //keep on
             return true;

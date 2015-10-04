@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using IO;
 using ScriptEngine.Parsers;
+using System.IO;
 
 namespace AbilityIDE
 {
@@ -23,11 +24,14 @@ namespace AbilityIDE
                 filePath = openDialog.SelectedPath;
             }
 
+            if (string.IsNullOrEmpty(filePath))
+                return;
+
             Settings.Default.UpdateRecentFiles(filePath);
 
             var sd = new ScenarioParser(filePath);
 
-            System.IO.Directory.SetCurrentDirectory(filePath);
+            Directory.SetCurrentDirectory(filePath);
 
             treeContent.LoadScenario(filePath);
         }

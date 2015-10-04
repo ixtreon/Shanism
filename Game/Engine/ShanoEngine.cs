@@ -13,15 +13,17 @@ using Engine.Objects.Game;
 using System.Security;
 using System.IO;
 using IO.Objects;
+using ScriptLib;
 
 namespace Engine
 {
     /// <summary>
     /// The game engine lies here. 
     /// </summary>
-    public class ShanoEngine : IGameEngine
+    public class ShanoEngine : INetworkEngine
     {
-        public static ShanoEngine Current { get; private set; }
+        public static ShanoEngine Current { get; private set; } // ugly hax :|
+
 
         /// <summary>
         /// The frames per second we aim to run at. 
@@ -50,30 +52,32 @@ namespace Engine
         /// <summary>
         /// The current world map containing the terrain info. 
         /// </summary>
-        internal RandomMap WorldMap { get; private set; }
+        internal ITerrainMap TerrainMap { get; private set; }
 
         /// <summary>
         /// The current game map containing unit/doodad/sfx info. 
         /// </summary>
-        internal GameMap GameMap { get; private set; }
+        internal EntityMap EntityMap { get; private set; }
 
 
         /// <summary>
         /// A list of all players currently in game. 
         /// </summary>
-        internal List<Player> Players;
+        internal List<Player> Players { get; } = new List<Player>();
 
 
         internal Scenario Scenario { get; private set; }
 
+        internal ScenarioCompiler ScenarioCompiler { get; private set; }
 
         internal Network.LServer NetworkServer { get; private set; }
 
         internal bool IsOnline { get; private set; }
 
+        private HashSet<MapChunkId> generatedChunks = new HashSet<MapChunkId>();
+
         public ShanoEngine(int mapSeed)
         {
-
             // allow only one instance of the server. 
             // an ugly hack..
             if (Current != null)
@@ -83,31 +87,49 @@ namespace Engine
 
             this.Players = new List<Player>();
 
-            this.GameMap = new GameMap();
+            this.EntityMap = new EntityMap();
 
-            this.WorldMap = new RandomMap(mapSeed);
+            this.TerrainMap = new RandomTerrainMap(mapSeed);
 
-            Scenario = new Scenario(Path.GetFullPath(@"DefaultScenario"));
-            if (!Scenario.TryCompile())
-                throw new Exception("Unable to compile the scenario!");
+            ScenarioCompiler = new ScenarioCompiler();
+            ScenarioCompiler.ScenarioDir = Path.GetFullPath(@"DefaultScenario");
+
+            Scenario = ScenarioCompiler.TryCompile<Scenario>();
+
+            if(Scenario == null)
+            {
+                throw new Exception();
+            }
+
+            Scenario.LoadTypes(ScenarioCompiler.Assembly);
+            Scenario.RunScripts(cs => cs.LoadModels(Scenario.Models));
 
             //run startup scripts
-            Scenario.RunScripts(s => s.GameStart());
+            Scenario.RunScripts(cs => cs.GameStart());
         }
 
-        event Action<IUnit, OrderType> IGameEngine.AnyUnitOrderChanged
+        #region Network Engine implementation
+        event Action<IEnumerable<IPlayer>, OrderType> INetworkEngine.AnyUnitOrderChanged
         {
-            add { Unit.AnyOrderChanged += (u, o) => value(u, o.Type); }
-            remove { Unit.AnyOrderChanged += (u, o) => value(u, o.Type); }
+            add { Unit.AnyOrderChanged += (u, o) => value(new[] { u.Owner }, o?.Type ?? OrderType.Stand); }
+            remove { Unit.AnyOrderChanged -= (u, o) => value(new[] { u.Owner }, o.Type); }
         }
 
-        event Action<IUnit, IUnit> IGameEngine.AnyUnitEntersVisionRange
+        public INetworkReceptor HandleNetConnection(IGameClient c)
         {
-            add { Unit.AnyUnitInVisionRange += (args) => value(args.OriginUnit, args.TriggerUnit); }
-            remove { Unit.AnyUnitInVisionRange -= (args) => value(args.OriginUnit, args.TriggerUnit); }
+            var playerName = c.Name;
+
+            //TODO: do some checks???!?
+
+            var pl = new Player(this, c);
+
+            AddPlayer(pl);
+
+            return pl;
         }
+        #endregion
 
-
+        #region Server Controls
         /// <summary>
         /// Starts the game server by executing the main game loop. 
         /// </summary>
@@ -122,10 +144,7 @@ namespace Engine
             if (newThread)
             {
                 // start the update thread
-                GameThread = new Thread(mainLoop)
-                {
-                    IsBackground = true
-                };
+                GameThread = new Thread(mainLoop) { IsBackground = true };
                 GameThread.Start();
             }
             else
@@ -143,21 +162,6 @@ namespace Engine
         }
 
         /// <summary>
-        /// Adds the given player to the game. 
-        /// </summary>
-        /// <param name="p"></param>
-        public void AddPlayer(Player p)
-        {
-            this.Players.Add(p);
-
-            //run scripts
-            Scenario.RunScripts(s => s.OnPlayerJoined(p));
-            
-            ////run scripts -> not here though!
-            //Scenario.RunScripts(s => s.OnHeroSpawned(p.MainHero));
-        }
-
-        /// <summary>
         /// Allows for network connections to be established to this game. 
         /// </summary>
         /// <param name="port"></param>
@@ -171,26 +175,29 @@ namespace Engine
 
             IsOnline = true;
             NetworkServer = new Network.LServer(this);
-            NetworkServer.ClientConnectHandler = handleNetClient;
         }
+        #endregion
 
-        private IGameReceptor handleNetClient(IGameClient c)
+        /// <summary>
+        /// Adds the given player to the game. 
+        /// </summary>
+        /// <param name="p"></param>
+        public void AddPlayer(Player p)
         {
-            var playerName = c.Name;
+            this.Players.Add(p);
 
-            //TODO: do some checks
-            
-            var pl = new Player(this, c);
+            //run scripts
+            Scenario.RunScripts(s => s.OnPlayerJoined(p));
 
-            AddPlayer(pl);
-
-            return pl;
+            ////run scripts -> TODO: not here though!
+            //Scenario.RunScripts(s => s.OnHeroSpawned(p.MainHero));
         }
+
 
         /// <summary>
         /// Starts the basic game loop. 
         /// </summary>
-        private void mainLoop()
+        void mainLoop()
         {
             int frameStartTime, drawTime = 0;
             while (IsRunning)
@@ -218,29 +225,12 @@ namespace Engine
             if (IsOnline)
                 NetworkServer.Update(msElapsed);
 
-            GameMap.Update(msElapsed);
+            EntityMap.Update(msElapsed);
 
             foreach (var p in Players)
                 p.Update(msElapsed);
-
-
         }
 
-        /// <summary>
-        /// Returns all objects in proximity of the given hero. 
-        /// </summary>
-        /// <param name="h"></param>
-        /// <returns></returns>
-        public IEnumerable<IGameObject> GetNearbyObjects(Player pl)
-        {
-            var pos = pl.CameraPosition;
-            var range = (Vector)IO.Constants.Client.WindowSize / 2 + 1;
-
-            return GameMap.GetObjectsInRect(pos - range, range * 2);
-        }
-
-
-        private HashSet<MapChunkId> generatedChunks = new HashSet<MapChunkId>();
 
         /// <summary>
         /// Writes the map data for the given rectangle in the given array. 
@@ -251,21 +241,18 @@ namespace Engine
         public void GetTiles(Player pl, ref TerrainType[,] tileMap, MapChunkId chunk)
         {
             //TODO: check if chunk is valid for player pl
-
             var rect = new Rectangle(chunk.BottomLeft, MapChunkId.ChunkSize);
-            WorldMap.GetMap(rect, ref tileMap);
+            TerrainMap.GetMap(rect, ref tileMap);
             if (!generatedChunks.Contains(chunk))
             {
                 lock(generatedChunks)
                     generatedChunks.Add(chunk);
 
-                foreach (var dood in WorldMap.GenerateNativeDoodads(rect))
+                foreach (var dood in TerrainMap.GetNativeDoodads(rect))
                 {
-                    GameMap.Doodads.Add(dood);
+                    EntityMap.Add(dood);
                 }
             }
         }
-
-
     }
 }

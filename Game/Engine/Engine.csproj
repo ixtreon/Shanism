@@ -94,9 +94,14 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Engine.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=4.0.4.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\AutoMapper.4.0.4\lib\net45\AutoMapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Common.Logging">
       <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
     </Reference>
@@ -139,25 +144,36 @@
     <Compile Include="Events\UnitDamagingArgs.cs" />
     <Compile Include="Events\UnitDamagedArgs.cs" />
     <Compile Include="Events\UnitDyingArgs.cs" />
-    <Compile Include="Maps\AppendOnlyList.cs" />
-    <Compile Include="Maps\GameMapRangeEvents.cs" />
-    <Compile Include="Maps\HashMap2.cs" />
-    <Compile Include="Maps\ObjectMap.cs" />
-    <Compile Include="Maps\GameMap.cs" />
-    <Compile Include="Maps\Hash.cs" />
+    <Compile Include="Maps\EntityMapEvents.cs" />
     <Compile Include="Maps\HashMap.cs" />
-    <Compile Include="Maps\RandomMap.cs" />
-    <Compile Include="Maps\RangeConstraint.cs" />
+    <Compile Include="Maps\Concurrent\ObjectMap.cs" />
+    <Compile Include="Maps\EntityMap.cs" />
+    <Compile Include="Maps\Hash.cs" />
+    <Compile Include="Maps\Concurrent\HashMap.cs" />
+    <Compile Include="Maps\Terrain\ITerrainMap.cs" />
+    <Compile Include="Maps\ObjectMap.cs" />
+    <Compile Include="Maps\Terrain\RandomMap.cs" />
+    <Compile Include="Maps\RangeConstraints\UnitRangeConstraint.cs" />
+    <Compile Include="Maps\RangeConstraints\GlobalRangeConstraint.cs" />
+    <Compile Include="Maps\RangeConstraints\IRangeConstraint.cs" />
+    <Compile Include="Maps\RangeConstraints\RangeConstraint.cs" />
+    <Compile Include="Maps\Terrain\ScenarioMap.cs" />
     <Compile Include="ModelManager.cs" />
+    <Compile Include="Objects\Units\Abilities.cs" />
+    <Compile Include="Objects\Units\Combat.cs" />
+    <Compile Include="Objects\Units\Movement.cs" />
+    <Compile Include="Objects\Units\Vision.cs" />
+    <Compile Include="Systems\Abilities\Attributes\AbilityTypes.cs" />
+    <Compile Include="Systems\Abilities\Attributes\SpamAbility.cs" />
+    <Compile Include="Systems\Behaviours\AbilityTypeBehaviour.cs" />
     <Compile Include="Systems\Buffs\Buff.cs" />
     <Compile Include="Objects\Game\Doodad.cs" />
     <Compile Include="Objects\Game\GameItem.cs" />
     <Compile Include="Objects\GameObject.cs" />
-    <Compile Include="Objects\Units\UnitBuffs.cs" />
-    <Compile Include="Objects\Units\UnitEvents.cs" />
-    <Compile Include="Objects\Units\UnitOrders.cs" />
-    <Compile Include="Objects\Units\UnitRangeEvents.cs" />
-    <Compile Include="Objects\Units\UnitStates.cs" />
+    <Compile Include="Systems\Buffs\BuffSystem.cs" />
+    <Compile Include="Objects\Units\Orders.cs" />
+    <Compile Include="Objects\Units\RangeEvents.cs" />
+    <Compile Include="Objects\Units\States.cs" />
     <Compile Include="Systems\Abilities\Attack.cs" />
     <Compile Include="Systems\Behaviours\AbilityBehaviour.cs" />
     <Compile Include="Systems\Behaviours\Behaviour.cs" />
@@ -168,6 +184,7 @@
     <Compile Include="Systems\Behaviours\INeedsTarget.cs" />
     <Compile Include="Systems\Behaviours\ReturnBehaviour.cs" />
     <Compile Include="Systems\Buffs\BuffInstance.cs" />
+    <Compile Include="Systems\Chat\ChatProvider.cs" />
     <Compile Include="Systems\Item\Inventory.cs" />
     <Compile Include="Systems\Item\Item.cs" />
     <Compile Include="Objects\Game\Monster.cs" />
@@ -181,14 +198,14 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Systems\Abilities\Ability.cs" />
-    <Compile Include="Objects\CustomScript.cs" />
+    <Compile Include="Systems\CustomScript.cs" />
     <Compile Include="Systems\Orders\Cast.cs" />
     <Compile Include="Systems\Orders\MoveLocation.cs" />
     <Compile Include="Systems\Orders\MoveUnit.cs" />
     <Compile Include="Systems\Orders\PlayerMove.cs" />
     <Compile Include="Systems\Orders\Stand.cs" />
-    <Compile Include="Systems\Scenario.cs" />
-    <Compile Include="Systems\Orders\Order.cs" />
+    <Compile Include="Scenario.cs" />
+    <Compile Include="Systems\Orders\IOrder.cs" />
     <Compile Include="ShanoEngine.cs" />
     <Compile Include="Objects\Units\Unit.cs" />
     <Compile Include="Objects\Game\Hero.cs" />
@@ -199,10 +216,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="ClassDiagram1.cd" />
-    <None Include="ClassDiagram2.cd" />
-    <None Include="ClassDiagram3.cd" />
-    <None Include="ClassDiagram4.cd" />
-    <None Include="Engine.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -210,13 +223,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\ScenarioLib\ScenarioLib.csproj">
+      <Project>{bada50f2-93bc-4eba-949a-bf892ae4b7e5}</Project>
+      <Name>ScenarioLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\IO\IO.csproj">
       <Project>{dc89987d-5817-4f1d-95ca-80c024c8d6bb}</Project>
       <Name>IO</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\ScriptEngine\ScriptLib.csproj">
-      <Project>{bada50f2-93bc-4eba-949a-bf892ae4b7e5}</Project>
-      <Name>ScriptLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\Network\Network.csproj">
       <Project>{d2fa8685-b964-498d-a34f-d191be2cba6b}</Project>
@@ -224,7 +237,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Objects\Common\" />
+    <Folder Include="Scenario\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

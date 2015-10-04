@@ -77,11 +77,11 @@ namespace Engine.Objects.Game
         {
             // update location
             var dist = (Speed * msElapsed / 1000);
-            Location = Location.PolarProjection(Direction, dist);
+            Position = Position.PolarProjection(Direction, dist);
             this.DistanceTravelled += dist;
 
             //get valid targets
-            var units = Map.GetUnitsInRange(Location, Size / 2)
+            var units = Map.GetUnitsInRange(Position, Size / 2)
                 .Where(u => u.IsNonPlayable() && !u.IsDead);
 
             if(units.Any())
@@ -89,7 +89,7 @@ namespace Engine.Objects.Game
                 //get units hit by the projectile
                 var collidedUnits = units
                     .Where(u => !unitsHit.Contains(u))
-                    .OrderBy(u => u.Location.DistanceToSquared(Location));
+                    .OrderBy(u => u.Position.DistanceToSquared(Position));
 
                 // and fire the event. 
                 foreach (var target in collidedUnits)

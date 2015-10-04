@@ -9,11 +9,11 @@ using Microsoft.Xna.Framework.Graphics;
 using Client.Textures;
 using Client.Controls;
 
-namespace Client.UI
+namespace Client.UI.Common
 {
     abstract class Window : Control
     {
-        const float TitleHeight = 0.08f;
+        public const float TitleHeight = 0.08f;
 
         public static readonly Vector2 DefaultSize = new Vector2(1.0f, 1.2f);
 
@@ -83,7 +83,7 @@ namespace Client.UI
         }
 
         /// <summary>
-        /// Draws the background and title of the window. 
+        /// Draws the background and title-bar of this window. 
         /// </summary>
         /// <param name="sb"></param>
         public override void Draw(SpriteBatch sb)

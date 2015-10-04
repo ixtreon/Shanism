@@ -16,6 +16,68 @@ namespace Client.Sprites
     /// </summary>
     public abstract class Sprite
     {
+        public struct PointsInfo
+        {
+            Sprite sprite;
+
+            public PointsInfo(Sprite s) { sprite = s; }
+            
+            public Vector2 Center
+            {
+                get
+                {
+                    return new Vector2((float)sprite.SourceRectangle.Center.X / sprite.Texture.Width,
+                      (float)sprite.SourceRectangle.Center.Y / sprite.Texture.Height);
+                }
+            }
+
+            /// <summary>
+            /// dx, dy should be -1, 0, 1
+            /// </summary>
+            /// <param name="dx"></param>
+            /// <param name="dy"></param>
+            /// <returns></returns>
+            public Vector2 Get(int dx, int dy)
+            {
+                return Center + new Vector2((float)dx * sprite.SourceRectangle.Width / sprite.Texture.Width / 2, (float)dy * sprite.SourceRectangle.Width / sprite.Texture.Width / 2);
+            }
+
+            public Vector2 TopLeft
+            {
+                get
+                {
+                    return new Vector2((float)sprite.SourceRectangle.Left / sprite.Texture.Width,
+                      (float)sprite.SourceRectangle.Top / sprite.Texture.Height);
+                }
+            }
+            public Vector2 TopRight
+            {
+                get
+                {
+                    return new Vector2((float)sprite.SourceRectangle.Right / sprite.Texture.Width,
+                      (float)sprite.SourceRectangle.Top / sprite.Texture.Height);
+                }
+            }
+            public Vector2 BottomLeft
+            {
+                get
+                {
+                    return new Vector2((float)sprite.SourceRectangle.Left / sprite.Texture.Width,
+                      (float)sprite.SourceRectangle.Bottom / sprite.Texture.Height);
+                }
+            }
+            public Vector2 BottomRight
+            {
+                get
+                {
+                    return new Vector2((float)sprite.SourceRectangle.Right / sprite.Texture.Width,
+                      (float)sprite.SourceRectangle.Bottom / sprite.Texture.Height);
+                }
+            }
+        }
+
+        public readonly PointsInfo Points;
+
         public readonly Texture2D Texture;
 
         public readonly AnimationDef Model;
@@ -31,6 +93,7 @@ namespace Client.Sprites
 
         public Sprite(AnimationDef model)
         {
+            this.Points = new PointsInfo(this);
             this.Color = Color.White;
             this.Model = model;
             this.Texture = TextureCache.Get(File);

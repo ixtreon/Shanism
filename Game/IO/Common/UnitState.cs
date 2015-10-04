@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace IO.Common
 {
     /// <summary>
-    /// Unused
+    /// The collection of states that can affect units. 
     /// </summary>
     [Flags]
     public enum UnitState

@@ -14,7 +14,7 @@ namespace IO.Message
         /// <summary>
         /// The message the server sends in reply to a client's hanshake message. See <see cref="HandshakeInit"/>. 
         /// </summary>
-        HandshakeReply,
+        HandshakeReply = 1,
 
         /// <summary>
         /// The messsage the server sends in a reply to a client's map request. 
@@ -72,5 +72,6 @@ namespace IO.Message
         /// </summary>
         RelayOrder,
 
+        ObjectSeen,
     }
 }

@@ -9,16 +9,17 @@ using Microsoft.Xna.Framework.Input;
 using IO;
 using Client.Sprites;
 using Client.Textures;
+using Client.UI.Common;
 
 namespace Client.UI
 {
     class SpellButton : Button
     {
-        private IAbility ability;
+        IAbility ability;
 
         public event Action AbilityChanged;
 
-        private void OnAbilityChanged()
+        void OnAbilityChanged()
         {
             this.TooltipText =
                 string.Format("{0}\n\nCooldown: {1}s\nMana: {2}\n\n{3}",

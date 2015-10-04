@@ -33,11 +33,11 @@ namespace Engine.Systems.Abilities
             const float range = 1f;
             const double angle = Math.PI / 4;   //todo: check angle
 
-            var units = Map.GetUnitsInRange(Owner.Location, range);
+            var units = Map.GetUnitsInRange(Owner.Position, range);
 
             var t = units
                 .Where(u => u != Owner)
-                .OrderBy(u => u.Location.DistanceTo(Owner.Location));
+                .OrderBy(u => u.Position.DistanceTo(Owner.Position));
 
             if (!t.Any())
             {

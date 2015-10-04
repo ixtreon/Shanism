@@ -104,28 +104,28 @@ namespace ShanoRPGWin.UI
 
         private void btnCreate_Click(object sender, EventArgs e)
         {
-            var name = "<enter hero name>";
-            if (InputBox.Show(ref name) == DialogResult.OK)
-            {
-                if (LocalHeroes.Heroes.Any(h => h.Name == name))
-                {
-                    MessageBox.Show("A hero with the same name already exists!");
-                    return;
-                }
+            //var name = "<enter hero name>";
+            //if (InputBox.Show(ref name) == DialogResult.OK)
+            //{
+            //    if (LocalHeroes.Heroes.Any(h => h.Name == name))
+            //    {
+            //        MessageBox.Show("A hero with the same name already exists!");
+            //        return;
+            //    }
 
-                if (name.Any(c => !char.IsLetter(c)))
-                {
-                    MessageBox.Show("The hero name must contain only letters. ");
-                    return;
-                }
+            //    if (name.Any(c => !char.IsLetter(c)))
+            //    {
+            //        MessageBox.Show("The hero name must contain only letters. ");
+            //        return;
+            //    }
 
-                var theHero = new Hero(Vector.Zero)
-                {
-                    Name = name,
-                };
-                theHero.Save();
-            }
-            ReloadHeroes();
+            //    //var theHero = new Hero(Vector.Zero)
+            //    //{
+            //    //    Name = name,
+            //    //};
+            //    //theHero.Save();
+            //}
+            //ReloadHeroes();
         }
 
         private void btnDelete_Click(object sender, EventArgs e)

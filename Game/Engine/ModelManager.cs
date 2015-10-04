@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using IO.Common;
 using IO.Content;
+using IO;
 
 namespace Engine
 {
@@ -36,12 +37,14 @@ namespace Engine
 
         public void Include(string name, int period = 1000)
         {
-            models.Add(name, new AnimationDef(new TextureDef("GameObjects\\" + name), period));
+            var fullName = TextureType.Model.GetDirectory(name);
+            models.Add(name, new AnimationDef(new TextureDef(fullName), period));
         }
 
         public void Include(string name, int xFrames, int yFrames, int period = 1000)
         {
-            models.Add(name, new AnimationDef(new TextureDef("GameObjects\\" + name, xFrames, yFrames), period));
+            var fullName = TextureType.Model.GetDirectory(name);
+            models.Add(name, new AnimationDef(new TextureDef(fullName, xFrames, yFrames), period));
         }
     }
 }

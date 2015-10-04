@@ -11,7 +11,7 @@ namespace Engine.Systems.Orders
     /// <summary>
     /// Casts an ability. 
     /// </summary>
-    struct CastOrder : Order
+    struct CastOrder : IOrder
     {
         public readonly Ability Ability;
 

@@ -4,18 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IO;
-using ProtoBuf;
+using IxSerializer.Modules;
+using IxSerializer.Modules;
 
 namespace IO.Common
 {
-    [ProtoContract]
+    [SerialKiller]
     public struct Vector
     {
         public static readonly Vector Zero = new Vector();
 
-        [ProtoMember(1)]
+        [SerialMember]
         double x;
-        [ProtoMember(2)]
+        [SerialMember]
         double y;
 
         public double X
@@ -28,6 +29,14 @@ namespace IO.Common
         {
             get { return y; }
             set { y = value; }
+        }
+
+        public double Angle
+        {
+            get
+            {
+                return Zero.AngleTo(this);
+            }
         }
 
         public Vector(double x, double y)
@@ -95,6 +104,11 @@ namespace IO.Common
         public static Vector operator *(Vector a, Vector b)
         {
             return new Vector(a.X * b.X, a.Y * b.Y);
+        }
+
+        public bool IsNan()
+        {
+            return double.IsNaN(x) || double.IsNaN(y);
         }
 
         public static bool operator ==(Vector a, Vector b)

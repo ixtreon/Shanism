@@ -9,15 +9,27 @@ using IO.Common;
 namespace Engine.Systems.Orders
 {
     /// <summary>
-    /// An order that instructs the given unit to follow a <see cref="MovementState"/>. 
+    /// An order that instructs the given unit to obey a <see cref="MovementState"/>. 
     /// </summary>
-    struct PlayerMoveOrder : Order
+    struct PlayerMoveOrder : IMoveOrder
     {
         public readonly MovementState State;
+
+        public double Direction { get; set; }
+
+        public Vector SuggestedLocation { get; private set; }
 
         public PlayerMoveOrder(MovementState state) 
         {
             this.State = state;
+
+            Direction = state.DirectionVector.Angle;
+            SuggestedLocation = Vector.Zero;
+        }
+
+        Vector nextLocation(Unit u)
+        {
+            return u.Position.PolarProjection(State.DirectionVector.Angle, u.MoveSpeed * 0.1);
         }
 
         public OrderType Type
@@ -27,10 +39,9 @@ namespace Engine.Systems.Orders
 
         public bool Update(Unit unit, int msElapsed)
         {
-            var v = State.DirectionVector;
-            var dist = unit.MoveSpeed * msElapsed / 1000;
-            
-            unit.Location += v * dist;
+            SuggestedLocation = nextLocation(unit);
+            unit.Move(msElapsed, Direction);
+
             return true;
         }
     }

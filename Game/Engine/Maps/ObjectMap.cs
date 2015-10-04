@@ -1,53 +1,88 @@
 ﻿using Engine.Objects;
 using IO.Common;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections;
+using System.Threading;
 
 namespace Engine.Maps
 {
-    /// <summary>
-    /// A map which keeps track of game objects of type T. 
-    /// 
-    /// Internally uses a <see cref="HashMap<T>"/>. 
-    /// </summary>
-    /// <typeparam name="T">The type of <see cref="GameObject"/> to track. </typeparam>
     public class ObjectMap<T> : IEnumerable<T>
         where T : GameObject
     {
+        //the underlying hashmap that stores the objects
+        HashMap<T> map = new HashMap<T>(new Vector(7));
+
+        //the units that are to be added on next update
+        volatile List<T> pendingAdds = new List<T>();
 
         /// <summary>
-        /// The underlying HashMap which keeps track of the objects. 
+        /// Raised whenever an object is added to the map. 
         /// </summary>
-        readonly HashMap<T> HashMap;
+        public event Action<T> ObjectAdded;
 
         /// <summary>
-        /// The size of the cells used by the HashMap instance. 
+        /// Raised whenever an object is removed from the map. 
         /// </summary>
-        public readonly int CellSize;
+        public event Action<T> ObjectRemoved;
 
         /// <summary>
-        /// The event fired right after a GameObject is added to the map. 
+        /// Raised whenever an object within the map is updated. 
         /// </summary>
-        public event Action<T> Added;
-
-        /// <summary>
-        /// The event fired just before a GameObject is destroyed and is to be removed from the map. 
-        /// </summary>
-        public event Action<T> Destroyed;
-
-        /// <summary>
-        /// The event fired whenever a GameObject in the map changes its location. 
-        /// </summary>
-        public event Action<T> Moved;
+        public event Action<T> ObjectUpdate;
 
 
-        public ObjectMap(bool canMove = true, int cellSize = 5)
+        public void Add(T obj)
         {
-            HashMap = new HashMap<T>(new Vector(CellSize));
-            CellSize = cellSize;
+            lock (pendingAdds)
+                pendingAdds.Add(obj);
+        }
+
+        /// <summary>
+        /// Adds pending objects and removes dead guys.
+        /// </summary>
+        /// <param name="msElapsed"></param>
+        public void Update(int msElapsed)
+        {
+            // add the pending objects
+            var newAddList = new List<T>();
+            var oldAddList = Interlocked.Exchange(ref pendingAdds, newAddList);
+            foreach (var obj in oldAddList.ToArray())
+            {
+                Debug.Assert(obj != null) ;
+
+                map.Add(obj, obj.Position);
+                ObjectAdded?.Invoke(obj);
+            }
+
+            //check there are no destroyed units before calling GameObject.Update
+            foreach (var obj in map)
+            {
+                Debug.Assert(!obj.MarkedForDestruction && !obj.IsDestroyed) ;
+
+                obj.Update(msElapsed);
+            }
+
+            foreach (var obj in map)
+            {
+                ObjectUpdate?.Invoke(obj);
+                obj.UpdateLocation();
+                map.Update(obj, obj.OldPosition, obj.Position);
+                obj.TryFinalise();
+            }
+
+            //remove dead units
+            var deadObjs = map.Where(obj => obj.IsDestroyed).ToArray();
+            foreach (var obj in deadObjs)
+            {
+                map.Remove(obj, obj.Position);
+                ObjectRemoved?.Invoke(obj);
+            }
         }
 
 
@@ -59,51 +94,17 @@ namespace Engine.Maps
         /// <returns>An enumeration of all objects within the rectangle. </returns>
         public IEnumerable<T> RangeQuery(Vector pos, Vector size)
         {
-            return HashMap.RangeQuery(pos, size);
-        }
-
-        /// <summary>
-        /// Adds the specified item to the ObjectMap 
-        /// and makes sure its position and state are updated
-        /// by subscribing to the <see cref="GameObject.LocationChanged"/> 
-        /// and <see cref="GameObject.Destroyed"/> events. 
-        /// </summary>
-        /// <param name="item">The item to add. </param>
-        public void Add(T item)
-        {
-            item.Destroyed += item_Destroyed;
-            item.LocationChanged += item_LocationChanged;
-            HashMap.Add(item, item.Location);
-
-            if (Added != null)
-                Added(item);
-        }
-
-        void item_LocationChanged(GameObject item)
-        {
-            HashMap.UpdateItem((T)item, item.OldLocation, item.Location);
-
-            if (Moved != null)
-                Moved((T)item);
-        }
-
-        void item_Destroyed(ScenarioObject item)
-        {
-            if (Destroyed != null)
-                Destroyed((T)item);
-
-            HashMap.TryRemove((T)item, ((T)item).Location);
+            return map.RangeQuery(pos, size);
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            foreach (var it in HashMap.Items)
-                yield return it;
+            return ((IEnumerable<T>)map).GetEnumerator();
         }
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            return this.GetEnumerator();
+            return ((IEnumerable<T>)map).GetEnumerator();
         }
     }
 }

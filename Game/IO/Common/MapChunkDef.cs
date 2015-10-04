@@ -1,4 +1,4 @@
-﻿using ProtoBuf;
+﻿using IxSerializer.Modules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ namespace IO.Common
     /// <summary>
     /// A map chunk identifier. Wrapper for a point. 
     /// </summary>
-    [ProtoContract]
+    [SerialKiller]
     public struct MapChunkId : IEquatable<MapChunkId>
     {
         /// <summary>
@@ -21,7 +21,7 @@ namespace IO.Common
         /// <summary>
         /// Gets the map id of the chunk. 
         /// </summary>
-        [ProtoMember(1)]
+        [SerialMember]
         public readonly Point ChunkId;
 
 

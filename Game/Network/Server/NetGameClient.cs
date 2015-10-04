@@ -3,9 +3,14 @@ using IO.Common;
 using IO.Message;
 using IO.Message.Client;
 using IO.Message.Server;
+using IO.Objects;
+using IxLog;
+using IxSerializer;
 using Lidgren.Network;
+using Network.Objects.Serializers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,7 +49,7 @@ namespace Network.Server
         /// <summary>
         /// Gets the GameServer instance serving this connection
         /// </summary>
-        public IGameReceptor GameReceptor { get; private set; }
+        public INetworkReceptor GameReceptor { get; private set; }
 
 
         string IGameClient.Name
@@ -67,18 +72,66 @@ namespace Network.Server
             ClientName = name;
         }
 
-        public void Initialize(IGameReceptor receptor)
+        public void Initialize(INetworkReceptor receptor)
         {
             GameReceptor = receptor;
             GameReceptor.ChunkReceived += GameReceptor_ChunkReceived;
+            GameReceptor.ObjectInVisionRange += GameReceptor_ObjectInVisionRange;
         }
-
 
         public void Update(int msElapsed)
         {
             updatePlayerState();
         }
 
+        #region IOMessage Handlers
+        public void SendPlayerStatusUpdate()
+        {
+            IOMessage msg;
+            if (GameReceptor.HasHero)
+            {
+                msg = new PlayerStatusMessage(GameReceptor.MainHero);
+                sendObject(GameReceptor.MainHero);
+            }
+            else
+                msg = new PlayerStatusMessage(GameReceptor.CameraPosition);
+
+            sendMessage(msg, NetDeliveryMethod.ReliableUnordered);
+        }
+
+        public void HandleMapRequest(MapRequestMessage msg)
+        {
+            GameReceptor.RequestChunk(msg.Chunk);
+        }
+
+        public void HandleMoveUpdate(MoveMessage msg)
+        {
+            GameReceptor.MovementState = msg.Direction;
+        }
+
+        public void HandleHandshake(bool accepted)
+        {
+            var ioMsg = new HandshakeReplyMessage(accepted);
+            sendMessage(ioMsg);
+        }
+        #endregion
+
+        #region GameReceptor event handlers
+        private void GameReceptor_ChunkReceived(MapChunkId arg1, TerrainType[,] arg2)
+        {
+            var msg = new MapReplyMessage(arg1, arg2);
+            sendMessage(msg);
+        }
+
+        private void GameReceptor_ObjectInVisionRange(IGameObject obj)
+        {
+            Console.WriteLine("{0} came in range!", obj);
+
+            sendObject(obj);
+        }
+        #endregion
+
+        #region GameReceptor trackers
         /// <summary>
         /// Informs the client whenever its hero has changed. 
         /// </summary>
@@ -92,42 +145,30 @@ namespace Network.Server
                 lastPlayerHero = playerHero;
             }
         }
+        #endregion
+
 
         /// <summary>
         /// Sends the given message to the game client. 
         /// </summary>
-        public void SendMessage(IOMessage msg, NetDeliveryMethod deliveryMethod = NetDeliveryMethod.ReliableUnordered)
+        private void sendMessage(IOMessage msg, NetDeliveryMethod deliveryMethod = NetDeliveryMethod.ReliableUnordered)
         {
             Server.SendMessage(msg.ToNetMessage(Server), ConnectionHandle, deliveryMethod);
-            Log.Info("Sent a {0} to {1}", msg.Type, ConnectionHandle.RemoteEndPoint.Address);
+            Log.Default.Info("Sent a {0} to {1}", msg.Type, ConnectionHandle.RemoteEndPoint.Address);
         }
 
-
-        public void SendPlayerStatusUpdate()
+        private void sendObject(IGameObject obj)
         {
-            IOMessage msg;
-            if (GameReceptor.HasHero)
-                msg = new PlayerStatusMessage(GameReceptor.MainHero);
-            else
-                msg = new PlayerStatusMessage(GameReceptor.CameraPosition);
-
-            SendMessage(msg, NetDeliveryMethod.ReliableUnordered);
+            sendObject(obj, obj.ObjectType);
         }
 
-        public void HandleMapRequest(MapRequestMessage msg)
+        private void sendObject(IGameObject obj, ObjectType sendAsType)
         {
-            GameReceptor.RequestChunk(msg.Chunk);
-        }
+            var objData = Serializer.GetWriter(w =>
+                Serializer.WriteInterfaceData(w, sendAsType.UnderlyingInterface, obj, skipUnknownFields: true));
+            var msg = new ObjectSeenMessage(sendAsType, obj.Guid, objData);
 
-        public void HandleMoveUpdate(MoveMessage msg)
-        {
-            GameReceptor.MovementState = msg.Direction;
-        }
-
-        private void GameReceptor_ChunkReceived(MapChunkId arg1, TerrainType[,] arg2)
-        {
-            var msg = new MapReplyMessage(arg1, arg2);
-            SendMessage(msg);
+            sendMessage(msg);
         }
     }
 }

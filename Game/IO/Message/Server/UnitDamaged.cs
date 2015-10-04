@@ -1,4 +1,4 @@
-﻿using ProtoBuf;
+﻿using IxSerializer.Modules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,18 +7,24 @@ using System.Threading.Tasks;
 
 namespace IO.Message.Server
 {
+    [SerialKiller]
     class UnitDamageMessage : IOMessage
     {
-        [ProtoMember(1)]
+        public override MessageType Type
+        {
+            get { return MessageType.UnitDamage; }
+        }
+
+        [SerialMember]
         public readonly int UnitId;
 
-        [ProtoMember(2)]
+        [SerialMember]
         public readonly float ValueChange;
 
-        [ProtoMember(3)]
+        [SerialMember]
         public readonly float NewValue;
 
-        [ProtoMember(4)]
+        [SerialMember]
         public readonly bool IsHealth;
 
 

@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Client.Sprites;
 using Client.UI;
+using IO.Content;
 
 namespace Client.Objects
 {
@@ -39,7 +40,8 @@ namespace Client.Objects
         public ObjectControl(IGameObject obj)
         {
             this.Object = obj;
-            Sprite = SpriteFactory.FromModel(obj.Model);
+            var model = obj.Model ?? AnimationDef.Default;
+            Sprite = SpriteFactory.FromModel(model);
             //Sprite.Tint = obj.Tint;
         }
 
@@ -53,7 +55,7 @@ namespace Client.Objects
             Sprite.Update(msElapsed);
 
             //update object position
-            var loc = CustomLocation ?? Object.Location.ToVector2();
+            var loc = CustomLocation ?? Object.Position.ToVector2();
             Vector2 sz = new Vector2((float)Object.Size / 2);
             var posLo = Screen.GameToUi(loc - sz);
             var posHi = Screen.GameToUi(loc + sz);
