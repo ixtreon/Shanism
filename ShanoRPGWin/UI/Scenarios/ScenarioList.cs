@@ -39,16 +39,19 @@ namespace ShanoRPGWin.UI.Scenarios
 
         public virtual void OnLibraryChanged()
         {
+            Nodes.Clear();
+            foreach (var path in Library?.Scenarios)
+                Nodes.Add(path, path);
         }
 
         public virtual void OnLibraryItemRemoved(string path)
         {
-
+            Nodes.RemoveByKey(path);
         }
 
         public virtual void OnLibraryItemAdded(string path)
         {
-            //this.Nodes.Add()
+            this.Nodes.Add(path, path);
         }
 
         public ScenarioList()

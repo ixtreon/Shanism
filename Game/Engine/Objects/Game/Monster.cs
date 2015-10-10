@@ -52,7 +52,7 @@ namespace Engine.Objects.Game
             }
         }
         public Monster(Monster prototype)
-            : this(prototype.Model, prototype.Position, prototype.Level)
+            : this(prototype.ModelString, prototype.Position, prototype.Level)
         {
 
         }

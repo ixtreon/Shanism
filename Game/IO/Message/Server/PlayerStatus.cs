@@ -1,5 +1,5 @@
 ﻿using IO.Common;
-using IxSerializer.Modules;
+using IxSerializer.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +22,7 @@ namespace IO.Message.Server
         [SerialMember]
         public readonly Vector CameraPosition;
 
-        private PlayerStatusMessage() { }
+        //private PlayerStatusMessage() { }
 
         /// <summary>
         /// Informs the client of the id of its hero. 
@@ -38,9 +38,9 @@ namespace IO.Message.Server
         /// Informs the client that it is currently observing. 
         /// </summary>
         /// <param name="cameraPos"></param>
-        public PlayerStatusMessage(Vector cameraPos)
+        public PlayerStatusMessage()
         {
-            CameraPosition = cameraPos;
+            CameraPosition = new Vector();
         }
     }
 }

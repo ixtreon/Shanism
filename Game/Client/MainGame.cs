@@ -13,13 +13,15 @@ using Client.Map;
 using Client.Controls;
 using Client.Textures;
 using IO.Message.Client;
+using IO.Message.Server;
+using IO.Message;
 
 namespace Client
 {
     /// <summary>
     /// This is the main type for our game
     /// </summary>
-    public class MainGame : Game, IGameClient
+    public class MainGame : Game, IClient
     {
         GraphicsDeviceManager graphics;
 
@@ -30,15 +32,15 @@ namespace Client
         /// </summary>
         UiManager mainInterface;
 
-        public IGameReceptor Server { get; private set; }
+        public IReceptor Server { get; private set; }
 
         public GameStatus GameState { get; private set; } = GameStatus.Loading;
 
 
         public readonly string PlayerName;
+        
 
         public string LoadState { get; private set; }
-
 
         /// <summary>
         /// Raised when the game has finished loading. 
@@ -46,28 +48,29 @@ namespace Client
         public event Action GameLoaded;
 
 
-        bool HasHero
-        {
-            get { return localHero != null; }
-        }
+        #region IGameClient
+        public event Action<MoveMessage> MovementStateChanged;
+        public event Action<ActionMessage> ActionActivated;
+        public event Action<ChatMessage> ChatMessageSent;
+        public event Action<MapRequestMessage> MapRequested;
+        public event Action HandshakeInit;
 
-        string IGameClient.Name
+        string IClient.Name
         {
             get { return PlayerName; }
         }
+        #endregion
 
-        /// <summary>
-        /// Gets the local hero. 
-        /// </summary>
-        IHero localHero
+        public bool IsConnected { get; private set; }
+
+        IO.Common.Vector CameraPosition
         {
-            get { return Server.MainHero; }
+            get { return ObjectManager.MainHero?.Position ?? IO.Common.Vector.Zero; }
         }
-
 
         Rectangle lastWindowBounds;
 
-        private ObjectManager ObjectManager;
+        private ObjectManager ObjectManager = new ObjectManager();
 
         private MapManager MapManager;
 
@@ -89,19 +92,50 @@ namespace Client
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
         }
+        
 
-        // Also accepts a method to update the local server's state. 
-        public MainGame(string playerName, IGameReceptor server)
-            : this(playerName)
-        {
-            Server = server;
-        }
-
-        public void SetServer(IGameReceptor server)
+        public void SetEngine(IEngine engine)
         {
             if (Server != null)
                 throw new InvalidOperationException("Already got a server!");
+
+            //request to join lel
+        }
+
+        public void SetReceptor(IReceptor server)
+        {
             Server = server;
+
+            Server.ObjectSeen += server_ObjectSeen;
+            Server.ObjectUnseen += server_ObjectUnseen;
+            Server.MainHeroChanged += server_MainHeroChanged;
+            Server.MapChunkReceived += server_MapChunkReceived;
+            Server.HandshakeReplied += server_ConnectionChanged;
+        }
+
+        void server_ConnectionChanged(HandshakeReplyMessage msg)
+        {
+            IsConnected = msg.Success;
+        }
+
+        void server_MapChunkReceived(MapReplyMessage msg)
+        {
+            MapManager.HandleMapReply(msg);
+        }
+
+        void server_MainHeroChanged(PlayerStatusMessage msg)
+        {
+            ObjectManager.SetMainHero(msg.HeroId);
+        }
+
+        void server_ObjectUnseen(IGameObject obj)
+        {
+            ObjectManager.RemoveObject(obj.Guid);
+        }
+
+        void server_ObjectSeen(IGameObject obj)
+        {
+            ObjectManager.AddObject(obj);
         }
 
         /// <summary>
@@ -120,9 +154,8 @@ namespace Client
             mainInterface = new UiManager();
             mainInterface.OnActionPerformed += MainInterface_OnActionPerformed;
 
-            this.ObjectManager = new ObjectManager();
-
-            this.MapManager = new MapManager(Server, GraphicsDevice);
+            this.MapManager = new MapManager(GraphicsDevice);
+            MapManager.ChunkRequested += MapManager_ChunkRequested;
 
             this.mainInterface.Add(ObjectManager);
 
@@ -131,27 +164,47 @@ namespace Client
                 mainInterface.Target = u;
             };
 
-            Screen.Update(graphics, Server.CameraPosition, Server.HasHero);
+            Screen.Update(graphics, ObjectManager.MainHero);
 
-            this.IsMouseVisible = true;
-            this.Window.AllowUserResizing = true;
-            this.Window.ClientSizeChanged += Window_ClientSizeChanged;
+            IsMouseVisible = true;
+            Window.AllowUserResizing = true;
+            Window.ClientSizeChanged += Window_ClientSizeChanged;
             Window_ClientSizeChanged(null, null);
+
+
+            GameState = GameStatus.Playing;
+            if (GameLoaded != null)
+                GameLoaded();
         }
 
+        /// <summary>
+        /// Listens to the MapManager requesting chunks and relays them to the server. 
+        /// </summary>
+        private void MapManager_ChunkRequested(IO.Common.MapChunkId obj)
+        {
+            MapRequested(new MapRequestMessage(obj));
+        }
+
+        /// <summary>
+        /// Listens to the interface sending actions and relays them to the server. 
+        /// </summary>
+        /// <param name="msg"></param>
         private void MainInterface_OnActionPerformed(ActionMessage msg)
         {
-            Server.RegisterAction(msg);
+            ActionActivated(msg);
         }
 
+        /// <summary>
+        /// Changes the back buffer size in response to window resize. 
+        /// </summary>
         private void Window_ClientSizeChanged(object sender, EventArgs e)
         {
-            var s = this.Window.ClientBounds;
-            if (s != lastWindowBounds)
+            var sz = Window.ClientBounds;
+            if (sz != lastWindowBounds)
             {
-                lastWindowBounds = s;
-                graphics.PreferredBackBufferWidth = s.Width;
-                graphics.PreferredBackBufferHeight = s.Height;
+                lastWindowBounds = sz;
+                graphics.PreferredBackBufferWidth = sz.Width;
+                graphics.PreferredBackBufferHeight = sz.Height;
                 graphics.ApplyChanges();
             }
         }
@@ -189,30 +242,29 @@ namespace Client
             var msElapsed = (int)gameTime.ElapsedGameTime.TotalMilliseconds;
 
             //update the local server
-            Server.Update(msElapsed);
+            Server.UpdateServer(msElapsed);
 
-            if (!Server.Connected)
+            if (!IsConnected)
                 return;
 
-            mainInterface.TargetHero = localHero;
+            mainInterface.TargetHero = ObjectManager.MainHero;
 
             //update cameraInfo
-            Screen.Update(graphics, Server.CameraPosition, Server.HasHero);
+            Screen.Update(graphics, ObjectManager.MainHero);
 
             // keyboard
             KeyManager.Update(msElapsed);
             UpdateKeys();
 
             // object manager
-            var objs = Server.VisibleObjects;
-            ObjectManager.Update(msElapsed, objs);
+            ObjectManager.Update(msElapsed);
             ObjectManager.SendToBack();
 
             //user interface
             mainInterface.DoUpdate(msElapsed);
 
             //terrain
-            MapManager.Update();
+            MapManager.Update(CameraPosition);
 
 
             // overrides the hero position to the one we've just received. 
@@ -223,6 +275,7 @@ namespace Client
             base.Update(gameTime);
         }
 
+        MovementState lastMoveState;
 
         public void UpdateKeys()
         {
@@ -232,7 +285,13 @@ namespace Client
             //movement
             var dx = b2i(KeyManager.IsDown(Keybind.MoveRight)) - b2i(KeyManager.IsDown(Keybind.MoveLeft));
             var dy = b2i(KeyManager.IsDown(Keybind.MoveDown)) - b2i(KeyManager.IsDown(Keybind.MoveUp));
-            Server.MovementState = new MovementState(dx, dy);
+
+            var moveState = new MovementState(dx, dy);
+            if(moveState != lastMoveState)
+            {
+                lastMoveState = moveState;
+                MovementStateChanged(new MoveMessage(moveState));
+            }
 
             //health bars
             if(KeyManager.IsActivated(Keybind.ShowHealthBars))
@@ -251,25 +310,19 @@ namespace Client
         protected override void Draw(GameTime gameTime)
         {
 
-            if(!Server.Connected)
+            if(!IsConnected)
             {
                 drawConnectingScreen();
                 return;
             }
 
-            if(GameState == GameStatus.Loading)
-            {
-                GameState = GameStatus.Playing;
-                if(GameLoaded != null)
-                    GameLoaded();
-            }
 
             if (Server != null)
             {
                 GraphicsDevice.Clear(Color.CornflowerBlue);
 
                 //1. draw terrain (basiceffect)
-                MapManager.DrawTerrain();
+                MapManager.DrawTerrain(CameraPosition);
 
                 //start spritebatch drawing
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.DepthRead, RasterizerState.CullNone);

@@ -24,7 +24,7 @@ namespace Network.Server
     /// <para/>
     /// Tightly coupled with the network server. 
     /// </summary>
-    public class NetGameClient : IGameClient
+    public class NetGameClient : IClient
     {
         /// <summary>
         /// Gets the underlying NetConnection. 
@@ -49,21 +49,22 @@ namespace Network.Server
         /// <summary>
         /// Gets the GameServer instance serving this connection
         /// </summary>
-        public INetworkReceptor GameReceptor { get; private set; }
+        public IReceptor GameReceptor { get; private set; }
 
 
-        string IGameClient.Name
+        string IClient.Name
         {
             get { return ClientName; }
         }
+        
 
-
-        #region State Tracking
-
-        private IHero lastPlayerHero = null;
-
+        #region Receptor events
+        public event Action<MoveMessage> MovementStateChanged;
+        public event Action<ActionMessage> ActionActivated;
+        public event Action<ChatMessage> ChatMessageSent;
+        public event Action<MapRequestMessage> MapRequested;
+        public event Action HandshakeInit;
         #endregion
-
 
         public NetGameClient(NetServer serv, NetConnection conn, string name)
         {
@@ -72,78 +73,104 @@ namespace Network.Server
             ClientName = name;
         }
 
-        public void Initialize(INetworkReceptor receptor)
-        {
-            GameReceptor = receptor;
-            GameReceptor.ChunkReceived += GameReceptor_ChunkReceived;
-            GameReceptor.ObjectInVisionRange += GameReceptor_ObjectInVisionRange;
-        }
-
         public void Update(int msElapsed)
         {
-            updatePlayerState();
+
         }
 
-        #region IOMessage Handlers
-        public void SendPlayerStatusUpdate()
-        {
-            IOMessage msg;
-            if (GameReceptor.HasHero)
-            {
-                msg = new PlayerStatusMessage(GameReceptor.MainHero);
-                sendObject(GameReceptor.MainHero);
-            }
-            else
-                msg = new PlayerStatusMessage(GameReceptor.CameraPosition);
-
-            sendMessage(msg, NetDeliveryMethod.ReliableUnordered);
-        }
-
-        public void HandleMapRequest(MapRequestMessage msg)
-        {
-            GameReceptor.RequestChunk(msg.Chunk);
-        }
-
-        public void HandleMoveUpdate(MoveMessage msg)
-        {
-            GameReceptor.MovementState = msg.Direction;
-        }
-
-        public void HandleHandshake(bool accepted)
+        public void SendHandshake(bool accepted)
         {
             var ioMsg = new HandshakeReplyMessage(accepted);
             sendMessage(ioMsg);
         }
-        #endregion
 
-        #region GameReceptor event handlers
-        private void GameReceptor_ChunkReceived(MapChunkId arg1, TerrainType[,] arg2)
+
+        /// <summary>
+        /// Hooks up the net client to the receptor's events.
+        /// </summary>
+        public void Initialize(IReceptor receptor)
         {
-            var msg = new MapReplyMessage(arg1, arg2);
+            GameReceptor = receptor;
+
+            //attach to the game receptor events
+            GameReceptor.AnyUnitAction += GameReceptor_AnyUnitAction;
+            GameReceptor.HandshakeReplied += GameReceptor_ConnectionChanged;
+
+            GameReceptor.MainHeroChanged += GameReceptor_MainHeroChanged;
+            GameReceptor.MapChunkReceived += GameReceptor_MapChunkReceived;
+
+            GameReceptor.ObjectSeen += GameReceptor_ObjectSeen;
+            GameReceptor.ObjectUnseen += GameReceptor_ObjectUnseen;
+        }
+
+
+        private void GameReceptor_MapChunkReceived(MapReplyMessage msg)
+        {
             sendMessage(msg);
         }
 
-        private void GameReceptor_ObjectInVisionRange(IGameObject obj)
+        private void GameReceptor_ConnectionChanged(HandshakeReplyMessage msg)
         {
-            Console.WriteLine("{0} came in range!", obj);
+            sendMessage(msg);
+        }
+
+
+        #region Incoming IOMessage Handlers
+
+        internal void HandleMessage(IOMessage msg)
+        {
+            switch (msg.Type)
+            {
+                case MessageType.MapRequest:    // client wants map chunks
+                    MapRequested?.Invoke((MapRequestMessage)msg);
+                    break;
+                case MessageType.MoveUpdate:    // client wants to move
+                    MovementStateChanged((MoveMessage)msg);
+                    break;
+                case MessageType.SendChat:      // client wants to chat
+                    handleChatMessage((ChatMessage)msg);
+                    break;
+                case MessageType.Action:        // client wants to do stuff
+                    handleActionMessage((ActionMessage)msg);
+                    break;
+            }
+        }
+
+        void handleActionMessage(ActionMessage msg)
+        {
+            throw new NotImplementedException();
+        }
+
+        void handleChatMessage(ChatMessage msg)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+
+        #region Outgoing IOMessage handlers
+
+        private void GameReceptor_ObjectSeen(IGameObject obj)
+        {
+            Console.WriteLine("Someone saw {0}!", obj);
 
             sendObject(obj);
         }
-        #endregion
 
-        #region GameReceptor trackers
-        /// <summary>
-        /// Informs the client whenever its hero has changed. 
-        /// </summary>
-        private void updatePlayerState()
+        private void GameReceptor_AnyUnitAction(IUnit obj)
         {
-            var playerHero = GameReceptor.MainHero;
-            if (lastPlayerHero != playerHero)
-            {
-                SendPlayerStatusUpdate();
+            throw new NotImplementedException();
+        }
 
-                lastPlayerHero = playerHero;
-            }
+        private void GameReceptor_MainHeroChanged(PlayerStatusMessage msg)
+        {
+            sendMessage(msg);
+        }
+
+        private void GameReceptor_ObjectUnseen(IGameObject obj)
+        {
+            Console.WriteLine("Someone unsaw {0}!", obj);
         }
         #endregion
 
@@ -165,7 +192,7 @@ namespace Network.Server
         private void sendObject(IGameObject obj, ObjectType sendAsType)
         {
             var objData = Serializer.GetWriter(w =>
-                Serializer.WriteInterfaceData(w, sendAsType.UnderlyingInterface, obj, skipUnknownFields: true));
+                InterfaceSerializer.WriteInterfaceData(w, sendAsType.UnderlyingInterface, obj, skipUnknownFields: true));
             var msg = new ObjectSeenMessage(sendAsType, obj.Guid, objData);
 
             sendMessage(msg);

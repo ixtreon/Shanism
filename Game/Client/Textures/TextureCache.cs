@@ -54,7 +54,7 @@ namespace Client.Textures
         static void loadTextures()
         {
             //enumerate all png files in the content directory. 
-            foreach (var f in System.IO.Directory.EnumerateFiles(ContentDir, "*.png", SearchOption.AllDirectories))
+            foreach (var f in Directory.EnumerateFiles(ContentDir, "*.png", SearchOption.AllDirectories))
             {
                 var fne = f
                     .Take(f.LastIndexOf("."))   // remove extension

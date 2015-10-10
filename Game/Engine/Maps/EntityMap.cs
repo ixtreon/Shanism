@@ -7,6 +7,7 @@ using Engine.Objects;
 using IO.Common;
 using Engine.Objects.Game;
 using System.Diagnostics;
+using System.Collections;
 
 namespace Engine.Maps
 {
@@ -15,8 +16,11 @@ namespace Engine.Maps
     /// </summary>
     public partial class EntityMap
     {
+        //contains objects keyed by their location
+        readonly ObjectMap<GameObject> map;
 
-        readonly ObjectMap<GameObject> map = new ObjectMap<GameObject>();
+        //contains objects keyed by their guid
+        readonly Hashtable objectsGuidTable;
 
         public IEnumerable<GameObject> Objects
         {
@@ -25,13 +29,21 @@ namespace Engine.Maps
 
         public EntityMap()
         {
+            objectsGuidTable = new Hashtable();
+            map = new ObjectMap<GameObject>();
             map.ObjectUpdate += onObjectUpdate;
-            map.ObjectAdded += onObjectAdded;
         }
 
         public void Add(GameObject obj)
         {
+            objectsGuidTable.Add(obj.Guid, obj);
             map.Add(obj);
+        }
+
+        public GameObject GetByGuid(int guid)
+        {
+            var obj = objectsGuidTable[guid];
+            return (GameObject)obj;
         }
 
         /// <summary>

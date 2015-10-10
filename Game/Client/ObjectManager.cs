@@ -1,97 +1,116 @@
-﻿using System;
+﻿using Client.Objects;
+using Client.UI;
+using IO;
+using IO.Objects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IO;
-using IO.Objects;
-using Microsoft.Xna.Framework.Graphics;
-using Client.UI;
-using Client.Objects;
 
 namespace Client
 {
-
-    /// <summary>
-    /// Keeps an up-to-date list of all nearby units (TODO: objects too!) and displays them on the screen. 
-    /// </summary>
     class ObjectManager : Control
     {
+        static Dictionary<Type, Func<IGameObject, ObjectControl>> gameObjectToControlMap = new Dictionary<Type, Func<IGameObject, ObjectControl>>
+        {
+            { typeof(IHero), (o) => new HeroControl((IHero)o) },
+            { typeof(IUnit), (o) => new UnitControl((IUnit)o) },
+            { typeof(IDoodad), (o) => new DoodadControl((IDoodad)o) },
+        };
 
-        public UnitControl LocalHero { get; private set; }
+        public int MainHeroGuid { get; private set; }
 
+        HeroControl _mainHeroControl;
+        public HeroControl MainHeroControl
+        {
+            get
+            {
+                if(_mainHeroControl == null)
+                    _mainHeroControl = objects.TryGet(MainHeroGuid) as HeroControl;
+                return _mainHeroControl;
+            }
+        }
+
+        public IHero MainHero
+        {
+            get { return MainHeroControl?.Hero; }
+        }
+
+        
         /// <summary>
         /// A dictionary of all objects indexed by their guid. 
         /// </summary>
-        Dictionary<int, ObjectControl> Objects = new Dictionary<int, ObjectControl>();
+        Dictionary<int, ObjectControl> objects = new Dictionary<int, ObjectControl>();
 
         /// <summary>
         /// The event raised whenever a unit was clicked. 
         /// </summary>
         public event Action<UnitControl> UnitClicked;
 
-        public void Update(int msElapsed, IEnumerable<IGameObject> newObjects)
-        { 
-            // mark all units for removal at first
-            var toRemove = new HashSet<int>(Objects.Values.Select(o => o.Object.Guid));
-
-            //add new units, or mark existing ones as not-to-remove
-            foreach(var o in newObjects.ToArray())
+        public IEnumerable<IGameObject> VisibleObjects
+        {
+            get
             {
-                if (this.Objects.ContainsKey(o.Guid))
-                    toRemove.Remove(o.Guid);            // don't remove if it's here now
-                else
-                    addObject(o);                       // an (actually) new guy 
+                return objects.Select(kvp => kvp.Value.Object).ToArray();
             }
-            
-            //remove old units
-            foreach (var guid in toRemove)
-                    removeObject(guid);
+        }
 
+        public override void Update(int msElapsed)
+        {
             // update everyone who is still around
-            foreach (var u in Objects.Values)
-            {
+            foreach (var u in objects.Values)
                 u.Update(msElapsed);
-            }
-
-            base.Update(msElapsed);
         }
 
-        void removeObject(int guid)
+        public void AddObject(IGameObject o)
         {
-            //never remove the local hero
-            if (LocalHero != null && guid == LocalHero.Unit.Guid)
-                return;
+            Console.WriteLine("SAW A NIGGER: " + o.GetType().Name);
+            //get the control constructor for this type of game object. 
+            var mapping = gameObjectToControlMap
+                .Where(kvp => kvp.Key.IsAssignableFrom(o.GetType()))
+                .Select(kvp => kvp.Value)
+                .FirstOrDefault();
 
-            this.Remove(Objects[guid]);
-            Objects.Remove(guid);
-        }
-
-        ObjectControl addObject(IGameObject o)
-        {
-            //TODO: fix for doodads, sfx
-            ObjectControl gameObject = null;
-            if (typeof(IUnit).IsAssignableFrom(o.GetType()))
-                gameObject = new UnitControl((IUnit)o);
-            else if (typeof(IDoodad).IsAssignableFrom(o.GetType()))
-                gameObject = new DoodadControl((IDoodad)o);
-            else
+            if(mapping == null)
                 throw new Exception("Some type of object we don't recognize yet!");
 
+            //create the UI control
+            var gameObject = mapping(o);
+
+            //hook to events
             gameObject.MouseDown += gameObject_MouseDown;
 
-            Objects.Add(o.Guid, gameObject); 
+            //add to the dictionary
+            objects[o.Guid] = gameObject;
 
+            //add the UI control
             this.Add(gameObject);
-            return gameObject;
+        }
+
+        public void RemoveObject(int guid)
+        {
+            ////never remove the local hero
+            //if (LocalHero != null && guid == LocalHero.Unit.Guid)
+            //    return;
+
+            try
+            {
+                this.Remove(objects[guid]);
+            }
+            catch { }
+            objects.Remove(guid);
+        }
+
+        public void SetMainHero(int guid)
+        {
+            MainHeroGuid = guid;
         }
 
         void gameObject_MouseDown(Control c, Microsoft.Xna.Framework.Vector2 pos)
         {
             if (c is UnitControl)
-                if (UnitClicked != null)
-                    UnitClicked((UnitControl)c);
+                UnitClicked?.Invoke((UnitControl)c);
         }
-
     }
 }

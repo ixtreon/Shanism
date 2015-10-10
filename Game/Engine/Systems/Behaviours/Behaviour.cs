@@ -40,8 +40,14 @@ namespace Engine.Systems.Behaviours
         {
             this.unit = u;
 
-            unit.UnitInVisionRange += OnUnitInVisionRange;
+            unit.ObjectSeen += OnObjectSeen;
             unit.DamageReceived += OnDamageReceived;
+        }
+
+        private void OnObjectSeen(GameObject obj)
+        {
+            if (obj is Unit)
+                OnUnitInVisionRange((Unit)obj);
         }
 
         public Behaviour(Behaviour b)
@@ -54,9 +60,9 @@ namespace Engine.Systems.Behaviours
         protected virtual void OnDamageReceived(UnitDamagedArgs args) { }
 
         /// <summary>
-        /// The event fired whenever the controlled unit takes damage. 
+        /// The event fired whenever a unit comes in range. 
         /// </summary>
-        protected virtual void OnUnitInVisionRange(RangeArgs<Unit> args) { }
+        protected virtual void OnUnitInVisionRange(Unit unit) { }
 
         /// <summary>
         /// Returns whether the current behaviour should take control of the character. 

@@ -24,7 +24,7 @@ namespace Network
     /// 
     /// Emulates a local game server to fool the game client. 
     /// </summary>
-    public class LClient : LPeer, IGameReceptor
+    public class LClient : LPeer, IReceptor
     {
 
         public readonly string PlayerName;
@@ -34,34 +34,32 @@ namespace Network
         bool isConnected = false;
 
         #region GameReceptor fields and properties
-        public event Action<MapChunkId, TerrainType[,]> ChunkReceived;
+        public event Action<HandshakeReplyMessage> HandshakeReplied;
+        public event Action<PlayerStatusMessage> MainHeroChanged;
+        public event Action<MapReplyMessage> MapChunkReceived;
+        public event Action<IGameObject> ObjectUnseen;
+        public event Action<IGameObject> ObjectSeen;
+        public event Action<IUnit> AnyUnitAction;
 
-        public MovementState MovementState { get; set; }
+        #endregion
 
-        public Vector CameraPosition { get; private set; }
+        //public MovementState MovementState { get; set; }
+
+        //public Vector CameraPosition { get; private set; }
 
         public IHero MainHero { get; private set; }
 
-        public IEnumerable<IGameObject> VisibleObjects
-        {
-            get
-            {
-                return ObjectFactory.RangeQuery(CameraPosition - Constants.Client.WindowSize / 2, Constants.Client.WindowSize);
-            }
-        }
+        //public IEnumerable<IGameObject> VisibleObjects
+        //{
+        //    get
+        //    {
+        //        return ObjectFactory.RangeQuery(CameraPosition - Constants.Client.WindowSize / 2, Constants.Client.WindowSize);
+        //    }
+        //}
 
-        bool IGameReceptor.Connected { get { return isConnected; } }
 
-        public bool HasHero { get { return MainHero != null; } }
+        public IClient GameClient { get; private set; }
 
-        #endregion
-
-        #region State Tracking Vars
-
-        Vector lastCameraPosition = new Vector();
-        MovementState lastMovementState = MovementState.Stand;
-
-        #endregion
 
         static LClient()
         {
@@ -69,6 +67,8 @@ namespace Network
 
             SerializerModules.Init();
         }
+
+
 
         public LClient(string hostAddress, string name)
             : base(new NetClient(new NetPeerConfiguration(AppIdentifier)))
@@ -79,16 +79,27 @@ namespace Network
             var conn = NetClient.Connect(hostAddress, NetworkPort);
         }
 
+        public void SetClient(IClient client)
+        {
+            this.GameClient = client;
+
+            //event handling lol
+            client.ActionActivated += SendMessage;
+            client.ChatMessageSent += SendMessage;
+            client.MapRequested += SendMessage;
+            client.MovementStateChanged += SendMessage;
+            client.HandshakeInit += () => { };
+        }
+
+
+
         public override void Update(int msElapsed)
         {
-            base.Update(msElapsed);
-
-            updateMovementState();
         }
 
         internal override void OnConnected(NetConnection conn)
         {
-            //send a handshake init
+            //send a handshake init no matter if the client requested it or not, lel
             HandshakeInitMessage ioMsg = new HandshakeInitMessage(PlayerName);
             SendMessage(ioMsg);
         }
@@ -130,17 +141,6 @@ namespace Network
             }
         }
 
-        void updateMovementState()
-        {
-            if (lastMovementState != MovementState)
-            {
-                var msg = new MoveMessage(MovementState);
-                SendMessage(msg);
-
-                lastMovementState = MovementState;
-            }
-        }
-
         void handleObjectSeen(ObjectSeenMessage ioMsg)
         {
             IGameObject obj = null;
@@ -148,25 +148,25 @@ namespace Network
             {
                 var objType = ioMsg.ObjectType;
                 if (objType == ObjectType.Hero)
-                    obj = Serializer.ReadInterfaceData<IHero, HeroStub>(r, skipUnknownFields: true);
+                    obj = InterfaceSerializer.ReadInterfaceData<IHero, HeroStub>(r, skipUnknownFields: true);
 
                 else if (objType == ObjectType.Unit)
-                    obj = Serializer.ReadInterfaceData<IUnit, UnitStub>(r, skipUnknownFields: true);
+                    obj = InterfaceSerializer.ReadInterfaceData<IUnit, UnitStub>(r, skipUnknownFields: true);
 
                 else if (objType == ObjectType.Doodad)
-                    obj = Serializer.ReadInterfaceData<IDoodad, DoodadStub>(r, skipUnknownFields: true);
+                    obj = InterfaceSerializer.ReadInterfaceData<IDoodad, DoodadStub>(r, skipUnknownFields: true);
 
                 else
                     Log.Default.Warning("Unrecognized object type: {0}", objType.ToString());
             });
 
-            ObjectFactory.AddOrUpdate(ioMsg.ObjectType, ioMsg.Guid, obj);
+            ObjectSeen(obj);
         }
 
         void handleMapReply(MapReplyMessage msg)
         {
             //invoke the ChunkReceived event
-            ChunkReceived?.Invoke(msg.Chunk, msg.Data);
+            MapChunkReceived?.Invoke(msg);
         }
 
         void handleStatusUpdate(PlayerStatusMessage m)
@@ -181,38 +181,26 @@ namespace Network
         void handleHandshake(HandshakeReplyMessage m)
         {
             Console.WriteLine("Got a handshake reply. Everything OK? {0}", m.Success);
-
-            if(m.Success)
-            {
-                isConnected = true;
-
-            }
+            HandshakeReplied(m);
         }
+        
 
-        public void RequestChunk(MapChunkId chunk)
+
+        void SendMessage(IOMessage ioMsg)
         {
-            if(!isConnected)
-            {
-                Console.WriteLine("No server connection!");
-                return;
-            }
-
-            //ask the server for a chunk
-            var ioMsg = new MapRequestMessage(chunk);
-            SendMessage(ioMsg);
+            SendMessage(ioMsg, NetDeliveryMethod.ReliableUnordered);
         }
 
-        public void RegisterAction(ActionMessage p)
-        {
-            //inform the server about an action to be performed
-            //NYI
-        }
-
-        void SendMessage(IOMessage ioMsg, NetDeliveryMethod deliveryMethod = NetDeliveryMethod.ReliableUnordered)
+        void SendMessage(IOMessage ioMsg, NetDeliveryMethod deliveryMethod)
         {
             var msg = ioMsg.ToNetMessage(NetClient);
             NetClient.SendMessage(msg, deliveryMethod);
             Log.Default.Info("Sent a {0}", ioMsg.Type);
+        }
+
+        public void UpdateServer(int msElapsed)
+        {
+            base.Update(msElapsed);
         }
     }
 }

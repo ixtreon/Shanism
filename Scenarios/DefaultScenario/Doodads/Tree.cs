@@ -11,9 +11,10 @@ namespace DefaultScenario.Doodads
     class Tree : Doodad
     {
         public Tree(Vector location)
-            : base("Tree", location)
+            : base("pruchka", location)
         {
-            this.Model = "tree";
+            this.Size = 5;
+            this.ModelString = "tree";
         }
     }
 }

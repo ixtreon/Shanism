@@ -13,18 +13,44 @@ namespace Engine.Systems
     /// </summary>
     public abstract class CustomScript : ScenarioObject
     {
+        /// <summary>
+        /// Uses the <paramref name="manager"/> object to declare the models used in this scenario. 
+        /// </summary>
         public virtual void LoadModels(ModelManager manager) { }
 
+        /// <summary>
+        /// The method executed when the game has started. 
+        /// </summary>
         public virtual void GameStart() { }
 
-        public virtual void OnPlayerJoined(Player p) { }
+        /// <summary>
+        /// The method executed when a player has joined the game. 
+        /// </summary>
+        /// <param name="pl">The player who joined the game. </param>
+        public virtual void OnPlayerJoined(Player pl) { }
 
+        /// <summary>
+        /// The method executed when a hero is created. 
+        /// </summary>
+        /// <param name="hero"></param>
         public virtual void OnHeroSpawned(Hero hero) { }
 
+        /// <summary>
+        /// NYI
+        /// </summary>
+        /// <param name="unit"></param>
         public virtual void OnUnitAdded(Unit unit) { }
 
+        /// <summary>
+        /// NYI
+        /// </summary>
+        /// <param name="d"></param>
         public virtual void OnDoodadAdded(Doodad d) { }
 
+        /// <summary>
+        /// NYI
+        /// </summary>
+        /// <param name="d"></param>
         public virtual void OnUnitDeath(Unit unit) { }
     }
 }

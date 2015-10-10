@@ -56,7 +56,7 @@ namespace Engine.Systems.Behaviours
 
         public override void Update(int msElapsed)
         {
-            CurrentOrder = new CastOrder(AbilityTarget, Ability);
+            CurrentOrder = new CastOrder(Ability, AbilityTarget);
         }
     }
 }

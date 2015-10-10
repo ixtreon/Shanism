@@ -23,12 +23,11 @@ namespace Engine
     /// 
     /// If the player does not have a main hero he is to be spectating. 
     /// </summary>
-    public class Player : IGameReceptor, IPlayer, INetworkReceptor
+    public class Player : IPlayer, IReceptor
     {
         const double SpectatorMoveSpeed = 5;
 
         public static int LastPlayerId = 0;
-
 
         /// <summary>
         /// The neutral aggressive NPC player. Attacks players on sight. 
@@ -40,6 +39,8 @@ namespace Engine
         /// </summary>
         public static readonly Player NeutralFriendly = new Player("Neutral Friendly");
 
+
+
         /// <summary>
         /// The engine this player is part of. 
         /// </summary>
@@ -48,20 +49,15 @@ namespace Engine
         /// <summary>
         /// Gets the client handle of this player. 
         /// </summary>
-        readonly IGameClient InputDevice;
+        readonly IClient InputDevice;
 
-
-        Vector customCameraPosition;
+        //Vector customCameraPosition;
 
         /// <summary>
         /// All units controlled by the player. 
         /// </summary>
         readonly HashSet<Unit> controlledUnits = new HashSet<Unit>();
-
-        /// <summary>
-        /// Gets or sets the movement state of the main hero. 
-        /// </summary>
-        public MovementState MovementState { get; set; }
+        
 
         /// <summary>
         /// Gets the id of this player. 
@@ -78,38 +74,21 @@ namespace Engine
         /// </summary>
         public string Name { get; private set; }
 
-        /// <summary>
-        /// The event raised whenever a chunk is received. 
-        /// </summary>
-        public event Action<MapChunkId, TerrainType[,]> ChunkReceived;
 
+        public event Action<IGameObject> ObjectSeen;
 
-        public event Action<IUnit> UnitInVisionRange;
+        public event Action<IGameObject> ObjectUnseen;
 
-        public event Action<IGameObject> ObjectInVisionRange;
-
-        public event Action<IGameObject> ObjectLeavesVisionRange;
-
-        public event Action<IHero> MainHeroChanged;
-
-
-        //nyi
-        /// <summary>
-        /// The event raised whenever an object 
-        /// </summary>
-        public event Action<IGameObject> ObjectMoved;
-
-        //nyi
         /// <summary>
         /// The event raised whenever a visible unit performs an action. 
         /// </summary>
-        public event Action<IUnit> UnitActionPerformed;
+        public event Action<IUnit> AnyUnitAction;
 
-        //nyi
-        /// <summary>
-        /// The event raised whenever a visible unit changes its movement state. 
-        /// </summary>
-        public event Action<IUnit> UnitMoveStateChanged;
+        public event Action<HandshakeReplyMessage> HandshakeReplied;
+
+        public event Action<PlayerStatusMessage> MainHeroChanged;
+
+        public event Action<MapReplyMessage> MapChunkReceived;
 
 
         /// <summary>
@@ -119,12 +98,19 @@ namespace Engine
 
         public bool Connected { get { return true; } }
 
-        IHero IGameReceptor.MainHero { get { return MainHero; } }
-
+        /// <summary>
+        /// Gets whether this player is the neutral aggressive player. 
+        /// </summary>
         public bool IsNeutralAggressive {  get { return this == NeutralAggressive; } }
 
+        /// <summary>
+        /// Gets whether this player is the neutral friendly player. 
+        /// </summary>
         public bool IsNeutralFriendly {  get { return this == NeutralFriendly; } }
 
+        /// <summary>
+        /// Gets whether this player is an actual human player. 
+        /// </summary>
         public bool IsPlayer {  get { return !IsNeutralAggressive && !IsNeutralFriendly; } }
 
         internal IEnumerable<IUnit> ControlledUnits { get { return controlledUnits; } }
@@ -137,12 +123,17 @@ namespace Engine
                     .Distinct(); }
         }
 
+        internal void SendHandshake(bool isSuccessful)
+        {
+            HandshakeReplied(new HandshakeReplyMessage(isSuccessful));
+        }
+
         /// <summary>
         /// Gets the custom camera position. Undefined if there is a hero. 
         /// </summary>
         public Vector CameraPosition
         {
-            get { return MainHero?.Position ?? customCameraPosition; }
+            get { return MainHero?.Position ?? Vector.Zero; }
         }
 
         Player(string name)
@@ -151,28 +142,62 @@ namespace Engine
             Name = Name;
         }
 
-        public Player(ShanoEngine engine, IGameClient inputDevice)
+        public Player(ShanoEngine engine, IClient inputDevice)
             : this(inputDevice.Name)
         {
             PlayerId = Interlocked.Increment(ref LastPlayerId);
             Name = inputDevice.Name;
 
             Engine = engine;
+
             InputDevice = inputDevice;
+
+            InputDevice.ActionActivated += inputDevice_ActionActivated;
+            InputDevice.MapRequested += InputDevice_MapRequested;
+            InputDevice.MovementStateChanged += inputDevice_MovementStateChanged;
+            InputDevice.HandshakeInit += inputDevice_HandshakeInit;
         }
 
+        #region GameClient listeners
+        void inputDevice_ActionActivated(ActionMessage obj)
+        {
+            MainHero.TryCastAbility(obj);
+        }
+
+        void inputDevice_HandshakeInit()
+        {
+            //run scripts
+        }
+
+        void inputDevice_MovementStateChanged(MoveMessage msg)
+        {
+            var newState = msg.Direction;
+            if (newState.IsMoving)
+                MainHero.SetOrder(new PlayerMoveOrder(msg.Direction));
+            else
+                MainHero.ClearOrder();
+        }
+
+        async void InputDevice_MapRequested(MapRequestMessage msg)
+        {
+            var chunkId = msg.Chunk;
+            var chunkData = new TerrainType[MapChunkId.ChunkSize.X, MapChunkId.ChunkSize.Y];
+            await Task.Run(() =>
+            {
+                Engine.GetTiles(this, ref chunkData, chunkId);
+            });
+
+            MapChunkReceived(new MapReplyMessage(chunkId, chunkData));
+        }
+
+        #endregion
 
         /// <summary>
         /// Listens to the input device for any updates. 
         /// </summary>
         public void Update(int msElapsed)
         {
-            updateMovement(msElapsed);
-        }
 
-        void IGameReceptor.Update(int msElapsed)
-        {
-            Engine.Update(msElapsed);
         }
 
         public void SetMainHero(Hero h)
@@ -181,6 +206,8 @@ namespace Engine
                 throw new Exception("Player already has a hero!");
 
             MainHero = h;
+
+            MainHeroChanged(new PlayerStatusMessage(h));
 
             //fire custom scripts
             Engine.Scenario.RunScripts(s => s.OnHeroSpawned(h));    //should remove or change to 'OnPlayerMainHeroChanged' ...
@@ -192,6 +219,9 @@ namespace Engine
                 MainHero.OnAction(msg);
         }
 
+        /// <summary>
+        /// Gets whether this player is an enemy to the given player. 
+        /// </summary>
         public bool IsEnemy(Player p)
         {
             var oneIsPlayer = (p.IsPlayer || this.IsPlayer);
@@ -199,68 +229,41 @@ namespace Engine
             return oneIsPlayer && oneIsAggressive;
         }
 
+        /// <summary>
+        /// Gets whether the given unit is an enemy to this player. 
+        /// </summary>
+        /// <param name="u"></param>
+        /// <returns></returns>
         public bool IsEnemy(Unit u)
         {
             return IsEnemy(u.Owner);
         }
-
-        public async void RequestChunk(MapChunkId chunk)
-        {
-            var mapTiles = new TerrainType[MapChunkId.ChunkSize.X, MapChunkId.ChunkSize.Y];
-            await Task.Run(() =>
-            {
-                Engine.GetTiles(this, ref mapTiles, chunk);
-            });
-
-            if (ChunkReceived != null)
-                ChunkReceived(chunk, mapTiles);
-        }
-
+        
         internal void OnObjectVisionRange(RangeArgs<GameObject> args)
         {
+            if (!this.IsPlayer)
+                return;
             if (args.EventType == Maps.EventType.EntersRange)
             {
-                ObjectInVisionRange?.Invoke(args.TriggerObject);
+                ObjectSeen?.Invoke(args.TriggerObject);
             }
             else
             {
-                ObjectLeavesVisionRange?.Invoke(args.TriggerObject);
+                ObjectUnseen?.Invoke(args.TriggerObject);
             }
         }
+        
 
-        internal void raiseUnitInVisionRange(RangeArgs<Unit> args)
-        {
-            UnitInVisionRange?.Invoke(args.TriggerObject);
-        }
-
-        void updateMovement(int msElapsed)
-        {
-            //if no hero, allow spectating and ghost-walking
-            if (MainHero == null)
-            {
-                customCameraPosition += MovementState.DirectionVector * SpectatorMoveSpeed * msElapsed / 1000;
-                return;
-            }
-
-            //continue only if move state changed
-            if (MainHero.MoveState == MovementState)
-                return;
-
-            //update the hero's current order
-            if (MovementState.IsMoving)
-                MainHero.SetOrder(new PlayerMoveOrder(MovementState));
-            else
-                MainHero.ClearOrder();
-        }
-
-        internal void AddUnit(Unit unit)
+        internal void AddControlledUnit(Unit unit)
         {
             controlledUnits.Add(unit);
+
+            ObjectSeen?.Invoke(unit);
         }
 
-        public override string ToString()
+        public void UpdateServer(int msElapsed)
         {
-            return Name;
+            Engine.Update(msElapsed);
         }
     }
 }

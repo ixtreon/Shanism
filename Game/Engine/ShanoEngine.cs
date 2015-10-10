@@ -14,13 +14,14 @@ using System.Security;
 using System.IO;
 using IO.Objects;
 using ScriptLib;
+using System.Threading.Tasks;
 
 namespace Engine
 {
     /// <summary>
     /// The game engine lies here. 
     /// </summary>
-    public class ShanoEngine : INetworkEngine
+    public class ShanoEngine : IEngine
     {
         public static ShanoEngine Current { get; private set; } // ugly hax :|
 
@@ -37,27 +38,17 @@ namespace Engine
         public bool IsRunning { get; private set; }
 
         /// <summary>
-        /// Gets the thread running the game loop, if <see cref="HasOwnThread"/> is true. 
+        /// Gets the thread running the game loop. 
         /// </summary>
         public Thread GameThread { get; private set; }
 
-        /// <summary>
-        /// Gets whether this game server is running on a separate thread. 
-        /// </summary>
-        public bool HasOwnThread
-        {
-            get { return GameThread != null; }
-        }
+        private HashSet<MapChunkId> generatedChunks = new HashSet<MapChunkId>();
 
         /// <summary>
         /// The current world map containing the terrain info. 
         /// </summary>
         internal ITerrainMap TerrainMap { get; private set; }
 
-        /// <summary>
-        /// The current game map containing unit/doodad/sfx info. 
-        /// </summary>
-        internal EntityMap EntityMap { get; private set; }
 
 
         /// <summary>
@@ -65,67 +56,66 @@ namespace Engine
         /// </summary>
         internal List<Player> Players { get; } = new List<Player>();
 
+        /// <summary>
+        /// The current game map containing unit/doodad/sfx info. 
+        /// </summary>
+        internal EntityMap EntityMap { get; } = new EntityMap();
 
         internal Scenario Scenario { get; private set; }
 
-        internal ScenarioCompiler ScenarioCompiler { get; private set; }
-
         internal Network.LServer NetworkServer { get; private set; }
 
+        /// <summary>
+        /// Gets whether this engine is open for online play. 
+        /// </summary>
         internal bool IsOnline { get; private set; }
 
-        private HashSet<MapChunkId> generatedChunks = new HashSet<MapChunkId>();
 
-        public ShanoEngine(int mapSeed)
+        public ShanoEngine(int mapSeed, string scenarioDir)
         {
+            
             // allow only one instance of the server. 
             // an ugly hack..
             if (Current != null)
                 throw new Exception("Please run only one instance of the server!");
-
             Current = this;
 
-            this.Players = new List<Player>();
+            //compile the scenario..
+            var scenarioCompiler = new ScenarioCompiler { ScenarioDir = Path.GetFullPath(scenarioDir) };
 
-            this.EntityMap = new EntityMap();
-
-            this.TerrainMap = new RandomTerrainMap(mapSeed);
-
-            ScenarioCompiler = new ScenarioCompiler();
-            ScenarioCompiler.ScenarioDir = Path.GetFullPath(@"DefaultScenario");
-
-            Scenario = ScenarioCompiler.TryCompile<Scenario>();
-
+            string compileErrors;
+            this.Scenario = scenarioCompiler.TryCompile<Scenario>(out compileErrors);
             if(Scenario == null)
-            {
-                throw new Exception();
-            }
+                throw new Exception("Unable to compile the scenario. The message returned was: {0}".F(compileErrors));
 
-            Scenario.LoadTypes(ScenarioCompiler.Assembly);
+            Scenario.LoadTypes(scenarioCompiler.Assembly);
+            
+            TerrainMap = new RandomTerrainMap(mapSeed);    //TODO: get from the scenario
+
+            //run scripts
             Scenario.RunScripts(cs => cs.LoadModels(Scenario.Models));
-
-            //run startup scripts
             Scenario.RunScripts(cs => cs.GameStart());
         }
 
-        #region Network Engine implementation
-        event Action<IEnumerable<IPlayer>, OrderType> INetworkEngine.AnyUnitOrderChanged
-        {
-            add { Unit.AnyOrderChanged += (u, o) => value(new[] { u.Owner }, o?.Type ?? OrderType.Stand); }
-            remove { Unit.AnyOrderChanged -= (u, o) => value(new[] { u.Owner }, o.Type); }
-        }
+        #region IEngine implementation
 
-        public INetworkReceptor HandleNetConnection(IGameClient c)
+        public IReceptor AcceptClient(IClient c)
         {
-            var playerName = c.Name;
-
             //TODO: do some checks???!?
 
             var pl = new Player(this, c);
+            return pl;
+        }
+
+        public void StartPlaying(IReceptor rec)
+        {
+            var pl = rec as Player;
+            if (pl == null)
+                throw new ArgumentException(nameof(rec), "You should supply a {0} of type {1} as returned by this engine!".F(nameof(IReceptor), nameof(Player)));
+
+            pl.SendHandshake(true);
 
             AddPlayer(pl);
-
-            return pl;
         }
         #endregion
 
@@ -133,15 +123,15 @@ namespace Engine
         /// <summary>
         /// Starts the game server by executing the main game loop. 
         /// </summary>
-        /// <param name="newThread">If set to true starts a new thread to run the loop on. </param>
-        public void Start(bool newThread = false)
+        /// <param name="spawnNewThread">If true spawns a new thread to run the loop on. Otherwise uses the current thread. </param>
+        public void Start(bool spawnNewThread = false)
         {
             if (IsRunning)
                 return;
             IsRunning = true;
 
 
-            if (newThread)
+            if (spawnNewThread)
             {
                 // start the update thread
                 GameThread = new Thread(mainLoop) { IsBackground = true };
@@ -181,16 +171,12 @@ namespace Engine
         /// <summary>
         /// Adds the given player to the game. 
         /// </summary>
-        /// <param name="p"></param>
-        public void AddPlayer(Player p)
+        /// <param name="pl"></param>
+        public void AddPlayer(Player pl)
         {
-            this.Players.Add(p);
+            this.Players.Add(pl);
 
-            //run scripts
-            Scenario.RunScripts(s => s.OnPlayerJoined(p));
-
-            ////run scripts -> TODO: not here though!
-            //Scenario.RunScripts(s => s.OnHeroSpawned(p.MainHero));
+            Scenario.RunScripts(s => s.OnPlayerJoined(pl));
         }
 
 

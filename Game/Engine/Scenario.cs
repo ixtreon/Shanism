@@ -71,7 +71,7 @@ namespace Engine
 
 
         /// <summary>
-        /// Loads the generated assembly. 
+        /// Loads the generated assembly. Currently loads all scripts in memory. 
         /// </summary>
         internal void LoadTypes(Assembly currentAssembly)
         {

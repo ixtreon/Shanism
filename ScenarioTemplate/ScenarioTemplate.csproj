@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ScenarioTemplate</RootNamespace>
     <AssemblyName>ScenarioTemplate</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scenario.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Abilities\" />
@@ -51,6 +53,10 @@
     <Folder Include="Units\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Game\Engine\Engine.csproj">
+      <Project>{0b2e9f70-7046-470a-8e5d-ebd47f030ddc}</Project>
+      <Name>Engine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Game\IO\IO.csproj">
       <Project>{dc89987d-5817-4f1d-95ca-80c024c8d6bb}</Project>
       <Name>IO</Name>

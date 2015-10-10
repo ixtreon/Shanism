@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using IO;
 using IO.Objects;
-using IxSerializer.Modules;
+using IxSerializer.Attributes;
 
 namespace IO.Common
 {

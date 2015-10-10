@@ -28,25 +28,12 @@ namespace Network
         }
 
 
-        /// <summary>
-        /// A method that accepts a game client pending connection, and eventually returns a receptor instance for this guy. 
-        /// </summary>
-        /// <param name="client"></param>
-        /// <returns>The network receptor to handle this guy, or null if the server did not accept him. </returns>
-        public delegate INetworkReceptor ClientGeneratorCallback(IGameClient client);
-
-
         public event Action<NetGameClient> ClientConnected;
 
         public event Action<NetGameClient> ClientDisconnected;
 
 
-        /// <summary>
-        /// Gets or sets the method which is to handle incoming client connections 
-        /// </summary>
-        public ClientGeneratorCallback ClientConnectHandler { get; set; }
-
-        readonly INetworkEngine engine;
+        readonly IEngine engine;
 
         internal NetServer Server {  get { return (NetServer)peer; } }
 
@@ -54,11 +41,11 @@ namespace Network
 
 
 
-        public LServer(INetworkEngine engine)
+        public LServer(IEngine engine)
             : base(new NetServer(new NetPeerConfiguration(AppIdentifier) { Port = NetworkPort }))
         {
             this.engine = engine;
-            engine.AnyUnitOrderChanged += Engine_AnyUnitOrderChanged;
+            //engine.AnyUnitOrderChanged += Engine_AnyUnitOrderChanged;
 
             Log.Default.Info("Server started!");
         }
@@ -93,36 +80,32 @@ namespace Network
 
         internal override void HandleDataMessage(NetIncomingMessage incomingMessage)
         {
-            Debug.Assert(incomingMessage.MessageType == NetIncomingMessageType.Data);
-
-            var msg = incomingMessage.ToIOMessage();
-
-            
-            //check if it's a handshake and if so, ask the server whether to accept it
-            if (msg.Type == MessageType.HandshakeInit)
+            //try
             {
-                handleHandshake(incomingMessage.SenderConnection, (HandshakeInitMessage)msg);
-                return;
-            }
+                var msg = incomingMessage.ToIOMessage();
 
-            //for all other message types, the client must already have an identity. 
-            var client = clients.TryGet(incomingMessage.SenderConnection);
-            if (client == null)
-            {
-                Log.Default.Warning("Received a request from an unknown client. ");
-                return;
-            }
 
-            switch (msg.Type)
-            {
-                case MessageType.MapRequest:
-                    client.HandleMapRequest((MapRequestMessage)msg);
-                    break;
+                //check if it's a handshake and if so, ask the server whether to accept it
+                if (msg.Type == MessageType.HandshakeInit)
+                {
+                    handleHandshake(incomingMessage.SenderConnection, (HandshakeInitMessage)msg);
+                    return;
+                }
 
-                case MessageType.MoveUpdate:
-                    client.HandleMoveUpdate((MoveMessage)msg);
-                    break;
+                //for all other message types, the client must already have an identity. 
+                var client = clients.TryGet(incomingMessage.SenderConnection);
+                if (client == null)
+                {
+                    Log.Default.Warning("Received a request from an unknown client. Ignoring it. ");
+                    return;
+                }
+
+                client.HandleMessage(msg);
             }
+            //catch (Exception e)
+            //{
+            //    Log.Default.Error("Unhandled exception while handling a data packet: {0}", e.Message);
+            //}
         }
 
         void Engine_AnyUnitOrderChanged(IEnumerable<IPlayer> seenByPlayers, IO.Common.OrderType orderType)
@@ -145,41 +128,34 @@ namespace Network
             //get the peer data
             var client = new NetGameClient(Server, peerConnection, msg.PlayerName);
 
-            if (ClientConnectHandler == null)
-            {
-                Log.Default.Warning("A client tried to join but no server was listening for it!");
-                return;
-            }
 
             //check if the server accepts it
-            var receptor = ClientConnectHandler(client);
+            var receptor = engine.AcceptClient(client);
             var accepted = (receptor != null);  //TODO: make an actual check
 
             //if so, add to our list, too
             if (accepted)
             {
+                // do our set-up
                 client.Initialize(receptor);
                 clients.Add(peerConnection, client);
 
-                //and raise the event
+                // inform the engine we'll be playing
+                // (this step is necessary for single-player, check out LocalShano implementation)
+                engine.StartPlaying(receptor);
+
+                //and raise the client event
                 ClientConnected?.Invoke(client);
             }
 
             Log.Default.Info("Got a handshake from {0}! Do we accept it? {1}", peerConnection.RemoteEndPoint.Address, accepted ? "yep" : "nope");
 
-
             //prepare and send the handshake reply
-            client.HandleHandshake(accepted);
+            client.SendHandshake(accepted);
 
             if (!accepted)
             {
                 //TODO: drop connection
-            }
-
-            // proceed by sending a player status message 
-            if (accepted)
-            {
-                client.SendPlayerStatusUpdate();
             }
         }
 

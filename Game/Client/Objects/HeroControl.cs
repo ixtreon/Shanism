@@ -12,11 +12,12 @@ namespace Client.Objects
 {
     class HeroControl : UnitControl
     {
+        public IHero Hero { get; private set; }
 
-        public HeroControl(IUnit u)
-            : base(u)
+        public HeroControl(IHero hero)
+            : base(hero)
         {
-
+            this.Hero = hero;
         }
 
         public override void Update(int msElapsed)

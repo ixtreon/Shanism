@@ -100,16 +100,16 @@ namespace Engine.Systems.Behaviours
         /// Adds to the aggro table units that come into range. 
         /// </summary>
         /// <param name="args"></param>
-        protected override void OnUnitInVisionRange(RangeArgs<Unit> args)
+        protected override void OnUnitInVisionRange(Unit unit)
         {
             if (ReturnBehaviour.Returning)
                 return;
 
-            var u = args.TriggerObject as Hero;
+            var hero = unit as Hero;
 
             //add it to the aggro table if it's a hero
-            if (u != null && !aggroTable.ContainsKey(u))
-                aggroTable[u] = 0;
+            if (hero != null && !aggroTable.ContainsKey(hero))
+                aggroTable[hero] = 0;
         }
 
         /// <summary>

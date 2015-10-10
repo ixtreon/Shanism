@@ -1,7 +1,9 @@
 ﻿using Engine.Objects.Game;
 using Engine.Systems.Behaviours;
 using Engine.Systems.Orders;
+using IO;
 using IO.Common;
+using IO.Message.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -147,14 +149,36 @@ namespace Engine.Objects
         /// <param name="target"></param>
         public void CastAbility(Ability ability, object target)
         {
-            var newOrder = new CastOrder(target, ability);
+            var newOrder = new CastOrder(ability, target);
 
             if(!newOrder.Equals(Order))
-            {
                 Order = newOrder;
-            }
         }
 
+        public void TryCastAbility(ActionMessage msg)
+        {
+            var ability = abilities.TryGet(msg.AbilityId);
+            if (ability == null)
+                return;
+
+            var targetUnit = Map.GetByGuid(msg.TargetGuid);
+
+            object target = null;
+            switch(msg.TargetType)
+            {
+                case AbilityTargetType.PointTarget:
+                    target = msg.TargetLocation; break;
+                case AbilityTargetType.UnitTarget:
+                    if (targetUnit == null)
+                        return;
+                    target = targetUnit; break;
+                case AbilityTargetType.PointOrUnitTarget:
+                    // TODO: fix buggy code
+                    // fails if guid resolution failed, target is unit (not point)
+                    target = targetUnit?.Position ?? msg.TargetLocation; break;
+            }
+            CastAbility(ability, target);
+        }
 
 
         //TODO: implement these

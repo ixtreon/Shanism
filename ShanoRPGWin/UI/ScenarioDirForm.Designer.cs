@@ -37,7 +37,7 @@
             this.scenarioList.Library = this.Library;
             this.scenarioList.Location = new System.Drawing.Point(12, 12);
             this.scenarioList.Name = "scenarioList";
-            this.scenarioList.Size = new System.Drawing.Size(175, 275);
+            this.scenarioList.Size = new System.Drawing.Size(168, 311);
             this.scenarioList.TabIndex = 0;
             // 
             // Library
@@ -48,7 +48,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(429, 299);
+            this.ClientSize = new System.Drawing.Size(388, 335);
             this.Controls.Add(this.scenarioList);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "ScenarioDirForm";

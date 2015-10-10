@@ -63,8 +63,10 @@ namespace Client
 
 
 
-        public static void Update(GraphicsDeviceManager graphics, IO.Common.Vector cameraGamePos, bool hasHero)
+        public static void Update(GraphicsDeviceManager graphics, IHero hero)
         {
+            var hasHero = (hero != null);
+            var cameraGamePos = hero?.Position ?? IO.Common.Vector.Zero;
             IsLocked = hasHero;
 
             CenterPoint = cameraGamePos.ToVector2();

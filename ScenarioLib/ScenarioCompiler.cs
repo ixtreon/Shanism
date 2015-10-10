@@ -157,11 +157,18 @@ namespace ScriptLib
         public T TryCompile<T>()
             where T : class
         {
+            string errors;
+            return TryCompile<T>(out errors);
+        }
+
+        public T TryCompile<T>(out string errors)
+            where T : class
+        {
             var result = Compile();
 
             if (result != null)
             {
-                Console.WriteLine("COMPILE ERRORS:\n" + result);
+                errors = result;
                 return null;
             }
 
@@ -171,13 +178,14 @@ namespace ScriptLib
 
             if (!scenarios.Any())
             {
-                Console.WriteLine("No scenarios found in the assembly!");
+                errors = "No scenarios found in the assembly!";
                 return null;
             }
 
             if (scenarios.Count() > 1)
                 Console.WriteLine("Found 2 scenarios. Picking a random one...");
 
+            errors = null;
             return scenarios.First();
 
         }

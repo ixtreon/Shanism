@@ -12,6 +12,7 @@ using Client;
 using Engine.Objects.Game;
 using IO.Message;
 using IO.Message.Client;
+using System.IO;
 
 namespace Local
 {
@@ -36,18 +37,23 @@ namespace Local
         /// </summary>
         /// <param name="mapSeed">The map seed. </param>
         /// <param name="h">The hero to play with. </param>
-        public LocalShano(string playerName, int mapSeed)
+        public LocalShano(string playerName, int mapSeed, string scenarioPath)
         {
             //create the local server and client
-            ShanoEngine = new ShanoEngine(mapSeed);
+            ShanoEngine = new ShanoEngine(mapSeed, scenarioPath);
             ShanoClient = new MainGame(playerName);
 
+            var receptor = ShanoEngine.AcceptClient(ShanoClient);
+            ShanoClient.SetReceptor(receptor);
+
+            ShanoClient.GameLoaded += () => ShanoEngine.StartPlaying(receptor);
+
             //create the local player
-            var pl = new Player(ShanoEngine, ShanoClient);
+
+            //var pl = new Player(ShanoEngine, ShanoClient);
+            //ShanoEngine.AddPlayer(pl);
 
             //link them
-            ShanoEngine.AddPlayer(pl);
-            ShanoClient.SetServer(pl);
 
             //start the client
             ShanoClient.Running = true;

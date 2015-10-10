@@ -23,12 +23,6 @@ namespace Engine.Objects
     public abstract class GameObject : ScenarioObject, IGameObject
     {
 
-        static int guidCount = 0;
-        static int GetFreshGuid()
-        {
-            return Interlocked.Increment(ref guidCount);
-        }
-
 
         Vector _newPosition;
         Vector _position;
@@ -60,7 +54,7 @@ namespace Engine.Objects
         /// </summary>
         public double Size { get; set; }
 
-        public string Model { get; set; }
+        public string ModelString { get; set; }
 
         /// <summary>
         /// Gets the globally unique identifier of the object. 
@@ -100,7 +94,7 @@ namespace Engine.Objects
         {
             get
             {
-                return Game.Scenario.Models[this.Model];
+                return Game.Scenario.Models[this.ModelString];
             }
         }
 
@@ -108,8 +102,8 @@ namespace Engine.Objects
         protected GameObject()
         {
             this.Size = 0.4;
-            this.Model = "default";
-            Guid = GetFreshGuid();
+            this.ModelString = "default";
+            Guid = ObjectGuid.GetNew();
             _oldPosition = new Vector(double.NaN);
         }
 
@@ -117,7 +111,7 @@ namespace Engine.Objects
             : this()
         {
             this.Name = "Dummy";
-            this.Model = model;
+            this.ModelString = model;
             _position = _newPosition = location;
         }
 
@@ -129,10 +123,6 @@ namespace Engine.Objects
         internal bool UpdateLocation()
         {
             Debug.Assert(!IsDestroyed);
-
-            //update only if we moved or we were in the NaN-zone
-            if (_position == _newPosition && !OldPosition.IsNan())
-                return false;
 
             _customPosition = false;
             _oldPosition = _position;

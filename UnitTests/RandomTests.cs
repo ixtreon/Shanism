@@ -15,7 +15,7 @@ namespace UnitTests
     {
         public TestContext TestContext { get; set; }
 
-        [TestMethod]
+        //[TestMethod]
         public void TestMethod1()
         {
             TerrainType[,] terrainArray = new TerrainType[5, 5];
@@ -25,15 +25,9 @@ namespace UnitTests
             //var oldArr = protoArr.ToArray();
         }
 
-        [TestMethod]
+        //[TestMethod]
         public void testEnumConvert()
         {
-            var arr = new int[2, 3, 4];
-
-            foreach (var r in enumIndices(arr))
-                arr.SetValue(42, r);
-
-            Assert.IsTrue(arr.Cast<int>().All(i => i == 42));
 
         }
     }

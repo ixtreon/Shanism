@@ -23,11 +23,7 @@ namespace Engine.Maps
 
             return id;
         }
-
-        void onObjectAdded(GameObject obj)
-        {
-            //var candidates = 
-        }
+        
 
         internal IEnumerable<IRangeConstraint> GetRangeConstraints()
         {

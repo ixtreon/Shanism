@@ -58,7 +58,6 @@
     <Compile Include="HashMapPerfTest.cs" />
     <Compile Include="HashMapTests.cs" />
     <Compile Include="SerializerExtTest.cs" />
-    <Compile Include="SerializerTest.cs" />
     <Compile Include="RandomTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

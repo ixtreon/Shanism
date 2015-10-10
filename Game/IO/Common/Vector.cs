@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IO;
-using IxSerializer.Modules;
-using IxSerializer.Modules;
+using IxSerializer.Attributes;
+using IxSerializer.Attributes;
 
 namespace IO.Common
 {

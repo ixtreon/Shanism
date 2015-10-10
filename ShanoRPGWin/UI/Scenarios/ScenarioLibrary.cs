@@ -19,6 +19,11 @@ namespace ShanoRPGWin.UI.Scenarios
 
         public event Action<string> ItemRemoved;
 
+        public IEnumerable<string> Scenarios
+        {
+            get { return loadedScenarios; }
+        }
+
         public ScenarioLibrary()
         {
             Refresh();

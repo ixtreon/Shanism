@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Network</RootNamespace>
     <AssemblyName>Network</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -126,6 +126,10 @@
     <Compile Include="Server\NetGameClient.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\!lib\IxLog\IxLog\IxLog.csproj">
+      <Project>{b1fc6d51-2a33-4ef8-bbad-d8207f2dcb02}</Project>
+      <Name>IxLog</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\!lib\IxSerializer\IxSerializer.csproj">
       <Project>{41be9dd9-644c-4a90-8d47-667b4323df7a}</Project>
       <Name>IxSerializer</Name>

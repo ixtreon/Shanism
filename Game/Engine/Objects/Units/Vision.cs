@@ -15,16 +15,19 @@ namespace Engine.Objects
         /// <summary>
         /// The event executed whenever another unit approaches our vision range. 
         /// </summary>
-        public event Action<RangeArgs<Unit>> UnitInVisionRange;
+        //public event Action<RangeArgs<Unit>> UnitInVisionRange;
 
 
-        public static event Action<RangeArgs<Unit>> AnyUnitInVisionRange;
+        //public static event Action<RangeArgs<Unit>> AnyUnitInVisionRange;
         //handles to the events registered to track units/objects in range
         int unitInRangeHandlerId = -1;
         int objectRangeHandlerId = -1;
 
 
         HashSet<GameObject> visibleObjects = new HashSet<GameObject>();
+
+        public event Action<GameObject> ObjectSeen;
+        public event Action<GameObject> ObjectUnseen;
 
         /// <summary>
         /// Gets all units this guy can see. 
@@ -57,7 +60,6 @@ namespace Engine.Objects
 
                     visionRange = value;
 
-                    unitInRangeHandlerId = Map.RegisterAnyUnitInRangeEvent(this, visionRange, Maps.EventType.EntersRange, RaiseUnitInVisionEvent);
                     objectRangeHandlerId = Map.RegisterAnyObjectInRangeEvent(this, visionRange, Maps.EventType.LeavesOrEnters, raisePlayerObjectVisionEvent);
                 }
             }
@@ -71,27 +73,24 @@ namespace Engine.Objects
         }
 
 
-        void RaiseUnitInVisionEvent(RangeArgs<Unit> args)
-        {
-            UnitInVisionRange?.Invoke(args);
-            AnyUnitInVisionRange?.Invoke(args);
-
-            if (args.OriginUnit.Owner.IsPlayer)
-                args.OriginUnit.Owner.raiseUnitInVisionRange(args);
-        }
-
         void raisePlayerObjectVisionEvent(RangeArgs<GameObject> args)
         {
             Debug.Assert(this == args.OriginUnit);
+            var trigObject = args.TriggerObject;
 
-            //someone came in range! 
+            //inform the unit
+            if (args.EventType == Maps.EventType.EntersRange)
+                ObjectSeen?.Invoke(trigObject);
+            else
+                ObjectUnseen?.Invoke(trigObject);
+
+            //inform its owner 
             Owner.OnObjectVisionRange(args);
 
-            //fix up the list of objects we see
-            var trigObject = args.TriggerObject;
+            //add to or remove from the list of units that are seen
             if (args.EventType == Maps.EventType.EntersRange)
             {
-                visibleObjects.Add(args.TriggerObject);
+                visibleObjects.Add(trigObject);
                 trigObject.SeenBy.Add(this);
             }
             else

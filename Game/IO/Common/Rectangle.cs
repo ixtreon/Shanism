@@ -1,5 +1,5 @@
-﻿using IxSerializer.Modules;
-using IxSerializer.Modules;
+﻿using IxSerializer.Attributes;
+using IxSerializer.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;

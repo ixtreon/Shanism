@@ -9,10 +9,6 @@ namespace NetworkTests
 
 
 
-        [TestMethod]
-        public void TestMethod1()
-        {
-            
-        }
+
     }
 }

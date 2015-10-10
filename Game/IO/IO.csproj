@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IO</RootNamespace>
     <AssemblyName>IO</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -120,7 +120,7 @@
     <Compile Include="Common\MapChunkDef.cs" />
     <Compile Include="Common\ObjectType.cs" />
     <Compile Include="Common\OrderType.cs" />
-    <Compile Include="INetworkReceptor.cs" />
+    <Compile Include="IReceptor.cs" />
     <Compile Include="Objects\IEffect.cs" />
     <Compile Include="TextureType.cs" />
     <Compile Include="Common\UnitState.cs" />
@@ -135,7 +135,7 @@
     <Compile Include="Common\Rectangle.cs" />
     <Compile Include="Common\Vector.cs" />
     <Compile Include="Message\Client\Action.cs" />
-    <Compile Include="Message\Client\Chat.cs" />
+    <Compile Include="Message\Common\Chat.cs" />
     <Compile Include="Message\Client\HandshakeInit.cs" />
     <Compile Include="Message\Client\MapRequest.cs" />
     <Compile Include="Message\Client\Move.cs" />
@@ -149,16 +149,15 @@
     <Compile Include="Message\Server\PlayerStatus.cs" />
     <Compile Include="Message\Server\UnitDamaged.cs" />
     <Compile Include="Objects\IAbility.cs" />
-    <Compile Include="IGameReceptor.cs" />
     <Compile Include="Objects\IBuffInstance.cs" />
     <Compile Include="Objects\IDoodad.cs" />
-    <Compile Include="Objects\INetworkEngine.cs" />
+    <Compile Include="IEngine.cs" />
     <Compile Include="Objects\IGameObject.cs" />
     <Compile Include="Objects\IPlayer.cs" />
     <Compile Include="Objects\IUnit.cs" />
     <Compile Include="Objects\IHero.cs" />
     <Compile Include="Common\TerrainType.cs" />
-    <Compile Include="IGameClient.cs" />
+    <Compile Include="IClient.cs" />
     <Compile Include="Common\MovementState.cs" />
     <Compile Include="Objects\UnitType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

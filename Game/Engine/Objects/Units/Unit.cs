@@ -163,7 +163,12 @@ namespace Engine.Objects
             }
             set
             {
-                LifePercentage = value / MaxLife;
+                if (value < 0)
+                    LifePercentage = 0;
+                else if (value > MaxLife)
+                    LifePercentage = 1;
+                else
+                    LifePercentage = value / MaxLife;
             }
         }
 
@@ -204,7 +209,7 @@ namespace Engine.Objects
             : base(model, location)
         {
             this.Owner = owner;
-            Owner.AddUnit(this);
+            Owner.AddControlledUnit(this);
 
             this.VisionRange = 5;
             this.Level = level;

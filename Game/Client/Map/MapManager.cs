@@ -2,6 +2,7 @@
 using Client.Sprites;
 using IO;
 using IO.Common;
+using IO.Message.Server;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Concurrent;
@@ -33,10 +34,6 @@ namespace Client.Map
         /// </summary>
         public const int ChunkSize = Constants.Client.WindowHeight / 2;
 
-        /// <summary>
-        /// The server instance to query for maps. 
-        /// </summary>
-        protected readonly IGameReceptor server;
 
         /// <summary>
         /// Contains a map of all available chunks. 
@@ -48,25 +45,36 @@ namespace Client.Map
         /// </summary>
         Dictionary<MapChunkId, long> chunkRequests = new Dictionary<MapChunkId, long>();
 
-        public MapManager(IGameReceptor serv, GraphicsDevice device)
+
+        public event Action<MapChunkId> ChunkRequested;
+
+
+
+        public MapManager(GraphicsDevice device)
         {
-            this.server = serv;
-            serv.ChunkReceived += serv_TilesReceived; 
             effect = new BasicEffect(device)
             {
                 VertexColorEnabled = true,
             };
         }
 
-        void serv_TilesReceived(MapChunkId chunk, TerrainType[,] tiles)
+        public void Update(Vector cameraPos)
         {
-            var rect = chunk.Span;
+            //request nearby chunks
+            foreach (var c in EnumerateNearbyChunks(cameraPos).Except(ChunksAvailable.Keys))
+                requestChunk(c);
 
-            var chunkData = new ChunkData(chunk, tiles);
+            RemoveOldChunks(cameraPos);
+        }
+
+        public void HandleMapReply(MapReplyMessage msg)
+        {
+            var rect = msg.Chunk.Span;
+
+            var chunkData = new ChunkData(msg.Chunk, msg.Data);
 
             ChunksAvailable[chunkData.Chunk] = chunkData;
             chunkData.BuildBuffer(effect.GraphicsDevice, GetTile);
-            RemoveOldChunks();
         }
 
         public TerrainType GetTile(int x, int y)
@@ -74,25 +82,6 @@ namespace Client.Map
             var id = MapChunkId.ChunkOf(new Vector(x, y) + new Vector(0.5));
             var chunk = GetChunk(id);
             return chunk?.GetTile(x, y) ?? TerrainType.None;
-        }
-
-        public void Update()
-        {
-            //request nearby chunks
-            foreach (var c in EnumerateNearbyChunks().Except(ChunksAvailable.Keys))
-                requestChunk(c);
-        }
-
-        public IEnumerable<MapChunkId> EnumerateNearbyChunks()
-        {
-            var cameraPos = server.CameraPosition;
-
-
-            var lowLeft = cameraPos - (Vector)Constants.Client.WindowSize / 2;
-            var upRight = cameraPos + (Vector)Constants.Client.WindowSize / 2;
-
-            var chunks = MapChunkId.ChunksBetween(lowLeft, upRight).ToArray();
-            return chunks;
         }
 
         /// <summary>
@@ -115,7 +104,7 @@ namespace Client.Map
 
             //make the request and set last timestamp
             chunkRequests[chunk] = timeNow;
-            server.RequestChunk(chunk);
+            ChunkRequested?.Invoke(chunk);
         }
 
         /// <summary>
@@ -134,16 +123,15 @@ namespace Client.Map
 
         int chunkRemoveLock = 0;
 
-        public void RemoveOldChunks()
+        public void RemoveOldChunks(Vector cameraPos)
         {
             var isLocked = Interlocked.Exchange(ref chunkRemoveLock, 1);
             if(isLocked == 0)
             {
                 if (ChunksAvailable.Count > MaxChunks)
                 {
-                    var heroPos = server.MainHero.Position;
                     var toRemove = ChunksAvailable.Keys
-                        .OrderBy(chunk => ((Vector)chunk.Center).DistanceTo(heroPos))
+                        .OrderBy(chunk => ((Vector)chunk.Center).DistanceTo(cameraPos))
                         .Skip(MaxChunks * 3 / 4);
                     foreach (var id in toRemove)
                     {
@@ -160,21 +148,20 @@ namespace Client.Map
 
         BasicEffect effect;
 
-        public void DrawTerrain()
+        public void DrawTerrain(Vector cameraPos)
         {
-            var cameraLoc = server.CameraPosition;
 
             var device = effect.GraphicsDevice;
 
             //setup texturestuff
             effect.Set2DMatrices();
-            effect.World = Microsoft.Xna.Framework.Matrix.CreateTranslation((float)-cameraLoc.X, (float)-cameraLoc.Y, 0);
+            effect.World = Microsoft.Xna.Framework.Matrix.CreateTranslation((float)-cameraPos.X, (float)-cameraPos.Y, 0);
             effect.VertexColorEnabled = false;
             effect.TextureEnabled = true;
             effect.Texture = SpriteFactory.Terrain.TerrainAtlas.Texture;
 
             //draw all chunks around us
-            foreach (var chunkId in EnumerateNearbyChunks())
+            foreach (var chunkId in EnumerateNearbyChunks(cameraPos))
             {
                 var chunk = GetChunk(chunkId);
                 if (chunk != null && chunk.HasBuffer)
@@ -188,6 +175,15 @@ namespace Client.Map
                 }
             }
 
+        }
+
+        public static IEnumerable<MapChunkId> EnumerateNearbyChunks(Vector cameraPos)
+        {
+            var lowLeft = cameraPos - (Vector)Constants.Client.WindowSize / 2;
+            var upRight = cameraPos + (Vector)Constants.Client.WindowSize / 2;
+
+            var chunks = MapChunkId.ChunksBetween(lowLeft, upRight).ToArray();
+            return chunks;
         }
 
     }

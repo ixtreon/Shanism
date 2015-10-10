@@ -127,7 +127,6 @@ namespace Engine.Objects.Game
             this.BaseVitality= 5;
             this.BaseIntellect = 5;
             this.BaseAgility = 5;
-            
         }
 
 

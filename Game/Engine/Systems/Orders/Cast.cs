@@ -24,7 +24,7 @@ namespace Engine.Systems.Orders
             get { return OrderType.Casting; }
         }
 
-        public CastOrder(object target, Ability ability)
+        public CastOrder(Ability ability, object target)
         {
             this.Target = target;
             this.Ability = ability;
