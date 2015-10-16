@@ -74,22 +74,19 @@ namespace Engine
         /// </summary>
         public string Name { get; private set; }
 
-
+        #region IReceptor Implementation
         public event Action<IGameObject> ObjectSeen;
 
         public event Action<IGameObject> ObjectUnseen;
 
-        /// <summary>
-        /// The event raised whenever a visible unit performs an action. 
-        /// </summary>
-        public event Action<IUnit> AnyUnitAction;
+        public event Action<IUnit, string> AnyUnitAction;
 
         public event Action<HandshakeReplyMessage> HandshakeReplied;
 
         public event Action<PlayerStatusMessage> MainHeroChanged;
 
         public event Action<MapReplyMessage> MapChunkReceived;
-
+        #endregion
 
         /// <summary>
         /// Gets whether the player has a hero. 
@@ -111,7 +108,7 @@ namespace Engine
         /// <summary>
         /// Gets whether this player is an actual human player. 
         /// </summary>
-        public bool IsPlayer {  get { return !IsNeutralAggressive && !IsNeutralFriendly; } }
+        public bool IsHuman {  get { return !IsNeutralAggressive && !IsNeutralFriendly; } }
 
         internal IEnumerable<IUnit> ControlledUnits { get { return controlledUnits; } }
 
@@ -224,7 +221,7 @@ namespace Engine
         /// </summary>
         public bool IsEnemy(Player p)
         {
-            var oneIsPlayer = (p.IsPlayer || this.IsPlayer);
+            var oneIsPlayer = (p.IsHuman || this.IsHuman);
             var oneIsAggressive = (p.IsNeutralAggressive || this.IsNeutralAggressive);
             return oneIsPlayer && oneIsAggressive;
         }
@@ -241,7 +238,7 @@ namespace Engine
         
         internal void OnObjectVisionRange(RangeArgs<GameObject> args)
         {
-            if (!this.IsPlayer)
+            if (!this.IsHuman)
                 return;
             if (args.EventType == Maps.EventType.EntersRange)
             {

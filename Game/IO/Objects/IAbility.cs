@@ -37,8 +37,14 @@ namespace IO
         /// </summary>
         int ManaCost { get; }
 
+        /// <summary>
+        /// Gets the casting time of the ability in milliseconds. 
+        /// </summary>
         int CastTime { get; }
 
+        /// <summary>
+        /// Gets the casting range of the ability in game units. 
+        /// </summary>
         double CastRange { get; }
     }
 }

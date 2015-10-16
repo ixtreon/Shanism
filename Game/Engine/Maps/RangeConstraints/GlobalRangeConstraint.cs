@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Engine.Maps
 {
     /// <summary>
-    /// A constraint between a GameObject or a point and all other GameObjects
+    /// A constraint between a GameObject or a point and all other GameObjects of type <typeparam name="T">T</typeparam>. 
     /// </summary>
     internal class GlobalRangeConstraint<T> : RangeConstraint
         where T : GameObject
@@ -33,6 +33,7 @@ namespace Engine.Maps
 
         protected override void OnConstraintActivated(RangeConstraint constraint, EventType eventType, GameObject triggerObject)
         {
+            //raise only if object is of type T
             if (triggerObject is T)
                 EventHandler?.Invoke(new RangeArgs<T>(constraint, eventType, (T)triggerObject));
         }

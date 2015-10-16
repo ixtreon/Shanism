@@ -22,6 +22,9 @@ namespace Engine.Events
             get { return Target as Unit; }
         }
 
+        /// <summary>
+        /// Gets the location this spell targeted. If a unit was targeted, returns its position. 
+        /// </summary>
         public Vector TargetLocation
         {
             get

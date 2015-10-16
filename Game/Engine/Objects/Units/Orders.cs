@@ -28,7 +28,7 @@ namespace Engine.Objects
 
 
         /// <summary>
-        /// Gets the type of the unit's current order or <see cref="OrderType.Stand"/> if it has no order. 
+        /// Gets the type of the unit's current order. 
         /// </summary>
         public virtual OrderType OrderType
         {
@@ -36,7 +36,7 @@ namespace Engine.Objects
         }
 
         /// <summary>
-        /// Gets or sets the active behaviour of the unit. 
+        /// Gets or sets the behaviour that will issue this unit some orders. 
         /// </summary>
         public Behaviour Behaviour { get; set; }
 
@@ -46,20 +46,13 @@ namespace Engine.Objects
         public IOrder Order { get; private set; }
 
         /// <summary>
-        /// Gets the location suggested by the current order. 
-        /// Used to determine whether the unit was teleported using a script. 
-        /// </summary>
-        Vector OrderSuggestedLocation { get; set; }
-
-        /// <summary>
         /// Gets whether this unit is currently performing a custom order,
         /// i.e. one not part of its <see cref="Behaviour"/>
         /// </summary>
         public bool CustomOrder { get; private set; }
 
         /// <summary>
-        /// Gets whether this unit is currently moving, 
-        /// i.e. whether it has some type of move order issued. 
+        /// Gets whether this unit is currently moving. 
         /// </summary>
         public bool IsMoving
         {
@@ -67,7 +60,7 @@ namespace Engine.Objects
         }
 
         /// <summary>
-        /// Gets the direction in which this unit is moving. 
+        /// Gets the direction in which this unit is moving, or <see cref="double.NaN"/> if it is standing. 
         /// </summary>
         public double MoveDirection
         {
@@ -75,16 +68,7 @@ namespace Engine.Objects
         }
 
         /// <summary>
-        /// Clears the current order of the unit. 
-        /// </summary>
-        public void ClearOrder()
-        {
-            this.Order = new Stand();
-            this.CustomOrder = false;
-        }
-
-        /// <summary>
-        /// Updates the current behaviour and state, 
+        /// Updates the current behaviour and then state, 
         /// and finally runs the state handler to i.e. move or attack. 
         /// </summary>
         /// <param name="msElapsed">The time elapsed since the last call of this method, in milliseconds. </param>
@@ -98,31 +82,23 @@ namespace Engine.Objects
             if (StateFlags.HasFlag(UnitState.Stunned))
                 return;
 
-            // update the active behaviour. 
-            Behaviour?.Update(msElapsed);
-
-            // change to a new order?
-            if (!CustomOrder && Behaviour != null && Behaviour.CurrentOrder != Order)
+            //update the behaviour
+            if (Behaviour != null)
             {
-                Order = Behaviour?.CurrentOrder;
+                Behaviour.Update(msElapsed);
 
-                //raise the order changed event
-                OrderChanged?.Invoke(Order);
-                AnyOrderChanged?.Invoke(this, Order);
+                // change to a new order?
+                if (!CustomOrder && Behaviour.CurrentOrder != Order)
+                {
+                    Order = Behaviour.CurrentOrder;
+
+                    //raise the order changed event
+                    OrderChanged?.Invoke(Order);
+                    AnyOrderChanged?.Invoke(this, Order);
+                }
             }
 
-            //update the active order
-            updateCurrentOrder(msElapsed);
-        }
-
-        /// <summary>
-        /// Updates the current order. 
-        /// 
-        /// Currently called from <see cref="UpdateBehaviour(int)"/>
-        /// </summary>
-        /// <param name="msElapsed"></param>
-        void updateCurrentOrder(int msElapsed)
-        {
+            //then the order
             if (Order != null)
             {
                 var toContinue = Order.Update(this, msElapsed);
@@ -155,27 +131,25 @@ namespace Engine.Objects
                 Order = newOrder;
         }
 
-        public void TryCastAbility(ActionMessage msg)
+        internal void TryCastAbility(ActionMessage msg)
         {
+            //check if we got the ability
             var ability = abilities.TryGet(msg.AbilityId);
             if (ability == null)
                 return;
-
-            var targetUnit = Map.GetByGuid(msg.TargetGuid);
 
             object target = null;
             switch(msg.TargetType)
             {
                 case AbilityTargetType.PointTarget:
-                    target = msg.TargetLocation; break;
+                    target = msg.TargetLocation;
+                    break;
+
                 case AbilityTargetType.UnitTarget:
-                    if (targetUnit == null)
+                    target = Map.GetByGuid(msg.TargetGuid);
+                    if (target == null)
                         return;
-                    target = targetUnit; break;
-                case AbilityTargetType.PointOrUnitTarget:
-                    // TODO: fix buggy code
-                    // fails if guid resolution failed, target is unit (not point)
-                    target = targetUnit?.Position ?? msg.TargetLocation; break;
+                    break;
             }
             CastAbility(ability, target);
         }
@@ -196,7 +170,8 @@ namespace Engine.Objects
 
         public void OrderHoldPosition()
         {
-            throw new NotImplementedException();
+            this.Order = new Stand();
+            this.CustomOrder = true;
         }
 
         public void OrderAttack(Unit target)
@@ -212,6 +187,15 @@ namespace Engine.Objects
         public void OrderMoveAttack(Vector target)
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Clears the current order of the unit. 
+        /// </summary>
+        public void ClearOrder()
+        {
+            this.Order = new Stand();
+            this.CustomOrder = false;
         }
         #endregion
     }

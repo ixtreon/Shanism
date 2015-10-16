@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Engine.Objects;
-using ShanoRpgWin;
 using ShanoRPGWin.Properties;
 using ShanoRPGWin.UI;
 using IO;
@@ -18,11 +17,11 @@ using Local;
 
 namespace ShanoRPGWin
 {
-    public partial class Form1 : Form
+    public partial class LauncherForm : Form
     {
         ScenarioDirForm scenarioPicker = new ScenarioDirForm();
 
-        public Form1()
+        public LauncherForm()
         {
             InitializeComponent();
         }

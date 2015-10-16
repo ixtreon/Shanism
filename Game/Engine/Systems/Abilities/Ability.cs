@@ -41,7 +41,7 @@ namespace Engine.Objects.Game
         public int CurrentCooldown { get; internal set; }
 
         /// <summary>
-        /// Gets or sets the cooldown of this ability. 
+        /// Gets or sets the cooldown of this ability in milliseconds. 
         /// </summary>
         public int Cooldown { get; set; }
 

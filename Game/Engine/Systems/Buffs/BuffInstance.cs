@@ -9,6 +9,9 @@ using IO.Common;
 
 namespace Engine.Systems.Buffs
 {
+    /// <summary>
+    /// Represents an instance of a buff applied to a unit. 
+    /// </summary>
     public class BuffInstance : IBuffInstance
     {
         public readonly Buff Buff;
@@ -17,7 +20,7 @@ namespace Engine.Systems.Buffs
 
         public int DurationLeft { get; private set; }
 
-        public bool ShouldDestroy
+        public bool ShouldDestroy 
         {
             get { return Buff.IsTimed && DurationLeft <= 0; }
         }

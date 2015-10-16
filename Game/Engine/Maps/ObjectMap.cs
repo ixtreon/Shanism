@@ -16,7 +16,7 @@ namespace Engine.Maps
         where T : GameObject
     {
         //the underlying hashmap that stores the objects
-        HashMap<T> map = new HashMap<T>(new Vector(7));
+        HashMap<T> map = new HashMap<T>(new Vector(Constants.ObjectMap.CellSize));
 
         //the units that are to be added on next update
         volatile List<T> pendingAdds = new List<T>();
@@ -35,6 +35,8 @@ namespace Engine.Maps
         /// Raised whenever an object within the map is updated. 
         /// </summary>
         public event Action<T> ObjectUpdate;
+
+        public event Action<T, byte[]> ObjectChanged;
 
 
         public void Add(T obj)
@@ -60,20 +62,26 @@ namespace Engine.Maps
                 ObjectAdded?.Invoke(obj);
             }
 
-            //check there are no destroyed units before calling GameObject.Update
             foreach (var obj in map)
             {
+                // check there are no destroyed units inside
                 Debug.Assert(!obj.MarkedForDestruction && !obj.IsDestroyed) ;
-
+                // call custom object updaters
                 obj.Update(msElapsed);
             }
 
             foreach (var obj in map)
             {
                 ObjectUpdate?.Invoke(obj);
+                //update the object's location records
                 obj.UpdateLocation();
+                //update the map's location records
                 map.Update(obj, obj.OldPosition, obj.Position);
-                obj.TryFinalise();
+
+                //check for changes, lel
+
+                // mark for removal if needed
+                obj.Finalise();
             }
 
             //remove dead units

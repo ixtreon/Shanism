@@ -48,9 +48,10 @@ namespace Engine.Objects
             {
                 return visionRange;
             }
+
             set
             {
-                if (!visionRange.AlmostEqualTo(value, 0.0005))
+                if (!visionRange.AlmostEqualTo(value, 0.0005))  //should be ok, lel
                 {
                     if (unitInRangeHandlerId != -1)
                     {
@@ -66,7 +67,7 @@ namespace Engine.Objects
         }
 
 
-        //TODO: add seeing checks?
+        //TODO: add visibility checks?
         public bool IsInVisionRange(GameObject o)
         {
             return (Position.DistanceTo(o.Position) <= VisionRange);

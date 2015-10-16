@@ -9,7 +9,7 @@ namespace IO
         int Guid { get; }
         Vector Position { get; }
 
-        AnimationDef Model { get; }
+        AnimationDefOld Model { get; }
         double Size { get; }
 
         string Name { get; }

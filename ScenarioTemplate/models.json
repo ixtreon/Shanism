@@ -1,0 +1,35 @@
+﻿{
+  "Textures": [
+    {
+      "id": 1,
+      "file": "hero.png",
+      "split_x": 3,
+      "split_y": 1
+    },
+  ],
+
+  "Animations": [
+    {
+      "id": 1,
+      "tex_id": 1,
+      "pos_x": 0,
+      "pos_y": 0,
+      "sz_x": 3,
+      "sz_y": 1,
+    }
+  ],
+
+  "Models": [
+    {
+      "name": "hero",
+      "stand": 1,
+      "walk": 1,
+      "attack": 1,
+      "cast": 1,
+      "left_x":  0.1,
+      "right_x":  0.9,
+      "left_y":  0.2,
+      "right_y":  0.8,
+    }
+  ]
+}

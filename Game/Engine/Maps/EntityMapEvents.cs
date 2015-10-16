@@ -25,10 +25,10 @@ namespace Engine.Maps
         }
         
 
-        internal IEnumerable<IRangeConstraint> GetRangeConstraints()
-        {
-            return globalConstraints;
-        }
+        //internal IEnumerable<IRangeConstraint> GetRangeConstraints()
+        //{
+        //    return globalConstraints;
+        //}
 
         /// <summary>
         /// Calls the provided method whenever any GameObject crosses at specified range from the specified GameObject. 
@@ -75,7 +75,7 @@ namespace Engine.Maps
             if (obj.IsDestroyed)
                 throw new Exception("Trying to check a range constraint for a destroyed unit!");
 
-
+            //check global constraints
             var globalConstraints = this.globalConstraints;
 
             foreach (var c in globalConstraints)    //check if this guy triggered any of the global constraints

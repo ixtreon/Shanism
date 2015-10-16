@@ -7,14 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ScenarioLib.File
+namespace ScenarioLib.Files
 {
     public class CSharpSourceFile
     {
         /// <summary>
         /// Gets the path of the file. 
         /// </summary>
-        public readonly string FilePath;
+        public string FilePath { get; private set; }
 
         /// <summary>
         /// Gets whether the file has any uncommited changes. 
@@ -39,7 +39,7 @@ namespace ScenarioLib.File
 
         public virtual void Load()
         {
-            var fText = System.IO.File.ReadAllText(FilePath);
+            var fText = File.ReadAllText(FilePath);
             Tree = SyntaxFactory.ParseSyntaxTree(fText, null, FilePath, Encoding.Default);
             Root = Tree.GetRoot();
         }
@@ -47,7 +47,7 @@ namespace ScenarioLib.File
         public virtual void Save()
         {
             var fileText = Root.ToFullString();
-            System.IO.File.WriteAllText(FilePath, fileText);
+            File.WriteAllText(FilePath, fileText);
         }
     }
 }

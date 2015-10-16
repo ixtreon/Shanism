@@ -90,7 +90,7 @@ namespace Engine.Objects
         /// <summary>
         /// Gets the model of the object. 
         /// </summary>
-        AnimationDef IGameObject.Model
+        public AnimationDefOld Model
         {
             get
             {

@@ -120,7 +120,11 @@
     <Compile Include="Common\MapChunkDef.cs" />
     <Compile Include="Common\ObjectType.cs" />
     <Compile Include="Common\OrderType.cs" />
+    <Compile Include="Contentz\AnimationDef.cs" />
+    <Compile Include="Contentz\FrameDef.cs" />
+    <Compile Include="Contentz\ModelDef.cs" />
     <Compile Include="IReceptor.cs" />
+    <Compile Include="Message\Server\ObjectAnimation.cs" />
     <Compile Include="Objects\IEffect.cs" />
     <Compile Include="TextureType.cs" />
     <Compile Include="Common\UnitState.cs" />
@@ -130,7 +134,7 @@
     <Compile Include="Ext.cs" />
     <Compile Include="Common\GenericComparer.cs" />
     <Compile Include="Common\AbilityType.cs" />
-    <Compile Include="Content\ModelDef.cs" />
+    <Compile Include="Content\AnimationDefOld.cs" />
     <Compile Include="Common\Point.cs" />
     <Compile Include="Common\Rectangle.cs" />
     <Compile Include="Common\Vector.cs" />

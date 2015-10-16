@@ -86,7 +86,7 @@ namespace Network.Server
 
 
         /// <summary>
-        /// Hooks up the net client to the receptor's events.
+        /// Hooks up the net client to the server receptor's events.
         /// </summary>
         public void Initialize(IReceptor receptor)
         {
@@ -104,6 +104,7 @@ namespace Network.Server
         }
 
 
+        #region Outgoing message handlers
         private void GameReceptor_MapChunkReceived(MapReplyMessage msg)
         {
             sendMessage(msg);
@@ -115,50 +116,12 @@ namespace Network.Server
         }
 
 
-        #region Incoming IOMessage Handlers
-
-        internal void HandleMessage(IOMessage msg)
-        {
-            switch (msg.Type)
-            {
-                case MessageType.MapRequest:    // client wants map chunks
-                    MapRequested?.Invoke((MapRequestMessage)msg);
-                    break;
-                case MessageType.MoveUpdate:    // client wants to move
-                    MovementStateChanged((MoveMessage)msg);
-                    break;
-                case MessageType.SendChat:      // client wants to chat
-                    handleChatMessage((ChatMessage)msg);
-                    break;
-                case MessageType.Action:        // client wants to do stuff
-                    handleActionMessage((ActionMessage)msg);
-                    break;
-            }
-        }
-
-        void handleActionMessage(ActionMessage msg)
-        {
-            throw new NotImplementedException();
-        }
-
-        void handleChatMessage(ChatMessage msg)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-
-        #region Outgoing IOMessage handlers
-
         private void GameReceptor_ObjectSeen(IGameObject obj)
         {
-            Console.WriteLine("Someone saw {0}!", obj);
-
-            sendObject(obj);
+            sendObjectSeenMessage(obj);
         }
 
-        private void GameReceptor_AnyUnitAction(IUnit obj)
+        private void GameReceptor_AnyUnitAction(IUnit obj, string actionId)
         {
             throw new NotImplementedException();
         }
@@ -170,9 +133,29 @@ namespace Network.Server
 
         private void GameReceptor_ObjectUnseen(IGameObject obj)
         {
-            Console.WriteLine("Someone unsaw {0}!", obj);
+            throw new NotImplementedException();
         }
         #endregion
+
+
+        internal void HandleMessage(IOMessage msg)
+        {
+            switch (msg.Type)
+            {
+                case MessageType.MapRequest:    // client wants map chunks
+                    MapRequested((MapRequestMessage)msg);
+                    break;
+                case MessageType.MoveUpdate:    // client wants to move
+                    MovementStateChanged((MoveMessage)msg);
+                    break;
+                case MessageType.SendChat:      // client wants to chat
+                    ChatMessageSent((ChatMessage)msg);
+                    break;
+                case MessageType.Action:        // client wants to do stuff
+                    ActionActivated((ActionMessage)msg);
+                    break;
+            }
+        }
 
 
         /// <summary>
@@ -184,13 +167,9 @@ namespace Network.Server
             Log.Default.Info("Sent a {0} to {1}", msg.Type, ConnectionHandle.RemoteEndPoint.Address);
         }
 
-        private void sendObject(IGameObject obj)
+        private void sendObjectSeenMessage(IGameObject obj)
         {
-            sendObject(obj, obj.ObjectType);
-        }
-
-        private void sendObject(IGameObject obj, ObjectType sendAsType)
-        {
+            var sendAsType = obj.ObjectType;
             var objData = Serializer.GetWriter(w =>
                 InterfaceSerializer.WriteInterfaceData(w, sendAsType.UnderlyingInterface, obj, skipUnknownFields: true));
             var msg = new ObjectSeenMessage(sendAsType, obj.Guid, objData);

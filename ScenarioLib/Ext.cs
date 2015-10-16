@@ -33,7 +33,7 @@ namespace ScenarioLib
                 .OfType<AssignmentExpressionSyntax>();
         }
 
-        public static ConstructorDeclarationSyntax GetDefaultConstructor(this ClassDeclarationSyntax expr)
+        public static ConstructorDeclarationSyntax GetParameterlessConstructor(this ClassDeclarationSyntax expr)
         {
             return expr.Members
                 .OfType<ConstructorDeclarationSyntax>()

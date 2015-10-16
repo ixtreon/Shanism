@@ -229,6 +229,12 @@ namespace IO
                 .Select(g => g.Key)
                 .First();
         }
+
+        /// <summary>
+        /// Creates a single instance of each class that inherits the provided type in the given assembly. 
+        /// </summary>
+        /// <typeparam name="T">The base class all returned objects' classes should inherit. </typeparam>
+        /// <param name="assembly">The assembly in which to look for stuff. </param>
         public static IEnumerable<T> CreateInstanceOfEach<T>(this Assembly assembly)
         {
             return assembly.GetTypes()

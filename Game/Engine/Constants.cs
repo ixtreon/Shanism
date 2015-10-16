@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Engine.Objects
+namespace Engine
 {
     static class Constants
     {
@@ -37,5 +37,10 @@ namespace Engine.Objects
         }
 
         public const double DamageReductionPerDefense = 0.05;
+
+        public static class ObjectMap
+        {
+            public const int CellSize = 8;
+        }
     }
 }

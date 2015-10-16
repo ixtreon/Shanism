@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace IO.Common
 {
     /// <summary>
-    /// The collection of states that can affect units. 
+    /// The states that can affect units. 
     /// </summary>
     [Flags]
     public enum UnitState
@@ -15,13 +15,13 @@ namespace IO.Common
         None = 0,
 
         [UnitState(false)]
-        Sleeping = 1 << 0,
+        Sleeping = 1,
 
         [UnitState(true)]
-        Stunned = 1 << 1,
+        Stunned = 2,
 
         [UnitState(false)]
-        Fleeing = 1 << 2,
+        Fleeing = 4,
 
     }
 }

@@ -53,7 +53,7 @@ namespace Engine.Systems.Orders
                 return false;
 
             var oa = (CastOrder)other;
-            return Ability == oa.Ability && Target == oa.Target;
+            return Ability == oa.Ability && Target == oa.Target;    // the last check is flaky for point targets; who cares..
         }
 
         public static bool operator ==(CastOrder o1, CastOrder o2)

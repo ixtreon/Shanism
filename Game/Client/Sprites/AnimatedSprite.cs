@@ -25,7 +25,7 @@ namespace Client.Sprites
 
         private TTexture texture;
 
-        public AnimatedSprite(AnimationDef m)
+        public AnimatedSprite(AnimationDefOld m)
             : base(m)
         {
             texture = new TTexture(File);

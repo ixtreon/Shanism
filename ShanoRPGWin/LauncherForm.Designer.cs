@@ -1,6 +1,6 @@
 ﻿namespace ShanoRPGWin
 {
-    partial class Form1
+    partial class LauncherForm
     {
         /// <summary>
         /// Required designer variable.
@@ -56,7 +56,7 @@
             // 
             // btnPlay
             // 
-            this.btnPlay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.btnPlay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPlay.Enabled = false;
             this.btnPlay.Location = new System.Drawing.Point(19, 53);
@@ -70,7 +70,7 @@
             // 
             // pSettings
             // 
-            this.pSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.pSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pSettings.AutoSize = true;
             this.pSettings.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
@@ -103,7 +103,7 @@
             // 
             // pGeneralSettings
             // 
-            this.pGeneralSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.pGeneralSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pGeneralSettings.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.pGeneralSettings.BackColor = System.Drawing.SystemColors.Control;
@@ -166,7 +166,7 @@
             // 
             // pLocalGame
             // 
-            this.pLocalGame.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.pLocalGame.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pLocalGame.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.pLocalGame.BackColor = System.Drawing.SystemColors.Control;
@@ -233,7 +233,7 @@
             // 
             // pRemoteGame
             // 
-            this.pRemoteGame.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.pRemoteGame.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pRemoteGame.BackColor = System.Drawing.SystemColors.Control;
             this.pRemoteGame.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -274,7 +274,7 @@
             // 
             // txtPlayerName
             // 
-            this.txtPlayerName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtPlayerName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPlayerName.FormattingEnabled = true;
             this.txtPlayerName.Location = new System.Drawing.Point(95, 24);

@@ -1,6 +1,6 @@
 ﻿namespace ShanoRPGWin.UI.Scenarios
 {
-    partial class ScenarioList
+    partial class LibTree
     {
         /// <summary> 
         /// Required designer variable.

@@ -21,7 +21,7 @@ namespace Engine.Systems.Buffs
 
 
         /// <summary>
-        /// Gets or sets icon of the buff. Also see <see cref=""/>
+        /// Gets or sets icon of the buff. 
         /// </summary>
         public string Icon { get; set; }
 
@@ -44,15 +44,27 @@ namespace Engine.Systems.Buffs
 
         public int AttackSpeed { get; set; }
 
+
         public string Name { get; set; }
 
+        /// <summary>
+        /// Gets or sets the raw description of the buff. 
+        /// <para/>
+        /// Uses <see cref="IO.Ext.FormatWith{T}(string, T)"/> to parse "{strength}" into "5". 
+        /// </summary>
         public string RawDescription { get; set; }
-
+        
+        /// <summary>
+        /// Gets the formatted description of this buff. 
+        /// </summary>
         public string Description
         {
             get { return RawDescription.FormatWith(this); }
         }
 
+        /// <summary>
+        /// Gets the identifier of this buff. Currently its name. 
+        /// </summary>
         public string Id
         {
             get { return Name; }
@@ -84,30 +96,33 @@ namespace Engine.Systems.Buffs
         public double MaxDamage { get; set; }
 
         /// <summary>
-        /// Gets the strength modifier of this buff. 
+        /// Gets or sets the strength modifier of this buff. 
         /// </summary>
         public double Strength { get; set; }
 
         /// <summary>
-        /// Gets the vitality modifier of this buff. 
+        /// Gets or sets the vitality modifier of this buff. 
         /// </summary>
         public double Vitality { get; set; }
 
         /// <summary>
-        /// Gets the agility modifier of this buff. 
+        /// Gets or sets the agility modifier of this buff. 
         /// </summary>
         public double Agility { get; set; }
 
         /// <summary>
-        /// Gets the intellect modifier of this buff. 
+        /// Gets or sets the intellect modifier of this buff. 
         /// </summary>
         public double Intellect { get; set; }
 
         /// <summary>
-        /// The total duration of the buff, in miliseconds. 
+        /// Gets or sets the total duration of the buff, in miliseconds. 
         /// </summary>
         public int FullDuration { get; set; }
 
+        /// <summary>
+        /// Gets whether this buff is timed or indefinite (i.e. an aura). 
+        /// </summary>
         public bool IsTimed
         {
             get { return Type != BuffType.Aura; }

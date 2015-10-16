@@ -41,16 +41,7 @@ namespace Engine.Objects.Game
             Behaviour = new AggroBehaviour(this, ab);
         }
 
-        IOrder lastOrder;
 
-        internal override void Update(int msElapsed)
-        {
-            base.Update(msElapsed);
-            if(Order != null && !Order.Equals(lastOrder))
-            {
-                lastOrder = Order;
-            }
-        }
         public Monster(Monster prototype)
             : this(prototype.ModelString, prototype.Position, prototype.Level)
         {

@@ -11,7 +11,6 @@ namespace Engine.Maps
     /// <summary>
     /// Represents an abstract distance constraint between an origin GameObject or point and one or all other GameObjects
     /// that raises events when the specified range is crossed. 
-    /// 
     /// </summary>
     abstract class RangeConstraint : IRangeConstraint
     {
@@ -25,7 +24,10 @@ namespace Engine.Maps
         /// </summary>
         public OriginType OriginType { get; private set; }
 
-
+        /// <summary>
+        /// Gets the origin of the constraint. 
+        /// Currently either a <see cref="GameObject"/> or a <see cref="Vector"/>. 
+        /// </summary>
         public object Origin { get; private set; }
 
         /// <summary>
@@ -80,64 +82,28 @@ namespace Engine.Maps
             Origin = origin;
         }
 
-        //sees if any of those guys trigger the constraint on its creation
-        // candidates must include all possible units, maybe some more. 
-        public void CustomCheck(IEnumerable<GameObject> candidates)
-        {
-            //triggered only for proximity events. can't trigger leave lolz
-            if (!ConstraintType.HasFlag(EventType.EntersRange))
-                return;
-
-            foreach (var obj in candidates.Where(o => objectCheck(o)))
-                OnConstraintActivated(this, EventType.EntersRange, obj);
-        }
-
-        public void CustomCheck(GameObject obj)
-        {
-            //triggered only for proximity events. can't trigger leave lolz
-            if (!ConstraintType.HasFlag(EventType.EntersRange))
-                return;
-
-            if(objectCheck(obj))
-                OnConstraintActivated(this, EventType.EntersRange, obj);
-        }
-
-        /// <summary>
-        /// Checks whether the given object is or was in range of the origin. 
-        /// </summary>
-        /// <param name="triggerObject"></param>
-        /// <param name="currentLocations">Whether to make the check for the current objects' locations, or to use their previous ones. </param>
-        /// <returns>Whether <paramref name="triggerObject"/> is, or was, in range of the origin. </returns>
-        bool objectCheck(GameObject triggerObject, bool currentLocations = true)
-        {
-            if (currentLocations)
-                return triggerObject.Position.DistanceTo(OriginLocation) < RangeThreshold;
-            else
-                return triggerObject.OldPosition.DistanceTo(originOldLocation) < RangeThreshold;
-        }
 
         public virtual void Check(GameObject triggerObject)
         {
-            if (Origin == triggerObject)
+            // sanity check
+            if (Origin == triggerObject)    
                 return;
 
-            //are we close or not
-            var nowCloser = objectCheck(triggerObject, true);
-            var wasCloser = objectCheck(triggerObject, false);
+            // check if we are/were close 
+            var nowCloser = triggerObject.Position.DistanceTo(OriginLocation) < RangeThreshold;
+            var wasCloser = triggerObject.OldPosition.DistanceTo(originOldLocation) < RangeThreshold;
 
-            //continue only if change in closeness
+            // continue only if closeness changed
             if (wasCloser == nowCloser)
                 return;
 
-            //the actual event that caused this raise
-            var evType = (wasCloser) ? (EventType.LeavesRange) : (EventType.EntersRange);
-
             //check if we actually listen for that event
             //either we listen to both, or evType must correspond to our type
-            if (ConstraintType != EventType.LeavesOrEnters && evType != ConstraintType)
+            var evType = (wasCloser) ? (EventType.LeavesRange) : (EventType.EntersRange);
+            if (!(ConstraintType == EventType.LeavesOrEnters || evType == ConstraintType))
                 return;
 
-            //raise the actual event
+            //finally raise the event
             OnConstraintActivated(this, evType, triggerObject);
 
         }
@@ -168,11 +134,6 @@ namespace Engine.Maps
         LeavesOrEnters = LeavesRange | EntersRange,
     }
 
-    public enum TargetType
-    {
-        SingleObject,
-        AllObjects,
-    }
 
     public enum OriginType
     {

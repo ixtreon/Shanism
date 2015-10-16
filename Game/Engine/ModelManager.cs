@@ -14,15 +14,15 @@ namespace Engine
     /// </summary>
     public class ModelManager
     {
-        private readonly AnimationDef Default;
+        private readonly AnimationDefOld Default;
 
-        private readonly Dictionary<string, AnimationDef> models = new Dictionary<string, AnimationDef>();
+        private readonly Dictionary<string, AnimationDefOld> models = new Dictionary<string, AnimationDefOld>();
 
-        public AnimationDef this[string s]
+        public AnimationDefOld this[string s]
         {
             get
             {
-                AnimationDef m;
+                AnimationDefOld m;
                 if (models.TryGetValue(s, out m))
                     return m;
                 return Default;
@@ -38,13 +38,13 @@ namespace Engine
         public void Include(string name, int period = 1000)
         {
             var fullName = TextureType.Model.GetDirectory(name);
-            models.Add(name, new AnimationDef(new TextureDef(fullName), period));
+            models.Add(name, new AnimationDefOld(new TextureDef(fullName), period));
         }
 
         public void Include(string name, int xFrames, int yFrames, int period = 1000)
         {
             var fullName = TextureType.Model.GetDirectory(name);
-            models.Add(name, new AnimationDef(new TextureDef(fullName, xFrames, yFrames), period));
+            models.Add(name, new AnimationDefOld(new TextureDef(fullName, xFrames, yFrames), period));
         }
     }
 }

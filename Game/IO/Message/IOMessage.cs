@@ -29,7 +29,7 @@ namespace IO.Message
     [SerialKid(typeof(MapReplyMessage), (short)MessageType.MapReply)]
     [SerialKid(typeof(ObjectSeenMessage), (short)MessageType.ObjectSeen)]
     [SerialKid(typeof(PlayerStatusMessage), (short)MessageType.PlayerStatusUpdate)]
-    [SerialKid(typeof(UnitDamageMessage), (short)MessageType.UnitDamage)]
+    [SerialKid(typeof(UnitDamagedMessage), (short)MessageType.UnitDamage)]
 
     //common
     [SerialKid(typeof(ChatMessage), (short)MessageType.SendChat)]

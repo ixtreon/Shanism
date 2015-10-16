@@ -27,7 +27,10 @@ namespace IO
 
         event Action<IGameObject> ObjectSeen;
 
-        event Action<IUnit> AnyUnitAction;
+        /// <summary>
+        /// The event raised whenever a visible unit performs an action. 
+        /// </summary>
+        event Action<IUnit, string> AnyUnitAction;
 
         /// <summary>
         /// Causes the underlying game server to update. 

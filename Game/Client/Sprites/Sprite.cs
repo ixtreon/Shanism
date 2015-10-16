@@ -80,7 +80,7 @@ namespace Client.Sprites
 
         public readonly Texture2D Texture;
 
-        public readonly AnimationDef Model;
+        public readonly AnimationDefOld Model;
 
         public TextureDef File
         {
@@ -91,7 +91,7 @@ namespace Client.Sprites
 
         public Color Color { get; set; }
 
-        public Sprite(AnimationDef model)
+        public Sprite(AnimationDefOld model)
         {
             this.Points = new PointsInfo(this);
             this.Color = Color.White;

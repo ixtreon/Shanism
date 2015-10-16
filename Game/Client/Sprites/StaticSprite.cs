@@ -12,7 +12,7 @@ namespace Client.Sprites
     /// </summary>
     class StaticSprite : Sprite
     {
-        public StaticSprite(AnimationDef m)
+        public StaticSprite(AnimationDefOld m)
             : base(m)
         {
             this.SourceRectangle = (m.SizeAndLocation * new IO.Common.Point(Texture.Width, Texture.Height) / m.File.Splits).ToXnaRect();

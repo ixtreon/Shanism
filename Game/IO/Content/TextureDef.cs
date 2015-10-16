@@ -30,8 +30,6 @@ namespace IO.Content
         /// Creates a new TextureDef for the given file containing multiple image segments. 
         /// </summary>
         /// <param name="name">The name (or path) of the file. </param>
-        /// <param name="width">The number of image segments along the horizontal. </param>
-        /// <param name="height">The number of image segments along the vertical. </param>
         public TextureDef(string name, Point logicalSize)
         {
             this.Name = name;

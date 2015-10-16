@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace IO.Message.Server
 {
     [SerialKiller]
-    class UnitDamageMessage : IOMessage
+    class UnitDamagedMessage : IOMessage
     {
         public override MessageType Type
         {
@@ -33,9 +33,9 @@ namespace IO.Message.Server
             get { return NewValue - ValueChange; }
         }
 
-        private UnitDamageMessage() { }
+        private UnitDamagedMessage() { }
 
-        public UnitDamageMessage(IUnit u, double change, bool isHealth)
+        public UnitDamagedMessage(IUnit u, double change, bool isHealth)
         {
             UnitId = u.Guid;
             IsHealth = isHealth;

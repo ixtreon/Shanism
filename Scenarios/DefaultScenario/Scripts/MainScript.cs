@@ -23,6 +23,7 @@ class MainScript : CustomScript
     {
         var spellz = new Ability[]
         {
+            new Teleport(),
             new Spark(),
             new Vacuum(),
             new DeathWardSpell(),

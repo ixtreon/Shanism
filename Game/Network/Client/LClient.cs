@@ -26,7 +26,6 @@ namespace Network
     /// </summary>
     public class LClient : LPeer, IReceptor
     {
-
         public readonly string PlayerName;
 
         NetClient NetClient { get { return (NetClient)peer; } }
@@ -39,24 +38,11 @@ namespace Network
         public event Action<MapReplyMessage> MapChunkReceived;
         public event Action<IGameObject> ObjectUnseen;
         public event Action<IGameObject> ObjectSeen;
-        public event Action<IUnit> AnyUnitAction;
+        public event Action<IUnit, string> AnyUnitAction;
 
         #endregion
 
-        //public MovementState MovementState { get; set; }
-
-        //public Vector CameraPosition { get; private set; }
-
         public IHero MainHero { get; private set; }
-
-        //public IEnumerable<IGameObject> VisibleObjects
-        //{
-        //    get
-        //    {
-        //        return ObjectFactory.RangeQuery(CameraPosition - Constants.Client.WindowSize / 2, Constants.Client.WindowSize);
-        //    }
-        //}
-
 
         public IClient GameClient { get; private set; }
 
@@ -92,11 +78,6 @@ namespace Network
         }
 
 
-
-        public override void Update(int msElapsed)
-        {
-        }
-
         internal override void OnConnected(NetConnection conn)
         {
             //send a handshake init no matter if the client requested it or not, lel
@@ -120,15 +101,15 @@ namespace Network
             switch(ioMsg.Type)
             {
                 case MessageType.HandshakeReply:
-                    handleHandshake((HandshakeReplyMessage)ioMsg);
+                    HandshakeReplied((HandshakeReplyMessage)ioMsg);
                     break;
 
                 case MessageType.PlayerStatusUpdate:
-                    handleStatusUpdate((PlayerStatusMessage)ioMsg);
+                    MainHeroChanged((PlayerStatusMessage)ioMsg);
                     break;
 
                 case MessageType.MapReply:
-                    handleMapReply((MapReplyMessage)ioMsg);
+                    MapChunkReceived((MapReplyMessage)ioMsg);
                     break;
 
                 case MessageType.ObjectSeen:
@@ -163,28 +144,6 @@ namespace Network
             ObjectSeen(obj);
         }
 
-        void handleMapReply(MapReplyMessage msg)
-        {
-            //invoke the ChunkReceived event
-            MapChunkReceived?.Invoke(msg);
-        }
-
-        void handleStatusUpdate(PlayerStatusMessage m)
-        {
-            //update the hero instance
-            if (m.HeroId >= 0)
-                MainHero = (IHero)ObjectFactory.GetOrCreate(ObjectType.Hero, m.HeroId);
-
-            Console.WriteLine("Got a hero message!");
-        }
-
-        void handleHandshake(HandshakeReplyMessage m)
-        {
-            Console.WriteLine("Got a handshake reply. Everything OK? {0}", m.Success);
-            HandshakeReplied(m);
-        }
-        
-
 
         void SendMessage(IOMessage ioMsg)
         {
@@ -200,7 +159,7 @@ namespace Network
 
         public void UpdateServer(int msElapsed)
         {
-            base.Update(msElapsed);
+            Update(msElapsed);
         }
     }
 }

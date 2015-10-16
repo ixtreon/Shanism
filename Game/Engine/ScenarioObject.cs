@@ -52,7 +52,7 @@ namespace Engine
         /// and does so if needed by setting the <see cref="IsDestroyed"/> flag
         /// Should be called on the main game loop. 
         /// </summary>
-        internal bool TryFinalise()
+        internal bool Finalise()
         {
             if (MarkedForDestruction)
             {

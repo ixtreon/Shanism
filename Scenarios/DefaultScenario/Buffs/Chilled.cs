@@ -20,6 +20,7 @@ namespace DefaultScenario.Buffs
 
             MoveSpeed = -190;
             AttackSpeed = -25;
+            Strength = 5;
         }
     }
 }

@@ -96,8 +96,7 @@ namespace Engine.Objects.Game
                 {
                     unitsHit.Add(target);
 
-                    if (OnUnitCollision != null)
-                        OnUnitCollision(this, target);
+                    OnUnitCollision?.Invoke(this, target);
 
                     if (DestroyOnCollision)
                     {

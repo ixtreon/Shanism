@@ -81,12 +81,12 @@
   <ItemGroup>
     <Compile Include="Abilities\DeathWardSpell.cs" />
     <Compile Include="Abilities\Spark.cs" />
+    <Compile Include="Abilities\Teleport.cs" />
     <Compile Include="Abilities\Vacuum.cs" />
     <Compile Include="Buffs\Chilled.cs" />
     <Compile Include="Buffs\Stunned.cs" />
     <Compile Include="Doodads\Tree.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scenario.cs" />
     <Compile Include="Scripts\Content.cs" />
     <Compile Include="Scripts\MainScript.cs" />
     <Compile Include="Scripts\SpawnMonsters.cs" />
@@ -107,7 +107,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="scenario.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

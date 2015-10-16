@@ -10,10 +10,11 @@ using System.IO;
 using Engine.Objects.Game;
 using IO;
 using Engine.Systems;
+using ScenarioLib;
 
 namespace Engine
 {
-    public abstract class Scenario
+    public class Scenario : ScenarioBase
     {
         /// <summary>
         /// Used to list all models used by the scenario. 
@@ -44,19 +45,6 @@ namespace Engine
         public string Description { get; protected set; } = "Shano description of a shano scenario.";
 
         public string MessageOfTheDay { get; protected set; } = "Welcome to the shano world!";
-
-        /// <summary>
-        /// Gets all files in the scenario. 
-        /// </summary>
-        //public IEnumerable<string> Files
-        //{
-        //    get { return files; }
-        //}
-
-        /// <summary>
-        /// A convenient place to list all files used in the scenario. 
-        /// </summary>
-        public abstract void ListFiles();
 
 
         /// <summary>

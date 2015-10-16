@@ -14,12 +14,14 @@ using IO.Message.Client;
 
 namespace Engine.Objects.Game
 {
-    [ProtoContract]
     public class Hero : Unit, IHero
     {
-        //multiply by _level to obtain the Xp needed to level up. 
+        //multiplied by _level to obtain the Xp needed to level up. 
         const int XpPerLevel = 100;
 
+        /// <summary>
+        /// The total experience of the unit. 
+        /// </summary>
         int _experience;
 
         /// <summary>
@@ -41,7 +43,6 @@ namespace Engine.Objects.Game
         /// <summary>
         /// The current experience of this hero.
         /// </summary>
-        [ProtoMember(1)]
         public int Experience
         {
             get { return _experience; }
@@ -61,22 +62,18 @@ namespace Engine.Objects.Game
         /// <summary>
         /// Gets or sets the base strength of this hero. 
         /// </summary>
-        [ProtoMember(2)]
         public double BaseStrength { get; set; }
         /// <summary>
         /// Gets or sets the base vitality of this hero. 
         /// </summary>
-        [ProtoMember(3)]
         public double BaseVitality { get; set; }
         /// <summary>
         /// Gets or sets the base intellect of this hero. 
         /// </summary>
-        [ProtoMember(4)]
         public double BaseIntellect { get; set; }
         /// <summary>
         /// Gets or sets the base agility of this hero. 
         /// </summary>
-        [ProtoMember(5)]
         public double BaseAgility { get; set; }
 
 
@@ -130,33 +127,11 @@ namespace Engine.Objects.Game
         }
 
 
-        public void Save(string fileName)
-        {
-            using(var fs = File.Create(fileName))
-            {
-                Serializer.Serialize(fs, this);
-            }
-        }
-
-        public static Hero Load(string fileName)
-        {
-            using (var fs = File.OpenRead(fileName))
-            {
-                var h = Serializer.Deserialize<Hero>(fs);
-                return h;
-            }
-        }
-
-        public static void Delete(string fileName)
-        {
-            File.Delete(fileName);
-        }
-
         /// <summary>
         /// Fired whenever the hero requests the activation of some action. 
         /// </summary>
         /// <param name="args"></param>
-        public virtual void OnAction(ActionMessage args)
+        internal virtual void OnAction(ActionMessage args)
         {
             Ability ability;
             if(!abilities.TryGetValue(args.AbilityId, out ability))
@@ -188,15 +163,6 @@ namespace Engine.Objects.Game
             MagicDamage += Intellect * Constants.Attributes.MagicDamagePerInt;
             ManaRegen += Intellect * Constants.Attributes.ManaRegPerInt;
         }
-
-        ///// <summary>
-        ///// Updates hero's abilities (custom handlers, cooldown)
-        ///// in addition to the default buff handling provided by <see cref="Unit"/>
-        ///// </summary>
-        //internal override void Update(int msElapsed)
-        //{
-        //    base.Update(msElapsed);
-        //}
     }
 
 }

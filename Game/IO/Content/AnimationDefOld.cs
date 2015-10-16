@@ -12,9 +12,9 @@ namespace IO.Content
     /// Represents an animation definition as used by model definitions (see <see cref="ModelDef"/>) to display object animations. 
     /// </summary>
     [SerialKiller]
-    public class AnimationDef
+    public class AnimationDefOld
     {
-        public static readonly AnimationDef Default = new AnimationDef(new TextureDef(TextureType.Model, @"default"));
+        public static readonly AnimationDefOld Default = new AnimationDefOld(new TextureDef(TextureType.Model, @"default"));
 
         [SerialMember]
         public readonly TextureDef File;
@@ -38,9 +38,13 @@ namespace IO.Content
         public readonly Rectangle SizeAndLocation;
 
 
-        AnimationDef() { }
+        AnimationDefOld() { }
 
-        private AnimationDef(TextureDef f) 
+        /// <summary>
+        /// Creates a new animation from the given texture. 
+        /// </summary>
+        /// <param name="f"></param>
+        private AnimationDefOld(TextureDef f) 
         { 
             this.File = f;
             this.SizeAndLocation = new Rectangle(0, 0, 1, 1);
@@ -51,7 +55,7 @@ namespace IO.Content
         /// </summary>
         /// <param name="f">The texture to be used. </param>
         /// <param name="period">The default period. </param>
-        public AnimationDef(TextureDef f, int period = 1000)
+        public AnimationDefOld(TextureDef f, int period = 1000)
             : this(f)
         {
             this.Period = period;
@@ -59,7 +63,7 @@ namespace IO.Content
         }
 
 
-        public AnimationDef(TextureDef f, Rectangle span)
+        public AnimationDefOld(TextureDef f, Rectangle span)
             : this(f)
         {
             if (span.Position.X < 0 || span.Position.Y < 0 || span.FarPosition.X > f.Splits.X || span.FarPosition.Y > f.Splits.Y)
@@ -67,7 +71,7 @@ namespace IO.Content
             this.SizeAndLocation = span;
         }
 
-        public AnimationDef(TextureDef f, Point p)
+        public AnimationDefOld(TextureDef f, Point p)
             : this(f, new Rectangle(p.X, p.Y, 1, 1)) { }
     }
 }

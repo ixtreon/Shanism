@@ -45,7 +45,7 @@ namespace Client.Sprites
                 TerrainAtlas = new TTexture(TerrainDef);
                 foreach(TerrainType t in Enum.GetValues(typeof(TerrainType)))
                 {
-                    terrainSprites[(int)t] = new StaticSprite(new AnimationDef(TerrainDef, TerrainAtlas.GetTile((int)t)));
+                    terrainSprites[(int)t] = new StaticSprite(new AnimationDefOld(TerrainDef, TerrainAtlas.GetTile((int)t)));
                 }
                 TerrainAtlas2 = new TTexture(new TextureDef("terrain_atlas", 32, 32));
             }
@@ -72,10 +72,10 @@ namespace Client.Sprites
         {
             Icon.Load();
             Terrain.Load();
-            Blank = new StaticSprite(new AnimationDef(new TextureDef("1")));
+            Blank = new StaticSprite(new AnimationDefOld(new TextureDef("1")));
         }
 
-        public static Sprite FromModel(AnimationDef m)
+        public static Sprite FromModel(AnimationDefOld m)
         {
             if (m.IsAnimated)
                 return new AnimatedSprite(m);
@@ -85,7 +85,7 @@ namespace Client.Sprites
 
         internal static Sprite FromTexture(TextureType t, string texName)
         {
-            return new StaticSprite(new AnimationDef(new TextureDef(t.GetDirectory(texName))));
+            return new StaticSprite(new AnimationDefOld(new TextureDef(t.GetDirectory(texName))));
         }
     }
 }

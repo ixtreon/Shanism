@@ -17,5 +17,16 @@ namespace ShanoRPGWin.UI
         {
             InitializeComponent();
         }
+
+        private void btnAddLibrary_Click(object sender, EventArgs e)
+        {
+            var result = folderDialog.ShowDialog();
+
+            if(result == DialogResult.OK)
+            {
+                var dirPath = folderDialog.SelectedPath;
+                FormLibrary.Add(dirPath);
+            }
+        }
     }
 }

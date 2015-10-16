@@ -22,8 +22,8 @@ module Settings =
     ///</summary>
     let RecognizeMethodStringInvoke (fieldName: string) (methodName: string) (n: StatementSyntax) =
         match n with
-        | ExpressionStatementSyntax(
-            _, 
+        | ExpressionStatementSyntax
+           (_, 
             InvocationExpressionSyntax(
                 _, 
                 MemberAccessExpressionSyntax(

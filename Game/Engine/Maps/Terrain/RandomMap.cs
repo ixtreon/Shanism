@@ -26,14 +26,14 @@ namespace Engine.Maps
             public double Min, Max;
         }
 
-        struct RandomObjectData
-        {
-            public Doodad Doodad;
-            public double PreferredHumidity;
-            public double PreferredTerrain;
-            public double HumidityTolerance;
-            public double TerrainTolerance;
-        }
+        //struct RandomObjectData
+        //{
+        //    public Doodad Doodad;
+        //    public double PreferredHumidity;
+        //    public double PreferredTerrain;
+        //    public double HumidityTolerance;
+        //    public double TerrainTolerance;
+        //}
 
         static readonly TerrainData[] tileSettings =
         {

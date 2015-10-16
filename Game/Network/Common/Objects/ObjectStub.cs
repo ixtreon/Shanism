@@ -18,7 +18,7 @@ namespace Network.Objects
 
         public Vector Position { get; internal set; }
 
-        public AnimationDef Model { get; internal set; }
+        public AnimationDefOld Model { get; internal set; }
 
         public string Name { get; internal set; }
 

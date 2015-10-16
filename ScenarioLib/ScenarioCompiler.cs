@@ -12,44 +12,54 @@ using System.Security.Permissions;
 using System.Security.Policy;
 using IO;
 
-namespace ScriptLib
+namespace ScenarioLib
 {
     /// <summary>
     /// Compiles a bunch of files referencing IO/Engine
     /// </summary>
     public class ScenarioCompiler
     {
+        #region Static and const members
+        public const string _OutputFileName = "scenario.dll";
+        public const string _ScenarioSubDir = "scenarios/";
+
+        public const string _OutputFilePath = _ScenarioSubDir + _OutputFileName;
+        public const string _OutputPdbPath = _OutputFilePath + ".pdb";
+
+
         //TODO: gotta sign the exe...
         private static readonly SecurityPermissionFlag[] scenarioPermissions = new[]
         {
             SecurityPermissionFlag.Execution,
         };
 
+        /// <summary>
+        /// The system assemblies used to compile scenarios. 
+        /// </summary>
         private static readonly string[] systemAssemblies = new[]
         {
-            //system
             "System.dll",
             "System.Core.dll",
             "mscorlib.dll",
             "Microsoft.Csharp.dll",
         };
 
+        /// <summary>
+        /// The custom assemblies used to compile scenarios. 
+        /// </summary>
         private static readonly string[] customAssemblies = new[]
         {
-            //shano
             "IO.dll",
             "Engine.dll",
-            "scriptengine.dll",
+            "ScenarioLib.dll",
         };
 
 
-
         private static readonly AppDomain ScenarioAppDomain;
+        #endregion
 
-        public const string ScenarioSubDir = "current/";
-        public const string OutputFile = ScenarioSubDir + "scenario.dll";
-        public const string PdbFile = OutputFile + ".pdb";
 
+        private string _scenarioDir;
         public string ScenarioDir
         {
             get { return _scenarioDir; }
@@ -63,11 +73,12 @@ namespace ScriptLib
             }
         }
 
+        /// <summary>
+        /// Gets whether we made a compilation in the given directory. 
+        /// </summary>
         public bool IsCompiled { get; private set; }
 
         public Assembly Assembly { get; private set; }
-
-        private string _scenarioDir;
 
 
         /// <summary>
@@ -80,18 +91,20 @@ namespace ScriptLib
             foreach (var p in scenarioPermissions)
                 permissions.AddPermission(new SecurityPermission(p));
 
-            //add extra assemblies. (i.e. this one)
-            //var fullTrustAssemblies = trustedAssemblies
-            //    .Select(s => Assembly.LoadFile(getLocalDir(s)).Evidence)
-            //    .ToArray();
+            var policyLevel = PolicyLevel.CreateAppDomainLevel();
+            policyLevel.RootCodeGroup.PolicyStatement = new PolicyStatement(permissions);
+            //AppDomain.CurrentDomain.SetAppDomainPolicy(policyLevel);
 
-            //var fullTrustAssembly = Assembly.GetExecutingAssembly().Evidence.GetHostEvidence<StrongName>();
-            var ass = Assembly.GetEntryAssembly();
-            //the ApplicationBase should be different to this one. 
-            var adSetup = new AppDomainSetup();
-            adSetup.ApplicationBase = Path.GetFullPath(ScenarioSubDir);
+            //We want the sandboxer assembly's strong name, so that we can add it to the full trust list.
+            //StrongName fullTrustAssembly = typeof(ScenarioCompiler).Assembly.Evidence.GetHostEvidence<StrongName>();
+
+            ////var fullTrustAssembly = Assembly.GetExecutingAssembly().Evidence.GetHostEvidence<StrongName>();
+            //var ass = Assembly.GetEntryAssembly();
+            ////the ApplicationBase should be different to this one. 
+            //var adSetup = new AppDomainSetup();
+            //adSetup.ApplicationBase = Path.GetFullPath(_ScenarioSubDir);
             
-            ScenarioAppDomain = AppDomain.CreateDomain("ScenarioSandbox", null, adSetup, permissions);
+            //ScenarioAppDomain = AppDomain.CreateDomain("ScenarioSandbox", null, adSetup, permissions);
         }
 
         public ScenarioCompiler()
@@ -106,15 +119,24 @@ namespace ScriptLib
             this.ScenarioDir = scenarioDir;
         }
 
+
         /// <summary>
-        /// Compiles all files in the <see cref="ScenarioDir"/> directory. 
-        /// If successful returns null, otherwise returns a string containing the compile errors as returned by the compiler. 
+        /// Loads the already compiled assembly. 
+        /// Throws an <see cref="InvalidOperationException"/> if <see cref="IsCompiled"/> is false. 
         /// </summary>
-        public string Compile()
+        /// <returns></returns>
+        void LoadCompiledAssembly()
         {
-            var files = Directory.EnumerateFiles(ScenarioDir, "*.cs", SearchOption.AllDirectories);
-            return Compile(files);
+            if (!IsCompiled)
+                throw new InvalidOperationException("Please compile the scenario first!");
+
+            var rawAssembly = File.ReadAllBytes(_OutputFilePath);
+            var rawSymbols = File.ReadAllBytes(_OutputPdbPath);
+            //TODO: Load in the sandboxed assembly!
+            Assembly = AppDomain.CurrentDomain.Load(rawAssembly, rawSymbols);
         }
+
+
         /// <summary>
         /// Compiles the given files. 
         /// If successful returns null, otherwise returns a string containing the compile errors as returned by the compiler. 
@@ -125,7 +147,7 @@ namespace ScriptLib
                 throw new InvalidOperationException("Please select a Scenario directory first!");
 
             //get all the files in AbilityDir and compile them
-            var res = compileFiles(files, Path.GetFullPath(OutputFile));
+            var res = compileFiles(files, Path.GetFullPath(_OutputFilePath));
 
             IsCompiled = res.Success;
 
@@ -133,76 +155,37 @@ namespace ScriptLib
         }
 
         /// <summary>
-        /// Loads the already compiled assembly. 
-        /// Throws an <see cref="InvalidOperationException"/> if <see cref="IsCompiled"/> is false. 
+        /// Compiles all files in the <see cref="ScenarioDir"/> directory. 
+        /// If successful returns null, otherwise returns a string containing the compile errors as returned by the compiler. 
         /// </summary>
-        /// <returns></returns>
-        void LoadAssembly()
+        public string Compile()
         {
-            if (!IsCompiled)
-                throw new InvalidOperationException("Please compile the scenario first!");
-
-            var rawAssembly = File.ReadAllBytes(OutputFile);
-            var rawSymbols = File.ReadAllBytes(PdbFile);
-            //TODO: Load in the sandboxed assembly!
-            // requires strong signing of IO, Engine
-            Assembly = Assembly.Load(rawAssembly, rawSymbols);
-        }
-
-        /// <summary>
-        /// Tries to compile the given scenario and prints the errors, if any, to the console. 
-        /// Returns true if successful. 
-        /// </summary>
-        /// <returns></returns>
-        public T TryCompile<T>()
-            where T : class
-        {
-            string errors;
-            return TryCompile<T>(out errors);
+            var files = Directory.EnumerateFiles(ScenarioDir, "*.cs", SearchOption.AllDirectories);
+            return Compile(files);
         }
 
         public T TryCompile<T>(out string errors)
-            where T : class
+            where T : ScenarioBase
         {
-            var result = Compile();
-
-            if (result != null)
-            {
-                errors = result;
+            //compile the assemblies
+            errors = Compile();
+            if (!string.IsNullOrEmpty(errors))
                 return null;
-            }
 
-            LoadAssembly();
-
-            var scenarios = Assembly.CreateInstanceOfEach<T>();
-
-            if (!scenarios.Any())
-            {
-                errors = "No scenarios found in the assembly!";
+            //parse the scenario config
+            var scenario = ScenarioBase.LoadAs<T>(ScenarioDir);
+            if (scenario == null)
                 return null;
-            }
 
-            if (scenarios.Count() > 1)
-                Console.WriteLine("Found 2 scenarios. Picking a random one...");
-
-            errors = null;
-            return scenarios.First();
-
+            LoadCompiledAssembly();
+            return scenario;
         }
-
-
-        /// <summary>
-        /// Returns the diagnostics in a human-readable format. 
-        /// </summary>
-        private string enumDiagnostics(IEnumerable<Diagnostic> ds, DiagnosticSeverity s)
-        {
-            return ds.Where(d => d.Severity == s)
-                .Aggregate("", (acc, d) => acc + Environment.NewLine + d.ToString());
-        }
-
         /// <summary>
         /// Uses Roslyn to compile the given files. 
         /// </summary>
+        /// <param name="inFiles"></param>
+        /// <param name="outFile">The path where the compiled file should be written. </param>
+        /// <returns>The result of the compilation. </returns>
         private EmitResult compileFiles(IEnumerable<string> inFiles, string outFile)
         {
             //get the syntax tree
@@ -213,36 +196,48 @@ namespace ScriptLib
                 });
 
             //create the compilation unit using the trusted assemblies
+            var systemRefs = systemAssemblies.Select(a => MetadataReference.CreateFromFile(getAssemblyDir(a)));
+            var customRefs = customAssemblies.Select(s => MetadataReference.CreateFromFile(getLocalDir(s)));
             var compilation = CSharpCompilation.Create(
                 assemblyName: "scenario.dll",
                 options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
                     optimizationLevel: OptimizationLevel.Debug),
                     syntaxTrees: syntaxTrees,
-                    references: systemAssemblies.Select(a => MetadataReference.CreateFromFile(getAssemblyDir(a)))
-                        .Concat(customAssemblies.Select(s => MetadataReference.CreateFromFile(getLocalDir(s))))
+                    references: systemRefs.Concat(customRefs)
                 );
 
             //create directory
-            if (!Directory.Exists(ScenarioSubDir))
-                Directory.CreateDirectory(ScenarioSubDir);
+            if (!Directory.Exists(_ScenarioSubDir))
+                Directory.CreateDirectory(_ScenarioSubDir);
 
             //compile
             EmitResult result;
-            using (var pdbStream = new FileStream(PdbFile, FileMode.Create))
-                using (var outStream = new FileStream(OutputFile, FileMode.Create))
+            using (var pdbStream = new FileStream(_OutputPdbPath, FileMode.Create))
+                using (var outStream = new FileStream(_OutputFilePath, FileMode.Create))
                     result = compilation.Emit(outStream, pdbStream: pdbStream);
 
             return result;
         }
 
 
-        protected static string getAssemblyDir(string path)
+        /// <summary>
+        /// Returns the diagnostics in a kinda readable format. 
+        /// </summary>
+        static string enumDiagnostics(IEnumerable<Diagnostic> ds, DiagnosticSeverity s)
+        {
+            return ds
+                .Where(d => d.Severity == s)
+                .Select(d => d.ToString())
+                .Aggregate((a, b) => a + Environment.NewLine + b);
+        }
+
+        static string getAssemblyDir(string path)
         {
             var assemblyDir = Path.GetDirectoryName(typeof(object).Assembly.Location);
             return Path.Combine(assemblyDir, path);
         }
 
-        protected static string getLocalDir(string path)
+        static string getLocalDir(string path)
         {
             var currentDir = Directory.GetCurrentDirectory();
             return Path.Combine(currentDir, path);

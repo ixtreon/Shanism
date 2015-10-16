@@ -40,7 +40,7 @@ namespace Client.Objects
         public ObjectControl(IGameObject obj)
         {
             this.Object = obj;
-            var model = obj.Model ?? AnimationDef.Default;
+            var model = obj.Model ?? AnimationDefOld.Default;
             Sprite = SpriteFactory.FromModel(model);
             //Sprite.Tint = obj.Tint;
         }

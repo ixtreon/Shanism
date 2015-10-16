@@ -31,13 +31,13 @@ namespace IO.Message.Client
         /// The string id of the action being performed. 
         /// </summary>
         [SerialMember]
-        public readonly string AbilityId;
+        public readonly string AbilityId = string.Empty;
 
         /// <summary>
         /// The Guid of the target, if there is one. 
         /// </summary>
         [SerialMember]
-        public readonly int TargetGuid;
+        public readonly int TargetGuid = -1;
 
         /// <summary>
         /// The target location, if there is one. 
@@ -54,10 +54,9 @@ namespace IO.Message.Client
         /// <param name="targetGuid"></param>
         public ActionMessage(string abilityId, int targetGuid)
         {
-            this.HasTarget = true;
             TargetType = AbilityTargetType.UnitTarget;
-            this.TargetGuid = targetGuid;
 
+            this.TargetGuid = targetGuid;
             this.AbilityId = abilityId;
         }
 
@@ -69,10 +68,9 @@ namespace IO.Message.Client
         public ActionMessage(string abilityId, Vector targetLoc)
             : this()
         {
-            this.HasTarget = true;
             TargetType = AbilityTargetType.PointTarget;
-            this.TargetLocation = targetLoc;
 
+            this.TargetLocation = targetLoc;
             this.AbilityId = abilityId;
         }
 
@@ -83,7 +81,7 @@ namespace IO.Message.Client
         public ActionMessage(string abilityId)
             : this()
         {
-            this.HasTarget = false;
+            TargetType = AbilityTargetType.NoTarget;
 
             this.AbilityId = abilityId;
         }
