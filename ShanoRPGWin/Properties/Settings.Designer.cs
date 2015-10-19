@@ -70,5 +70,17 @@ namespace ShanoRPGWin.Properties {
                 this["ScenarioLibrary"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CurrentScenario {
+            get {
+                return ((string)(this["CurrentScenario"]));
+            }
+            set {
+                this["CurrentScenario"] = value;
+            }
+        }
     }
 }

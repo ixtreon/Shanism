@@ -89,6 +89,7 @@ namespace Engine.Maps
             foreach (var obj in deadObjs)
             {
                 map.Remove(obj, obj.Position);
+
                 ObjectRemoved?.Invoke(obj);
             }
         }

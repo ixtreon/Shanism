@@ -154,6 +154,7 @@
     <Compile Include="Maps\EntityMap.cs" />
     <Compile Include="Maps\Hash.cs" />
     <Compile Include="Maps\Concurrent\HashMap.cs" />
+    <Compile Include="Maps\Terrain\MapGod.cs" />
     <Compile Include="Maps\Terrain\ITerrainMap.cs" />
     <Compile Include="Maps\ObjectMap.cs" />
     <Compile Include="Maps\Terrain\RandomMap.cs" />
@@ -161,7 +162,7 @@
     <Compile Include="Maps\RangeConstraints\GlobalRangeConstraint.cs" />
     <Compile Include="Maps\RangeConstraints\IRangeConstraint.cs" />
     <Compile Include="Maps\RangeConstraints\RangeConstraint.cs" />
-    <Compile Include="Maps\Terrain\ScenarioMap.cs" />
+    <Compile Include="Maps\Terrain\FixedMap.cs" />
     <Compile Include="ModelManager.cs" />
     <Compile Include="Objects\ObjectGuid.cs" />
     <Compile Include="Objects\Units\Abilities.cs" />
@@ -220,7 +221,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="ClassDiagram1.cd" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

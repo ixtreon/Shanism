@@ -168,6 +168,9 @@ namespace Engine
 
         void inputDevice_MovementStateChanged(MoveMessage msg)
         {
+            if (MainHero == null)
+                return;
+
             var newState = msg.Direction;
             if (newState.IsMoving)
                 MainHero.SetOrder(new PlayerMoveOrder(msg.Direction));
@@ -242,11 +245,11 @@ namespace Engine
                 return;
             if (args.EventType == Maps.EventType.EntersRange)
             {
-                ObjectSeen?.Invoke(args.TriggerObject);
+                ObjectSeen(args.TriggerObject);
             }
             else
             {
-                ObjectUnseen?.Invoke(args.TriggerObject);
+                ObjectUnseen(args.TriggerObject);
             }
         }
         

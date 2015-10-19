@@ -22,20 +22,31 @@ namespace Engine.Maps
     /// <typeparam name="T">The type of objects to track. </typeparam>
     public class HashMap<T> : IEnumerable<T>
     {
+        /// <summary>
+        /// The main table of tables. 
+        /// </summary>
         readonly Hashtable hashTable = new Hashtable();
 
+        /// <summary>
+        /// The span of a sub-table. 
+        /// </summary>
         public readonly Vector CellSize;
 
+        /// <summary>
+        /// The total amount of objects in the HashMap
+        /// </summary>
         public int Count { get; private set; }
 
-        public IEnumerable<Hashtable> Tables
-        {
-            get { return hashTable.Values.Cast<Hashtable>(); }
-        }
 
         public IEnumerable<T> Items
         {
-            get { return Tables.SelectMany(bin => bin.Keys.Cast<T>().ToArray()).ToArray(); }
+            get { return hashTable.Values.Cast<Hashtable>().SelectMany(bin => bin.Keys.Cast<T>().ToArray()).ToArray(); }
+            //get
+            //{
+            //    foreach (var tbl in hashTable.Values.Cast<Hashtable>().ToArray())
+            //        foreach (DictionaryEntry val in tbl)
+            //            yield return (T)val.Key;
+            //}
         }
 
         public HashMap(Vector cellSize)

@@ -8,21 +8,79 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ScriptLib;
 using AbilityIDE.Properties;
 using System.IO;
+using AbilityIDE.ScenarioViews;
 
 namespace AbilityIDE
 {
     public partial class ShanoEditor : Form
     {
 
-        Dictionary<TreeNode, string> Files;
+        ScenarioView[] scenarioViews;
+
+
+        public bool StatusLoading
+        {
+            set
+            {
+                if (value)  statusLabel.Text = "Loading...";
+                else        statusLabel.Text = "";
+            }
+        }
+        public bool StatusSaving
+        {
+            set
+            {
+                if (value) statusLabel.Text = "Saving...";
+                else statusLabel.Text = "";
+            }
+        }
+
+        static IEnumerable<Control> enumControls(Control c)
+        {
+            var cc = c.Controls.Cast<Control>();
+            return cc.Concat(cc.SelectMany(enumControls));
+        }
+
 
         public ShanoEditor()
         {
             InitializeComponent();
             populateRecentMenu();
+
+            scenarioTree.SelectionChanged += tree_SelectionChanged;
+
+
+
+            scenarioViews = enumControls(this)
+                .Cast<Control>()
+                .Where(c => typeof(ScenarioView).IsAssignableFrom(c.GetType()))
+                .Cast<ScenarioView>()
+                .ToArray();
+
+            foreach (var c in scenarioViews)
+            {
+                c.Dock = DockStyle.Fill;
+                c.ScenarioChanged += scenarioView_ChangedScenario;
+            }
+        }
+
+        private void scenarioView_ChangedScenario()
+        {
+            updateUi();
+        }
+
+        private void tree_SelectionChanged(ScenarioViewType ty)
+        {
+            var toShow = scenarioViews.FirstOrDefault(v => v.ViewType == ty);
+
+            //hide
+            foreach (var c in scenarioViews)
+                if(c != toShow)
+                    c.Hide();
+            //show
+            toShow?.Show();
         }
 
         private void populateRecentMenu()
@@ -46,17 +104,8 @@ namespace AbilityIDE
 
             foreach(var path in recents)
             {
-                string fileName;
-                try
-                {
-                    fileName = Path.GetFileName(path);
-                }
-                catch(ArgumentException e)
-                {
-                    continue;
-                }
 
-                var recentFileMenuItem = new ToolStripMenuItem(fileName)
+                var recentFileMenuItem = new ToolStripMenuItem(path)
                 {
                     ToolTipText = path,
                 };
@@ -77,7 +126,7 @@ namespace AbilityIDE
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //TODO: save all modified files
+            save();
         }
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -99,46 +148,13 @@ namespace AbilityIDE
         {
             var n = e.Node;
 
-            if (Files.ContainsKey(n))
-            {
-                var txt = Files[n];
-
-                cCodeEditor.Text = txt;
-            }
-        }
-
-        //TODO: REMOVE
-
-        ScenarioCompiler compiler = new ScenarioCompiler();
-
-        private int lastEdit = 0;
-
-        private async void checkSyntax()
-        {
-            var ticket = Interlocked.Increment(ref lastEdit);
-
-            await Task.Delay(500);
-
-            //if (lastEdit == ticket)
+            //if (Files.ContainsKey(n))
             //{
-            //    var result = compiler.CompileFiles(new[] { scenarioView1.SelectedNode.Name }, "kur.dll");
+            //    var txt = Files[n];
 
-            //    if (result.Success)
-            //    {
-
-            //    }
-            //    else
-            //    {
-            //        foreach (var d in result.Diagnostics)
-            //        {
-            //            if (d.Location.IsInSource)
-            //            {
-            //                richTextBox1.Select(d.Location.SourceSpan.Start, d.Location.SourceSpan.End);
-            //                richTextBox1.SelectionFont = new Font(richTextBox1.SelectionFont, FontStyle.Underline);
-            //            }
-            //        }
-            //    }
+            //    cCodeEditor.Text = txt;
             //}
         }
+
     }
 }

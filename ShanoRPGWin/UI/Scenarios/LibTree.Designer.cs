@@ -29,6 +29,10 @@
         private void InitializeComponent()
         {
             this.SuspendLayout();
+            // 
+            // LibTree
+            // 
+            this.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.LibTree_AfterSelect);
             this.ResumeLayout(false);
 
         }

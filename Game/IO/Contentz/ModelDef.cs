@@ -50,7 +50,7 @@ namespace IO.Content
         }
         #endregion
 
-        public ModelDef(string name, AnimationDef stand,
+        public ModelDef(string name, AnimationDef stand = null,
             AnimationDef attack = null,
             AnimationDef walk = null,
             AnimationDef cast = null)

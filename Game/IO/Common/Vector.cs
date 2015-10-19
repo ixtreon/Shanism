@@ -157,6 +157,10 @@ namespace IO.Common
         {
             return new Point((int)x, (int)y);
         }
+        public Point Round()
+        {
+            return new Point((int)Math.Round(x), (int)Math.Round(y));
+        }
         public Point Floor()
         {
             return new Point((int)Math.Floor(x), (int)Math.Floor(y));
@@ -164,6 +168,11 @@ namespace IO.Common
         public Point Ceiling()
         {
             return new Point((int)Math.Ceiling(x), (int)Math.Ceiling(y));
+        }
+
+        public static implicit operator Vector(Point p)
+        {
+            return new Vector(p.X, p.Y);
         }
 
         public Vector PolarProjection(double angle, double distance)

@@ -18,7 +18,7 @@ class Teleport : Ability
         Description = "Teleports to the selected location";
         CastRange = 10;
         ManaCost = 1;
-        Cooldown = 1000;
+        Cooldown = 100;
     }
 
     public override void OnCast(AbilityCastArgs e)

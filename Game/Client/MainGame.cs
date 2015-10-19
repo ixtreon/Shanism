@@ -21,7 +21,7 @@ namespace Client
     /// <summary>
     /// This is the main type for our game
     /// </summary>
-    public class MainGame : Game, IClient
+    class MainGame : Game, IShanoClient
     {
         GraphicsDeviceManager graphics;
 
@@ -75,15 +75,15 @@ namespace Client
         private MapManager MapManager;
 
 
-        //hack so we can start the game without referencing monogame. duh
-        public bool Running
-        {
-            set
-            {
-                if (value)
-                    Run();
-            }
-        }
+        ////hack so we can start the game without referencing monogame. duh
+        //public bool Running
+        //{
+        //    set
+        //    {
+        //        if (value)
+        //            Run();
+        //    }
+        //}
 
         public MainGame(string playerName)
             : base()

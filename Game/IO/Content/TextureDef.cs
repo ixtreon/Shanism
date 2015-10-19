@@ -1,5 +1,6 @@
 ﻿using IO.Common;
 using IxSerializer.Attributes;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace IO.Content
     /// Contains the name of the texture along with the logical splits that divide it into chunks. 
     /// </summary>
     [SerialKiller]
+    [JsonObject(IsReference = true)]
     public struct TextureDef
     {
         /// <summary>

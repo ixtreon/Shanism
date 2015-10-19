@@ -123,11 +123,11 @@
     <Compile Include="UI\ScenarioDirForm.Designer.cs">
       <DependentUpon>ScenarioDirForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Scenarios\DirectoryInfo.cs">
+    <Compile Include="UI\Scenarios\LibraryDetails.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UI\Scenarios\DirectoryInfo.Designer.cs">
-      <DependentUpon>DirectoryInfo.cs</DependentUpon>
+    <Compile Include="UI\Scenarios\LibraryDetails.Designer.cs">
+      <DependentUpon>LibraryDetails.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Scenarios\ScenarioDetails.cs">
       <SubType>UserControl</SubType>
@@ -158,8 +158,14 @@
     <EmbeddedResource Include="UI\ScenarioDirForm.resx">
       <DependentUpon>ScenarioDirForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Scenarios\LibraryDetails.resx">
+      <DependentUpon>LibraryDetails.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Scenarios\LibTree.resx">
       <DependentUpon>LibTree.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Scenarios\ScenarioDetails.resx">
+      <DependentUpon>ScenarioDetails.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace ShanoRPGWin.UI.Scenarios
 {
-    public partial class DirectoryInfo : UserControl
+    public partial class LibraryDetails : UserControl
     {
-        public DirectoryInfo()
+        public LibraryDetails()
         {
             InitializeComponent();
         }

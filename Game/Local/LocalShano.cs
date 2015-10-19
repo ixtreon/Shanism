@@ -30,7 +30,7 @@ namespace Local
         /// <summary>
         /// Gets the game client. 
         /// </summary>
-        public readonly MainGame ShanoClient;
+        public readonly IShanoClient ShanoClient;
 
         /// <summary>
         /// Creates a new local game instance, putting the provided hero in the map with the specified seed. 
@@ -41,7 +41,7 @@ namespace Local
         {
             //create the local server and client
             ShanoEngine = new ShanoEngine(mapSeed, scenarioPath);
-            ShanoClient = new MainGame(playerName);
+            ShanoClient = ShanoGame.Create(playerName);
 
             var receptor = ShanoEngine.AcceptClient(ShanoClient);
             ShanoClient.SetReceptor(receptor);
@@ -56,7 +56,7 @@ namespace Local
             //link them
 
             //start the client
-            ShanoClient.Running = true;
+            ShanoClient.Run();
         }
     }
 }

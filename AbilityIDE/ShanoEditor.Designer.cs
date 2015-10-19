@@ -1,4 +1,6 @@
-﻿namespace AbilityIDE
+﻿using AbilityIDE.ScenarioViews;
+
+namespace AbilityIDE
 {
     partial class ShanoEditor
     {
@@ -54,40 +56,33 @@
             this.searchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.cCodeEditor = new System.Windows.Forms.RichTextBox();
+            this.openDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.tpCode = new System.Windows.Forms.TabPage();
             this.pSplitCode = new System.Windows.Forms.SplitContainer();
-            this.treeCode = new AbilityIDE.ScenarioTreeView();
             this.stripCode = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.openDialog = new System.Windows.Forms.FolderBrowserDialog();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.cCodeEditor = new System.Windows.Forms.RichTextBox();
             this.tpScenario = new System.Windows.Forms.TabPage();
-            this.tpContent = new System.Windows.Forms.TabPage();
-            this.tpCode = new System.Windows.Forms.TabPage();
-            this.pSplitContent = new System.Windows.Forms.SplitContainer();
-            this.treeContent = new AbilityIDE.ScenarioTreeView();
-            this.stripContent = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.treeScenario = new AbilityIDE.ScenarioTreeView();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.scenarioTree = new AbilityIDE.ScenarioTree();
+            this.mapView = new AbilityIDE.ScenarioViews.MapView();
+            this.detailsView = new AbilityIDE.ScenarioViews.DetailsView();
             this.menuStrip1.SuspendLayout();
+            this.tpCode.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pSplitCode)).BeginInit();
-            this.pSplitCode.Panel1.SuspendLayout();
             this.pSplitCode.Panel2.SuspendLayout();
             this.pSplitCode.SuspendLayout();
             this.stripCode.SuspendLayout();
-            this.tabControl1.SuspendLayout();
             this.tpScenario.SuspendLayout();
-            this.tpContent.SuspendLayout();
-            this.tpCode.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pSplitContent)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.pSplitContent.SuspendLayout();
-            this.stripContent.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -99,7 +94,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1107, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(853, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -290,14 +285,16 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.aboutToolStripMenuItem.Text = "&About...";
             // 
-            // cCodeEditor
+            // tpCode
             // 
-            this.cCodeEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cCodeEditor.Location = new System.Drawing.Point(0, 0);
-            this.cCodeEditor.Name = "cCodeEditor";
-            this.cCodeEditor.Size = new System.Drawing.Size(725, 669);
-            this.cCodeEditor.TabIndex = 1;
-            this.cCodeEditor.Text = "";
+            this.tpCode.BackColor = System.Drawing.SystemColors.Control;
+            this.tpCode.Controls.Add(this.pSplitCode);
+            this.tpCode.Location = new System.Drawing.Point(4, 22);
+            this.tpCode.Name = "tpCode";
+            this.tpCode.Padding = new System.Windows.Forms.Padding(3);
+            this.tpCode.Size = new System.Drawing.Size(845, 449);
+            this.tpCode.TabIndex = 0;
+            this.tpCode.Text = "Code";
             // 
             // pSplitCode
             // 
@@ -305,26 +302,13 @@
             this.pSplitCode.Location = new System.Drawing.Point(3, 3);
             this.pSplitCode.Name = "pSplitCode";
             // 
-            // pSplitCode.Panel1
-            // 
-            this.pSplitCode.Panel1.Controls.Add(this.treeCode);
-            // 
             // pSplitCode.Panel2
             // 
             this.pSplitCode.Panel2.Controls.Add(this.stripCode);
             this.pSplitCode.Panel2.Controls.Add(this.cCodeEditor);
-            this.pSplitCode.Size = new System.Drawing.Size(1093, 669);
-            this.pSplitCode.SplitterDistance = 364;
+            this.pSplitCode.Size = new System.Drawing.Size(839, 443);
+            this.pSplitCode.SplitterDistance = 279;
             this.pSplitCode.TabIndex = 3;
-            // 
-            // treeCode
-            // 
-            this.treeCode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeCode.Location = new System.Drawing.Point(0, 0);
-            this.treeCode.Name = "treeCode";
-            this.treeCode.Size = new System.Drawing.Size(364, 669);
-            this.treeCode.TabIndex = 2;
-            this.treeCode.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.scenarioView1_AfterSelect);
             // 
             // stripCode
             // 
@@ -332,7 +316,7 @@
             this.toolStripButton1});
             this.stripCode.Location = new System.Drawing.Point(0, 0);
             this.stripCode.Name = "stripCode";
-            this.stripCode.Size = new System.Drawing.Size(725, 25);
+            this.stripCode.Size = new System.Drawing.Size(556, 25);
             this.stripCode.TabIndex = 2;
             this.stripCode.Text = "toolStrip1";
             // 
@@ -346,18 +330,14 @@
             this.toolStripButton1.Text = "WTF WE";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
-            // tabControl1
+            // cCodeEditor
             // 
-            this.tabControl1.Controls.Add(this.tpScenario);
-            this.tabControl1.Controls.Add(this.tpContent);
-            this.tabControl1.Controls.Add(this.tpCode);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(0, 24);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1107, 701);
-            this.tabControl1.TabIndex = 4;
+            this.cCodeEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cCodeEditor.Location = new System.Drawing.Point(0, 0);
+            this.cCodeEditor.Name = "cCodeEditor";
+            this.cCodeEditor.Size = new System.Drawing.Size(556, 443);
+            this.cCodeEditor.TabIndex = 1;
+            this.cCodeEditor.Text = "";
             // 
             // tpScenario
             // 
@@ -366,75 +346,9 @@
             this.tpScenario.Location = new System.Drawing.Point(4, 22);
             this.tpScenario.Name = "tpScenario";
             this.tpScenario.Padding = new System.Windows.Forms.Padding(3);
-            this.tpScenario.Size = new System.Drawing.Size(1099, 675);
+            this.tpScenario.Size = new System.Drawing.Size(845, 449);
             this.tpScenario.TabIndex = 2;
             this.tpScenario.Text = "Scenario";
-            // 
-            // tpContent
-            // 
-            this.tpContent.BackColor = System.Drawing.SystemColors.Control;
-            this.tpContent.Controls.Add(this.pSplitContent);
-            this.tpContent.Location = new System.Drawing.Point(4, 22);
-            this.tpContent.Name = "tpContent";
-            this.tpContent.Padding = new System.Windows.Forms.Padding(3);
-            this.tpContent.Size = new System.Drawing.Size(1099, 675);
-            this.tpContent.TabIndex = 1;
-            this.tpContent.Text = "Content";
-            // 
-            // tpCode
-            // 
-            this.tpCode.BackColor = System.Drawing.SystemColors.Control;
-            this.tpCode.Controls.Add(this.pSplitCode);
-            this.tpCode.Location = new System.Drawing.Point(4, 22);
-            this.tpCode.Name = "tpCode";
-            this.tpCode.Padding = new System.Windows.Forms.Padding(3);
-            this.tpCode.Size = new System.Drawing.Size(1099, 675);
-            this.tpCode.TabIndex = 0;
-            this.tpCode.Text = "Code";
-            // 
-            // pSplitContent
-            // 
-            this.pSplitContent.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pSplitContent.Location = new System.Drawing.Point(3, 3);
-            this.pSplitContent.Name = "pSplitContent";
-            // 
-            // pSplitContent.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.treeContent);
-            // 
-            // pSplitContent.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.stripContent);
-            this.pSplitContent.Size = new System.Drawing.Size(1093, 669);
-            this.pSplitContent.SplitterDistance = 364;
-            this.pSplitContent.TabIndex = 4;
-            // 
-            // treeContent
-            // 
-            this.treeContent.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeContent.Location = new System.Drawing.Point(0, 0);
-            this.treeContent.Name = "treeContent";
-            this.treeContent.Size = new System.Drawing.Size(364, 669);
-            this.treeContent.TabIndex = 2;
-            // 
-            // stripContent
-            // 
-            this.stripContent.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton2});
-            this.stripContent.Location = new System.Drawing.Point(0, 0);
-            this.stripContent.Name = "stripContent";
-            this.stripContent.Size = new System.Drawing.Size(725, 25);
-            this.stripContent.TabIndex = 2;
-            this.stripContent.Text = "toolStrip2";
-            // 
-            // toolStripButton2
-            // 
-            this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
-            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton2.Text = "WTF WE";
             // 
             // splitContainer1
             // 
@@ -444,24 +358,82 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.treeScenario);
-            this.splitContainer1.Size = new System.Drawing.Size(1093, 669);
-            this.splitContainer1.SplitterDistance = 364;
+            this.splitContainer1.Panel1.Controls.Add(this.scenarioTree);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.mapView);
+            this.splitContainer1.Panel2.Controls.Add(this.detailsView);
+            this.splitContainer1.Size = new System.Drawing.Size(839, 443);
+            this.splitContainer1.SplitterDistance = 279;
             this.splitContainer1.TabIndex = 4;
             // 
-            // treeScenario
+            // tabControl1
             // 
-            this.treeScenario.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeScenario.Location = new System.Drawing.Point(0, 0);
-            this.treeScenario.Name = "treeScenario";
-            this.treeScenario.Size = new System.Drawing.Size(364, 669);
-            this.treeScenario.TabIndex = 2;
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Controls.Add(this.tpScenario);
+            this.tabControl1.Controls.Add(this.tpCode);
+            this.tabControl1.Location = new System.Drawing.Point(0, 24);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(853, 475);
+            this.tabControl1.TabIndex = 4;
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.statusLabel});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 499);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(853, 22);
+            this.statusStrip1.TabIndex = 5;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // statusLabel
+            // 
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(0, 17);
+            // 
+            // scenarioTree
+            // 
+            this.scenarioTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.scenarioTree.Location = new System.Drawing.Point(0, 0);
+            this.scenarioTree.Name = "scenarioTree";
+            this.scenarioTree.Scenario = null;
+            this.scenarioTree.Size = new System.Drawing.Size(279, 443);
+            this.scenarioTree.TabIndex = 0;
+            // 
+            // mapView
+            // 
+            this.mapView.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.mapView.Location = new System.Drawing.Point(214, 54);
+            this.mapView.MinimumSize = new System.Drawing.Size(310, 240);
+            this.mapView.Name = "mapView";
+            this.mapView.Padding = new System.Windows.Forms.Padding(0, 0, 0, 12);
+            this.mapView.Scenario = null;
+            this.mapView.Size = new System.Drawing.Size(310, 240);
+            this.mapView.TabIndex = 4;
+            this.mapView.Visible = false;
+            // 
+            // detailsView
+            // 
+            this.detailsView.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.detailsView.Location = new System.Drawing.Point(22, 230);
+            this.detailsView.Name = "detailsView";
+            this.detailsView.Scenario = null;
+            this.detailsView.Size = new System.Drawing.Size(260, 135);
+            this.detailsView.TabIndex = 3;
+            this.detailsView.Visible = false;
             // 
             // ShanoEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1107, 725);
+            this.ClientSize = new System.Drawing.Size(853, 521);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -469,27 +441,21 @@
             this.Text = "ShanoEditor";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.pSplitCode.Panel1.ResumeLayout(false);
+            this.tpCode.ResumeLayout(false);
             this.pSplitCode.Panel2.ResumeLayout(false);
             this.pSplitCode.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pSplitCode)).EndInit();
             this.pSplitCode.ResumeLayout(false);
             this.stripCode.ResumeLayout(false);
             this.stripCode.PerformLayout();
-            this.tabControl1.ResumeLayout(false);
             this.tpScenario.ResumeLayout(false);
-            this.tpContent.ResumeLayout(false);
-            this.tpCode.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pSplitContent)).EndInit();
-            this.pSplitContent.ResumeLayout(false);
-            this.stripContent.ResumeLayout(false);
-            this.stripContent.PerformLayout();
-            this.splitContainer1.Panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -519,25 +485,23 @@
         private System.Windows.Forms.ToolStripMenuItem searchToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
-        private System.Windows.Forms.RichTextBox cCodeEditor;
-        private ScenarioTreeView treeCode;
-        private System.Windows.Forms.SplitContainer pSplitCode;
         private System.Windows.Forms.FolderBrowserDialog openDialog;
-        private System.Windows.Forms.ToolStrip stripCode;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripMenuItem recentToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem dasToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem dasToolStripMenuItem1;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tpScenario;
-        private System.Windows.Forms.TabPage tpContent;
         private System.Windows.Forms.TabPage tpCode;
-        private System.Windows.Forms.SplitContainer pSplitContent;
-        private ScenarioTreeView treeContent;
-        private System.Windows.Forms.ToolStrip stripContent;
-        private System.Windows.Forms.ToolStripButton toolStripButton2;
+        private System.Windows.Forms.SplitContainer pSplitCode;
+        private System.Windows.Forms.ToolStrip stripCode;
+        private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.RichTextBox cCodeEditor;
+        private System.Windows.Forms.TabPage tpScenario;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private ScenarioTreeView treeScenario;
+        private System.Windows.Forms.TabControl tabControl1;
+        private ScenarioTree scenarioTree;
+        private DetailsView detailsView;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel statusLabel;
+        private MapView mapView;
     }
 }
 

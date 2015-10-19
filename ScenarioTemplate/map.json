@@ -1,0 +1,14 @@
+﻿{
+  "Infinite": true,
+
+
+  //finite only
+  "Width": 4,
+  "Height": 3,
+
+  "Map": [
+    [ 1, 1, 1, 1 ],
+    [ 1, 2, 1, 1 ],
+    [ 1, 2, 2, 1 ]
+  ]
+}

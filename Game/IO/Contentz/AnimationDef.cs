@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IO.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,11 +9,13 @@ namespace IO.Content
 {
     public class AnimationDef
     {
-        public readonly FrameDef[] Frames;
+        public TextureDef Texture { get; set; }
 
-        public AnimationDef(params FrameDef[] frames)
+        public Rectangle Span { get; set; }
+
+        public AnimationDef()
         {
-            Frames = frames;
+            //Frames = frames;
         }
     }
 }

@@ -173,7 +173,7 @@ namespace ScenarioLib
                 return null;
 
             //parse the scenario config
-            var scenario = ScenarioBase.LoadAs<T>(ScenarioDir);
+            var scenario = ScenarioBase.Load<T>(ScenarioDir);
             if (scenario == null)
                 return null;
 

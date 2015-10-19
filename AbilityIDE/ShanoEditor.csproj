@@ -90,6 +90,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ScenarioViews\DetailsView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ScenarioViews\DetailsView.Designer.cs">
+      <DependentUpon>DetailsView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ScenarioTree.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ScenarioViews\Maps\ShanoMap.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ScenarioViews\Maps\ShanoMap.Designer.cs">
+      <DependentUpon>ShanoMap.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ScenarioViews\MapView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ScenarioViews\MapView.Designer.cs">
+      <DependentUpon>MapView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ScenarioViews\ScenarioView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ScenarioViews\ScenarioViewType.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="ShanoEditor.cs">
       <SubType>Form</SubType>
@@ -99,12 +124,21 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScenarioView.cs">
-      <SubType>component</SubType>
-    </Compile>
     <Compile Include="ShanoFormFileActions.cs">
       <SubType>Form</SubType>
     </Compile>
+    <EmbeddedResource Include="ScenarioViews\DetailsView.resx">
+      <DependentUpon>DetailsView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScenarioTree.resx">
+      <DependentUpon>ScenarioTree.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScenarioViews\Maps\ShanoMap.resx">
+      <DependentUpon>ShanoMap.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScenarioViews\MapView.resx">
+      <DependentUpon>MapView.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ShanoEditor.resx">
       <DependentUpon>ShanoEditor.cs</DependentUpon>
     </EmbeddedResource>
@@ -137,6 +171,22 @@
       <Project>{dc89987d-5817-4f1d-95ca-80c024c8d6bb}</Project>
       <Name>IO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ScenarioLib\ScenarioLib.csproj">
+      <Project>{bada50f2-93bc-4eba-949a-bf892ae4b7e5}</Project>
+      <Name>ScenarioLib</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Folder-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dot-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\loading.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\load_icon.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

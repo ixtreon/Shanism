@@ -6,43 +6,78 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using IO;
-using ScriptEngine.Parsers;
 using System.IO;
+using ScenarioLib;
 
 namespace AbilityIDE
 {
     public partial class ShanoEditor : Form
     {
+        const string WindowTitle = "ShanoEditor";
+
+        public ScenarioBase Scenario { get; private set; }
+
+
 
         /// <summary>
         /// Opens an existing scenario. 
         /// </summary>
-        private void open(string filePath = null)
+        private async void open(string filePath = null)
         {
+            //ask the user to pick a file if none given
             if(string.IsNullOrEmpty(filePath) && openDialog.ShowDialog() == DialogResult.OK)
-            {
                 filePath = openDialog.SelectedPath;
-            }
 
+            //wtf
             if (string.IsNullOrEmpty(filePath))
                 return;
 
+            StatusLoading = true;
+            //load a scenario, if any
+            Scenario = await Task.Run(() => ScenarioBase.Load(filePath));
+            if(Scenario == null)
+            {
+                MessageBox.Show("Unable to find a scenario in the directory '{0}'".F(filePath), "ShanoEditor", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+
             Settings.Default.UpdateRecentFiles(filePath);
-
-            var sd = new ScenarioParser(filePath);
-
             Directory.SetCurrentDirectory(filePath);
 
-            treeContent.LoadScenario(filePath);
+            //load up UI changes
+            scenarioTree.Scenario = Scenario;
+
+            detailsView.Scenario = Scenario;
+            mapView.Scenario = Scenario;
+
+            updateUi();
+            StatusLoading = false;
         }
 
-        private void addToRecent(string path)
+
+        void save()
         {
-            const int maxRecent = 10;
-            var recentFiles = Settings.Default.RecentFiles.Split('\n');
-            Settings.Default.RecentFiles = openDialog.SelectedPath + '\n' + recentFiles.Take(maxRecent - 1).Aggregate((a, b) => a + '\n' + b);
-            Settings.Default.Save();
-            recentToolStripMenuItem.DropDownItems.Clear();
+            if (Scenario == null || !Scenario.IsDirty)
+                return;
+
+            Scenario.Save();
+            Scenario.IsDirty = false;
+
+            updateUi();
+        }
+
+        void updateUi()
+        {
+            if(Scenario != null)
+            {
+                var editPostfix = Scenario.IsDirty ? " *" : "";
+                Text = "{0} - {1}{2}".F(Scenario.Name, WindowTitle, editPostfix);
+            }
+            else
+            {
+                Text = WindowTitle;
+            }
         }
     }
 }

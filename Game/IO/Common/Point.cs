@@ -35,11 +35,6 @@ namespace IO.Common
                     yield return new Point(ix, iy);
         }
 
-        public static implicit operator Vector(Point p)
-        {
-            return new Vector(p.X, p.Y);
-        }
-
         public static Point operator +(Point a, Point b)
         {
             return new Point(a.X + b.X, a.Y + b.Y);
@@ -60,6 +55,11 @@ namespace IO.Common
         public static Point operator *(Point a, int divisor)
         {
             return new Point(a.X * divisor, a.Y * divisor);
+        }
+
+        public static Point operator -(Point a, int other)
+        {
+            return new Point(a.X - other, a.Y - other);
         }
 
         public static Point operator *(Point a, Point b)
@@ -105,6 +105,13 @@ namespace IO.Common
                 hash = hash * 23 + Y.GetHashCode();
                 return hash;
             }
+        }
+
+        public Point Clamp(Point min, Point max)
+        {
+            return new Point(
+                Math.Min(Math.Max(min.X, X), max.X),
+                Math.Min(Math.Max(min.Y, Y), max.Y));
         }
     }
 }

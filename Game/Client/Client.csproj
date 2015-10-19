@@ -136,7 +136,9 @@
     <Compile Include="Controls\DefaultKeyAttribute.cs" />
     <Compile Include="Controls\Keybind.cs" />
     <Compile Include="Controls\KeyManager.cs" />
+    <Compile Include="ShanoGame.cs" />
     <Compile Include="GameStatus.cs" />
+    <Compile Include="IShanoClient.cs" />
     <Compile Include="Map\ChunkData.cs" />
     <Compile Include="Map\FogLayer.cs" />
     <Compile Include="Map\MapManager.cs" />

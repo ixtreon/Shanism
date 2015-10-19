@@ -29,7 +29,7 @@ public class Spark : Ability
         Name = "Spark";
         Description = "Conjures a fucking spark travelling in a straight line. ";
         ManaCost = 1;
-        Cooldown = 1000;
+        Cooldown = 100;
     }
 
     // Run whenever the spell is cast. 

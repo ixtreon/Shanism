@@ -1,6 +1,6 @@
 ﻿namespace ShanoRPGWin.UI.Scenarios
 {
-    partial class DirectoryInfo
+    partial class LibraryDetails
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,8 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
+            this.SuspendLayout();
+            // 
+            // LibraryDetails
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.Name = "LibraryDetails";
+            this.ResumeLayout(false);
+
         }
 
         #endregion

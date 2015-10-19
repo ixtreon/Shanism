@@ -41,7 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="app.config" />
     <None Include="models.json" />
+    <None Include="map.json" />
     <None Include="scenario.json" />
   </ItemGroup>
   <ItemGroup>

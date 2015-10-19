@@ -1,7 +1,9 @@
 ﻿using Engine.Maps;
+using IO;
 using IO.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -13,6 +15,8 @@ namespace UnitTests
     [TestClass]
     public class HashMapPerfTest
     {
+        Random rnd = new Random();
+
         public TestContext TestContext { get; set; }
 
 
@@ -111,5 +115,6 @@ namespace UnitTests
 
             TestContext.WriteLine("[{0:n0}|{1:n0}]\t[{2:n0}|{3:n0}]\t[{4:n0}|{5:n0}]", t_set[0], t_set[1], t_set[2], t_get[0], t_get[1], t_get[2]);
         }
+
     }
 }

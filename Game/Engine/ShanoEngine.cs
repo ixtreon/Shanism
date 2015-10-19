@@ -89,8 +89,8 @@ namespace Engine
                 throw new Exception("Unable to compile the scenario. The message returned was: {0}".F(compileErrors));
 
             Scenario.LoadTypes(scenarioCompiler.Assembly);
-            
-            TerrainMap = new RandomTerrainMap(mapSeed);    //TODO: get from the scenario
+
+            TerrainMap = Maps.Terrain.MapGod.Create(Scenario.MapConfig, mapSeed);
 
             //run scripts
             Scenario.RunScripts(cs => cs.LoadModels(Scenario.Models));

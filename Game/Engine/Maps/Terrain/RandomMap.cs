@@ -18,7 +18,7 @@ namespace Engine.Maps
     /// <summary>
     /// Generates infinite procedural terrain and doodads using noise primitives. 
     /// </summary>
-    public class RandomTerrainMap : ITerrainMap
+    public class RandomMap : ITerrainMap
     {
         struct TerrainData
         {
@@ -58,7 +58,7 @@ namespace Engine.Maps
         public int Bottom { get; } = int.MinValue;
         public int Top { get; } = int.MaxValue;
 
-        internal RandomTerrainMap(int seed)
+        internal RandomMap(int seed)
         {
             this.Seed = seed;
             initTerrain();
