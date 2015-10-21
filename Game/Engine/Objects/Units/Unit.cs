@@ -98,10 +98,6 @@ namespace Engine.Objects
         /// Gets the unit's chance to dodge an attack. 
         /// </summary>
         public double Dodge { get; protected internal set; }
-        /// <summary>
-        /// Gets the current movement speed of the unit. 
-        /// </summary>
-        public double MoveSpeed { get; protected internal set; }
 
         /// <summary>
         /// Gets the current life regeneration rate of the unit, in life points per second.  
