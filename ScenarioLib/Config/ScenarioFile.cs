@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using IO;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -52,19 +53,19 @@ namespace ScenarioLib
 
         protected ScenarioBase() { }
 
-        public ScenarioBase CreateNew(string scenarioPath)
+        public ScenarioBase(string scenarioPath)
         {
-            var sc = new ScenarioBase
-            {
-                ScenarioDirectory = Path.GetFullPath(scenarioPath),
-                FilePath = Path.Combine(ScenarioDirectory, ScenarioFileName),
-                Name = "Shano Scenario",
-                Description = "Shanistic Description",
-                MapConfig = new MapConfig(),
-                ModelConfig = new ContentConfig()
-            };
-            sc.Save();
-            return sc;
+            if (!Directory.Exists(scenarioPath))
+                throw new ArgumentException(nameof(scenarioPath), "The given directory does not exist: '{0}'".F(scenarioPath));
+
+            ScenarioDirectory = Path.GetFullPath(scenarioPath);
+            FilePath = Path.Combine(scenarioPath, ScenarioFileName);
+            Name = "Shano Scenario";
+            Description = "Shanistic Description";
+            MapConfig = new MapConfig();
+            ModelConfig = new ContentConfig();
+
+            Save();
         }
 
 

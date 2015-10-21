@@ -136,6 +136,33 @@ namespace ScenarioLib
             Assembly = AppDomain.CurrentDomain.Load(rawAssembly, rawSymbols);
         }
 
+        public T TryCompile<T>(out string errors)
+            where T : ScenarioBase
+        {
+            //compile the assemblies
+            errors = Compile();
+            if (!string.IsNullOrEmpty(errors))
+                return null;
+
+            //parse the scenario config
+            var scenario = ScenarioBase.Load<T>(ScenarioDir);
+            if (scenario == null)
+                return null;
+
+            LoadCompiledAssembly();
+            return scenario;
+        }
+
+        /// <summary>
+        /// Compiles all files in the <see cref="ScenarioDir"/> directory. 
+        /// If successful returns null, otherwise returns a string containing the compile errors as returned by the compiler. 
+        /// </summary>
+        public string Compile()
+        {
+            var files = Directory.EnumerateFiles(ScenarioDir, "*.cs", SearchOption.AllDirectories);
+            return Compile(files);
+        }
+
 
         /// <summary>
         /// Compiles the given files. 
@@ -154,32 +181,6 @@ namespace ScenarioLib
             return IsCompiled ? null : enumDiagnostics(res.Diagnostics, DiagnosticSeverity.Error);
         }
 
-        /// <summary>
-        /// Compiles all files in the <see cref="ScenarioDir"/> directory. 
-        /// If successful returns null, otherwise returns a string containing the compile errors as returned by the compiler. 
-        /// </summary>
-        public string Compile()
-        {
-            var files = Directory.EnumerateFiles(ScenarioDir, "*.cs", SearchOption.AllDirectories);
-            return Compile(files);
-        }
-
-        public T TryCompile<T>(out string errors)
-            where T : ScenarioBase
-        {
-            //compile the assemblies
-            errors = Compile();
-            if (!string.IsNullOrEmpty(errors))
-                return null;
-
-            //parse the scenario config
-            var scenario = ScenarioBase.Load<T>(ScenarioDir);
-            if (scenario == null)
-                return null;
-
-            LoadCompiledAssembly();
-            return scenario;
-        }
         /// <summary>
         /// Uses Roslyn to compile the given files. 
         /// </summary>
