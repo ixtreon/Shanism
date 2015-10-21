@@ -52,5 +52,13 @@ namespace Engine.Maps
         {
             return Enumerable.Empty<Doodad>();
         }
+
+        public TerrainType GetTerrainAt(Vector loc)
+        {
+            var pt = loc.Floor();
+            if (!bounds.Contains(pt))
+                return TerrainType.None;
+            return map[pt.X, pt.Y];
+        }
     }
 }

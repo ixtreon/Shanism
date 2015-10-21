@@ -73,7 +73,7 @@ namespace Engine.Maps
         public void GetMap(Rectangle rect, ref TerrainType[,] outMap)
         {
             foreach (var p in rect.Iterate())
-                outMap[p.X - rect.X, p.Y - rect.Y] = GetTile(p);
+                outMap[p.X - rect.X, p.Y - rect.Y] = GetTerrainAt(p);
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Engine.Maps
         {
             foreach(var pt in rect.Iterate())
             {
-                if (!GetTile(pt).IsWater())
+                if (!GetTerrainAt(pt).IsWater())
                 {
                     var intPt = pointTransform(pt);
                     var v = humidityModule.GetValue(intPt.X, intPt.Y, 0);
@@ -105,9 +105,17 @@ namespace Engine.Maps
         }
 
         /// <summary>
-        /// Gets the map tile for the given x/y pair. 
+        /// Gets the map tile at the given point. 
         /// </summary>
-        TerrainType GetTile(Point p)
+        public TerrainType GetTerrainAt(Vector loc)
+        {
+            return GetTerrainAt(loc.Floor());
+        }
+
+        /// <summary>
+        /// Gets the map tile at the given point. 
+        /// </summary>
+        public TerrainType GetTerrainAt(Point p)
         {
             var internalPt = pointTransform(p);
             

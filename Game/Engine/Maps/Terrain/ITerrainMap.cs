@@ -21,5 +21,7 @@ namespace Engine.Maps
         void GetMap(Rectangle rect, ref TerrainType[,] outMap);
 
         IEnumerable<Doodad> GetNativeDoodads(Rectangle rect);
+
+        TerrainType GetTerrainAt(Vector loc);
     }
 }
