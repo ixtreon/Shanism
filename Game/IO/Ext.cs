@@ -237,9 +237,15 @@ namespace IO
         /// <param name="assembly">The assembly in which to look for stuff. </param>
         public static IEnumerable<T> CreateInstanceOfEach<T>(this Assembly assembly)
         {
-            return assembly.GetTypes()
-                .Where(ty => typeof(T).IsAssignableFrom(ty))
+            return assembly
+                .GetTypesDescending<T>()
                 .Select(ty => (T)Activator.CreateInstance(ty));
+        }
+        public static IEnumerable<Type> GetTypesDescending<T>(this Assembly assembly)
+        {
+            return assembly
+                .GetTypes()
+                .Where(ty => typeof(T).IsAssignableFrom(ty));
         }
     }
 }
