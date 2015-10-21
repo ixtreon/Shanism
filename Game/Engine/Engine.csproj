@@ -191,6 +191,7 @@
     <Compile Include="Systems\Behaviours\ReturnBehaviour.cs" />
     <Compile Include="Systems\Buffs\BuffInstance.cs" />
     <Compile Include="Systems\Chat\ChatProvider.cs" />
+    <Compile Include="Systems\CustomScript.cs" />
     <Compile Include="Systems\Item\Inventory.cs" />
     <Compile Include="Systems\Item\Item.cs" />
     <Compile Include="Objects\Game\Monster.cs" />
@@ -204,7 +205,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Systems\Abilities\Ability.cs" />
-    <Compile Include="Systems\CustomScript.cs" />
     <Compile Include="Systems\Orders\Cast.cs" />
     <Compile Include="Systems\Orders\MoveLocation.cs" />
     <Compile Include="Systems\Orders\MoveUnit.cs" />

@@ -5,11 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Engine.Objects;
 using Engine.Objects.Game;
+using ScenarioLib.Code;
 
 namespace Engine.Systems
 {
     /// <summary>
-    /// Represents an abstract base for the creation of custom game scripts. 
+    /// A base for the creation of custom game scripts. 
     /// </summary>
     public abstract class CustomScript : ScenarioObject
     {

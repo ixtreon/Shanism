@@ -18,15 +18,12 @@ using Engine.Events;
 namespace Engine
 {
     /// <summary>
-    /// Represents any type of player inside the game. 
-    /// There are two static members of this class to represent all NPC units. 
-    /// 
-    /// If the player does not have a main hero he is to be spectating. 
+    /// Represents a player connected to the game
+    /// There are 2 players for all NPC characters, 
+    /// see <see cref="NeutralAggressive"/> and <see cref="NeutralFriendly"/>. 
     /// </summary>
     public class Player : IPlayer, IReceptor
     {
-        const double SpectatorMoveSpeed = 5;
-
         public static int LastPlayerId = 0;
 
         /// <summary>
@@ -51,14 +48,12 @@ namespace Engine
         /// </summary>
         readonly IClient InputDevice;
 
-        //Vector customCameraPosition;
 
         /// <summary>
         /// All units controlled by the player. 
         /// </summary>
         readonly HashSet<Unit> controlledUnits = new HashSet<Unit>();
         
-
         /// <summary>
         /// Gets the id of this player. 
         /// </summary>
