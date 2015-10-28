@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using IO.Common;
 using Client.Controls;
 using Client.UI.Common;
+using IO.Objects;
 
 namespace Client.UI
 {
@@ -92,7 +93,7 @@ namespace Client.UI
                 {
                     var id = new Vector(i / AbilitiesPerColumn, i % AbilitiesPerColumn);
                     //var relativePos = new Vector(0.075, 0.1) + id * new Vector(0.5, 0.2);
-                    sb.RelativePosition = new Vector2(0.075f + (i / AbilitiesPerColumn) * 0.5f, 
+                    sb.RelativePosition = new Vector(0.075f + (i / AbilitiesPerColumn) * 0.5f, 
                         0.1f + (i % AbilitiesPerColumn) * 0.2f);
 
                     if(++i == AbilitiesPerPage)

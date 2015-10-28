@@ -49,8 +49,7 @@ namespace Network
 
         static LClient()
         {
-            Log.Default.Name = "client";
-
+            Log.Init("client");
             SerializerModules.Init();
         }
 
@@ -85,7 +84,7 @@ namespace Network
             SendMessage(ioMsg);
         }
 
-        //do shit when the link drops. (forcefully or not)
+        //do stuff when the link drops. (forcefully or not)
         internal override void OnDisconnected(NetConnection conn)
         {
             isConnected = false;

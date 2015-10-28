@@ -32,11 +32,12 @@
             this.btnPlay = new System.Windows.Forms.Button();
             this.pSettings = new System.Windows.Forms.FlowLayoutPanel();
             this.lblBasic = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.btnScenarioDirs = new System.Windows.Forms.Button();
             this.btnLocalGame = new System.Windows.Forms.RadioButton();
             this.pLocalGame = new System.Windows.Forms.Panel();
+            this.lblChosenScenario = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.nbMapSeed = new System.Windows.Forms.NumericUpDown();
+            this.btnScenarioDirs = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.chkLocalNetworked = new System.Windows.Forms.CheckBox();
             this.btnRemoteGame = new System.Windows.Forms.RadioButton();
@@ -47,7 +48,6 @@
             this.txtPlayerName = new System.Windows.Forms.ComboBox();
             this.button2 = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.lblChosenScenario = new System.Windows.Forms.Label();
             this.pSettings.SuspendLayout();
             this.pLocalGame.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nbMapSeed)).BeginInit();
@@ -100,30 +100,6 @@
             this.lblBasic.Text = "Game Settings";
             this.lblBasic.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(27, 16);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(52, 13);
-            this.label2.TabIndex = 11;
-            this.label2.Text = "Scenario:";
-            // 
-            // btnScenarioDirs
-            // 
-            this.btnScenarioDirs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnScenarioDirs.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnScenarioDirs.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnScenarioDirs.ForeColor = System.Drawing.SystemColors.ButtonShadow;
-            this.btnScenarioDirs.Location = new System.Drawing.Point(298, 12);
-            this.btnScenarioDirs.Margin = new System.Windows.Forms.Padding(0);
-            this.btnScenarioDirs.Name = "btnScenarioDirs";
-            this.btnScenarioDirs.Size = new System.Drawing.Size(47, 21);
-            this.btnScenarioDirs.TabIndex = 11;
-            this.btnScenarioDirs.Text = "•••";
-            this.btnScenarioDirs.UseVisualStyleBackColor = true;
-            this.btnScenarioDirs.Click += new System.EventHandler(this.btnScenarioDirs_Click);
-            // 
             // btnLocalGame
             // 
             this.btnLocalGame.AutoSize = true;
@@ -157,6 +133,25 @@
             this.pLocalGame.Size = new System.Drawing.Size(356, 77);
             this.pLocalGame.TabIndex = 1;
             // 
+            // lblChosenScenario
+            // 
+            this.lblChosenScenario.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblChosenScenario.Location = new System.Drawing.Point(85, 12);
+            this.lblChosenScenario.Name = "lblChosenScenario";
+            this.lblChosenScenario.Size = new System.Drawing.Size(210, 21);
+            this.lblChosenScenario.TabIndex = 12;
+            this.lblChosenScenario.Text = "<none>";
+            this.lblChosenScenario.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(27, 16);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(52, 13);
+            this.label2.TabIndex = 11;
+            this.label2.Text = "Scenario:";
+            // 
             // nbMapSeed
             // 
             this.nbMapSeed.InterceptArrowKeys = false;
@@ -174,6 +169,21 @@
             0,
             0,
             0});
+            // 
+            // btnScenarioDirs
+            // 
+            this.btnScenarioDirs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnScenarioDirs.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnScenarioDirs.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnScenarioDirs.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            this.btnScenarioDirs.Location = new System.Drawing.Point(298, 12);
+            this.btnScenarioDirs.Margin = new System.Windows.Forms.Padding(0);
+            this.btnScenarioDirs.Name = "btnScenarioDirs";
+            this.btnScenarioDirs.Size = new System.Drawing.Size(47, 21);
+            this.btnScenarioDirs.TabIndex = 11;
+            this.btnScenarioDirs.Text = "•••";
+            this.btnScenarioDirs.UseVisualStyleBackColor = true;
+            this.btnScenarioDirs.Click += new System.EventHandler(this.btnScenarioDirs_Click);
             // 
             // label1
             // 
@@ -230,6 +240,7 @@
             this.txtRemoteIp.Name = "txtRemoteIp";
             this.txtRemoteIp.Size = new System.Drawing.Size(96, 20);
             this.txtRemoteIp.TabIndex = 6;
+            this.txtRemoteIp.TextChanged += new System.EventHandler(this.txtRemoteIp_TextChanged);
             // 
             // lblRemoteIp
             // 
@@ -261,7 +272,7 @@
             this.txtPlayerName.Size = new System.Drawing.Size(235, 21);
             this.txtPlayerName.TabIndex = 8;
             this.txtPlayerName.Text = "Pesho";
-            this.txtPlayerName.TextChanged += new System.EventHandler(this.comboBox1_TextChanged);
+            this.txtPlayerName.TextChanged += new System.EventHandler(this.txtPlayerName_TextChanged);
             // 
             // button2
             // 
@@ -277,28 +288,18 @@
             this.button2.Text = "+";
             this.button2.UseVisualStyleBackColor = true;
             // 
-            // lblChosenScenario
-            // 
-            this.lblChosenScenario.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblChosenScenario.Location = new System.Drawing.Point(85, 12);
-            this.lblChosenScenario.Name = "lblChosenScenario";
-            this.lblChosenScenario.Size = new System.Drawing.Size(210, 21);
-            this.lblChosenScenario.TabIndex = 12;
-            this.lblChosenScenario.Text = "<none>";
-            this.lblChosenScenario.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // LauncherForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(384, 276);
+            this.ClientSize = new System.Drawing.Size(384, 364);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.txtPlayerName);
             this.Controls.Add(this.lblPlayerName);
             this.Controls.Add(this.btnPlay);
             this.Controls.Add(this.pSettings);
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(10000, 315);
+            this.MaximumSize = new System.Drawing.Size(10000, 3150);
             this.MinimumSize = new System.Drawing.Size(400, 315);
             this.Name = "LauncherForm";
             this.Text = "ShanoLauncher";

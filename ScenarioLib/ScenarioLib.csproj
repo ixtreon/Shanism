@@ -115,8 +115,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Code\ICustomScript.cs" />
     <Compile Include="CompiledScenario.cs" />
+    <Compile Include="CompilerException.cs" />
     <Compile Include="Config\ContentConfig.cs" />
     <Compile Include="Designer\ScenarioDesigner.cs" />
     <Compile Include="Ext.cs" />

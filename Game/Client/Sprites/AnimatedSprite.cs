@@ -23,16 +23,16 @@ namespace Client.Sprites
 
         private int timeElapsed = 0;
 
-        private TTexture texture;
+        private ShanoTexture texture;
 
         public AnimatedSprite(AnimationDefOld m)
             : base(m)
         {
-            texture = new TTexture(File);
+            texture = new ShanoTexture(File);
             this.CurrentFrame = 0;
             this.TotalFrames = texture.Count;
             this.Period = m.Period;
-            SourceRectangle = texture.GetTileRect(CurrentFrame).ToXnaRect();
+            SourceRectangle = texture.GetTileRect(CurrentFrame);
         }
 
         public override void Update(int msElapsed)
@@ -46,7 +46,7 @@ namespace Client.Sprites
                 CurrentFrame++;
                 if (CurrentFrame == TotalFrames)
                     CurrentFrame = 0;
-                SourceRectangle = texture.GetTileRect(CurrentFrame).ToXnaRect();
+                SourceRectangle = texture.GetTileRect(CurrentFrame);
             }
         }
     }

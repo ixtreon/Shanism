@@ -1,6 +1,5 @@
 ﻿using Client.Controls;
 using Client.Textures;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -9,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using IO;
 using Client.Sprites;
+using IO.Common;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace Client.UI
 {
@@ -174,9 +175,9 @@ namespace Client.UI
             SelectionLength = 0;
         }
 
-        private Vector2 CursorSize
+        private Vector CursorSize
         {
-            get { return new Vector2((float)Font.CharSpacing, (float)Font.Height); }
+            get { return new Vector(Font.CharSpacing, Font.Height); }
         }
 
         public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch sb)
@@ -185,18 +186,21 @@ namespace Client.UI
             
             if(CursorVisible)           // cursor
             {
-                var pos = AbsolutePosition + new Vector2((float)textPositions[CursorPosition], Size.Y - CursorSize.Y);
+                var pos = AbsolutePosition + new Vector((float)textPositions[CursorPosition], Size.Y - CursorSize.Y);
                 SpriteFactory.Blank.Draw(sb, pos, CursorSize, CursorColor);
             }
 
             //text
-            Font.DrawString(sb, CurrentText, ForeColor, AbsolutePosition + new Vector2(0, Size.Y), 0, 1);
+            Font.DrawString(sb, CurrentText, ForeColor, AbsolutePosition + new Vector(0, Size.Y), 0, 1);
 
             if (SelectionLength != 0)    // selection
             {
                 var start = textPositions[CursorPosition];
                 var end = textPositions[CursorPosition + SelectionLength];
-                SpriteFactory.Blank.Draw(sb, AbsolutePosition + new Vector2((float)start, Size.Y - CursorSize.Y), new Vector2((float)(end - start), CursorSize.Y), SelectionColor);
+                SpriteFactory.Blank.Draw(sb, 
+                    AbsolutePosition + new Vector(start, Size.Y - CursorSize.Y), 
+                    new Vector(end - start, CursorSize.Y), 
+                    SelectionColor);
             }
         }
 

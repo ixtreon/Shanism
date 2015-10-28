@@ -162,12 +162,14 @@ namespace AbilityIDE.ScenarioViews.Maps
             else
             {
                 //pan!
+                Cursor = Cursors.SizeAll;
                 mousePanning = new Point(e.X, e.Y);
             }
             base.OnMouseDown(e);
         }
         protected override void OnMouseUp(MouseEventArgs e)
         {
+            Cursor = Cursors.Cross;
             mousePanning = null;
             base.OnMouseUp(e);
         }
@@ -196,8 +198,8 @@ namespace AbilityIDE.ScenarioViews.Maps
 
 
             //map
-            var llGame = LowLeftPoint.Floor().Clamp(Point.Empty, Map.Size - 1);
-            var urGame = HighRightPoint.Ceiling().Clamp(Point.Empty, Map.Size - 1);
+            var llGame = LowLeftPoint.Floor().Clamp(Point.Zero, Map.Size - 1);
+            var urGame = HighRightPoint.Ceiling().Clamp(Point.Zero, Map.Size - 1);
             foreach (var p in llGame.IterateToInclusive(urGame))
             {
                 var tt = Map.Map[p.X, p.Y];

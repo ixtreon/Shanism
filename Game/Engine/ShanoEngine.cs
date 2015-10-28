@@ -74,22 +74,22 @@ namespace Engine
         public ShanoEngine(int mapSeed, string scenarioDir)
         {
             
-            // allow only one instance of the server. 
-            // an ugly hack..
+            // allow only one instance of the server. An ugly hack..
             if (Current != null)
                 throw new Exception("Please run only one instance of the server!");
             Current = this;
 
-            //compile the scenario..
-            var scenarioCompiler = new ScenarioCompiler { ScenarioDir = Path.GetFullPath(scenarioDir) };
+            //compile the scenario
+            try
+            {
+                Scenario = new Scenario(Path.GetFullPath(scenarioDir));
+            }
+            catch(Exception e)
+            {
+                throw;
+            }
 
-            string compileErrors;
-            this.Scenario = scenarioCompiler.TryCompile<Scenario>(out compileErrors);
-            if(Scenario == null)
-                throw new Exception("Unable to compile the scenario. The message returned was: {0}".F(compileErrors));
-
-            Scenario.LoadTypes(scenarioCompiler.Assembly);
-
+            //create the map from the scenario. 
             TerrainMap = Maps.Terrain.MapGod.Create(Scenario.MapConfig, mapSeed);
 
             //run scripts

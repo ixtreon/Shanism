@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -167,17 +168,6 @@ namespace IO
             yield return item;
         }
 
-        public static TVal AddOrGet<TKey, TVal>(this Dictionary<TKey, TVal> dict, TKey key)
-            where TVal : new()
-        {
-            TVal val;
-            if (!dict.TryGetValue(key, out val))
-            {
-                val = new TVal();
-                dict[key] = val;
-            }
-            return val;
-        }
 
 
         public static TVal TryGet<TKey, TVal>(this Dictionary<TKey, TVal> dict, TKey val)
@@ -209,18 +199,6 @@ namespace IO
             return i;
         }
 
-        public static int GetValue(this Enum val)
-        {
-            //TODO FUCKING CHANGE
-            return (int)Convert.ChangeType(val, TypeCode.Int32);
-        }
-
-        public static short GetShortValue(this Enum val)
-        {
-            //TODO FUCKING CHANGE
-            return (short)Convert.ChangeType(val, TypeCode.Int16);
-        }
-
         public static T MostCommon<T>(this IEnumerable<T> list)
         {
             return list
@@ -229,23 +207,24 @@ namespace IO
                 .Select(g => g.Key)
                 .First();
         }
-
-        /// <summary>
-        /// Creates a single instance of each class that inherits the provided type in the given assembly. 
-        /// </summary>
-        /// <typeparam name="T">The base class all returned objects' classes should inherit. </typeparam>
-        /// <param name="assembly">The assembly in which to look for stuff. </param>
-        public static IEnumerable<T> CreateInstanceOfEach<T>(this Assembly assembly)
-        {
-            return assembly
-                .GetTypesDescending<T>()
-                .Select(ty => (T)Activator.CreateInstance(ty));
-        }
+        
         public static IEnumerable<Type> GetTypesDescending<T>(this Assembly assembly)
         {
             return assembly
                 .GetTypes()
                 .Where(ty => typeof(T).IsAssignableFrom(ty));
+        }
+
+        public static string GetRelativePath(this string absolutePath, string folder)
+        {
+            Uri pathUri = new Uri(absolutePath);
+            // Folders must end in a slash
+            if (!folder.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                folder += Path.DirectorySeparatorChar;
+            }
+            Uri folderUri = new Uri(folder);
+            return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
         }
     }
 }

@@ -160,7 +160,7 @@
             this.scenarioDetails.Size = new System.Drawing.Size(218, 112);
             this.scenarioDetails.TabIndex = 0;
             this.scenarioDetails.Visible = false;
-            this.scenarioDetails.ScenarioSelected += new System.Action<ScenarioLib.ScenarioBase>(this.scenarioDetails_ScenarioSelected);
+            this.scenarioDetails.ScenarioSelected += new System.Action<ScenarioLib.ScenarioFile>(this.scenarioDetails_ScenarioSelected);
             // 
             // ScenarioDirForm
             // 
@@ -171,7 +171,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "ScenarioDirForm";
             this.Text = "Scenario Libraries";
-            this.VisibleChanged += new System.EventHandler(this.ScenarioDirForm_VisibleChanged);
+            this.Load += new System.EventHandler(this.ScenarioDirForm_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -193,5 +193,6 @@
         private System.Windows.Forms.Button btnRefresh;
         private Scenarios.ScenarioDetails scenarioDetails;
         private Scenarios.LibraryDetails libraryDetails;
+
     }
 }

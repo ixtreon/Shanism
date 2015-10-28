@@ -15,7 +15,7 @@ namespace Engine.Systems.Buffs
     /// <summary>
     /// Represents any in-game effect which has a temporary or permanent effect on a unit's statistics. 
     /// </summary>
-    public class Buff : ScenarioObject
+    public class Buff : ScenarioObject, IBuff
     {
         int _moveSpeed;
 
@@ -26,23 +26,6 @@ namespace Engine.Systems.Buffs
         public string Icon { get; set; }
 
 
-        /// <summary>
-        /// Gets or sets the movement speed modifier of this buff. 
-        /// </summary>
-        public int MoveSpeed
-        {
-            get
-            {
-                return _moveSpeed;
-            }
-
-            set
-            {
-                _moveSpeed = Math.Max(-100, Math.Min(100, value));
-            }
-        }
-
-        public int AttackSpeed { get; set; }
 
 
         public string Name { get; set; }
@@ -70,6 +53,7 @@ namespace Engine.Systems.Buffs
             get { return Name; }
         }
 
+
         /// <summary>
         /// Gets or sets the life modifier of this buff. 
         /// </summary>
@@ -84,6 +68,30 @@ namespace Engine.Systems.Buffs
         /// Gets or sets the defense provided by this buff. 
         /// </summary>
         public double Defense { get; set; }
+
+        /// <summary>
+        /// Gets or sets the dodge (evasion) modifier provided by this buff. 
+        /// </summary>
+        public double Dodge { get; set; }
+
+        /// <summary>
+        /// Gets or sets the movement speed modifier of this buff. 
+        /// </summary>
+        public double MoveSpeed { get; set; }
+
+        /// <summary>
+        /// Gets or sets the movement speed percentage modifier of this buff. 
+        /// </summary>
+        public int MoveSpeedPercentage
+        {
+            get { return _moveSpeed; }
+            set { _moveSpeed = Math.Max(-100, Math.Min(100, value)); }
+        }
+
+        /// <summary>
+        /// Gets or sets the attack speed percentage modifier of this buff. 
+        /// </summary>
+        public int AttackSpeed { get; set; }
 
         /// <summary>
         /// Gets or sets the mnimum damage modifier of this buff. 

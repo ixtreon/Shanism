@@ -13,6 +13,7 @@ using IO.Content;
 using Engine.Objects.Game;
 using System.Diagnostics;
 using System.Threading;
+using IO.Objects;
 
 namespace Engine.Objects
 {
@@ -30,7 +31,7 @@ namespace Engine.Objects
 
         protected internal bool _customPosition;
 
-        //fucking circular reference
+        //circular reference .
         protected internal readonly HashSet<Unit> SeenBy = new HashSet<Unit>();
 
         /// <summary>
@@ -90,7 +91,7 @@ namespace Engine.Objects
         /// <summary>
         /// Gets the model of the object. 
         /// </summary>
-        public AnimationDefOld Model
+        public AnimationDefOld Animation
         {
             get
             {

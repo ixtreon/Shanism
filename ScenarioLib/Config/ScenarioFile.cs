@@ -10,17 +10,17 @@ using System.Threading.Tasks;
 namespace ScenarioLib
 {
     /// <summary>
-    /// The core of a scenario. 
+    /// The core of a scenario. Serialized into pure json. 
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
-    public class ScenarioBase
+    public class ScenarioFile
     {
         const string ScenarioFileName = "scenario.json";
 
         /// <summary>
         /// Gets the path to this scenario's directory. 
         /// </summary>
-        public string ScenarioDirectory { get; protected set; }
+        public string BaseDirectory { get; protected set; }
 
         /// <summary>
         /// Gets the path to this scenario file. 
@@ -50,15 +50,15 @@ namespace ScenarioLib
         [JsonProperty]
         public ContentConfig ModelConfig { get; protected set; }
 
+        [JsonConstructor]
+        protected ScenarioFile() { }
 
-        protected ScenarioBase() { }
-
-        public ScenarioBase(string scenarioPath)
+        internal ScenarioFile(string scenarioPath)
         {
             if (!Directory.Exists(scenarioPath))
                 throw new ArgumentException(nameof(scenarioPath), "The given directory does not exist: '{0}'".F(scenarioPath));
 
-            ScenarioDirectory = Path.GetFullPath(scenarioPath);
+            BaseDirectory = Path.GetFullPath(scenarioPath);
             FilePath = Path.Combine(scenarioPath, ScenarioFileName);
             Name = "Shano Scenario";
             Description = "Shanistic Description";
@@ -69,16 +69,16 @@ namespace ScenarioLib
         }
 
 
-        public static ScenarioBase Load(string scenarioPath)
+        public static ScenarioFile Load(string scenarioPath)
         {
-            return Load<ScenarioBase>(scenarioPath);
+            return Load<ScenarioFile>(scenarioPath);
         }
 
         /// <summary>
         /// Tries to load the config file from the given path. 
         /// </summary>
         public static T Load<T>(string scenarioPath)
-            where T : ScenarioBase
+            where T : ScenarioFile
         {
             var dirPath = Path.GetFullPath(scenarioPath);
             var filePath = Path.Combine(dirPath, ScenarioFileName);
@@ -90,14 +90,14 @@ namespace ScenarioLib
                 var datas = File.ReadAllText(filePath);
             
                 var sc = JsonConvert.DeserializeObject<T>(datas);
-                sc.ScenarioDirectory = dirPath;
+                sc.BaseDirectory = dirPath;
                 sc.FilePath = filePath;
                 sc.MapConfig = sc.MapConfig ?? new MapConfig();
                 sc.ModelConfig = sc.ModelConfig ?? new ContentConfig();
 
                 return sc;
             }
-            catch
+            catch(Exception e)
             {
                 return null;
             }

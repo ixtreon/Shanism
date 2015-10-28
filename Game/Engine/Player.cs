@@ -192,7 +192,7 @@ namespace Engine
         /// </summary>
         public void Update(int msElapsed)
         {
-
+            
         }
 
         public void SetMainHero(Hero h)

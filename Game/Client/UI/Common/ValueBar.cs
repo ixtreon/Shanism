@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Client.Sprites;
 using Client.Textures;
+using Color = Microsoft.Xna.Framework.Color;
+using IO.Common;
 
 namespace Client.UI.Common
 {
@@ -47,7 +48,7 @@ namespace Client.UI.Common
             }
             if (!string.IsNullOrEmpty(text))
             {
-                var textPos = position + size.DivideBy(2);
+                var textPos = position + size / 2;
                 TextureCache.StraightFont.DrawStringScreen(sb, text, Color.White, textPos, 0.5f, 0.5f);
             }
         }

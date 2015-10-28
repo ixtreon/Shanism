@@ -1,13 +1,14 @@
 ﻿using Client;
 using Client.Textures;
+using IO.Common;
 using IO.Content;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace Client.Sprites
 {
@@ -22,11 +23,11 @@ namespace Client.Sprites
 
             public PointsInfo(Sprite s) { sprite = s; }
             
-            public Vector2 Center
+            public Vector Center
             {
                 get
                 {
-                    return new Vector2((float)sprite.SourceRectangle.Center.X / sprite.Texture.Width,
+                    return new Vector((float)sprite.SourceRectangle.Center.X / sprite.Texture.Width,
                       (float)sprite.SourceRectangle.Center.Y / sprite.Texture.Height);
                 }
             }
@@ -37,40 +38,40 @@ namespace Client.Sprites
             /// <param name="dx"></param>
             /// <param name="dy"></param>
             /// <returns></returns>
-            public Vector2 Get(int dx, int dy)
+            public Vector Get(int dx, int dy)
             {
-                return Center + new Vector2((float)dx * sprite.SourceRectangle.Width / sprite.Texture.Width / 2, (float)dy * sprite.SourceRectangle.Width / sprite.Texture.Width / 2);
+                return Center + new Vector((float)dx * sprite.SourceRectangle.Width / sprite.Texture.Width / 2, (float)dy * sprite.SourceRectangle.Width / sprite.Texture.Width / 2);
             }
 
-            public Vector2 TopLeft
+            public Vector TopLeft
             {
                 get
                 {
-                    return new Vector2((float)sprite.SourceRectangle.Left / sprite.Texture.Width,
+                    return new Vector((float)sprite.SourceRectangle.Left / sprite.Texture.Width,
                       (float)sprite.SourceRectangle.Top / sprite.Texture.Height);
                 }
             }
-            public Vector2 TopRight
+            public Vector TopRight
             {
                 get
                 {
-                    return new Vector2((float)sprite.SourceRectangle.Right / sprite.Texture.Width,
+                    return new Vector((float)sprite.SourceRectangle.Right / sprite.Texture.Width,
                       (float)sprite.SourceRectangle.Top / sprite.Texture.Height);
                 }
             }
-            public Vector2 BottomLeft
+            public Vector BottomLeft
             {
                 get
                 {
-                    return new Vector2((float)sprite.SourceRectangle.Left / sprite.Texture.Width,
+                    return new Vector((float)sprite.SourceRectangle.Left / sprite.Texture.Width,
                       (float)sprite.SourceRectangle.Bottom / sprite.Texture.Height);
                 }
             }
-            public Vector2 BottomRight
+            public Vector BottomRight
             {
                 get
                 {
-                    return new Vector2((float)sprite.SourceRectangle.Right / sprite.Texture.Width,
+                    return new Vector((float)sprite.SourceRectangle.Right / sprite.Texture.Width,
                       (float)sprite.SourceRectangle.Bottom / sprite.Texture.Height);
                 }
             }
@@ -105,7 +106,7 @@ namespace Client.Sprites
         {
             var destinationRectangle = new Rectangle(location.X, location.Y, size.X, size.Y);
 
-            spriteBatch.Draw(Texture, destinationRectangle, SourceRectangle, (Color)color);
+            spriteBatch.ShanoDraw(Texture, destinationRectangle, SourceRectangle, color);
         }
 
 
@@ -114,11 +115,11 @@ namespace Client.Sprites
             DrawScreen(spriteBatch, location, size, Color);
         }
 
-        public void Draw(SpriteBatch spriteBatch, Vector2 uiLocation, Vector2 uiSize)
+        public void Draw(SpriteBatch spriteBatch, Vector uiLocation, Vector uiSize)
         {
             Draw(spriteBatch, uiLocation, uiSize, Color);
         }
-        public void Draw(SpriteBatch spriteBatch, Vector2 uiLocation, Vector2 uiSize, Color color)
+        public void Draw(SpriteBatch spriteBatch, Vector uiLocation, Vector uiSize, Color color)
         {
             var pLoc = Screen.UiToScreen(uiLocation);
             var farPos = Screen.UiToScreen(uiLocation + uiSize);
@@ -127,12 +128,12 @@ namespace Client.Sprites
             DrawScreen(spriteBatch, pLoc, pSize, color);
         }
 
-        public void DrawInGame(SpriteBatch spriteBatch, Vector2 gameLocation, Vector2 gameSize)
+        public void DrawInGame(SpriteBatch spriteBatch, Vector gameLocation, Vector gameSize)
         {
             DrawInGame(spriteBatch, gameLocation, gameSize, Color);
         }
 
-        public void DrawInGame(SpriteBatch spriteBatch, Vector2 gameLocation, Vector2 gameSize, Color color)
+        public void DrawInGame(SpriteBatch spriteBatch, Vector gameLocation, Vector gameSize, Color color)
         {
             var pLoc = Screen.GameToScreen(gameLocation);
             var farPos = Screen.GameToScreen(gameLocation + gameSize);

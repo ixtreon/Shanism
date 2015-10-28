@@ -59,6 +59,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IxSerializer.Tests", "..\!l
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScenarioLib.Tests", "ScenarioLib.Tests\ScenarioLib.Tests.csproj", "{8B398427-3D4E-4CB8-B0F0-CFA35E2E66A4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{8B9AE201-2519-479A-872B-9EC9CBFEC7FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

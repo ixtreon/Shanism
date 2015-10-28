@@ -13,9 +13,9 @@ namespace ScenarioLib
     /// </summary>
     public class ContentConfig
     {
-        public List<TextureDef> Textures { get; } = new List<TextureDef>();
+        public HashSet<TextureDef> Textures { get; set; } = new HashSet<TextureDef>();
 
-        public List<ModelDef> Models { get; } = new List<ModelDef>();
+        public HashSet<ModelDef> Models { get; } = new HashSet<ModelDef>();
 
     }
 }

@@ -11,6 +11,9 @@ using Engine.Events;
 
 namespace Engine.Systems.Abilities
 {
+    /// <summary>
+    /// A simple melee attack ability that mirrors its owner's attack range and cooldown. 
+    /// </summary>
     public class Attack : Ability
     {
 
@@ -30,22 +33,19 @@ namespace Engine.Systems.Abilities
 
         public override void OnCast(AbilityCastArgs e)
         {
-            const float range = 1f;
-            const double angle = Math.PI / 4;   //todo: check angle
+            var units = Map.GetUnitsInRange(Owner.Position, Owner.AttackRange);
 
-            var units = Map.GetUnitsInRange(Owner.Position, range);
-
-            var t = units
+            var potentialTargets = units
                 .Where(u => u != Owner)
-                .OrderBy(u => u.Position.DistanceTo(Owner.Position));
+                .OrderBy(u => u.Position.DistanceTo(e.TargetLocation));
 
-            if (!t.Any())
+            if (!potentialTargets.Any())
             {
                 e.Success = false;
                 return;
             }
 
-            var target = t.First();
+            var target = potentialTargets.First();
 
             var dmgAmount = Owner.DamageRoll();
 

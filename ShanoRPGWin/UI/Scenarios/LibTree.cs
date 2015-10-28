@@ -20,38 +20,59 @@ namespace ShanoRPGWin.UI.Scenarios
     {
         private Dictionary<string, ScenarioLibrary> librariesInUse = new Dictionary<string, ScenarioLibrary>();
 
+        public bool Loaded { get; private set; }
+
+        public event Action OnRefresh;
+        public event Action OnLoaded;
+
+        private ToolTip tip = new ToolTip();
 
         public LibTree()
         {
             InitializeComponent();
-            Load();
-            this.VisibleChanged += LibTree_VisibleChanged;
+
+            ShowNodeToolTips = true;
+            VisibleChanged += LibTree_VisibleChanged;
         }
 
         private void LibTree_VisibleChanged(object sender, EventArgs e)
         {
+            //remove empty nodes ._.
             foreach (var n in Nodes.Find("", true))
                 Nodes.Remove(n);
         }
 
-
         /// <summary>
         /// Loads the libraries listed in app settings to this tree. 
         /// </summary>
-        public void Load()
+        public async Task LoadAsync()
         {
-            librariesInUse = Settings.Default.ScenarioLibrary
-                .Split(new[] { '\t' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(s => new ScenarioLibrary(s))
-                .ToDictionary(l => l.DirectoryPath, l => l);
+            if (Loaded)
+            {
+                await RefreshLibs();
+                return;
+            }
 
-            RefreshLibs();
+            Loaded = true;
+
+            //load libs from app settings
+            await Task.Run(() =>
+            {
+                librariesInUse = Settings.Default.ScenarioLibrary
+                    .Split(new[] { '\t' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(s => new ScenarioLibrary(s))
+                    .ToDictionary(l => l.DirectoryPath, l => l);
+            });
+            //search for scenarios in them libs
+            await RefreshLibs();
+
+            OnLoaded?.Invoke();
         }
 
         /// <summary>
         /// Asks each library to update its list of scenarios. 
         /// </summary>
-        public async void RefreshLibs()
+        public async Task RefreshLibs()
         {
             Nodes.Clear();
             foreach (var lib in librariesInUse.Values)
@@ -59,6 +80,7 @@ namespace ShanoRPGWin.UI.Scenarios
                 await lib.Refresh();
                 addLibraryNode(lib);
             }
+            OnRefresh?.Invoke();
         }
 
         /// <summary>
@@ -121,9 +143,9 @@ namespace ShanoRPGWin.UI.Scenarios
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public ScenarioBase FindScenario(string path)
+        public ScenarioFile FindScenario(string path)
         {
-            return Nodes.Find(path, true).FirstOrDefault()?.Tag as ScenarioBase;
+            return Nodes.Find(path, true).FirstOrDefault()?.Tag as ScenarioFile;
         }
 
         /// <summary>
@@ -138,9 +160,16 @@ namespace ShanoRPGWin.UI.Scenarios
             //add again
             var libName = GetShortenedPath(lib.DirectoryPath);
             var libNode = Nodes.Add(lib.DirectoryPath, libName);
+            libNode.ToolTipText = lib.DirectoryPath;
 
             var scNodes = lib.Scenarios
-                .Select(sc => new TreeNode { Name = sc.ScenarioDirectory, Text = sc.Name, Tag = sc })
+                .Select(sc => new TreeNode
+                {
+                    ToolTipText = sc.BaseDirectory,
+                    Name = sc.BaseDirectory,
+                    Text = sc.Name,
+                    Tag = sc,
+                })
                 .ToArray();
             libNode.Nodes.AddRange(scNodes);
         }
@@ -153,7 +182,7 @@ namespace ShanoRPGWin.UI.Scenarios
         }
 
         public event Action<ScenarioLibrary> SelectedLibrary;
-        public event Action<ScenarioBase, ScenarioLibrary> SelectedScenario;
+        public event Action<ScenarioFile, ScenarioLibrary> SelectedScenario;
         public event Action SelectionCleared;
 
         private void LibTree_AfterSelect(object sender, TreeViewEventArgs e)
@@ -169,7 +198,7 @@ namespace ShanoRPGWin.UI.Scenarios
                 return;
             }
 
-            ScenarioBase sc;
+            ScenarioFile sc;
             var parentKey = e.Node.Parent?.Name ?? string.Empty;
             if (librariesInUse.TryGetValue(parentKey, out lib) && lib.TryGet(nodeKey, out sc))
             {
@@ -190,8 +219,8 @@ namespace ShanoRPGWin.UI.Scenarios
             if (root == dir)
                 return path;
 
-            if(root.Last() != '\\') root += '\\';
-            if(dir.First() != '\\') dir = '\\' + dir;
+            if (root.Last() != '\\') root += '\\';
+            if (dir.First() != '\\') dir = '\\' + dir;
             return root + "..." + dir;
         }
     }

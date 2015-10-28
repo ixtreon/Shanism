@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Client.Sprites;
 using System;
@@ -8,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Client.Textures;
+using Color = Microsoft.Xna.Framework.Color;
+using IO.Common;
 
 namespace Client.UI.Common
 {
@@ -38,7 +39,7 @@ namespace Client.UI.Common
             this.BackColor = Color.Black.Darken(-5);
 
             var sz = Font.MeasureStringUi("WOW");
-            this.Size = new Vector2(0.05f, sz.Y);
+            this.Size = new Vector(0.05f, sz.Y);
         }
 
         public Button(string text = null, Texture2D texture = null)

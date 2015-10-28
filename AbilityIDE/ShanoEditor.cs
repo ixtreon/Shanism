@@ -62,6 +62,7 @@ namespace AbilityIDE
             foreach (var c in scenarioViews)
             {
                 c.Dock = DockStyle.Fill;
+                c.Visible = false;
                 c.ScenarioChanged += scenarioView_ChangedScenario;
             }
         }

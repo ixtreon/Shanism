@@ -18,7 +18,7 @@ namespace DefaultScenario.Buffs
             RawDescription = "Slows the unit's movement by {MoveSpeed:0;0}%, its attack speed by {AttackSpeed:0;0}%, but also provides {strength} strength. ";
 
 
-            MoveSpeed = -190;
+            MoveSpeedPercentage = -190;
             AttackSpeed = -25;
             Strength = 5;
         }

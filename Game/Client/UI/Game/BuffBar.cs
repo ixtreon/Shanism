@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace Client.UI
 {
@@ -77,7 +78,7 @@ namespace Client.UI
             return new BuffControl(BuffSize)
             {
                 Buff = b,
-                TooltipText = "SUCK MY DICK YO",
+                TooltipText = "some tooltip",
             };
         }
 
@@ -89,7 +90,7 @@ namespace Client.UI
             if (!Visible)
                 return;
 
-            var currentPos = AbsolutePosition + new Vector(Anchor).ToVector2();
+            var currentPos = AbsolutePosition + new Vector(Anchor);
             var i = 0;
             var growDist = BuffSize + Anchor;
 
@@ -99,7 +100,7 @@ namespace Client.UI
                 var tex = TextureCache.Get(TextureType.Icon, b.Icon);
 
                 //draw the buff
-                sb.DrawUi(tex, currentPos, new Vector(BuffSize).ToVector2(), Microsoft.Xna.Framework.Color.White);
+                sb.DrawUi(tex, currentPos, new Vector(BuffSize), Color.White);
 
                 i++;
                 var isNewRow = (i % BuffsPerRow) == 0;

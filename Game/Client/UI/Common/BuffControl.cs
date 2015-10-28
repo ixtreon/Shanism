@@ -7,15 +7,16 @@ using Microsoft.Xna.Framework.Graphics;
 using IO.Objects;
 using Client.Textures;
 using Microsoft.Xna.Framework;
+using IO.Common;
 
 namespace Client.UI.Common
 {
     class BuffControl : Control
     {
-        public new float Size
+        public new double Size
         {
             get { return base.Size.X; }
-            set { base.Size = new Vector2(value); }
+            set { base.Size = new Vector(value); }
         }
 
         public IBuffInstance Buff { get; set; }

@@ -14,7 +14,6 @@ namespace Client.Textures
 {
     static class TextureCache
     {
-
         /// <summary>
         /// The directory where all the resources are. 
         /// </summary>
@@ -35,7 +34,7 @@ namespace Client.Textures
             TextureCache.content = content;
             loadTextures();
 
-            //load fonts
+            //load some fonts
             FancyFont = new TextureFont(content, "Fonts\\UI", 0.5, 4);
             StraightFont = new TextureFont(content, "Fonts\\ui-text", 0.5);
             SmallFont = new TextureFont(StraightFont, 0.8);

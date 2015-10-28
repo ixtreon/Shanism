@@ -1,11 +1,12 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
 using Microsoft.Xna.Framework.Content;
+using IO.Common;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace Client.Textures
 {
@@ -112,7 +113,7 @@ namespace Client.Textures
         /// <param name="maxWidth">The maximum width the string is allowed to be. </param>
         /// <returns>The height of the string, in pixels. </returns>
         public int DrawString(SpriteBatch sb, string text, 
-            Color color, Vector2 pos, 
+            Color color, Vector pos, 
             float xAnchor = 0.0f, float yAnchor = 0.5f,
             int maxWidth = int.MaxValue)
         {
@@ -166,10 +167,10 @@ namespace Client.Textures
             return new Point(w, h);
         }
 
-        public Vector2 MeasureStringUi(string text = "WOW LOOK AT THAT STRING", int maxWidth = int.MaxValue)
+        public Vector MeasureStringUi(string text = "WOW LOOK AT THAT STRING", int maxWidth = int.MaxValue)
         {
             var p = MeasureString(text, maxWidth);
-            return new Vector2((float)Screen.ScreenToUi(p.X), (float)Screen.ScreenToUi(p.Y));
+            return new Vector(Screen.ScreenToUi(p.X), Screen.ScreenToUi(p.Y));
         }
 
         /// <summary>
@@ -248,7 +249,7 @@ namespace Client.Textures
         {
             var sz = getCharSize(c);
 
-            sb.Draw(Texture, new Rectangle(x, y, sz.X, sz.Y), keys[c], col);
+            sb.ShanoDraw(Texture, new Rectangle(x, y, sz.X, sz.Y), keys[c], col);
         }
 
         /// <summary>

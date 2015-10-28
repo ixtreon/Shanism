@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using IO;
-using Microsoft.Xna.Framework;
 using Client.Objects;
 using Microsoft.Xna.Framework.Input;
 using Client.Controls;
 using Client.UI.Menus;
 using IO.Message.Client;
+using IO.Objects;
+using IO.Common;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace Client.UI
 {
@@ -30,6 +32,7 @@ namespace Client.UI
 
 
         readonly BuffBar HeroBuffs;
+        private SpellBar abilityBar;
 
         public IHero TargetHero { get; set; }
 
@@ -44,8 +47,8 @@ namespace Client.UI
         public UiManager()
         {
             // self checks
-            this.Size = new Vector2(2f, 2f);
-            this.AbsolutePosition = new Vector2(-1, -1);
+            this.Size = new Vector(2f, 2f);
+            this.AbsolutePosition = new Vector(-1, -1);
             
             //hero panel
             this.heroUi = new HeroUi();
@@ -60,20 +63,29 @@ namespace Client.UI
             //main ability
             this.mainAbilityButton = new SpellButton()  
             {
-                Size = new Vector2(btnSize),
+                Size = new Vector(btnSize),
                 //Ability = hero.Abilities.First(),
-                RelativePosition = new Vector2(heroUi.Left - btnSize, heroUi.Bottom - btnSize),
+                RelativePosition = new Vector(heroUi.Left - btnSize, heroUi.Bottom - btnSize),
             };
             this.Add(mainAbilityButton, true);
 
             //secondary ability
             this.secondaryAbilityButton = new SpellButton()
             {
-                Size = new Vector2(btnSize),
+                Size = new Vector(btnSize),
                 //Ability = hero.Abilities.Skip(1).First(),
-                RelativePosition = new Vector2(heroUi.Right, heroUi.Bottom - btnSize),
+                RelativePosition = new Vector(heroUi.Right, heroUi.Bottom - btnSize),
             };
             this.Add(secondaryAbilityButton, true);
+
+            //TODO: Main ability bar
+            this.abilityBar = new SpellBar
+            {
+                ButtonCount = 16,
+                Size = new Vector(0.4, 0.25),
+                RelativePosition = new Vector(-0.2, -0.1),
+            };
+            this.Add(abilityBar, true);
 
             //main menu
             this.mainMenu = new MainMenu();
@@ -92,11 +104,11 @@ namespace Client.UI
             this.Add(chatBox);
 
             //cast bar
-            var castBarSize = new Vector2(0.5f, 0.08f);
+            var castBarSize = new Vector(0.5f, 0.08f);
             this.castBar = new CastBar()
             {
                 Size = castBarSize,
-                AbsolutePosition = new Vector2(
+                AbsolutePosition = new Vector(
                     -castBarSize.X / 2, 
                     heroUi.AbsolutePosition.Y - 2 * castBarSize.Y),
             };
@@ -105,7 +117,7 @@ namespace Client.UI
             //buff bar
             this.HeroBuffs = new BuffBar()
             {
-                AbsolutePosition = new Vector2(0, 0),
+                AbsolutePosition = new Vector(0, 0),
             };
             this.Add(HeroBuffs);
 
@@ -115,7 +127,7 @@ namespace Client.UI
             //spellbar?!
             //this.Add(new SpellBar()
             //{
-            //    AbsolutePosition = new Vector2(-1, 0.5f),
+            //    AbsolutePosition = new Vector(-1, 0.5f),
             //}, false);
 
         }
@@ -143,7 +155,7 @@ namespace Client.UI
 
                 if (a != null && a.CurrentCooldown <= 0)
                 {
-                    var pos = Screen.ScreenToGame(mouseState.Position).ToVector();
+                    var pos = Screen.ScreenToGame(mouseState.Position.ToPoint());
                     var actionId = a.Name;
                     var message = new ActionMessage(actionId, pos);
 

@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -8,6 +7,8 @@ using System.Text;
 using System.Collections;
 using Client.Sprites;
 using IO;
+using IO.Common;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace Client.UI
 {
@@ -16,13 +17,11 @@ namespace Client.UI
     /// </summary>
     abstract class Control
     {
-
-
         /// <summary>
         /// Specifies the default distance between elements in UI scale. 
-        /// 
         /// </summary>
-        public const float Anchor = 0.01f;
+        public const double Anchor = 0.01f;
+
 
         protected static Control HoverControl;
 
@@ -42,9 +41,9 @@ namespace Client.UI
 
 
         private bool _visible;
-        internal Vector2 _absolutePosition;
-        internal Vector2 _size = new Vector2(0.1f, 0.1f);
         private Keys MoveAroundKey = Keys.LeftAlt;
+        internal Vector _absolutePosition;
+        internal Vector _size = new Vector(0.1f, 0.1f);
 
         readonly List<Control> controls = new List<Control>();
 
@@ -96,7 +95,7 @@ namespace Client.UI
         /// <summary>
         /// Raised whenever a mouse button is pressed on this control. 
         /// </summary>
-        public event Action<Control, Vector2> MouseDown;
+        public event Action<Control, Vector> MouseDown;
 
         /// <summary>
         /// Raised whenever the mouse enters the control's boundary. 
@@ -111,12 +110,12 @@ namespace Client.UI
         /// <summary>
         /// Raised whenever the mouse moves over the control's boundary. 
         /// </summary>
-        public event Action<Control, Vector2> MouseMove;
+        public event Action<Control, Vector> MouseMove;
 
         /// <summary>
         /// Raised whenever a mouse button is released while previously pressed on the control. 
         /// </summary>
-        public event Action<Control, Vector2> MouseUp;
+        public event Action<Control, Vector> MouseUp;
 
         /// <summary>
         /// Raised whenever the control's visibility changes. 
@@ -126,7 +125,7 @@ namespace Client.UI
         /// <summary>
         /// Gets or sets the absolute position of this control in UI coordinates. 
         /// </summary>
-        public Vector2 AbsolutePosition
+        public Vector AbsolutePosition
         {
             get
             {
@@ -147,25 +146,25 @@ namespace Client.UI
         /// <summary>
         /// Gets the top Y coordinate of this control relative to its parent. 
         /// </summary>
-        public float Top
+        public double Top
         {
             get { return RelativePosition.Y; }
-            set { RelativePosition = new Vector2(RelativePosition.X, value); }
+            set { RelativePosition = new Vector(RelativePosition.X, value); }
         }
 
         /// <summary>
         /// Gets the left X coordinate of this control relative to its parent. 
         /// </summary>
-        public float Left
+        public double Left
         {
             get { return RelativePosition.X; }
-            set { RelativePosition = new Vector2(value, RelativePosition.Y); }
+            set { RelativePosition = new Vector(value, RelativePosition.Y); }
         }
 
         /// <summary>
         /// Gets the bottom Y coordinate of this control relative to its parent. 
         /// </summary>
-        public float Bottom
+        public double Bottom
         {
             get { return RelativePosition.Y + Size.Y; }
         }
@@ -173,7 +172,7 @@ namespace Client.UI
         /// <summary>
         /// Gets the right X coordinate of this control relative to its parent. 
         /// </summary>
-        public float Right
+        public double Right
         {
             get { return RelativePosition.X + Size.X; }
         }
@@ -188,7 +187,7 @@ namespace Client.UI
         /// <summary>
         /// Gets or sets the position of this control in its parent's coordinate space. 
         /// </summary>
-        public Vector2 RelativePosition
+        public Vector RelativePosition
         {
             get
             {
@@ -225,9 +224,9 @@ namespace Client.UI
         }
 
         /// <summary>
-        /// Gets or sets the size of the control. 
+        /// Gets or sets the size of the control in UI coordinates. 
         /// </summary>
-        public Vector2 Size
+        public Vector Size
         {
             get { return _size; }
             set
@@ -271,24 +270,24 @@ namespace Client.UI
         /// Gets the absolute position of this control's parent. 
         /// </summary>
         /// <returns></returns>
-        private Vector2 ParentPosition
+        private Vector ParentPosition
         {
-            get { return Parent != null ? Parent._absolutePosition : Vector2.Zero; }
+            get { return Parent != null ? Parent._absolutePosition : Vector.Zero; }
         }
 
         /// <summary>
         /// Gets the size of this control's parent. 
         /// </summary>
         /// <returns></returns>
-        private Vector2 ParentSize
+        private Vector ParentSize
         {
-            get { return Parent != null ? Parent.Size : Vector2.Zero; }
+            get { return Parent != null ? Parent.Size : Vector.Zero; }
         }
 
         #region Drag to move
 
-        Vector2 dragPoint = Vector2.Zero;
-        void UserControl_MouseDown(Control sender, Vector2 p)
+        Vector dragPoint = Vector.Zero;
+        void UserControl_MouseDown(Control sender, Vector p)
         {
             if (!Locked && oldKeyboardState.IsKeyDown(Keys.Q))
             {
@@ -331,7 +330,7 @@ namespace Client.UI
         /// </summary>
         /// <param name="p">The specified point, in UI coordinates. </param>
         /// <returns>True if the point is within this control. False otherwise. </returns>
-        public bool Contains(Vector2 p)
+        public bool Contains(Vector p)
         {
             var localP = p - AbsolutePosition;
             var inside = localP.X >= 0 && localP.Y >= 0 && localP.X < Size.X && localP.Y < Size.Y;
@@ -365,10 +364,10 @@ namespace Client.UI
 
             //mouse dragging
             if (mouseState.LeftButton == ButtonState.Released)
-                dragPoint = Vector2.Zero;
-            else if (dragPoint != Vector2.Zero)  //the control is being moved around by the user. 
+                dragPoint = Vector.Zero;
+            else if (dragPoint != Vector.Zero)  //the control is being moved around by the user. 
             {
-                var d = Screen.ScreenToUi(mouseState.Position) - dragPoint;
+                var d = Screen.ScreenToUi(mouseState.Position.ToPoint()) - dragPoint;
                 this.RelativePosition += d;
                 dragPoint += d;
             }
@@ -434,7 +433,7 @@ namespace Client.UI
                 }
             }
 
-            if (this.Contains(Screen.ScreenToUi(mouseState.Position)))
+            if (this.Contains(Screen.ScreenToUi(mouseState.Position.ToPoint())))
                 return this;
 
             return null;
@@ -457,8 +456,8 @@ namespace Client.UI
             var newHover = GetHoverControl() ?? this;
 
             //get the mouse position
-            var mPos = Screen.ScreenToUi(mouseState.Position);
-            var oldMPos = Screen.ScreenToUi(oldMouseState.Position);
+            var mPos = Screen.ScreenToUi(mouseState.Position.ToPoint());
+            var oldMPos = Screen.ScreenToUi(oldMouseState.Position.ToPoint());
 
             var btnHeldDown =
                 (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Pressed) ||
@@ -467,7 +466,7 @@ namespace Client.UI
 
             if (MoveControl != null)
             {
-                MoveControl.ScreenPosition += (mPos - oldMPos).ToXnaPoint();
+                MoveControl.ScreenPosition += (mPos - oldMPos).ToPoint();
             }
 
             //fire events for the hover controls

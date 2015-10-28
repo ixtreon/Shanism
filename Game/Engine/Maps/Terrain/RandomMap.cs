@@ -53,10 +53,8 @@ namespace Engine.Maps
 
         public readonly int Seed;
 
-        public int Left { get; } = int.MinValue;
-        public int Right { get; } = int.MaxValue;
-        public int Bottom { get; } = int.MinValue;
-        public int Top { get; } = int.MaxValue;
+        public Rectangle Bounds { get; } 
+            = new Rectangle(-int.MaxValue / 2, -int.MaxValue / 2, int.MaxValue, int.MaxValue);
 
         internal RandomMap(int seed)
         {

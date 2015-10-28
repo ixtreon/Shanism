@@ -19,6 +19,7 @@ namespace Network.Objects
 
         public double Defense { get; private set; }
 
+        public double Dodge { get; private set; }
         public int DurationLeft { get; private set; }
 
         public int FullDuration { get; private set; }
@@ -35,12 +36,22 @@ namespace Network.Objects
 
         public double MinDamage { get; private set; }
 
-        public int MoveSpeed { get; private set; }
+        public double MoveSpeed { get; private set; }
+
+        public int MoveSpeedPercentage { get; private set; }
 
         public double Strength { get; private set; }
 
         public BuffType Type { get; private set; }
 
         public double Vitality { get; private set; }
+
+        double IBuff.MoveSpeed
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }

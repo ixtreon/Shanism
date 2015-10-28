@@ -17,7 +17,7 @@ namespace AbilityIDE.ScenarioViews
 
         public MapConfig Map { get { return Scenario?.MapConfig; } }
 
-        protected override void LoadScenario()
+        protected override async Task LoadScenario()
         {
             if (Map == null) return;
 
@@ -29,7 +29,7 @@ namespace AbilityIDE.ScenarioViews
             shanoMap1.SetMap(Scenario.MapConfig);
         }
 
-        protected override void SaveScenario()
+        public override void SaveScenario()
         {
             if (Map == null) return;
 

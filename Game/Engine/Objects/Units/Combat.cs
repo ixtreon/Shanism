@@ -117,7 +117,8 @@ namespace Engine.Objects
         }
 
         /// <summary>
-        /// Calculates the final damage the unit will receive, if it was dealt damage of the specified type and type. 
+        /// Calculates the final damage the unit will receive, 
+        /// if it was dealt damage of the specified amount and type. 
         /// </summary>
         /// <param name="amount">The amount of damage dealt by the attacker. </param>
         /// <param name="dmgType">The type of damage dealt. </param>
@@ -128,7 +129,7 @@ namespace Engine.Objects
         }
 
         /// <summary>
-        /// Gets a random value within the range of <see cref="MinDamage"/> to <see cref="MaxDamage"/>
+        /// Gets a random value between <see cref="MinDamage"/> and <see cref="MaxDamage"/>
         /// </summary>
         /// <returns></returns>
         public double DamageRoll()

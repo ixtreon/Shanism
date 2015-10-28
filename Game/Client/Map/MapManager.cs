@@ -94,8 +94,9 @@ namespace Client.Map
                 return;
 
             //get last request timestamp
-            long lastRequest = 0;
-            chunkRequests.TryGetValue(chunk, out lastRequest);
+            long lastRequest;
+            if (!chunkRequests.TryGetValue(chunk, out lastRequest))
+                lastRequest = long.MinValue;
 
             //make sure we don't spam the server
             long timeNow = Environment.TickCount;
@@ -104,7 +105,7 @@ namespace Client.Map
 
             //make the request and set last timestamp
             chunkRequests[chunk] = timeNow;
-            ChunkRequested?.Invoke(chunk);
+            ChunkRequested(chunk);
         }
 
         /// <summary>

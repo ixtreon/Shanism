@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
 using Client.Sprites;
-using Microsoft.Xna.Framework;
+using IO.Common;
+using Color = Microsoft.Xna.Framework.Color;
+
 
 namespace Client.UI
 {
@@ -22,6 +24,7 @@ namespace Client.UI
             {
                 if (_buttonCount == value)
                     return;
+
                 if (_buttonCount < value)
                 {
                     for (int i = _buttonCount; i < value; i++)
@@ -29,8 +32,8 @@ namespace Client.UI
                         //Debug.Assert(SpellButtons[i] == null);
                         SpellButtons.Add(new SpellButton()
                         {
-                            Size = new Microsoft.Xna.Framework.Vector2(ButtonSize, ButtonSize),
-                            RelativePosition = new Microsoft.Xna.Framework.Vector2(i * ButtonSize, 0),
+                            Size = new Vector(ButtonSize, ButtonSize),
+                            RelativePosition = new Vector(i * ButtonSize, 0),
                             CanDrop = true,
                         });
                         Add(SpellButtons[i]);
@@ -43,7 +46,7 @@ namespace Client.UI
                     SpellButtons.RemoveRange(value, _buttonCount - value);
                 }
                 _buttonCount = value;
-                this.Size = new Microsoft.Xna.Framework.Vector2(_buttonCount * ButtonSize, ButtonSize);
+                this.Size = new Vector(_buttonCount * ButtonSize, ButtonSize);
             }
         }
 

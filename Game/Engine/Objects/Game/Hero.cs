@@ -11,6 +11,7 @@ using Engine.Common;
 using Engine.Objects.Game;
 using Engine.Systems.Orders;
 using IO.Message.Client;
+using IO.Objects;
 
 namespace Engine.Objects.Game
 {
@@ -140,9 +141,9 @@ namespace Engine.Objects.Game
             CastAbility(ability, args.TargetLocation);
         }
 
-        internal override void UpdateStats(int msElapsed)
+        internal override void UpdateBuffs(int msElapsed)
         {
-            base.UpdateStats(msElapsed);
+            base.UpdateBuffs(msElapsed);
             Strength = BaseStrength + Buffs.Sum(b => b.Strength);
             Vitality = BaseVitality + Buffs.Sum(b => b.Vitality);
             Intellect = BaseIntellect + Buffs.Sum(b => b.Intellect);

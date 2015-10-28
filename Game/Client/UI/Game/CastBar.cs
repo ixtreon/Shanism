@@ -1,5 +1,4 @@
 ﻿using IO;
-using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +7,8 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using IO.Common;
 using Client.UI.Common;
+using IO.Objects;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace Client.UI
 {
@@ -15,10 +16,10 @@ namespace Client.UI
     {
         public IUnit Target { get; set; }
 
-        public float Width
+        public double Width
         {
             get { return Size.X; }
-            set { Size = new Vector2(value, Size.Y); }
+            set { Size = new Vector(value, Size.Y); }
         }
 
         private ValueBar Bar = new ValueBar();
@@ -28,7 +29,7 @@ namespace Client.UI
             BackColor = new Color(15, 15, 15, 200);
             Bar.ForeColor = Color.Gold;
 
-            this.Size = new Vector2(0.5f, 0.08f);
+            this.Size = new Vector(0.5f, 0.08f);
             this.Add(Bar);
         }
 
@@ -56,7 +57,7 @@ namespace Client.UI
 
             if(this.Visible)
                 Textures.TextureCache.StraightFont.DrawString(sb, "- {0:0.0}s".Format(castTimeLeft), Color.White,
-                    AbsolutePosition + new Vector2(Size.X, Size.Y / 2), 1, 0.5f);
+                    AbsolutePosition + new Vector(Size.X, Size.Y / 2), 1, 0.5f);
         }
     }
 }

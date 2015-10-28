@@ -13,7 +13,7 @@ namespace Client.Textures
     /// <summary>
     /// An instance of a <see cref="IO.Content.TextureDef"/>. Provides methods to access amd draw the whole texture or parts of it. 
     /// </summary>
-    class TTexture
+    class ShanoTexture
     {
         /// <summary>
         /// Gets the texture definition for this texture. 
@@ -52,7 +52,7 @@ namespace Client.Textures
         /// <summary>
         /// Creates a new TTexture from the given texture definition. 
         /// </summary>
-        public TTexture(TextureDef f)
+        public ShanoTexture(TextureDef f)
         {
             File = f;
             Texture = TextureCache.Get(f.Name);
@@ -96,7 +96,7 @@ namespace Client.Textures
         /// <returns></returns>
         public Rectangle GetWholeRect()
         {
-            return GetTileRect(new Rectangle(Point.Empty, Size));
+            return GetTileRect(new Rectangle(Point.Zero, Size));
         }
     }
 }

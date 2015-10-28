@@ -27,7 +27,7 @@ public class Spark : Ability
     {
         Icon = "lightning-1";
         Name = "Spark";
-        Description = "Conjures a fucking spark travelling in a straight line. ";
+        Description = "Conjures a spark travelling in a straight line. ";
         ManaCost = 1;
         Cooldown = 100;
     }
@@ -59,7 +59,7 @@ public class Spark : Ability
             Direction = angle,
             Speed = 4,
             DestroyOnCollision = false,
-            MaxRange = double.MaxValue,
+            MaxRange = 8,
             Data = new  //add some custom data to the projectile
             {
                 Damage = caster.DamageRoll(),

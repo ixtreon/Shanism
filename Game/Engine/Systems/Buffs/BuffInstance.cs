@@ -14,7 +14,7 @@ namespace Engine.Systems.Buffs
     /// </summary>
     public class BuffInstance : IBuffInstance
     {
-        public readonly Buff Buff;
+        public Buff Buff { get; private set; }
 
         public Unit Target;
 
@@ -37,19 +37,23 @@ namespace Engine.Systems.Buffs
         #region IBuff implementation
         public string Icon { get { return Buff.Icon; } }
 
-        public int MoveSpeed { get { return Buff.MoveSpeed; } }
 
-        public int AttackSpeed { get { return Buff.AttackSpeed; } }
 
         public double Life { get { return Buff.Life; } }
 
         public double Mana { get { return Buff.Mana; } }
 
         public double Defense { get { return Buff.Defense; } }
+        public double Dodge { get { return Buff.Dodge; } }
 
         public double MinDamage { get { return Buff.MinDamage; } }
 
         public double MaxDamage { get { return Buff.MaxDamage; } }
+
+
+        public double MoveSpeed { get { return Buff.MoveSpeed; } }
+        public int MoveSpeedPercentage { get { return Buff.MoveSpeedPercentage; } }
+        public int AttackSpeed { get { return Buff.AttackSpeed; } }
 
         public double Strength { get { return Buff.Strength; } }
 

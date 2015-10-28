@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Client.Sprites;
 using Client.Textures;
+using Color = Microsoft.Xna.Framework.Color;
+using IO.Common;
 
 namespace Client.UI.Common
 {
@@ -36,13 +37,13 @@ namespace Client.UI.Common
             this.BackColor = Color.Transparent;
             if (!inverted)
             {
-                this.Size = new Vector2(0.4f, 0.08f);
+                this.Size = new Vector(0.4f, 0.08f);
                 this.TextFont = TextureCache.FancyFont;
                 this.ValueFont = TextureCache.StraightFont;
             }
             else
             {
-                this.Size = new Vector2(0.15f, 0.15f);
+                this.Size = new Vector(0.15f, 0.15f);
                 this.TextFont = new TextureFont(TextureCache.StraightFont, 0.75f);
                 this.ValueFont = new TextureFont(TextureCache.FancyFont, 1.3f);
             }
@@ -58,13 +59,13 @@ namespace Client.UI.Common
 
             if (!Inverted)
             {
-                TextFont.DrawStringScreen(sb, Text, TextColor, ScreenPosition.Add(6, ScreenSize.Y / 2), yAnchor: 0.5f);
-                ValueFont.DrawStringScreen(sb, Value, ValueColor, ScreenPosition.Add(ScreenSize.X - 6, ScreenSize.Y / 2), xAnchor: 1.0f, yAnchor: 0.5f);
+                TextFont.DrawStringScreen(sb, Text, TextColor, ScreenPosition + new Point(6, ScreenSize.Y / 2), yAnchor: 0.5f);
+                ValueFont.DrawStringScreen(sb, Value, ValueColor, ScreenPosition + new Point(ScreenSize.X - 6, ScreenSize.Y / 2), xAnchor: 1.0f, yAnchor: 0.5f);
             }
             else
             {
-                ValueFont.DrawStringScreen(sb, Value, TextColor, ScreenPosition.Add(ScreenSize.X / 2, 0), xAnchor: 0.5f, yAnchor: 0f);
-                TextFont.DrawStringScreen(sb, Text, ValueColor, ScreenPosition.Add(ScreenSize.X / 2, ScreenSize.Y), xAnchor: 0.5f, yAnchor: 1f);
+                ValueFont.DrawStringScreen(sb, Value, TextColor, ScreenPosition + new Point(ScreenSize.X / 2, 0), xAnchor: 0.5f, yAnchor: 0f);
+                TextFont.DrawStringScreen(sb, Text, ValueColor, ScreenPosition + new Point(ScreenSize.X / 2, ScreenSize.Y), xAnchor: 0.5f, yAnchor: 1f);
             }
         }
     }

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using IO.Common;
 using IO.Content;
+using IO.Objects;
 
 namespace Network.Objects
 {
@@ -18,7 +19,7 @@ namespace Network.Objects
 
         public Vector Position { get; internal set; }
 
-        public AnimationDefOld Model { get; internal set; }
+        public AnimationDefOld Animation { get; internal set; }
 
         public string Name { get; internal set; }
 

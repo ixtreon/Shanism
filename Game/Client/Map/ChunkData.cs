@@ -24,7 +24,7 @@ namespace Client.Map
         public readonly int Timestamp;
 
 
-        public readonly IO.Common.MapChunkId Chunk;
+        public readonly MapChunkId Chunk;
 
         volatile VertexBuffer buffer;
         public VertexBuffer Buffer
@@ -75,12 +75,12 @@ namespace Client.Map
                 {
                     var vertexData = new List<VertexPositionTexture>();
                     var i = 0;
-                    for(int x = 0; x < Width; x++)
-                        for(int y = 0; y < Height; y++)
+                    foreach (var x in Enumerable.Range(0, Width))
+                        foreach (var y in Enumerable.Range(0, Height))
                         {
                             var mapTile = Tiles[x, y];
                             var sprite = SpriteFactory.Terrain.GetSprite(mapTile);
-                            var pos = (Chunk.BottomLeft + new Vector(x , y)).ToVector2();
+                            var pos = (Chunk.BottomLeft + new Vector(x, y)).ToXnaVector();
                             var sz = 1.01f;
                             var srcRect = sprite.SourceRectangle;
 
@@ -133,19 +133,14 @@ namespace Client.Map
         /// Returns a VertexPositionTexture for the given in-texture point 
         /// which is at the provided in-game x/y co-ordinates. 
         /// </summary>
-        VertexPositionTexture genPoint(double x, double y, Vector2 texPos)
+        VertexPositionTexture genPoint(double x, double y, Vector texPos)
         {
-            return new VertexPositionTexture(new Vector3((float)x, (float)y, 0), texPos);
+            return new VertexPositionTexture(new Vector3((float)x, (float)y, 0), texPos.ToXnaVector());
         }
-
-        //VertexPositionTexture genPoint(Vector2 p, Sprite s, int dx, int dy)
-        //{
-        //    return new VertexPositionTexture(new Vector3(p.X, p.Y, 0), s.Points.Get(dx, dy));
-        //}
 
         public void Dispose()
         {
-            if(HasBuffer)
+            if (HasBuffer)
             {
                 HasBuffer = false;
                 Buffer.Dispose();

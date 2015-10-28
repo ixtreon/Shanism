@@ -1,5 +1,6 @@
 ﻿using IO;
-using Microsoft.Xna.Framework;
+using IO.Common;
+using IO.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace Client
         /// <summary>
         /// Gets or sets the camera center point in game co-ordinates. 
         /// </summary>
-        public static Vector2 CenterPoint { get; set; }
+        public static Vector CenterPoint { get; set; }
 
         /// <summary>
         /// Gets whether the camera is locked, i.e. there is a current hero. 
@@ -58,18 +59,18 @@ namespace Client
         /// <returns></returns>
         public static Point ScreenHalfSize
         {
-            get { return screenSize.DivideBy(2); }
+            get { return screenSize / 2; }
         }
 
 
 
-        public static void Update(GraphicsDeviceManager graphics, IHero hero)
+        public static void Update(Microsoft.Xna.Framework.GraphicsDeviceManager graphics, IHero hero)
         {
             var hasHero = (hero != null);
-            var cameraGamePos = hero?.Position ?? IO.Common.Vector.Zero;
+            CenterPoint = hero?.Position ?? Vector.Zero;
+
             IsLocked = hasHero;
 
-            CenterPoint = cameraGamePos.ToVector2();
             Size = new Point(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
         }
 
@@ -77,7 +78,7 @@ namespace Client
         /// <summary>
         /// Gets the screen co-ordinates of the given in-game point. 
         /// </summary>
-        public static Point GameToScreen(Vector2 p)
+        public static Point GameToScreen(Vector p)
         {
             return GameToScreen(p.X, p.Y);
         }
@@ -85,7 +86,7 @@ namespace Client
         /// <summary>
         /// Converts the given in-game point to Ui co-ordinates. 
         /// </summary>
-        public static Vector2 GameToUi(Vector2 v)
+        public static Vector GameToUi(Vector v)
         {
             // TODO: stop being lazy
             return ScreenToUi(GameToScreen(v));
@@ -110,11 +111,11 @@ namespace Client
         /// <summary>
         /// Converts the given screen point to in-game co-ordinates.  
         /// </summary>
-        public static Vector2 ScreenToGame(Point position)
+        public static Vector ScreenToGame(Point position)
         {
-            return new Vector2(
-                ((float)position.X - ScreenHalfSize.X) * Constants.Client.WindowWidth / Size.X + CenterPoint.X,
-                ((float)position.Y - ScreenHalfSize.Y) * Constants.Client.WindowHeight / Size.Y + CenterPoint.Y
+            return new Vector(
+                ((double)position.X - ScreenHalfSize.X) * Constants.Client.WindowWidth / Size.X + CenterPoint.X,
+                ((double)position.Y - ScreenHalfSize.Y) * Constants.Client.WindowHeight / Size.Y + CenterPoint.Y
                 );
         }
 
@@ -122,9 +123,9 @@ namespace Client
         /// <summary>
         /// Converts the given Ui point to screen co-ordinates.  
         /// </summary>
-        public static Point UiToScreen(Vector2 p)
+        public static IO.Common.Point UiToScreen(IO.Common.Vector p)
         {
-            return new Point(
+            return new IO.Common.Point(
                 ScreenHalfSize.X + (int)(p.X * UiScale),
                 ScreenHalfSize.Y + (int)(p.Y * UiScale));
         }
@@ -140,11 +141,11 @@ namespace Client
         /// <summary>
         /// Converts the given screen point to Ui co-ordinates.  
         /// </summary>
-        public static Vector2 ScreenToUi(Point p)
+        public static Vector ScreenToUi(Point p)
         {
-            return new Vector2(
-                (float)((p.X - ScreenHalfSize.X) / UiScale),
-                (float)((p.Y - ScreenHalfSize.Y) / UiScale));
+            return new Vector(
+                (p.X - ScreenHalfSize.X) / UiScale,
+                (p.Y - ScreenHalfSize.Y) / UiScale);
         }
 
         /// <summary>

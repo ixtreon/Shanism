@@ -15,14 +15,16 @@ namespace ShanoRPGWin.UI
 {
     public partial class ScenarioDirForm : Form
     {
-        ScenarioBase selectedScenario;
+        ScenarioFile selectedScenario;
 
         ScenarioLibrary selectedLibrary;
 
         /// <summary>
         /// Gets the scenario which the user ultimately chose. 
         /// </summary>
-        public ScenarioBase ChosenScenario { get; private set; }
+        public ScenarioFile ChosenScenario { get; private set; }
+
+        public event Action ScenariosLoaded;
 
         public ScenarioDirForm()
         {
@@ -39,20 +41,24 @@ namespace ShanoRPGWin.UI
             libTree.SelectionCleared += LibTree_SelectionCleared;
         }
 
-        void ScenarioDirForm_VisibleChanged(object sender, EventArgs e)
-        {
-
-        }
-
         /// <summary>
         /// Tries to find the given scenario. 
         /// </summary>
-        public ScenarioBase FindScenario(string path)
+        public ScenarioFile FindScenario(string path)
         {
             return libTree.FindScenario(path);
         }
 
+        /// <summary>
+        /// Reloads all libraries and their scenarios using the library list in the app config. 
+        /// </summary>
+        public async Task LoadScenarios()
+        {
+            await libTree.LoadAsync();
+            ScenariosLoaded?.Invoke();
+        }
 
+        #region libTree event handlers
         void LibTree_SelectedLibrary(ScenarioLibrary lib)
         {
             //show library
@@ -73,7 +79,7 @@ namespace ShanoRPGWin.UI
             selectedScenario = null;
         }
 
-        void LibTree_SelectedScenario(ScenarioBase sc, ScenarioLibrary lib)
+        void LibTree_SelectedScenario(ScenarioFile sc, ScenarioLibrary lib)
         {
             //show scenario
             scenarioDetails.Scenario = sc;
@@ -83,7 +89,9 @@ namespace ShanoRPGWin.UI
             libraryDetails.Hide();
             selectedLibrary = lib;
         }
+        #endregion
 
+        #region Add/Refresh/Remove event handlers
         void btnAddLibrary_Click(object sender, EventArgs e)
         {
             var result = folderDialog.ShowDialog();
@@ -93,14 +101,14 @@ namespace ShanoRPGWin.UI
             }
         }
 
-        void btnRefresh_Click(object sender, EventArgs e)
+        async void btnRefresh_Click(object sender, EventArgs e)
         {
-            libTree.RefreshLibs();
+            await libTree.RefreshLibs();
         }
 
-        void btnRemove_Click(object sender, EventArgs e)
+        async void btnRemove_Click(object sender, EventArgs e)
         {
-            if (selectedScenario != null)
+            if (selectedScenario != null)   //delete a scenario
             {
                 if (MessageBox.Show(
                     "This will DELETE the '" + selectedScenario.Name + "' scenario from your LOCAL DRIVE. \nAre you sure you want to proceed?",
@@ -108,11 +116,11 @@ namespace ShanoRPGWin.UI
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Warning) == DialogResult.Yes)
                 {
-                    libTree.RemoveScenario(selectedScenario.ScenarioDirectory);
-                    libTree.RefreshLibs();
+                    libTree.RemoveScenario(selectedScenario.BaseDirectory);
+                    await libTree.RefreshLibs();
                 }
             }
-            else if (selectedLibrary != null)
+            else if (selectedLibrary != null)   //delete a library
             {
                 if (MessageBox.Show(
                     "This will remove the library '" + selectedLibrary.DirectoryPath + "' from your local list of libraries. \nAre you sure you want to proceed?",
@@ -121,16 +129,24 @@ namespace ShanoRPGWin.UI
                     MessageBoxIcon.Warning) == DialogResult.Yes)
                 {
                     libTree.RemoveLibrary(selectedLibrary.DirectoryPath);
-                    libTree.RefreshLibs();
+                    await libTree.RefreshLibs();
                 }
             }
         }
+        #endregion
 
-        void scenarioDetails_ScenarioSelected(ScenarioBase sc)
+        #region Other event handlers
+        void scenarioDetails_ScenarioSelected(ScenarioFile sc)
         {
+            //selected a scenario => set dialog result and hide
             ChosenScenario = sc;
             DialogResult = DialogResult.OK;
             Hide();
         }
+        async void ScenarioDirForm_Load(object sender, EventArgs e)
+        {
+            await LoadScenarios();
+        }
+        #endregion
     }
 }

@@ -23,7 +23,7 @@ namespace Network
     {
         static LServer()
         {
-            Log.Default.Name = "server";
+            Log.Init("server");
             SerializerModules.Init();
         }
 

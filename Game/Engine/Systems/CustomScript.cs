@@ -5,14 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Engine.Objects;
 using Engine.Objects.Game;
-using ScenarioLib.Code;
+using ScenarioLib;
 
 namespace Engine.Systems
 {
     /// <summary>
     /// A base for the creation of custom game scripts. 
     /// </summary>
-    public abstract class CustomScript : ScenarioObject
+    public abstract class CustomScript : ScenarioObject, IScript
     {
         /// <summary>
         /// Uses the <paramref name="manager"/> object to declare the models used in this scenario. 

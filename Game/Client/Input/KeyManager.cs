@@ -63,7 +63,10 @@ namespace Client.Controls
             newKb = Keyboard.GetState();
 
             var keysJustPressed = newKb.GetPressedKeys().Except(oldKb.GetPressedKeys());
+
+            //inform the chat provider
             ChatProvider.Update(msElapsed, keysJustPressed);
+
         }
 
         public static void Save()

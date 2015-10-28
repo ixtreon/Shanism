@@ -12,7 +12,7 @@ namespace ScenarioLib.Designer
     /// </summary>
     class ScenarioDesigner
     {
-        public ScenarioDesigner(CompiledScenario sc)
+        public ScenarioDesigner(CompiledScenario<IScript> sc)
         {
 
         }

@@ -10,9 +10,9 @@ namespace ShanoRPGWin.UI.Scenarios
 {
     public class ScenarioLibrary
     {
-        private List<ScenarioBase> scenarios;
+        private List<ScenarioFile> scenarios;
 
-        private Dictionary<string, ScenarioBase> scenarioLookupTable = new Dictionary<string, ScenarioBase>();
+        private Dictionary<string, ScenarioFile> scenarioLookupTable = new Dictionary<string, ScenarioFile>();
 
         /// <summary>
         /// The path to this scenario library's directory. 
@@ -22,9 +22,9 @@ namespace ShanoRPGWin.UI.Scenarios
         /// <summary>
         /// Gets all scenarios found in the given directory. 
         /// </summary>
-        public IEnumerable<ScenarioBase> Scenarios
+        public IEnumerable<ScenarioFile> Scenarios
         {
-            get { return scenarios ?? Enumerable.Empty<ScenarioBase>(); }
+            get { return scenarios ?? Enumerable.Empty<ScenarioFile>(); }
         }
         
         /// <summary>
@@ -47,14 +47,14 @@ namespace ShanoRPGWin.UI.Scenarios
             {
                 var dirs = Directory.EnumerateDirectories(DirectoryPath);
                 scenarios = dirs
-                    .Select(d => ScenarioBase.Load(d))
+                    .Select(d => ScenarioFile.Load(d))
                     .Where(sc => sc != null)
                     .ToList();
-                scenarioLookupTable = scenarios.ToDictionary(sc => sc.ScenarioDirectory, sc => sc);
+                scenarioLookupTable = scenarios.ToDictionary(sc => sc.BaseDirectory, sc => sc);
             });
         }
 
-        public bool TryGet(string scenarioPath, out ScenarioBase sc)
+        public bool TryGet(string scenarioPath, out ScenarioFile sc)
         {
             return scenarioLookupTable.TryGetValue(scenarioPath, out sc);
         }

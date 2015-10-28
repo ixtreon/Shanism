@@ -14,11 +14,12 @@ using ScenarioLib;
 
 namespace Engine
 {
-    public class Scenario : ScenarioBase
+    public class Scenario : CompiledScenario<CustomScript>
     {
         /// <summary>
         /// Used to list all models used by the scenario. 
         /// </summary>
+        [Obsolete]
         readonly internal ModelManager Models = new ModelManager();
 
         /// <summary>
@@ -27,25 +28,13 @@ namespace Engine
         readonly private List<CustomScript> customScripts = new List<CustomScript>();
 
 
-        protected readonly List<string> files = new List<string>();
 
-        /// <summary>
-        /// Gets the base directory of the scenario. 
-        /// </summary>
-        public string Directory { get; private set; }
 
-        /// <summary>
-        /// Gets the name of the scenario. 
-        /// </summary>
-        public string Name { get; protected set; } = "ShanoScenario";
+        public Scenario(string path)
+            : base(path)
+        {
 
-        /// <summary>
-        /// Gets the description of the scenario. 
-        /// </summary>
-        public string Description { get; protected set; } = "Shano description of a shano scenario.";
-
-        public string MessageOfTheDay { get; protected set; } = "Welcome to the shano world!";
-
+        }
 
         /// <summary>
         /// Runs an action on all loaded scripts. 
@@ -53,26 +42,8 @@ namespace Engine
         /// <param name="act"></param>
         internal void RunScripts(Action<CustomScript> act)
         {
-            foreach (var s in customScripts)
+            foreach (var s in Scripts)
                 act(s);
-        }
-
-
-        /// <summary>
-        /// Loads the generated assembly. Currently loads all scripts in memory. 
-        /// </summary>
-        internal void LoadTypes(Assembly currentAssembly)
-        {
-            loadScripts(currentAssembly);
-        }
-
-        /// <summary>
-        /// Loads all objects of type <see cref="CustomScript"/> from the given assembly into <see cref="customScripts"/>. 
-        /// </summary>
-        /// <param name="assembly"></param>
-        void loadScripts(Assembly assembly)
-        {
-            customScripts.AddRange(assembly.CreateInstanceOfEach<CustomScript>());
         }
 
     }

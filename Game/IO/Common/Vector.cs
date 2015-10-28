@@ -12,6 +12,7 @@ namespace IO.Common
     public struct Vector
     {
         public static readonly Vector Zero = new Vector();
+        public static readonly Vector NaN = new Vector(double.NaN);
 
         [SerialMember]
         double x;

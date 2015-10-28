@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Client.Sprites;
 using Client.Textures;
+using IO.Common;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace Client.UI
 {
@@ -37,9 +38,9 @@ namespace Client.UI
             {
                 this.Text = HoverControl.TooltipText;
 
-                this.Size = Font.MeasureStringUi(Text, maxSize()) + new Vector2(0.02f, 0.02f);
+                this.Size = Font.MeasureStringUi(Text, maxSize()) + new Vector(0.02f, 0.02f);
                 var screenPos =
-                    (mouseState.Position + new Point(14, 26))
+                    (mouseState.Position.ToPoint() + new Point(14, 26))
                     .ConstrainWithin(Point.Zero, Screen.Size - this.ScreenSize);
                 this.AbsolutePosition = Screen.ScreenToUi(screenPos);
 
@@ -56,7 +57,7 @@ namespace Client.UI
             if (Visible)
             {
                 SpriteFactory.Blank.DrawScreen(sb, ScreenPosition, ScreenSize, Color.Black.SetAlpha(150));
-                Font.DrawStringScreen(sb, Text, Color.White, this.ScreenPosition.Add(anchor, anchor), 0, 0, maxWidth: maxSize());
+                Font.DrawStringScreen(sb, Text, Color.White, this.ScreenPosition + new Point(anchor, anchor), 0, 0, maxWidth: maxSize());
             }
         }
     }

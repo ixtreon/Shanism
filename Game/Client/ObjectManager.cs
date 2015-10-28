@@ -1,6 +1,7 @@
 ﻿using Client.Objects;
 using Client.UI;
 using IO;
+using IO.Common;
 using IO.Objects;
 using System;
 using System.Collections.Generic;
@@ -65,7 +66,6 @@ namespace Client
 
         public void AddObject(IGameObject o)
         {
-            Console.WriteLine("SAW A NIGGER: " + o.GetType().Name);
             //get the control constructor for this type of game object. 
             var mapping = gameObjectToControlMap
                 .Where(kvp => kvp.Key.IsAssignableFrom(o.GetType()))
@@ -107,7 +107,7 @@ namespace Client
             MainHeroGuid = guid;
         }
 
-        void gameObject_MouseDown(Control c, Microsoft.Xna.Framework.Vector2 pos)
+        void gameObject_MouseDown(Control c, Vector pos)
         {
             if (c is UnitControl)
                 UnitClicked?.Invoke((UnitControl)c);

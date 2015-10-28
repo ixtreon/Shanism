@@ -19,7 +19,7 @@ class Vacuum : Ability
     public int SuckInSpeed { get; set; }
 
     /// <summary>
-    /// Creates a new ability, sets its cooldown n shit
+    /// Creates a new ability, sets its cooldown n stuff
     /// </summary>
     public Vacuum()
         : base(IO.Common.AbilityTargetType.PointTarget)

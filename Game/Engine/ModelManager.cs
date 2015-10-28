@@ -10,7 +10,7 @@ using IO;
 namespace Engine
 {
     /// <summary>
-    /// Specifies all textures used within the game, their frames and shit.
+    /// Specifies all textures used within the game, their frames and stuff.
     /// </summary>
     public class ModelManager
     {

@@ -10,6 +10,7 @@ using IO.Common;
 using System.Reflection;
 using System.IO;
 using IxSerializer;
+using IO.Objects;
 
 namespace Network.Objects.Serializers
 {

@@ -15,7 +15,7 @@ namespace AbilityIDE.ScenarioViews
     {
         public override ScenarioViewType ViewType { get; } = ScenarioViewType.Details;
 
-        protected override void LoadScenario()
+        protected override async Task LoadScenario()
         {
             txtName.Enabled =
             txtDescription.Enabled = (Scenario != null);
@@ -24,10 +24,6 @@ namespace AbilityIDE.ScenarioViews
             txtDescription.Text = Scenario.Description ?? "";
         }
 
-        protected override void SaveScenario()
-        {
-            throw new NotImplementedException();
-        }
 
         public DetailsView()
         {

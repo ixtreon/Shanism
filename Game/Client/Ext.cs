@@ -10,6 +10,24 @@ using Client.Textures;
 
 namespace Client
 {
+
+    public static class SpriteBatchExt
+    {
+        //public static void ShanoDraw(this SpriteBatch sb, Texture2D tex, IO.Common.Point destPos, IO.Common.Point destSize, Color c)
+        //{
+        //    //sb.Draw(tex, destPos.ToXnaPoint(), destSize.ToXnaPoint(), c);
+        //}
+
+        public static void ShanoDraw(this SpriteBatch sb, Texture2D tex, IO.Common.Rectangle destRect, Color c)
+        {
+            sb.Draw(tex, destRect.ToXnaRect(), c);
+        }
+        public static void ShanoDraw(this SpriteBatch sb, Texture2D tex, IO.Common.Rectangle sourceRect, IO.Common.Rectangle destRect, Color c)
+        {
+            sb.Draw(tex, sourceRect.ToXnaRect(), destRect.ToXnaRect(), c);
+        }
+    }
+
     public static class Ext
     {
         public static Color SetAlpha(this Color c, int a)
@@ -23,7 +41,7 @@ namespace Client
 
         //xna <-> common vector transforms 
 
-        public static Vector2 ToVector2(this IO.Common.Vector v)
+        public static Vector2 ToXnaVector(this IO.Common.Vector v)
         {
             return new Vector2((float)v.X, (float)v.Y);
         }
@@ -36,6 +54,15 @@ namespace Client
         public static Point ToXnaPoint(this Vector2 v)
         {
             return new Point((int)v.X, (int)v.Y);
+        }
+        public static Point ToXnaPoint(this IO.Common.Point p)
+        {
+            return new Point(p.X, p.Y);
+        }
+
+        public static IO.Common.Point ToPoint(this Point p)
+        {
+            return new IO.Common.Point(p.X, p.Y);
         }
 
         //xna <-> common rectangle transforms

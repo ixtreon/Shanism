@@ -111,10 +111,25 @@
     <Compile Include="ScenarioViews\MapView.Designer.cs">
       <DependentUpon>MapView.cs</DependentUpon>
     </Compile>
+    <Compile Include="ScenarioViews\Models\AnimationView.cs" />
+    <Compile Include="ScenarioViews\Models\ModelsView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ScenarioViews\Models\ModelsView.Designer.cs">
+      <DependentUpon>ModelsView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ScenarioViews\Models\ModelView.cs" />
+    <Compile Include="ScenarioViews\Models\TextureView.cs" />
     <Compile Include="ScenarioViews\ScenarioView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ScenarioViews\ScenarioViewType.cs" />
+    <Compile Include="ScenarioViews\Models\TexturesView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ScenarioViews\Models\TexturesView.Designer.cs">
+      <DependentUpon>TexturesView.cs</DependentUpon>
+    </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="ShanoEditor.cs">
       <SubType>Form</SubType>
@@ -138,6 +153,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ScenarioViews\MapView.resx">
       <DependentUpon>MapView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScenarioViews\Models\ModelsView.resx">
+      <DependentUpon>ModelsView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScenarioViews\Models\TexturesView.resx">
+      <DependentUpon>TexturesView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ShanoEditor.resx">
       <DependentUpon>ShanoEditor.cs</DependentUpon>
@@ -188,6 +209,7 @@
   <ItemGroup>
     <None Include="Resources\load_icon.gif" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

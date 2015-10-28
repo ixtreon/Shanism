@@ -15,7 +15,7 @@ namespace AbilityIDE
     {
         const string WindowTitle = "ShanoEditor";
 
-        public ScenarioBase Scenario { get; private set; }
+        public ScenarioFile Scenario { get; private set; }
 
 
 
@@ -34,7 +34,7 @@ namespace AbilityIDE
 
             StatusLoading = true;
             //load a scenario, if any
-            Scenario = await Task.Run(() => ScenarioBase.Load(filePath));
+            Scenario = await Task.Run(() => ScenarioFile.Load(filePath));
             if(Scenario == null)
             {
                 MessageBox.Show("Unable to find a scenario in the directory '{0}'".F(filePath), "ShanoEditor", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -47,9 +47,8 @@ namespace AbilityIDE
 
             //load up UI changes
             scenarioTree.Scenario = Scenario;
-
-            detailsView.Scenario = Scenario;
-            mapView.Scenario = Scenario;
+            foreach (var view in scenarioViews)
+                view.Scenario = Scenario;
 
             updateUi();
             StatusLoading = false;
@@ -60,6 +59,8 @@ namespace AbilityIDE
         {
             if (Scenario == null || !Scenario.IsDirty)
                 return;
+            foreach (var view in scenarioViews)
+                view.SaveScenario();
 
             Scenario.Save();
             Scenario.IsDirty = false;

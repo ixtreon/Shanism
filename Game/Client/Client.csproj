@@ -132,10 +132,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Controls\ChatProvider.cs" />
-    <Compile Include="Controls\DefaultKeyAttribute.cs" />
-    <Compile Include="Controls\Keybind.cs" />
-    <Compile Include="Controls\KeyManager.cs" />
+    <Compile Include="Input\ChatProvider.cs" />
+    <Compile Include="Input\DefaultKeyAttribute.cs" />
+    <Compile Include="Input\Keybind.cs" />
+    <Compile Include="Input\KeyManager.cs" />
     <Compile Include="ShanoGame.cs" />
     <Compile Include="GameStatus.cs" />
     <Compile Include="IShanoClient.cs" />
@@ -156,7 +156,7 @@
     <Compile Include="Ext.cs" />
     <Compile Include="Sprites\AnimatedSprite.cs" />
     <Compile Include="Sprites\Sprite.cs" />
-    <Compile Include="Textures\TTexture.cs" />
+    <Compile Include="Textures\ShanoTexture.cs" />
     <Compile Include="Sprites\StaticSprite.cs" />
     <Compile Include="Sprites\SpriteFactory.cs" />
     <Compile Include="Textures\TextureCache.cs" />

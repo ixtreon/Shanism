@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IO;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Client.Sprites;
 using Client.UI;
 using IO.Content;
+using IO.Objects;
+using IO.Common;
 
 namespace Client.Objects
 {
@@ -31,7 +32,7 @@ namespace Client.Objects
         /// Gets or sets a custom location for this object. 
         /// Really hacky!
         /// </summary>
-        public Vector2? CustomLocation { get; set; }
+        public Vector? CustomLocation { get; set; }
 
         /// <summary>
         /// Creates a new ObjectControl for the given game object. 
@@ -40,7 +41,7 @@ namespace Client.Objects
         public ObjectControl(IGameObject obj)
         {
             this.Object = obj;
-            var model = obj.Model ?? AnimationDefOld.Default;
+            var model = obj.Animation ?? AnimationDefOld.Default;
             Sprite = SpriteFactory.FromModel(model);
             //Sprite.Tint = obj.Tint;
         }
@@ -55,8 +56,8 @@ namespace Client.Objects
             Sprite.Update(msElapsed);
 
             //update object position
-            var loc = CustomLocation ?? Object.Position.ToVector2();
-            Vector2 sz = new Vector2((float)Object.Size / 2);
+            var loc = CustomLocation ?? Object.Position;
+            var sz = new Vector(Object.Size) / 2;
             var posLo = Screen.GameToUi(loc - sz);
             var posHi = Screen.GameToUi(loc + sz);
 

@@ -14,13 +14,7 @@ namespace Engine.Maps
 
         readonly TerrainType[,] map;
 
-        public int Bottom { get { return bounds.Bottom; } }
-
-        public int Left { get { return bounds.Left; } }
-        public int Right { get { return bounds.Right; } }
-
-        public int Top { get { return bounds.Top; } }
-
+        public Rectangle Bounds { get { return bounds; } }
 
         public FixedMap(TerrainType[,] map)
         {

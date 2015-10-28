@@ -12,8 +12,8 @@ namespace AbilityIDE
     class ScenarioTree : TreeView
     {
 
-        ScenarioBase _scenario;
-        public ScenarioBase Scenario
+        ScenarioFile _scenario;
+        public ScenarioFile Scenario
         {
             get { return _scenario; }
             set

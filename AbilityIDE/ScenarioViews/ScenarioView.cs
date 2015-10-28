@@ -14,9 +14,9 @@ namespace AbilityIDE.ScenarioViews
 
         public event Action ScenarioChanged;
 
-        bool _loadingScenario;
-        ScenarioBase _scenario;
-        public ScenarioBase Scenario
+        protected bool _loadingScenario;
+        ScenarioFile _scenario;
+        public ScenarioFile Scenario
         {
             get { return _scenario; }
             set
@@ -25,16 +25,19 @@ namespace AbilityIDE.ScenarioViews
                 {
                     _scenario = value;
 
-                    _loadingScenario = true;
-                    LoadScenario();
-                    _loadingScenario = false;
+                    Task.Run(async () =>
+                    {
+                        _loadingScenario = true;
+                        await LoadScenario();
+                        _loadingScenario = false;
+                    });
                 }
             }
         }
 
-        protected virtual void LoadScenario() { }
+        protected virtual async Task LoadScenario() { }
 
-        protected virtual void SaveScenario() { }
+        public virtual void SaveScenario() { }
 
         public void MarkAsChanged()
         {

@@ -8,7 +8,7 @@ using Engine.Systems;
 using Engine.Objects.Game;
 using IO.Common;
 
-class MainScript : CustomScript
+class SpawnHeroes : CustomScript
 {
     public override void LoadModels(ModelManager manager)
     {
@@ -35,10 +35,9 @@ class MainScript : CustomScript
 
     public override void OnPlayerJoined(Player p)
     {
-
         if (!p.HasHero)
         {
-            var h = new Hero(p, new Vector(0, 0));
+            var h = new Hero(p, Terrain.Bounds.Center);
             Map.Add(h);
 
             p.SetMainHero(h);

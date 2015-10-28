@@ -11,16 +11,16 @@ namespace ScenarioLib.Tests
         [TestMethod]
         public void testUnwantedProperties()
         {
-            ScenarioBase scenario = new ScenarioStub("lolol") { DontSerializePlz = 666 };
+            ScenarioFile scenario = new ScenarioStub("lolol") { DontSerializePlz = 666 };
 
             var datas = JsonConvert.SerializeObject(scenario);
 
-            var outScenario = JsonConvert.DeserializeObject<ScenarioBase>(datas);
+            var outScenario = JsonConvert.DeserializeObject<ScenarioFile>(datas);
 
             Assert.AreEqual("lolol", outScenario.Name);
         }
 
-        class ScenarioStub : ScenarioBase
+        class ScenarioStub : ScenarioFile
         {
 
             public ScenarioStub(string name)

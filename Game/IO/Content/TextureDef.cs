@@ -14,19 +14,21 @@ namespace IO.Content
     /// </summary>
     [SerialKiller]
     [JsonObject(IsReference = true)]
-    public struct TextureDef
+    public class TextureDef
     {
         /// <summary>
         /// The number of segments in the file, if there is more than one. 
         /// </summary>
         [SerialMember]
-        public readonly Point Splits;
+        public Point Splits;
 
         /// <summary>
         /// The name, also the path, to the file. 
         /// </summary>
         [SerialMember]
-        public readonly string Name;
+        public string Name;
+
+        TextureDef() { }
 
         /// <summary>
         /// Creates a new TextureDef for the given file containing multiple image segments. 
@@ -38,16 +40,6 @@ namespace IO.Content
             this.Splits = logicalSize;
         }
 
-        /// <summary>
-        /// Creates a new TextureDef for the given file containing multiple image segments. 
-        /// </summary>
-        /// <param name="name">The name (or path) of the file. </param>
-        /// <param name="logicalWidth">The number of image segments along the horizontal. </param>
-        /// <param name="logicalHeight">The number of image segments along the vertical. </param>
-        public TextureDef(TextureType type, string name, Point logicalSize)
-            : this(type.GetDirectory(name), logicalSize)
-        { }
-
 
 
         /// <summary>
@@ -57,11 +49,6 @@ namespace IO.Content
         public TextureDef(string name)
             : this(name, new Point(1))
         { }
-
-        public TextureDef(TextureType type, string name)
-            : this(type.GetDirectory(name), new Point(1))
-        { }
-
 
 
         /// <summary>
@@ -74,14 +61,22 @@ namespace IO.Content
             : this(name, new Point(logicalWidth, logicalHeight))
         { }
 
-        /// <summary>
-        /// Creates a new TextureDef for the given file containing multiple image segments. 
-        /// </summary>
-        /// <param name="name">The name (or path) of the file. </param>
-        /// <param name="logicalWidth">The number of image segments along the horizontal. </param>
-        /// <param name="logicalHeight">The number of image segments along the vertical. </param>
-        public TextureDef(TextureType type, string name, int logicalWidth, int logicalHeight)
-            : this(type.GetDirectory(name), new Point(logicalWidth, logicalHeight))
-        { }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is TextureDef))
+                return false;
+            return ((TextureDef)obj).Name == Name;
+        }
+
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

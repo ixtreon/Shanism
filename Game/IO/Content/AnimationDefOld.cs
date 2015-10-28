@@ -14,7 +14,7 @@ namespace IO.Content
     [SerialKiller]
     public class AnimationDefOld
     {
-        public static readonly AnimationDefOld Default = new AnimationDefOld(new TextureDef(TextureType.Model, @"default"));
+        public static readonly AnimationDefOld Default = new AnimationDefOld(new TextureDef(TextureType.Model.GetDirectory() + @"\default"));
 
         [SerialMember]
         public readonly TextureDef File;

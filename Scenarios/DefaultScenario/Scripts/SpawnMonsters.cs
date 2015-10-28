@@ -11,27 +11,35 @@ using Engine.Objects.Game;
 
 class SpawnMonsters : CustomScript
 {
-    private int N_UNITS = 1;
-    private int MAX_DIST = 3;
-    static readonly Vector center = new Vector(0);
+    int CampSpawnRadius = 40;
+    int CampCount = 3;
+
+    int UnitsPerCamp = 3;
+    int UnitCampRadius = 5;
 
     public override void GameStart()
     {
+        //restrain the camp spawn area to the terrain bounds
+        var campSpawnRect = 
+            new Rectangle(-CampSpawnRadius, -CampSpawnRadius, 2 * CampSpawnRadius, 2 * CampSpawnRadius)
+            .IntersectWith(Terrain.Bounds);
 
-        for (int i = 0; i < N_UNITS; i++)
+        foreach(var iCamp in Enumerable.Range(0, CampCount))
         {
-            var dist = Rnd.NextDouble(0, MAX_DIST);
-            var ang = Rnd.NextDouble() * Math.PI * 2;
-            var pos = center.PolarProjection(ang, dist);
+            //center it at a random spot
+            var campCenter = Rnd.PointInside(campSpawnRect);
 
-            var m = new Monster("mobche", pos, 10)
+            //make some units
+            foreach(var iUnit in Enumerable.Range(0, UnitsPerCamp))
             {
-                Life = 123,
-            };
-            Map.Add(m);
-
+                var uPos = Rnd.PointInCircle(campCenter, UnitCampRadius);
+                var m = new Monster("mobche", uPos, 2)
+                {
+                    Life = 123,
+                };
+                Map.Add(m);
+            }
         }
-
     }
 
     public override async void OnUnitDeath(Unit unit)
@@ -50,7 +58,9 @@ class SpawnMonsters : CustomScript
             pos += new Vector(dx, dy);
             nu.Position = pos;
 
-            await Task.Delay(3000);
+
+            //wait 30 sec
+            await Task.Delay(30000);
 
             Map.Add(nu);
         }

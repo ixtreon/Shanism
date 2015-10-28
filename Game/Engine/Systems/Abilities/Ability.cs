@@ -9,6 +9,7 @@ using Engine.Objects;
 using IO;
 using IO.Common;
 using Engine.Events;
+using IO.Objects;
 
 namespace Engine.Objects.Game
 {

@@ -1,4 +1,5 @@
 ﻿using IO.Common;
+using IO.Objects;
 using IxSerializer.Attributes;
 using System;
 using System.Collections.Generic;

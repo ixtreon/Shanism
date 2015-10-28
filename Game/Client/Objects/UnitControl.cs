@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IO;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Client.Properties;
 using Client.Sprites;
 using Client.UI;
 using Client.UI.Common;
+using IO.Objects;
+using Color = Microsoft.Xna.Framework.Color;
+using IO.Common;
 
 namespace Client.Objects
 {
@@ -41,7 +43,7 @@ namespace Client.Objects
             if(Sprite is AnimatedSprite)
                 ((AnimatedSprite)Sprite).Period = moving ? 100 : 1000;
 
-            Vector2 sz = new Vector2((float)Unit.Size);
+            var sz = new Vector(Unit.Size);
 
             var c = Unit.IsDead ? Color.Black : Color.White;
             Sprite.DrawScreen(sb, ScreenPosition, ScreenSize, c);

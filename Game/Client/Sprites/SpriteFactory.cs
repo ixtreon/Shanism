@@ -30,8 +30,8 @@ namespace Client.Sprites
         {
             public static readonly TextureDef TerrainDef = new TextureDef("terrain", 8, 8);
 
-            public static TTexture TerrainAtlas { get; private set; }
-            public static TTexture TerrainAtlas2 { get; private set; }
+            public static ShanoTexture TerrainAtlas { get; private set; }
+            public static ShanoTexture TerrainAtlas2 { get; private set; }
 
             private static Sprite[] terrainSprites = new Sprite[255];
 
@@ -42,12 +42,12 @@ namespace Client.Sprites
 
             internal static void Load()
             {
-                TerrainAtlas = new TTexture(TerrainDef);
+                TerrainAtlas = new ShanoTexture(TerrainDef);
                 foreach(TerrainType t in Enum.GetValues(typeof(TerrainType)))
                 {
                     terrainSprites[(int)t] = new StaticSprite(new AnimationDefOld(TerrainDef, TerrainAtlas.GetTile((int)t)));
                 }
-                TerrainAtlas2 = new TTexture(new TextureDef("terrain_atlas", 32, 32));
+                TerrainAtlas2 = new ShanoTexture(new TextureDef("terrain_atlas", 32, 32));
             }
         }
 

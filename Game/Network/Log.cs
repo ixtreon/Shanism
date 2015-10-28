@@ -8,6 +8,12 @@ namespace Network
 {
     class Log
     {
-        public static IxLog.Log Default = new IxLog.Log("network");
+        public static IxLog.Log Default;
+
+
+        public static void Init(string name = "network")
+        {
+           Default = new IxLog.Log(name);
+        }
     }
 }

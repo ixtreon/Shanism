@@ -64,12 +64,14 @@ namespace AbilityIDE
             this.cCodeEditor = new System.Windows.Forms.RichTextBox();
             this.tpScenario = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.scenarioTree = new AbilityIDE.ScenarioTree();
+            this.texturesView1 = new AbilityIDE.ScenarioViews.TexturesView();
+            this.mapView = new AbilityIDE.ScenarioViews.MapView();
+            this.detailsView = new AbilityIDE.ScenarioViews.DetailsView();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.scenarioTree = new AbilityIDE.ScenarioTree();
-            this.mapView = new AbilityIDE.ScenarioViews.MapView();
-            this.detailsView = new AbilityIDE.ScenarioViews.DetailsView();
+            this.modelsView1 = new AbilityIDE.ScenarioViews.ModelsView();
             this.menuStrip1.SuspendLayout();
             this.tpCode.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pSplitCode)).BeginInit();
@@ -362,11 +364,49 @@ namespace AbilityIDE
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.modelsView1);
+            this.splitContainer1.Panel2.Controls.Add(this.texturesView1);
             this.splitContainer1.Panel2.Controls.Add(this.mapView);
             this.splitContainer1.Panel2.Controls.Add(this.detailsView);
             this.splitContainer1.Size = new System.Drawing.Size(839, 443);
             this.splitContainer1.SplitterDistance = 279;
             this.splitContainer1.TabIndex = 4;
+            // 
+            // scenarioTree
+            // 
+            this.scenarioTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.scenarioTree.Location = new System.Drawing.Point(0, 0);
+            this.scenarioTree.Name = "scenarioTree";
+            this.scenarioTree.Scenario = null;
+            this.scenarioTree.Size = new System.Drawing.Size(279, 443);
+            this.scenarioTree.TabIndex = 0;
+            // 
+            // texturesView1
+            // 
+            this.texturesView1.Location = new System.Drawing.Point(3, 3);
+            this.texturesView1.Name = "texturesView1";
+            this.texturesView1.Scenario = null;
+            this.texturesView1.Size = new System.Drawing.Size(181, 143);
+            this.texturesView1.TabIndex = 5;
+            // 
+            // mapView
+            // 
+            this.mapView.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.mapView.Location = new System.Drawing.Point(190, 3);
+            this.mapView.MinimumSize = new System.Drawing.Size(310, 240);
+            this.mapView.Name = "mapView";
+            this.mapView.Scenario = null;
+            this.mapView.Size = new System.Drawing.Size(322, 347);
+            this.mapView.TabIndex = 4;
+            // 
+            // detailsView
+            // 
+            this.detailsView.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.detailsView.Location = new System.Drawing.Point(3, 152);
+            this.detailsView.Name = "detailsView";
+            this.detailsView.Scenario = null;
+            this.detailsView.Size = new System.Drawing.Size(181, 152);
+            this.detailsView.TabIndex = 3;
             // 
             // tabControl1
             // 
@@ -397,36 +437,13 @@ namespace AbilityIDE
             this.statusLabel.Name = "statusLabel";
             this.statusLabel.Size = new System.Drawing.Size(0, 17);
             // 
-            // scenarioTree
+            // modelsView1
             // 
-            this.scenarioTree.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.scenarioTree.Location = new System.Drawing.Point(0, 0);
-            this.scenarioTree.Name = "scenarioTree";
-            this.scenarioTree.Scenario = null;
-            this.scenarioTree.Size = new System.Drawing.Size(279, 443);
-            this.scenarioTree.TabIndex = 0;
-            // 
-            // mapView
-            // 
-            this.mapView.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.mapView.Location = new System.Drawing.Point(214, 54);
-            this.mapView.MinimumSize = new System.Drawing.Size(310, 240);
-            this.mapView.Name = "mapView";
-            this.mapView.Padding = new System.Windows.Forms.Padding(0, 0, 0, 12);
-            this.mapView.Scenario = null;
-            this.mapView.Size = new System.Drawing.Size(310, 240);
-            this.mapView.TabIndex = 4;
-            this.mapView.Visible = false;
-            // 
-            // detailsView
-            // 
-            this.detailsView.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.detailsView.Location = new System.Drawing.Point(22, 230);
-            this.detailsView.Name = "detailsView";
-            this.detailsView.Scenario = null;
-            this.detailsView.Size = new System.Drawing.Size(260, 135);
-            this.detailsView.TabIndex = 3;
-            this.detailsView.Visible = false;
+            this.modelsView1.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.modelsView1.Location = new System.Drawing.Point(3, 310);
+            this.modelsView1.Name = "modelsView1";
+            this.modelsView1.Size = new System.Drawing.Size(181, 115);
+            this.modelsView1.TabIndex = 6;
             // 
             // ShanoEditor
             // 
@@ -502,6 +519,8 @@ namespace AbilityIDE
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private MapView mapView;
+        private TexturesView texturesView1;
+        private ModelsView modelsView1;
     }
 }
 

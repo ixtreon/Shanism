@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using IO;
 using Client.Sprites;
 using Client.Textures;
 using Client.UI.Common;
+using IO.Objects;
+using Color = Microsoft.Xna.Framework.Color;
+using IO.Common;
 
 namespace Client.UI
 {
@@ -46,11 +48,11 @@ namespace Client.UI
             }
         }
 
-        public SpellButton(Keys k = Keys.None, float sz = 0.12f)
+        public SpellButton(Keys k = Keys.None, double sz = 0.12f)
         {
             this.CanDrag = true;
             this.Texture = SpriteFactory.Icon.Nothing.Texture;
-            this.Size = new Vector2(sz, sz);
+            this.Size = new Vector(sz, sz);
             this.Keybind = k;
             this.HasBorder = true;
 

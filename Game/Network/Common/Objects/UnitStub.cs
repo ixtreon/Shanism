@@ -12,7 +12,6 @@ namespace Network.Objects
 {
     class UnitStub : ObjectStub, IUnit
     {
-        //TODO: these 3 are PROBLEFUCKINGMATIC
         public IEnumerable<IBuffInstance> Buffs { get; set; }
 
         public IEnumerable<IAbility> Abilities { get; set; }

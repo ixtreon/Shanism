@@ -5,15 +5,16 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using IO;
+using IO.Objects;
 
 namespace ScenarioLib
 {
     /// <summary>
     /// A compiled scenario that contains information about the types of objects defined in it
-    /// as well as providing the functionality of a <see cref="ScenarioBase"/> object. 
+    /// as well as being a <see cref="ScenarioFile"/> object. 
     /// </summary>
-    public class CompiledScenario : ScenarioBase
+    public class CompiledScenario<TScript> : ScenarioFile
+        where TScript : IScript
     {
         /// <summary>
         /// Gets the assembly that contains the compiled scenario. 
@@ -21,15 +22,25 @@ namespace ScenarioLib
         public Assembly ScenarioAssembly { get; private set; }
 
 
-
+        List<Type> objectTypes = new List<Type>();
         List<IGameObject> objects = new List<IGameObject>();
+        List<TScript> scripts = new List<TScript>();
 
         /// <summary>
-        /// Gets all game objects defined in this scenario. 
+        /// Gets the types of game objects defined in this scenario. 
+        /// </summary>
+        public IEnumerable<Type> DefinedObjectTypes
+        {
+            get { return objectTypes; }
+        }
+
+        /// <summary>
+        /// Gets an instance of each game object defined in this scenario. 
         /// </summary>
         public IEnumerable<IGameObject> DefinedObjects
         {
             get { return objects; }
+
         }
 
         /// <summary>
@@ -43,25 +54,50 @@ namespace ScenarioLib
         /// <summary>
         /// Gets all doodads defined in this scenario. 
         /// </summary>
-        public IEnumerable<IUnit> DefinedDoodads
+        public IEnumerable<IDoodad> DefinedDoodads
         {
-            get { return objects.OfType<IUnit>(); }
+            get { return objects.OfType<IDoodad>(); }
+        }
+
+        public IEnumerable<TScript> Scripts
+        {
+            get { return scripts; }
         }
 
         public CompiledScenario(string scenarioPath)
             : base(scenarioPath)
         {
-            //TODO: use the compiler, lol
+            //compile
+            var cmp = new ScenarioCompiler(scenarioPath);
+            var errors = cmp.Compile();
+            if (errors.Any())
+                throw new AggregateException(errors.Select(err => new CompilerException(err)));
+            //load
+            cmp.LoadCompiledAssembly();
+            //parse
+            loadAssembly(cmp.Assembly);
         }
 
-        public void LoadAssembly(Assembly scAssembly)
+        void loadAssembly(Assembly scAssembly)
         {
             ScenarioAssembly = scAssembly;
 
-            objects = scAssembly.GetTypesDescending<IGameObject>()
+            objectTypes = scAssembly.GetTypesDescending<IGameObject>()
                 .Where(ty => ty.GetConstructor(Type.EmptyTypes) != null)
+                .ToList();
+
+            objects = objectTypes
                 .Select(ty => (IGameObject)Activator.CreateInstance(ty))
                 .ToList();
+
+            scripts = scAssembly.GetTypesDescending<TScript>()
+                .Select(ty => (TScript)Activator.CreateInstance(ty))
+                .ToList();
         }
+    }
+
+
+    public interface IScript
+    {
     }
 }

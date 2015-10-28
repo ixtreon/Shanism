@@ -1,11 +1,12 @@
 ﻿using Client.Controls;
 using Client.UI.Common;
-using Microsoft.Xna.Framework;
+using IO.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace Client.UI
 {
@@ -22,8 +23,8 @@ namespace Client.UI
         public MainMenu()
         {
             this.BackColor = Color.Black.SetAlpha(150);
-            this.Size = new Vector2(0.8f, 0.6f);
-            this.AbsolutePosition = Vector2.Zero - Size / 2;
+            this.Size = new Vector(0.8f, 0.6f);
+            this.AbsolutePosition = Vector.Zero - Size / 2;
             this.Visible = false;
 
             var menuAnchor = 3 * Anchor;
@@ -35,12 +36,12 @@ namespace Client.UI
                 btnExit,
             };
 
-            var btnSize = new Vector2(Size.X - 2 * menuAnchor, (Size.Y - menuAnchor) / buttons.Length - menuAnchor);
+            var btnSize = new Vector(Size.X - 2 * menuAnchor, (Size.Y - menuAnchor) / buttons.Length - menuAnchor);
             var y = menuAnchor;
             foreach(var btn in buttons)
             {
                 this.Add(btn);
-                btn.RelativePosition = new Vector2(menuAnchor, y);
+                btn.RelativePosition = new Vector(menuAnchor, y);
                 btn.Size = btnSize;
                 btn.BackColor = Color.White.Darken(95);
                 y += menuAnchor + btnSize.Y;
@@ -49,7 +50,7 @@ namespace Client.UI
             btnExit.MouseUp += btnExit_MouseUp;
         }
 
-        void btnExit_MouseUp(Control arg1, Vector2 arg2)
+        void btnExit_MouseUp(Control arg1, Vector arg2)
         {
             
         }

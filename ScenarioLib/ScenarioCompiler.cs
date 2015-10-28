@@ -17,7 +17,7 @@ namespace ScenarioLib
     /// <summary>
     /// Compiles a bunch of files referencing IO/Engine
     /// </summary>
-    public class ScenarioCompiler
+    class ScenarioCompiler
     {
         #region Static and const members
         public const string _OutputFileName = "scenario.dll";
@@ -125,7 +125,7 @@ namespace ScenarioLib
         /// Throws an <see cref="InvalidOperationException"/> if <see cref="IsCompiled"/> is false. 
         /// </summary>
         /// <returns></returns>
-        void LoadCompiledAssembly()
+        public void LoadCompiledAssembly()
         {
             if (!IsCompiled)
                 throw new InvalidOperationException("Please compile the scenario first!");
@@ -136,16 +136,19 @@ namespace ScenarioLib
             Assembly = AppDomain.CurrentDomain.Load(rawAssembly, rawSymbols);
         }
 
-        public T TryCompile<T>(out string errors)
-            where T : ScenarioBase
+        public T CompileAndLoad<T>(out string errors)
+            where T : ScenarioFile
         {
             //compile the assemblies
-            errors = Compile();
+            errors = Compile()
+                .Select(d => d.ToString())
+                .Aggregate((a, b) => a + Environment.NewLine + b);
+
             if (!string.IsNullOrEmpty(errors))
                 return null;
 
             //parse the scenario config
-            var scenario = ScenarioBase.Load<T>(ScenarioDir);
+            var scenario = ScenarioFile.Load<T>(ScenarioDir);
             if (scenario == null)
                 return null;
 
@@ -157,7 +160,7 @@ namespace ScenarioLib
         /// Compiles all files in the <see cref="ScenarioDir"/> directory. 
         /// If successful returns null, otherwise returns a string containing the compile errors as returned by the compiler. 
         /// </summary>
-        public string Compile()
+        public IEnumerable<Diagnostic> Compile()
         {
             var files = Directory.EnumerateFiles(ScenarioDir, "*.cs", SearchOption.AllDirectories);
             return Compile(files);
@@ -166,9 +169,9 @@ namespace ScenarioLib
 
         /// <summary>
         /// Compiles the given files. 
-        /// If successful returns null, otherwise returns a string containing the compile errors as returned by the compiler. 
+        /// If successful, returns an empty enumerable, otherwise returns the list of compile errors. 
         /// </summary>
-        public string Compile(IEnumerable<string> files)
+        public IEnumerable<Diagnostic> Compile(IEnumerable<string> files)
         {
             if (string.IsNullOrEmpty(ScenarioDir))
                 throw new InvalidOperationException("Please select a Scenario directory first!");
@@ -177,8 +180,9 @@ namespace ScenarioLib
             var res = compileFiles(files, Path.GetFullPath(_OutputFilePath));
 
             IsCompiled = res.Success;
-
-            return IsCompiled ? null : enumDiagnostics(res.Diagnostics, DiagnosticSeverity.Error);
+            if (IsCompiled)
+                return Enumerable.Empty<Diagnostic>();
+            return res.Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error);
         }
 
         /// <summary>
@@ -187,18 +191,17 @@ namespace ScenarioLib
         /// <param name="inFiles"></param>
         /// <param name="outFile">The path where the compiled file should be written. </param>
         /// <returns>The result of the compilation. </returns>
-        private EmitResult compileFiles(IEnumerable<string> inFiles, string outFile)
+        EmitResult compileFiles(IEnumerable<string> inFiles, string outFile)
         {
             //get the syntax tree
-            var syntaxTrees = inFiles.Select(f => 
-                {
-                    var st = SyntaxFactory.ParseSyntaxTree(File.ReadAllText(f), null, f, Encoding.Default);
-                    return st;
-                });
+            var syntaxTrees = inFiles
+                .Select(f => SyntaxFactory.ParseSyntaxTree(File.ReadAllText(f), null, f, Encoding.Default));
 
             //create the compilation unit using the trusted assemblies
-            var systemRefs = systemAssemblies.Select(a => MetadataReference.CreateFromFile(getAssemblyDir(a)));
-            var customRefs = customAssemblies.Select(s => MetadataReference.CreateFromFile(getLocalDir(s)));
+            var systemRefs = systemAssemblies
+                .Select(a => MetadataReference.CreateFromFile(getAssemblyDir(a)));
+            var customRefs = customAssemblies
+                .Select(s => MetadataReference.CreateFromFile(getLocalDir(s)));
             var compilation = CSharpCompilation.Create(
                 assemblyName: "scenario.dll",
                 options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
@@ -214,23 +217,12 @@ namespace ScenarioLib
             //compile
             EmitResult result;
             using (var pdbStream = new FileStream(_OutputPdbPath, FileMode.Create))
-                using (var outStream = new FileStream(_OutputFilePath, FileMode.Create))
-                    result = compilation.Emit(outStream, pdbStream: pdbStream);
+            using (var outStream = new FileStream(_OutputFilePath, FileMode.Create))
+                result = compilation.Emit(outStream, pdbStream: pdbStream);
 
             return result;
         }
-
-
-        /// <summary>
-        /// Returns the diagnostics in a kinda readable format. 
-        /// </summary>
-        static string enumDiagnostics(IEnumerable<Diagnostic> ds, DiagnosticSeverity s)
-        {
-            return ds
-                .Where(d => d.Severity == s)
-                .Select(d => d.ToString())
-                .Aggregate((a, b) => a + Environment.NewLine + b);
-        }
+        
 
         static string getAssemblyDir(string path)
         {

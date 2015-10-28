@@ -20,6 +20,7 @@ namespace IO.Common
         [SerialMember]
         public Point Position;
 
+
         /// <summary>
         /// Gets or sets the size of the rectangle. 
         /// </summary>
@@ -89,14 +90,23 @@ namespace IO.Common
             return new Rectangle(r.X / p.X, r.Y / p.Y, r.Width / p.X, r.Height / p.Y);
         }
 
+        public static bool operator ==(Rectangle a, Rectangle b)
+        {
+            return a.Position == b.Position && a.Size == b.Size;
+        }
+        public static bool operator !=(Rectangle a, Rectangle b)
+        {
+            return !(a == b);
+        }
+
         public Point FarPosition
         {
             get { return Position + Size; }
         }
 
-        public Point Center
+        public Vector Center
         {
-            get { return Position + Size / 2; }
+            get { return Position + Size / 2.0; }
         }
 
         public Rectangle(Point position, Point size)
@@ -118,6 +128,25 @@ namespace IO.Common
                     yield return new Point(X + ix, Y + iy);
         }
 
+        /// <summary>
+        /// Gets the intersection (common area) of the two rectangles. 
+        /// </summary>
+        /// <param name="rectangle"></param>
+        /// <returns></returns>
+        public Rectangle IntersectWith(Rectangle rectangle)
+        {
+            var x = Math.Max(rectangle.X, X);
+            var y = Math.Max(rectangle.Y, Y);
+            var w = Math.Min(rectangle.Width, Width);
+            var h = Math.Min(rectangle.Height, Height);
+            return new Rectangle(x, y, w, h);
+        }
+
+        /// <summary>
+        /// Gets whether the given point is inside this rectangle. 
+        /// </summary>
+        /// <param name="p">The point to check. </param>
+        /// <returns>Whether the point is in the rectangle. </returns>
         public bool Contains(Point p)
         {
             return p.X >= X && p.Y >= Y && p.X < (X + Width) && p.Y < (Y + Height);

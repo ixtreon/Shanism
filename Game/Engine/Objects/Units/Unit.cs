@@ -30,42 +30,44 @@ namespace Engine.Objects
         /// <summary>
         /// Gets or sets the base hit points (life) of the unit. 
         /// </summary>
-        public double BaseLife { get; set; }
+        public double BaseLife { get; protected set; }
 
         /// <summary>
         /// Gets or sets the base mana of the unit. 
         /// </summary>
-        public double BaseMana { get; set; }
+        public double BaseMana { get; protected set; }
 
         /// <summary>
         /// Gets or sets the base dodge chance of the unit. 
+        /// TODO: add buff modifier
         /// </summary>
-        public double BaseDodge { get; set; }
+        public double BaseDodge { get; protected set; }
 
         /// <summary>
         /// Gets or sets the base defense of the unit. 
         /// </summary>
-        public double BaseDefense { get; set; }
+        public double BaseDefense { get; protected set; }
 
         /// <summary>
         /// Gets or sets the base movement speed of the units in squares per second. 
+        /// TODO: add buff modifier
         /// </summary>
-        public double BaseMoveSpeed { get; set; }
+        public double BaseMoveSpeed { get; protected set; }
 
         /// <summary>
         /// Gets or sets the base minimum damage inflicted by the unit. 
         /// </summary>
-        public double BaseMinDamage { get; set; }
+        public double BaseMinDamage { get; protected set; }
 
         /// <summary>
         /// Gets or sets the base maximum damage inflicted by the unit. 
         /// </summary>
-        public double BaseMaxDamage { get; set; }
+        public double BaseMaxDamage { get; protected set; }
 
         /// <summary>
         /// Gets or sets the base rate of attack of the unit measured in attacks per second. 
         /// </summary>
-        public double BaseAttacksPerSecond { get; set; }
+        public double BaseAttacksPerSecond { get; protected set; }
         #endregion
 
 
@@ -95,7 +97,7 @@ namespace Engine.Objects
         /// </summary>
         public double Defense { get; protected internal set; }
         /// <summary>
-        /// Gets the unit's chance to dodge an attack. 
+        /// Gets the unit's chance to dodge an attack, in the range 0 to 100. 
         /// </summary>
         public double Dodge { get; protected internal set; }
 
@@ -226,29 +228,31 @@ namespace Engine.Objects
         }
 
         /// <summary>
-        /// Handles changes to base stats based on current buffs and life and mana regeneration. 
+        /// Updates the unit state based on the current buffs. 
         /// </summary>
         /// <param name="secondsElapsed">the time elapsed since the last update, in seconds</param>
-        internal virtual void UpdateStats(int msElapsed)
+        internal virtual void UpdateBuffs(int msElapsed)
         {
-
-            //current stat is simply the base value plus the sum of all effects on it from buffs. 
-            Defense = BaseDefense + Buffs.Sum(b => b.Defense);
-            Dodge = BaseDodge;
+            // current stat is the base value plus the sum of all effects on it from buffs. 
+            // for some stats 'plus' means different things
             MaxLife = BaseLife + Buffs.Sum(b => b.Life);
             MaxMana = BaseMana + Buffs.Sum(b => b.Mana);
+            Defense = BaseDefense + Buffs.Sum(b => b.Defense);
+            Dodge = 100 - Buffs.Aggregate(
+                100 - BaseDodge, 
+                (p, b) => p * (100 - b.Dodge) / 100);
             MinDamage = BaseMinDamage + Buffs.Sum(b => b.MinDamage);
             MaxDamage = BaseMaxDamage + Buffs.Sum(b => b.MaxDamage);
-            MoveSpeed = BaseMoveSpeed * Math.Max(0, Buffs.Aggregate(1.0, (p, b) => p * (100.0 + b.MoveSpeed) / 100));
+            MoveSpeed = Buffs.Aggregate(
+                    BaseMoveSpeed + Buffs.Sum(b => b.MoveSpeed), 
+                    (p, b) => p * (100.0 + b.MoveSpeedPercentage) / 100);
             AttacksPerSecond = BaseAttacksPerSecond * (100 + Buffs.Sum(b => b.AttackSpeed)) / 100;
-
 
             LifeRegen = Constants.BaseLifeRegen;
             ManaRegen = Constants.BaseManaRegen;
             MagicDamage = Constants.BaseMagicDamage;
 
             MoveSpeed = 3;
-
         }
 
         /// <summary>
@@ -264,7 +268,7 @@ namespace Engine.Objects
             if (IsDead)
                 return;
 
-            UpdateStats(msElapsed);
+            UpdateBuffs(msElapsed);
             regenerate(msElapsed);
 
             //update abilities

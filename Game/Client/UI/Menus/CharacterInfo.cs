@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using IO.Common;
+using IO.Objects;
 
 namespace Client.UI.Menus
 {
@@ -26,7 +27,7 @@ namespace Client.UI.Menus
 
 
             Add(lblCharName);
-            lblCharName.RelativePosition = new Vector(Anchor, TitleHeight + Anchor).ToVector2();
+            lblCharName.RelativePosition = new Vector(Anchor, TitleHeight + Anchor);
         }
 
         public override void Update(int msElapsed)

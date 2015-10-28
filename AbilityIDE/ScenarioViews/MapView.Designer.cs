@@ -77,7 +77,6 @@
             // 
             this.shanoMap1.Brush = IO.Common.TerrainType.Dirt;
             this.shanoMap1.BrushSize = 1;
-            this.shanoMap1.Cursor = System.Windows.Forms.Cursors.Cross;
             this.shanoMap1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.shanoMap1.Location = new System.Drawing.Point(0, 0);
             this.shanoMap1.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);

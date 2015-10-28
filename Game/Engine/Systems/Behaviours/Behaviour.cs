@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Engine.Events;
 using IO;
+using IO.Objects;
 
 namespace Engine.Systems.Behaviours
 {

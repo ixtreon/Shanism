@@ -15,6 +15,7 @@ using Client.Textures;
 using IO.Message.Client;
 using IO.Message.Server;
 using IO.Message;
+using IO.Objects;
 
 namespace Client
 {
@@ -349,7 +350,7 @@ namespace Client
         {
             var txt = "Connecting...";
             var font = TextureCache.HugeFont;
-            var pos = new Point(Screen.Size.X / 10);
+            var pos = new IO.Common.Point(Screen.Size.X / 10);
 
             spriteBatch.Begin();
 
@@ -361,25 +362,25 @@ namespace Client
 
         private void drawDebugStats(SpriteBatch sb, double msElapsed)
         {
-            var mpUi = Screen.ScreenToUi(Mouse.GetState().Position);
-            var mpGame = Screen.ScreenToGame(Mouse.GetState().Position);
+            var mpUi = Screen.ScreenToUi(Mouse.GetState().Position.ToPoint());
+            var mpGame = Screen.ScreenToGame(Mouse.GetState().Position.ToPoint());
 
             //FPS
             const double frameConst = 0.1;
             smoothFrameDelay = smoothFrameDelay * (1 - frameConst) + msElapsed * frameConst;
             var sFps =
                 "FPS: " + (1000 / smoothFrameDelay).ToString("00.0");
-            TextureCache.FancyFont.DrawStringScreen(spriteBatch, sFps, Color.Goldenrod, new Point(24, 18));
+            TextureCache.FancyFont.DrawStringScreen(spriteBatch, sFps, Color.Goldenrod, new IO.Common.Point(24, 18));
 
             //UI coordinates of mouse
             var sUiCoord = string.Format(
                 "UI X/Y: {0} {1}", mpUi.X.ToString("0.00"), mpUi.Y.ToString("0.00"));
-            TextureCache.FancyFont.DrawStringScreen(spriteBatch, sUiCoord, Color.Black, new Point(24, 3 * 24));
+            TextureCache.FancyFont.DrawStringScreen(spriteBatch, sUiCoord, Color.Black, new IO.Common.Point(24, 3 * 24));
 
             //in-game coordinates of mouse
             var sGameCoord = string.Format(
                 "Game X/Y: {0} {1}", mpGame.X.ToString("0.00"), mpGame.Y.ToString("0.00"));
-            TextureCache.FancyFont.DrawStringScreen(spriteBatch, sGameCoord, Color.Black, new Point(24, 2 * 24));
+            TextureCache.FancyFont.DrawStringScreen(spriteBatch, sGameCoord, Color.Black, new IO.Common.Point(24, 2 * 24));
 
         }
 
