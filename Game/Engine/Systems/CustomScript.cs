@@ -12,7 +12,7 @@ namespace Engine.Systems
     /// <summary>
     /// A base for the creation of custom game scripts. 
     /// </summary>
-    public abstract class CustomScript : ScenarioObject, IScript
+    public abstract class CustomScript : ScenarioObject
     {
         /// <summary>
         /// Uses the <paramref name="manager"/> object to declare the models used in this scenario. 

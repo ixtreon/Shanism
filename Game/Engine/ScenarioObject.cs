@@ -30,11 +30,8 @@ namespace Engine
             Game = ShanoEngine.Current;     // the ugly hack bites back
         }
 
-        internal bool MarkedForDestruction { get; private set; }
-
         internal bool IsDestroyed { get; private set; }
 
-        public event Action<ScenarioObject> Destroyed;
 
         /// <summary>
         /// Marks this GameObject for destruction, eventually removing it from the game. 
@@ -44,23 +41,7 @@ namespace Engine
             if (IsDestroyed)
                 throw new InvalidOperationException("Trying to destroy an object twice!");
 
-            MarkedForDestruction = true;
-        }
-
-        /// <summary>
-        /// Checks whether this object should be destroyed (<see cref="MarkedForDestruction"/>), 
-        /// and does so if needed by setting the <see cref="IsDestroyed"/> flag
-        /// Should be called on the main game loop. 
-        /// </summary>
-        internal bool Finalise()
-        {
-            if (MarkedForDestruction)
-            {
-                IsDestroyed = true;
-                Destroyed?.Invoke(this);
-            }
-
-            return IsDestroyed;
+            IsDestroyed = true;
         }
 
         /// <summary>

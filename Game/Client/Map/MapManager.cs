@@ -100,7 +100,7 @@ namespace Client.Map
 
             //make sure we don't spam the server
             long timeNow = Environment.TickCount;
-            if (timeNow - lastRequest < SpamInterval)
+            if (timeNow - SpamInterval < lastRequest)
                 return;
 
             //make the request and set last timestamp

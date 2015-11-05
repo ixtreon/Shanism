@@ -157,5 +157,21 @@ namespace AbilityIDE
             //}
         }
 
+        private void ShanoEditor_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (Scenario == null || !Scenario.IsDirty)
+                return;
+
+            var z = MessageBox.Show(
+                "You have not saved your changes to the scenario. Would you like to do that now?",
+                "ShanoEditor",
+                MessageBoxButtons.YesNoCancel,
+                MessageBoxIcon.Warning);
+
+            if (z == DialogResult.Cancel)
+                e.Cancel = true;
+            else if (z == DialogResult.Yes)
+                save();
+        }
     }
 }

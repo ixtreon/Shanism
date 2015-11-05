@@ -90,6 +90,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="ScenarioViews\DetailsView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -105,21 +110,38 @@
     <Compile Include="ScenarioViews\Maps\ShanoMap.Designer.cs">
       <DependentUpon>ShanoMap.cs</DependentUpon>
     </Compile>
+    <Compile Include="ScenarioViews\Maps\ToolBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ScenarioViews\Maps\ToolBox.Designer.cs">
+      <DependentUpon>ToolBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="ScenarioViews\MapView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ScenarioViews\MapView.Designer.cs">
       <DependentUpon>MapView.cs</DependentUpon>
     </Compile>
-    <Compile Include="ScenarioViews\Models\AnimationView.cs" />
+    <Compile Include="ScenarioViews\Models\AnimationModelView.cs" />
+    <Compile Include="ScenarioViews\Models\AnimationView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ScenarioViews\Models\AnimationView.Designer.cs">
+      <DependentUpon>AnimationView.cs</DependentUpon>
+    </Compile>
     <Compile Include="ScenarioViews\Models\ModelsView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ScenarioViews\Models\ModelsView.Designer.cs">
       <DependentUpon>ModelsView.cs</DependentUpon>
     </Compile>
-    <Compile Include="ScenarioViews\Models\ModelView.cs" />
-    <Compile Include="ScenarioViews\Models\TextureView.cs" />
+    <Compile Include="ScenarioViews\Models\TextureModelView.cs" />
+    <Compile Include="ScenarioViews\Models\TextureView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ScenarioViews\Models\TextureView.Designer.cs">
+      <DependentUpon>TextureView.cs</DependentUpon>
+    </Compile>
     <Compile Include="ScenarioViews\ScenarioView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -130,6 +152,7 @@
     <Compile Include="ScenarioViews\Models\TexturesView.Designer.cs">
       <DependentUpon>TexturesView.cs</DependentUpon>
     </Compile>
+    <Compile Include="ScenarioViews\SingletonImageList.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="ShanoEditor.cs">
       <SubType>Form</SubType>
@@ -151,8 +174,14 @@
     <EmbeddedResource Include="ScenarioViews\Maps\ShanoMap.resx">
       <DependentUpon>ShanoMap.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ScenarioViews\Maps\ToolBox.resx">
+      <DependentUpon>ToolBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ScenarioViews\MapView.resx">
       <DependentUpon>MapView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScenarioViews\Models\AnimationView.resx">
+      <DependentUpon>AnimationView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ScenarioViews\Models\ModelsView.resx">
       <DependentUpon>ModelsView.cs</DependentUpon>
@@ -165,14 +194,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -209,7 +233,30 @@
   <ItemGroup>
     <None Include="Resources\load_icon.gif" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\action_Cancel_16xLG.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\action_add_16xLG.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Rename_6779.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Actor_16xLG.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Event_594_exp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Folder_6221.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\folder_Closed_16xLG.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ImageFile.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

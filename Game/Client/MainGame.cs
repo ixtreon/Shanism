@@ -24,6 +24,7 @@ namespace Client
     /// </summary>
     class MainGame : Game, IShanoClient
     {
+        //MonoGame stuff
         GraphicsDeviceManager graphics;
 
         SpriteBatch spriteBatch;
@@ -33,8 +34,14 @@ namespace Client
         /// </summary>
         UiManager mainInterface;
 
+        /// <summary>
+        /// Gets the server this client is connected to. 
+        /// </summary>
         public IReceptor Server { get; private set; }
 
+        /// <summary>
+        /// Gets the current state of the game. 
+        /// </summary>
         public GameStatus GameState { get; private set; } = GameStatus.Loading;
 
 
@@ -42,6 +49,15 @@ namespace Client
         
 
         public string LoadState { get; private set; }
+
+        Rectangle lastWindowBounds;
+
+        /// <summary>
+        /// The guy that handles objects. 
+        /// </summary>
+        ObjectGod ObjectManager = new ObjectGod();
+
+        MapManager MapManager;
 
         /// <summary>
         /// Raised when the game has finished loading. 
@@ -69,22 +85,6 @@ namespace Client
             get { return ObjectManager.MainHero?.Position ?? IO.Common.Vector.Zero; }
         }
 
-        Rectangle lastWindowBounds;
-
-        private ObjectManager ObjectManager = new ObjectManager();
-
-        private MapManager MapManager;
-
-
-        ////hack so we can start the game without referencing monogame. duh
-        //public bool Running
-        //{
-        //    set
-        //    {
-        //        if (value)
-        //            Run();
-        //    }
-        //}
 
         public MainGame(string playerName)
             : base()

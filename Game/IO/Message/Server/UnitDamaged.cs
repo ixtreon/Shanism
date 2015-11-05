@@ -16,9 +16,15 @@ namespace IO.Message.Server
             get { return MessageType.UnitDamage; }
         }
 
+        /// <summary>
+        /// The ID of the unit that was damaged. 
+        /// </summary>
         [SerialMember]
         public readonly int UnitId;
 
+        /// <summary>
+        /// The change in zzz.
+        /// </summary>
         [SerialMember]
         public readonly float ValueChange;
 

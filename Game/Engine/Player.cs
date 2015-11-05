@@ -14,6 +14,7 @@ using IO.Message.Server;
 using System.Threading;
 using IO.Objects;
 using Engine.Events;
+using Engine.Systems.RangeEvents;
 
 namespace Engine
 {
@@ -238,7 +239,7 @@ namespace Engine
         {
             if (!this.IsHuman)
                 return;
-            if (args.EventType == Maps.EventType.EntersRange)
+            if (args.EventType == EventType.EntersRange)
             {
                 ObjectSeen(args.TriggerObject);
             }

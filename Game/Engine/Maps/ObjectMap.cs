@@ -9,10 +9,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
 using System.Threading;
+using Engine.Events;
 
 namespace Engine.Maps
 {
-    public class ObjectMap<T> : IEnumerable<T>
+    internal class ObjectMap<T> : IEnumerable<T>
         where T : GameObject
     {
         //the underlying hashmap that stores the objects
@@ -21,28 +22,31 @@ namespace Engine.Maps
         //the units that are to be added on next update
         volatile List<T> pendingAdds = new List<T>();
 
+        readonly object _addLock = new object();
+        
         /// <summary>
-        /// Raised whenever an object is added to the map. 
+        /// Raised whenever an object changes its location. 
         /// </summary>
-        public event Action<T> ObjectAdded;
-
-        /// <summary>
-        /// Raised whenever an object is removed from the map. 
-        /// </summary>
-        public event Action<T> ObjectRemoved;
-
-        /// <summary>
-        /// Raised whenever an object within the map is updated. 
-        /// </summary>
-        public event Action<T> ObjectUpdate;
+        public event Action<ObjectMoveArgs> ObjectMoves;
 
         public event Action<T, byte[]> ObjectChanged;
 
 
         public void Add(T obj)
         {
-            lock (pendingAdds)
+            lock (_addLock)
                 pendingAdds.Add(obj);
+        }
+
+        // process pending adds
+        public void AddPendingObjects()
+        {
+            List<T> oldAddList;
+            lock (_addLock)
+                oldAddList = Interlocked.Exchange(ref pendingAdds, new List<T>());
+
+            foreach (var obj in oldAddList)
+                map.Add(obj, obj.Position);
         }
 
         /// <summary>
@@ -51,47 +55,24 @@ namespace Engine.Maps
         /// <param name="msElapsed"></param>
         public void Update(int msElapsed)
         {
-            // add the pending objects
-            var newAddList = new List<T>();
-            var oldAddList = Interlocked.Exchange(ref pendingAdds, newAddList);
-            foreach (var obj in oldAddList.ToArray())
-            {
-                Debug.Assert(obj != null) ;
-
-                map.Add(obj, obj.Position);
-                ObjectAdded?.Invoke(obj);
-            }
 
             foreach (var obj in map)
             {
-                // check there are no destroyed units inside
-                Debug.Assert(!obj.MarkedForDestruction && !obj.IsDestroyed) ;
-                // call custom object updaters
-                obj.Update(msElapsed);
-            }
-
-            foreach (var obj in map)
-            {
-                ObjectUpdate?.Invoke(obj);
-                //update the object's location records
+                //update private -> public location
                 obj.UpdateLocation();
-                //update the map's location records
+
+                //update the object's location in the map. 
                 map.Update(obj, obj.OldPosition, obj.Position);
-
-                //check for changes, lel
-
-                // mark for removal if needed
-                obj.Finalise();
             }
+
+            // call object.Update
+            foreach (var obj in map)
+                obj.Update(msElapsed);
 
             //remove dead units
             var deadObjs = map.Where(obj => obj.IsDestroyed).ToArray();
             foreach (var obj in deadObjs)
-            {
                 map.Remove(obj, obj.Position);
-
-                ObjectRemoved?.Invoke(obj);
-            }
         }
 
 
@@ -105,6 +86,13 @@ namespace Engine.Maps
         {
             return map.RangeQuery(pos, size);
         }
+
+
+        public IEnumerable<T> RawQuery(Vector pos, Vector size)
+        {
+            return map.RawQuery(pos, size);
+        }
+
 
         public IEnumerator<T> GetEnumerator()
         {

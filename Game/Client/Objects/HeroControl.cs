@@ -13,7 +13,7 @@ namespace Client.Objects
 {
     class HeroControl : UnitControl
     {
-        public IHero Hero { get; private set; }
+        public IHero Hero { get; }
 
         public HeroControl(IHero hero)
             : base(hero)

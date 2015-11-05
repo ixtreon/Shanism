@@ -22,6 +22,7 @@ namespace AbilityIDE.ScenarioViews
             if (Map == null) return;
 
             chkInfinite.Checked = Map.Infinite;
+            chkInfinite_CheckedChanged(null, null);
 
             nWidth.Value = Map.Width;
             nHeight.Value = Map.Height;
@@ -63,7 +64,9 @@ namespace AbilityIDE.ScenarioViews
 
         private void WidthHeight_ValueChanged(object sender, EventArgs e)
         {
-            btnResizeMap.Visible = (nWidth.Value != Map.Width || nHeight.Value != Map.Height);
+            btnResizeMap.Visible = 
+            btnCancelMapResize.Visible =
+                (nWidth.Value != Map.Width || nHeight.Value != Map.Height);
         }
         
         private void btnResizeMap_Click(object sender, EventArgs e)
@@ -77,24 +80,31 @@ namespace AbilityIDE.ScenarioViews
 
             //hide the button
             btnResizeMap.Hide();
+            btnCancelMapResize.Hide();
         }
 
-        private void btnMinMap_Click(object sender, EventArgs e)
+        private void btnMinTools_Click(object sender, EventArgs e)
         {
             mapSplitter.Panel1Collapsed = true;
-            btnMaxMap.Visible = true;
+            btnMaxTools.Visible = true;
         }
 
-        private void btnMaxMap_Click(object sender, EventArgs e)
+        private void btnMaxTools_Click(object sender, EventArgs e)
         {
             mapSplitter.Panel1Collapsed = false;
-            btnMaxMap.Visible = false;
+            btnMaxTools.Visible = false;
         }
 
         private void chkFixedSeed_CheckedChanged(object sender, EventArgs e)
         {
             //edit map + mark as edited
             txtFixedSeed.Enabled = chkFixedSeed.Enabled;
+        }
+
+        private void btnCancelMapResize_Click(object sender, EventArgs e)
+        {
+            nWidth.Value = Map.Width;
+            nHeight.Value = Map.Height;
         }
     }
 }

@@ -8,11 +8,13 @@ using IO.Common;
 using Engine.Objects.Game;
 using System.Diagnostics;
 using System.Collections;
+using Engine.Systems;
+using Engine.Systems.RangeEvents;
 
 namespace Engine.Maps
 {
     /// <summary>
-    /// Keeps track of entities of type <see cref="GameObject"/>
+    /// Another needless layer of abstraction over the HashMap. 
     /// </summary>
     public partial class EntityMap
     {
@@ -22,16 +24,26 @@ namespace Engine.Maps
         //contains objects keyed by their guid
         readonly Hashtable objectsGuidTable;
 
+
+        internal readonly RangeEventProvider RangeProvider;
+
+        private int currentFrame = -1;
+
+        /// <summary>
+        /// Gets all objects in the entity map. 
+        /// </summary>
         public IEnumerable<GameObject> Objects
         {
             get { return map; }
         }
 
-        public EntityMap()
+        internal EntityMap(RangeEventProvider rangeProvider)
         {
+            this.RangeProvider = rangeProvider;
+
             objectsGuidTable = new Hashtable();
+
             map = new ObjectMap<GameObject>();
-            map.ObjectUpdate += onObjectUpdate;
         }
 
         public void Add(GameObject obj)
@@ -43,7 +55,7 @@ namespace Engine.Maps
         public GameObject GetByGuid(int guid)
         {
             var obj = objectsGuidTable[guid];
-            return (GameObject)obj;
+            return obj as GameObject;
         }
 
         /// <summary>
@@ -71,6 +83,7 @@ namespace Engine.Maps
             return map.RangeQuery(pos, size);
         }
 
+        
         /// <summary>
         /// Returns all units with locations in a given range from the specified position. 
         /// </summary>
@@ -81,14 +94,14 @@ namespace Engine.Maps
         {
             //get a rectangle around the query region. 
             var windowPos = pos - range;
-            var windowSize = new Vector(range) * 2;
+            var windowSize = new Vector(range * 2);
 
             //pick the units in this rectangle. 
             var us = GetUnitsInRect(windowPos, windowSize, aliveOnly);
 
             //get exactly the units within the circle. 
-            var rsq = range * range;
-            return us.Where(u => u.Position.DistanceToSquared(pos) <= rsq);
+            var rangeSq = range * range;
+            return us.Where(u => u.Position.DistanceToSquared(pos) <= rangeSq);
         }
 
 
@@ -98,21 +111,24 @@ namespace Engine.Maps
         /// <param name="msElapsed">The time elapsed since the last update, in milliseconds. </param>
         internal void Update(int msElapsed)
         {
+            currentFrame++;
+
             var objs = Objects.ToArray();
 
             //shouldn't have destroyed units inside the map. 
             Debug.Assert(!objs.Any(o => o.IsDestroyed));
 
             //state update pass
+            map.AddPendingObjects();
+
+            //update constraints
+            //TODO: still pass enum of all objects
+            //      rather than nearby ones
+            foreach(var obj in objs)
+                RangeProvider.CheckAllConstraints(obj, objs, currentFrame);
+
+            //update units n map
             map.Update(msElapsed);
-        }
-
-
-        //checks the range constraints for this object.
-        //executed every frame thanks to the ObjectMap 
-        void onObjectUpdate(GameObject obj)
-        {
-            checkRangeConstraints(obj);
         }
     }
 }

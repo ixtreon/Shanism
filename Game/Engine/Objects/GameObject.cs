@@ -1,19 +1,16 @@
-﻿using System;
+﻿using Engine.Systems.RangeEvents;
+using IO;
+using IO.Common;
+using IO.Content;
+using IO.Objects;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Engine.Maps;
-using Engine.Systems;
-using IO;
-using IO.Common;
-using ProtoBuf;
-using IO.Content;
-using Engine.Objects.Game;
-using System.Diagnostics;
 using System.Threading;
-using IO.Objects;
+using System.Threading.Tasks;
 
 namespace Engine.Objects
 {
@@ -69,6 +66,9 @@ namespace Engine.Objects
 
         public abstract ObjectType ObjectType { get; }
 
+
+        internal SortedSet<ObjectConstraint> RangeConstraints { get; } = new SortedSet<ObjectConstraint>();
+
         /// <summary>
         /// Gets or sets the location of the game object. 
         /// Changes will not take effect until the next game cycle. 
@@ -81,7 +81,7 @@ namespace Engine.Objects
 
         internal Vector OldPosition { get { return _oldPosition; } }
 
-        internal Vector NewPosition {  get { return _newPosition; } }
+        internal Vector FuturePosition {  get { return _newPosition; } }
 
         /// <summary>
         /// Gets whether the unit was moved by magix this turn. 
@@ -119,11 +119,11 @@ namespace Engine.Objects
 
         /// <summary>
         /// Updates the externally visible <see cref="Position"/> and <see cref="OldPosition"/> values. 
-        /// Returns whether the unit moved. 
+        /// Returns whether the unit moved (NYI). 
         /// </summary>
         internal bool UpdateLocation()
         {
-            Debug.Assert(!IsDestroyed);
+            //Debug.Assert(!IsDestroyed);
 
             _customPosition = false;
             _oldPosition = _position;

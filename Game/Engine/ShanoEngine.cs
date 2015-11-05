@@ -1,20 +1,12 @@
-﻿using Engine.Objects;
-using Engine.Maps;
+﻿using Engine.Maps;
+using Engine.Systems;
+using IO;
+using IO.Common;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using IO;
-using Engine.Systems;
-using IO.Common;
-using System.Diagnostics;
-using Engine.Objects.Game;
-using System.Security;
 using System.IO;
-using IO.Objects;
-using ScenarioLib;
-using System.Threading.Tasks;
+using System.Linq;
+using System.Threading;
 
 namespace Engine
 {
@@ -59,7 +51,7 @@ namespace Engine
         /// <summary>
         /// The current game map containing unit/doodad/sfx info. 
         /// </summary>
-        internal EntityMap EntityMap { get; } = new EntityMap();
+        internal EntityMap EntityMap { get; }
 
         internal Scenario Scenario { get; private set; }
 
@@ -70,6 +62,9 @@ namespace Engine
         /// </summary>
         internal bool IsOnline { get; private set; }
 
+        #region Subsystems
+        RangeEventProvider rangeSystem = new RangeEventProvider();
+        #endregion
 
         public ShanoEngine(int mapSeed, string scenarioDir)
         {
@@ -82,15 +77,22 @@ namespace Engine
             //compile the scenario
             try
             {
-                Scenario = new Scenario(Path.GetFullPath(scenarioDir));
+                Scenario = Scenario.Load(Path.GetFullPath(scenarioDir));
             }
             catch(Exception e)
             {
                 throw;
             }
 
-            //create the map from the scenario. 
+
+            //create the terrain map from the scenario. 
             TerrainMap = Maps.Terrain.MapGod.Create(Scenario.MapConfig, mapSeed);
+
+            //create systems, entity map
+            rangeSystem = new RangeEventProvider();
+
+            EntityMap = new EntityMap(rangeSystem);
+
 
             //run scripts
             Scenario.RunScripts(cs => cs.LoadModels(Scenario.Models));
@@ -211,6 +213,11 @@ namespace Engine
             if (IsOnline)
                 NetworkServer.Update(msElapsed);
 
+            //update range system before locations 
+            //so new units get properly detected
+
+
+            //update entity locations
             EntityMap.Update(msElapsed);
 
             foreach (var p in Players)

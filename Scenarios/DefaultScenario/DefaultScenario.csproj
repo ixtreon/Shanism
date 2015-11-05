@@ -90,6 +90,7 @@
     <Compile Include="Scripts\Content.cs" />
     <Compile Include="Scripts\SpawnHero.cs" />
     <Compile Include="Scripts\SpawnMonsters.cs" />
+    <Compile Include="Units\Albimon.cs" />
     <Compile Include="Units\DeathWard.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -74,24 +74,20 @@ namespace Engine.Maps
         /// </summary>
         /// <param name="item"></param>
         /// <param name="position"></param>
-        public void Remove(T item, Vector position)
+        public bool Remove(T item, Vector position)
         {
             //remove from the hashmap using the item's current key to locate it. 
             var binId = getBin(position);
-
             if (!hashTable.ContainsKey(binId))
-                throw new Exception("Provided bin {0} for GameObject {1} does not exist in the table!".Format(binId, item));
+                return false;
+
             var binTable = Get(binId);
+            if (!binTable.ContainsKey(item))
+                return false;
 
-            if(!binTable.ContainsKey(item))
-            {
-                var kur = this.Contains(item);
-                var hui = this.hashTable.Values.SelectRaw(o => (Hashtable)o).FirstOrDefault(t => t.ContainsKey(item));
-                return;
-            }
             binTable.Remove(item);
-
             Count--;
+            return true;
         }
 
         /// <summary>
@@ -127,7 +123,7 @@ namespace Engine.Maps
         /// Retrieves all units within the specified rectangle. 
         /// Thread-safe. 
         /// </summary>
-        /// <param name="pos"></param>
+        /// <param name="pos">The lower left point of the rectangle. </param>
         /// <param name="size"></param>
         /// <returns></returns>
         public IEnumerable<T> RangeQuery(Vector pos, Vector size)
@@ -140,12 +136,24 @@ namespace Engine.Maps
             Hashtable binTable;
             foreach (var b in bins)
             {
-                binTable = TryGet(b);
-                if(binTable != null)
-                    foreach(DictionaryEntry kvp in binTable)
+                if ((binTable = TryGet(b)) != null)
+                        foreach (DictionaryEntry kvp in binTable)
                         if (((Vector)kvp.Value).Inside(pos, size))
                             yield return (T)kvp.Key;
             }
+        }
+
+        public IEnumerable<T> RawQuery(Vector pos, Vector size)
+        {
+            var cellStart = getBin(pos);
+            var cellEnd = getBin(pos + size);
+            var bins = SelectBins(cellStart, cellEnd);
+
+            Hashtable binTable;
+            foreach (var b in bins)
+                if ((binTable = TryGet(b)) != null)
+                    foreach (DictionaryEntry kvp in binTable)
+                        yield return (T)kvp.Key;
         }
 
         Hashtable Get(Bin id)

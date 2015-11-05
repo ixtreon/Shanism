@@ -42,5 +42,10 @@ namespace Engine
         {
             public const int CellSize = 8;
         }
+
+        public static class RangeConstraints
+        {
+            public const double MaxRange = 16;
+        }
     }
 }

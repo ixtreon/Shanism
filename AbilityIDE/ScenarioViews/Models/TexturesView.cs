@@ -22,34 +22,79 @@ namespace AbilityIDE.ScenarioViews
 
         public override ScenarioViewType ViewType { get; } = ScenarioViewType.Textures;
 
-        TextureView CurrentTexture { get; set; }
+        TextureModelView CurrentTexture { get; set; }
 
-        public readonly Dictionary<string, TextureView> AllTextures = new Dictionary<string, TextureView>();
+        public readonly Dictionary<string, TextureModelView> AllTextures = new Dictionary<string, TextureModelView>();
 
         public TexturesView()
         {
             InitializeComponent();
+            texTree.ImageList = SingletonImageList.FolderImageList;
         }
 
         protected override async Task LoadScenario()
         {
-            lTextures.Items.Clear();
+            await LoadTextures();
 
-            await RefreshList();
-
-            //update the visible list
-            foreach (var kvp in AllTextures)
-                lTextures.Items.Add(kvp.Value.Path, kvp.Value.Included);
+            await RefreshTree();
         }
 
         public override void SaveScenario()
         {
-            Scenario.ModelConfig.Textures = new HashSet<TextureDef>(AllTextures.Values
+            Scenario.ModelConfig.Textures = AllTextures.Values
                 .Where(t => t.Included)
-                .Select(t => t.Data));
+                .Select(t => t.Data)
+                .ToList();
         }
 
-        public async Task RefreshList()
+        async Task RefreshTree()
+        {
+            texTree.Nodes.Clear();
+            var rootNode = texTree.Nodes.Add("Textures");
+
+            //update the visible list
+            foreach (var kvp in AllTextures)
+            {
+                //split path into segments
+                var texturePathSegments = kvp.Value.Path
+                    .Split(Path.DirectorySeparatorChar);
+
+
+                //find or create the folder structure
+                var folderNode = rootNode;
+                foreach (var pathSegment in texturePathSegments.DropLast())
+                {
+                    var segmentNode = folderNode.Nodes.Find(pathSegment, false)
+                        .SingleOrDefault();
+                    if (segmentNode == null)
+                        folderNode.Nodes.Add(segmentNode = new TreeNode
+                        {   //add new folder
+                            Text = pathSegment,
+                            Name = pathSegment,
+                            ImageIndex = 0,
+                            SelectedImageIndex = 0,
+                        });
+                    folderNode = segmentNode;
+                }
+
+                //create the texture node
+                var nodeText = texturePathSegments.Last();
+                folderNode.Nodes.Add(new TreeNode
+                {
+                    Text = nodeText,
+                    Name = kvp.Value.Path,
+                    Checked = kvp.Value.Included,
+                    ImageIndex = 1,
+                    SelectedImageIndex = 1,
+                    Tag = kvp.Value
+                });
+            }
+
+            rootNode.ExpandAll();
+
+        }
+
+        async Task LoadTextures()
         {
             AllTextures.Clear();
             if (Scenario == null)
@@ -70,12 +115,12 @@ namespace AbilityIDE.ScenarioViews
                     {
                         bmp = (Bitmap)Image.FromFile(imgPath);
                         var relPath = imgPath.GetRelativePath(Scenario.BaseDirectory);
-                        AllTextures.Add(relPath, new TextureView
+                        AllTextures.Add(relPath, new TextureModelView
                         {
                             FullPath = imgPath,
                             Path = relPath,
                             Image = bmp,
-                            Data = Scenario.ModelConfig.Textures.FirstOrDefault(t => t.Name == imgPath),
+                            Data = Scenario.ModelConfig.Textures.FirstOrDefault(t => t.Name == relPath),
                         });
                     }
                     catch { }
@@ -83,77 +128,64 @@ namespace AbilityIDE.ScenarioViews
             });
         }
 
-        private void lTextures_SelectedIndexChanged(object sender, EventArgs e)
+        void updateUi(TextureModelView texData)
         {
-            var texId = lTextures.SelectedItem as string;
-            if (string.IsNullOrEmpty(texId))
-                return;
+            pDetailSplitter.Visible = (texData != null);
 
-            //get and show the texture
-            CurrentTexture = AllTextures[texId];
-            pTexPreview.Image = CurrentTexture.Image;
+            //update the right panel
+            if (texData != null)
+            {
+                CurrentTexture = AllTextures[texData.Path];
 
-            // select the object
-            pTexProps.SelectedObject = CurrentTexture;
-        }
-
-        private void lTextures_ItemCheck(object sender, ItemCheckEventArgs e)
-        {
-            if (_loadingScenario)
-                return;
-
-            var texId = lTextures.Items[e.Index] as string;
-
-            if (string.IsNullOrEmpty(texId))
-                return;
-
-            var texData = AllTextures[texId];
-
-            texData.Included = !texData.Included;
-            MarkAsChanged();
+                texView.SetModel(CurrentTexture);
+                pTexProps.SelectedObject = CurrentTexture;
+            }
         }
 
         private void pTexProps_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             var it = e.ChangedItem;
 
-            pTexPreview.Invalidate();
-
+            texView.Invalidate();
             MarkAsChanged();
         }
 
-        private void pTexPreview_Paint(object sender, PaintEventArgs e)
+        private void texTree_AfterCheck(object sender, TreeViewEventArgs e)
         {
-            if (pTexPreview.Image == null || CurrentTexture == null || CurrentTexture.Included == false)
-                return;
+            var n = e.Node;
+            var texData = n.Tag as TextureModelView;
 
-            var img = pTexPreview.Image;
-            var imgRatio = (float)img.Width / img.Height;
-
-            var imgW = Math.Min(pTexPreview.Width, pTexPreview.Height * imgRatio);
-            var imgH = imgW / imgRatio;
-
-            var g = e.Graphics;
-            var splitsX = CurrentTexture.LogicalWidth ?? 1;
-            var splitsY = CurrentTexture.LogicalHeight ?? 1;
-
-            var left = (pTexPreview.Width - imgW) / 2;
-            var top = (pTexPreview.Height - imgH) / 2;
-
-            using (var p = new Pen(Color.Yellow, 2))
+            if (texData == null)   // a folder, recurse
             {
-                foreach (var ix in Enumerable.Range(0, splitsX + 1))
-                {
-                    var x = (float)(left + imgW * ix / splitsX);
-                    g.DrawLine(p, x, top, x, top + imgH);
-                }
-
-                foreach (var iy in Enumerable.Range(0, splitsY + 1))
-                {
-                    var y = (float)(top + imgH * iy / splitsY);
-                    g.DrawLine(p, left, y, left + imgW, y);
-                }
+                selectAll(n, n.Checked);
+                return;
             }
+
+            // save to the scenario
+            if (!_loadingScenario)
+            {
+                texData.Included = n.Checked;
+                MarkAsChanged();
+            }
+
+            if (n.IsSelected)
+                updateUi(texData);
+        }
+
+        void selectAll(TreeNode n, bool selected)
+        {
+            foreach(TreeNode cn in n.Nodes)
+            {
+                cn.Checked = selected;
+                selectAll(cn, selected);
+            }
+        }
+
+        private void texTree_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+
+            var texData = e.Node.Tag as TextureModelView;
+            updateUi(texData);
         }
     }
 }

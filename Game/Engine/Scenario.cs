@@ -14,7 +14,7 @@ using ScenarioLib;
 
 namespace Engine
 {
-    public class Scenario : CompiledScenario<CustomScript>
+    public class Scenario : CompiledScenario
     {
         /// <summary>
         /// Used to list all models used by the scenario. 
@@ -22,18 +22,43 @@ namespace Engine
         [Obsolete]
         readonly internal ModelManager Models = new ModelManager();
 
+
+        readonly List<CustomScript> scripts = new List<CustomScript>();
+
         /// <summary>
-        /// Custom scripts (see <see cref="CustomScript"/>) get loaded here. 
+        /// Gets a list of all scripts (see <see cref="CustomScript"/>) in the scenario. 
         /// </summary>
-        readonly private List<CustomScript> customScripts = new List<CustomScript>();
-
-
-
-
-        public Scenario(string path)
-            : base(path)
+        public IEnumerable<CustomScript> Scripts
         {
+            get { return scripts; }
+        }
 
+
+        protected Scenario() { }
+        
+
+        public static new Scenario Load(string path)
+        {
+            return Load<Scenario>(path);
+        }
+
+
+        public static new T Load<T>(string path)
+            where T : Scenario
+        {
+            var sc = CompiledScenario.Load<T>(path);
+
+            sc.addScripts();
+
+            return sc;
+        }
+
+        void addScripts()
+        {
+            scripts.Clear();
+            scripts.AddRange(ScenarioAssembly
+                .GetTypesDescending<CustomScript>()
+                .Select(ty => (CustomScript)Activator.CreateInstance(ty)));
         }
 
         /// <summary>
@@ -45,6 +70,5 @@ namespace Engine
             foreach (var s in Scripts)
                 act(s);
         }
-
     }
 }

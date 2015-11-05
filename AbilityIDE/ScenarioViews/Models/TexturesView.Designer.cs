@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.lTextures = new System.Windows.Forms.CheckedListBox();
             this.pSplitter = new System.Windows.Forms.SplitContainer();
+            this.texTree = new System.Windows.Forms.TreeView();
             this.pDetailSplitter = new System.Windows.Forms.SplitContainer();
-            this.pTexPreview = new System.Windows.Forms.PictureBox();
+            this.texView = new AbilityIDE.ScenarioViews.Models.TextureView();
             this.pTexProps = new System.Windows.Forms.PropertyGrid();
             ((System.ComponentModel.ISupportInitialize)(this.pSplitter)).BeginInit();
             this.pSplitter.Panel1.SuspendLayout();
@@ -41,71 +41,65 @@
             this.pDetailSplitter.Panel1.SuspendLayout();
             this.pDetailSplitter.Panel2.SuspendLayout();
             this.pDetailSplitter.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pTexPreview)).BeginInit();
             this.SuspendLayout();
-            // 
-            // lTextures
-            // 
-            this.lTextures.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lTextures.FormattingEnabled = true;
-            this.lTextures.IntegralHeight = false;
-            this.lTextures.Items.AddRange(new object[] {
-            "edno",
-            "dve",
-            "tri"});
-            this.lTextures.Location = new System.Drawing.Point(0, 0);
-            this.lTextures.Name = "lTextures";
-            this.lTextures.Size = new System.Drawing.Size(144, 352);
-            this.lTextures.TabIndex = 0;
-            this.lTextures.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lTextures_ItemCheck);
-            this.lTextures.SelectedIndexChanged += new System.EventHandler(this.lTextures_SelectedIndexChanged);
             // 
             // pSplitter
             // 
             this.pSplitter.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pSplitter.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.pSplitter.Location = new System.Drawing.Point(0, 0);
             this.pSplitter.Name = "pSplitter";
             // 
             // pSplitter.Panel1
             // 
-            this.pSplitter.Panel1.Controls.Add(this.lTextures);
+            this.pSplitter.Panel1.Controls.Add(this.texTree);
             // 
             // pSplitter.Panel2
             // 
             this.pSplitter.Panel2.Controls.Add(this.pDetailSplitter);
-            this.pSplitter.Size = new System.Drawing.Size(434, 352);
-            this.pSplitter.SplitterDistance = 144;
+            this.pSplitter.Size = new System.Drawing.Size(522, 397);
+            this.pSplitter.SplitterDistance = 191;
             this.pSplitter.TabIndex = 1;
+            // 
+            // texTree
+            // 
+            this.texTree.CheckBoxes = true;
+            this.texTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.texTree.Location = new System.Drawing.Point(0, 0);
+            this.texTree.Margin = new System.Windows.Forms.Padding(0);
+            this.texTree.Name = "texTree";
+            this.texTree.Size = new System.Drawing.Size(191, 397);
+            this.texTree.TabIndex = 1;
+            this.texTree.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.texTree_AfterCheck);
+            this.texTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.texTree_AfterSelect);
             // 
             // pDetailSplitter
             // 
             this.pDetailSplitter.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pDetailSplitter.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.pDetailSplitter.Location = new System.Drawing.Point(0, 0);
             this.pDetailSplitter.Name = "pDetailSplitter";
             this.pDetailSplitter.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // pDetailSplitter.Panel1
             // 
-            this.pDetailSplitter.Panel1.Controls.Add(this.pTexPreview);
+            this.pDetailSplitter.Panel1.Controls.Add(this.texView);
             // 
             // pDetailSplitter.Panel2
             // 
             this.pDetailSplitter.Panel2.Controls.Add(this.pTexProps);
-            this.pDetailSplitter.Size = new System.Drawing.Size(286, 352);
-            this.pDetailSplitter.SplitterDistance = 202;
+            this.pDetailSplitter.Size = new System.Drawing.Size(327, 397);
+            this.pDetailSplitter.SplitterDistance = 247;
             this.pDetailSplitter.TabIndex = 0;
             // 
-            // pTexPreview
+            // texView
             // 
-            this.pTexPreview.BackColor = System.Drawing.Color.Black;
-            this.pTexPreview.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pTexPreview.Location = new System.Drawing.Point(0, 0);
-            this.pTexPreview.Name = "pTexPreview";
-            this.pTexPreview.Size = new System.Drawing.Size(286, 202);
-            this.pTexPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pTexPreview.TabIndex = 0;
-            this.pTexPreview.TabStop = false;
-            this.pTexPreview.Paint += new System.Windows.Forms.PaintEventHandler(this.pTexPreview_Paint);
+            this.texView.CanSelectLogical = false;
+            this.texView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.texView.Location = new System.Drawing.Point(0, 0);
+            this.texView.Name = "texView";
+            this.texView.Size = new System.Drawing.Size(327, 247);
+            this.texView.TabIndex = 1;
             // 
             // pTexProps
             // 
@@ -117,7 +111,7 @@
             this.pTexProps.Margin = new System.Windows.Forms.Padding(0);
             this.pTexProps.Name = "pTexProps";
             this.pTexProps.PropertySort = System.Windows.Forms.PropertySort.Alphabetical;
-            this.pTexProps.Size = new System.Drawing.Size(286, 146);
+            this.pTexProps.Size = new System.Drawing.Size(327, 146);
             this.pTexProps.TabIndex = 0;
             this.pTexProps.ToolbarVisible = false;
             this.pTexProps.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pTexProps_PropertyValueChanged);
@@ -128,7 +122,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.pSplitter);
             this.Name = "TexturesView";
-            this.Size = new System.Drawing.Size(434, 352);
+            this.Size = new System.Drawing.Size(522, 397);
             this.pSplitter.Panel1.ResumeLayout(false);
             this.pSplitter.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pSplitter)).EndInit();
@@ -137,17 +131,15 @@
             this.pDetailSplitter.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pDetailSplitter)).EndInit();
             this.pDetailSplitter.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pTexPreview)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.CheckedListBox lTextures;
         private System.Windows.Forms.SplitContainer pSplitter;
         private System.Windows.Forms.SplitContainer pDetailSplitter;
-        private System.Windows.Forms.PictureBox pTexPreview;
         private System.Windows.Forms.PropertyGrid pTexProps;
+        private Models.TextureView texView;
+        private System.Windows.Forms.TreeView texTree;
     }
 }

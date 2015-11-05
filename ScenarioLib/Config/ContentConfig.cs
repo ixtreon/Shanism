@@ -11,11 +11,11 @@ namespace ScenarioLib
     /// <summary>
     /// Contains the configuration for all the content files. 
     /// </summary>
-    public class ContentConfig
+    public class ObjectsConfig
     {
-        public HashSet<TextureDef> Textures { get; set; } = new HashSet<TextureDef>();
+        public List<TextureDef> Textures { get; set; } = new List<TextureDef>();
 
-        public HashSet<ModelDef> Models { get; } = new HashSet<ModelDef>();
+        public List<ModelDef> Models { get; set;  } = new List<ModelDef>();
 
     }
 }

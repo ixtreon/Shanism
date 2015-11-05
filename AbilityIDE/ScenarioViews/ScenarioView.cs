@@ -47,5 +47,6 @@ namespace AbilityIDE.ScenarioViews
                 ScenarioChanged?.Invoke();
             }
         }
+
     }
 }

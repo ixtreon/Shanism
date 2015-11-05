@@ -69,39 +69,33 @@ namespace Client.Map
         public void BuildBuffer(GraphicsDevice device, Func<int, int, TerrainType> getTerrain)
         {
             if (HasBuffer)
-                throw new Exception("Dont call me twice!");
+                throw new Exception("Don't call me twice!");
 
             ThreadPool.QueueUserWorkItem(o =>
-                {
-                    var vertexData = new List<VertexPositionTexture>();
-                    var i = 0;
-                    foreach (var x in Enumerable.Range(0, Width))
-                        foreach (var y in Enumerable.Range(0, Height))
-                        {
-                            var mapTile = Tiles[x, y];
-                            var sprite = SpriteFactory.Terrain.GetSprite(mapTile);
-                            var pos = (Chunk.BottomLeft + new Vector(x, y)).ToXnaVector();
-                            var sz = 1.01f;
-                            var srcRect = sprite.SourceRectangle;
+            {
+                var vertexData = new List<VertexPositionTexture>();
 
+                foreach (var x in Enumerable.Range(0, Width))
+                    foreach (var y in Enumerable.Range(0, Height))
+                    {
+                        var sprite = SpriteFactory.Terrain.GetSprite(Tiles[x, y]);
+                        var pos = Chunk.BottomLeft + new Vector(x, y);
+                        var _tileFar = 1;
+                        var _tileClose = 0;
 
-                            //vertexData.Add(genPoint(pos, sprite, -1, -1));
+                        vertexData.Add(genPoint(pos.X + _tileClose, pos.Y + _tileClose, sprite.Points.TopLeft));
+                        vertexData.Add(genPoint(pos.X + _tileFar, pos.Y + _tileClose, sprite.Points.TopRight));
+                        vertexData.Add(genPoint(pos.X + _tileClose, pos.Y + _tileFar, sprite.Points.BottomLeft));
 
-                            vertexData.Add(genPoint(pos.X, pos.Y, sprite.Points.TopLeft));
-                            vertexData.Add(genPoint(pos.X + sz, pos.Y, sprite.Points.TopRight));
-                            vertexData.Add(genPoint(pos.X, pos.Y + sz, sprite.Points.BottomLeft));
+                        vertexData.Add(genPoint(pos.X + _tileClose, pos.Y + _tileFar, sprite.Points.BottomLeft));
+                        vertexData.Add(genPoint(pos.X + _tileFar, pos.Y + _tileClose, sprite.Points.TopRight));
+                        vertexData.Add(genPoint(pos.X + _tileFar, pos.Y + _tileFar, sprite.Points.BottomRight));
+                    }
 
-                            vertexData.Add(genPoint(pos.X, pos.Y + sz, sprite.Points.BottomLeft));
-                            vertexData.Add(genPoint(pos.X + sz, pos.Y, sprite.Points.TopRight));
-                            vertexData.Add(genPoint(pos.X + sz, pos.Y + sz, sprite.Points.BottomRight));
-
-                            i++;
-                        }
-
-                    buffer = new VertexBuffer(device, typeof(VertexPositionTexture), 6 * Area, BufferUsage.WriteOnly);
-                    buffer.SetData(vertexData.ToArray());
-                    HasBuffer = true;
-                });
+                buffer = new VertexBuffer(device, typeof(VertexPositionTexture), 6 * Area, BufferUsage.WriteOnly);
+                buffer.SetData(vertexData.ToArray());
+                HasBuffer = true;
+            });
         }
 
 

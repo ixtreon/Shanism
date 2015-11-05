@@ -226,5 +226,23 @@ namespace IO
             Uri folderUri = new Uri(folder);
             return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
         }
+
+        /// <summary>
+        /// Drops the last value in the sequence. 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> DropLast<T>(this IEnumerable<T> e)
+        {
+            if (e == null || !e.Any()) throw new Exception("Sequence contains no elements!");
+
+            T lastVal = e.First();
+            foreach(var newVal in e.Skip(1))
+            {
+                yield return lastVal;
+                lastVal = newVal;
+            }
+        }
     }
 }

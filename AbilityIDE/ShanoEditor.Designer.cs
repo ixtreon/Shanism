@@ -48,13 +48,7 @@ namespace AbilityIDE
             this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.customizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.contentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.indexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.searchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.tpCode = new System.Windows.Forms.TabPage();
@@ -65,13 +59,13 @@ namespace AbilityIDE
             this.tpScenario = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.scenarioTree = new AbilityIDE.ScenarioTree();
+            this.modelsView1 = new AbilityIDE.ScenarioViews.ModelsView();
             this.texturesView1 = new AbilityIDE.ScenarioViews.TexturesView();
             this.mapView = new AbilityIDE.ScenarioViews.MapView();
             this.detailsView = new AbilityIDE.ScenarioViews.DetailsView();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.modelsView1 = new AbilityIDE.ScenarioViews.ModelsView();
             this.menuStrip1.SuspendLayout();
             this.tpCode.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pSplitCode)).BeginInit();
@@ -93,10 +87,10 @@ namespace AbilityIDE
             this.scenarioToolStripMenuItem,
             this.editToolStripMenuItem,
             this.toolsToolStripMenuItem,
-            this.helpToolStripMenuItem});
+            this.aboutToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(853, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(769, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -224,68 +218,22 @@ namespace AbilityIDE
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.customizeToolStripMenuItem,
             this.optionsToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.toolsToolStripMenuItem.Text = "&Tools";
             // 
-            // customizeToolStripMenuItem
-            // 
-            this.customizeToolStripMenuItem.Enabled = false;
-            this.customizeToolStripMenuItem.Name = "customizeToolStripMenuItem";
-            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
-            this.customizeToolStripMenuItem.Text = "&Customize";
-            // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.optionsToolStripMenuItem.Text = "&Options";
-            // 
-            // helpToolStripMenuItem
-            // 
-            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.contentsToolStripMenuItem,
-            this.indexToolStripMenuItem,
-            this.searchToolStripMenuItem,
-            this.toolStripSeparator5,
-            this.aboutToolStripMenuItem});
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.helpToolStripMenuItem.Text = "&Help";
-            // 
-            // contentsToolStripMenuItem
-            // 
-            this.contentsToolStripMenuItem.Enabled = false;
-            this.contentsToolStripMenuItem.Name = "contentsToolStripMenuItem";
-            this.contentsToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
-            this.contentsToolStripMenuItem.Text = "&Contents";
-            // 
-            // indexToolStripMenuItem
-            // 
-            this.indexToolStripMenuItem.Enabled = false;
-            this.indexToolStripMenuItem.Name = "indexToolStripMenuItem";
-            this.indexToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
-            this.indexToolStripMenuItem.Text = "&Index";
-            // 
-            // searchToolStripMenuItem
-            // 
-            this.searchToolStripMenuItem.Enabled = false;
-            this.searchToolStripMenuItem.Name = "searchToolStripMenuItem";
-            this.searchToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
-            this.searchToolStripMenuItem.Text = "&Search";
-            // 
-            // toolStripSeparator5
-            // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(119, 6);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
-            this.aboutToolStripMenuItem.Text = "&About...";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(52, 20);
+            this.aboutToolStripMenuItem.Text = "About";
             // 
             // tpCode
             // 
@@ -294,7 +242,7 @@ namespace AbilityIDE
             this.tpCode.Location = new System.Drawing.Point(4, 22);
             this.tpCode.Name = "tpCode";
             this.tpCode.Padding = new System.Windows.Forms.Padding(3);
-            this.tpCode.Size = new System.Drawing.Size(845, 449);
+            this.tpCode.Size = new System.Drawing.Size(761, 436);
             this.tpCode.TabIndex = 0;
             this.tpCode.Text = "Code";
             // 
@@ -308,8 +256,8 @@ namespace AbilityIDE
             // 
             this.pSplitCode.Panel2.Controls.Add(this.stripCode);
             this.pSplitCode.Panel2.Controls.Add(this.cCodeEditor);
-            this.pSplitCode.Size = new System.Drawing.Size(839, 443);
-            this.pSplitCode.SplitterDistance = 279;
+            this.pSplitCode.Size = new System.Drawing.Size(755, 430);
+            this.pSplitCode.SplitterDistance = 251;
             this.pSplitCode.TabIndex = 3;
             // 
             // stripCode
@@ -318,7 +266,7 @@ namespace AbilityIDE
             this.toolStripButton1});
             this.stripCode.Location = new System.Drawing.Point(0, 0);
             this.stripCode.Name = "stripCode";
-            this.stripCode.Size = new System.Drawing.Size(556, 25);
+            this.stripCode.Size = new System.Drawing.Size(500, 25);
             this.stripCode.TabIndex = 2;
             this.stripCode.Text = "toolStrip1";
             // 
@@ -337,7 +285,7 @@ namespace AbilityIDE
             this.cCodeEditor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cCodeEditor.Location = new System.Drawing.Point(0, 0);
             this.cCodeEditor.Name = "cCodeEditor";
-            this.cCodeEditor.Size = new System.Drawing.Size(556, 443);
+            this.cCodeEditor.Size = new System.Drawing.Size(500, 430);
             this.cCodeEditor.TabIndex = 1;
             this.cCodeEditor.Text = "";
             // 
@@ -348,13 +296,14 @@ namespace AbilityIDE
             this.tpScenario.Location = new System.Drawing.Point(4, 22);
             this.tpScenario.Name = "tpScenario";
             this.tpScenario.Padding = new System.Windows.Forms.Padding(3);
-            this.tpScenario.Size = new System.Drawing.Size(845, 449);
+            this.tpScenario.Size = new System.Drawing.Size(761, 436);
             this.tpScenario.TabIndex = 2;
             this.tpScenario.Text = "Scenario";
             // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer1.Location = new System.Drawing.Point(3, 3);
             this.splitContainer1.Name = "splitContainer1";
             // 
@@ -368,8 +317,8 @@ namespace AbilityIDE
             this.splitContainer1.Panel2.Controls.Add(this.texturesView1);
             this.splitContainer1.Panel2.Controls.Add(this.mapView);
             this.splitContainer1.Panel2.Controls.Add(this.detailsView);
-            this.splitContainer1.Size = new System.Drawing.Size(839, 443);
-            this.splitContainer1.SplitterDistance = 279;
+            this.splitContainer1.Size = new System.Drawing.Size(755, 430);
+            this.splitContainer1.SplitterDistance = 166;
             this.splitContainer1.TabIndex = 4;
             // 
             // scenarioTree
@@ -378,8 +327,18 @@ namespace AbilityIDE
             this.scenarioTree.Location = new System.Drawing.Point(0, 0);
             this.scenarioTree.Name = "scenarioTree";
             this.scenarioTree.Scenario = null;
-            this.scenarioTree.Size = new System.Drawing.Size(279, 443);
+            this.scenarioTree.Size = new System.Drawing.Size(166, 430);
             this.scenarioTree.TabIndex = 0;
+            // 
+            // modelsView1
+            // 
+            this.modelsView1.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.modelsView1.Location = new System.Drawing.Point(3, 310);
+            this.modelsView1.Name = "modelsView1";
+            this.modelsView1.Scenario = null;
+            this.modelsView1.Size = new System.Drawing.Size(181, 115);
+            this.modelsView1.TabIndex = 6;
+            this.modelsView1.TextureDictionary = null;
             // 
             // texturesView1
             // 
@@ -419,16 +378,16 @@ namespace AbilityIDE
             this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(853, 475);
+            this.tabControl1.Size = new System.Drawing.Size(769, 462);
             this.tabControl1.TabIndex = 4;
             // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 499);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 486);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(853, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(769, 22);
             this.statusStrip1.TabIndex = 5;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -437,25 +396,18 @@ namespace AbilityIDE
             this.statusLabel.Name = "statusLabel";
             this.statusLabel.Size = new System.Drawing.Size(0, 17);
             // 
-            // modelsView1
-            // 
-            this.modelsView1.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.modelsView1.Location = new System.Drawing.Point(3, 310);
-            this.modelsView1.Name = "modelsView1";
-            this.modelsView1.Size = new System.Drawing.Size(181, 115);
-            this.modelsView1.TabIndex = 6;
-            // 
             // ShanoEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(853, 521);
+            this.ClientSize = new System.Drawing.Size(769, 508);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "ShanoEditor";
             this.Text = "ShanoEditor";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ShanoEditor_FormClosing);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.tpCode.ResumeLayout(false);
@@ -494,14 +446,7 @@ namespace AbilityIDE
         private System.Windows.Forms.ToolStripMenuItem redoToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem customizeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem contentsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem indexToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem searchToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
-        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.FolderBrowserDialog openDialog;
         private System.Windows.Forms.ToolStripMenuItem recentToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem dasToolStripMenuItem;
@@ -521,6 +466,7 @@ namespace AbilityIDE
         private MapView mapView;
         private TexturesView texturesView1;
         private ModelsView modelsView1;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
     }
 }
 

@@ -142,7 +142,7 @@
     <Compile Include="Map\ChunkData.cs" />
     <Compile Include="Map\FogLayer.cs" />
     <Compile Include="Map\MapManager.cs" />
-    <Compile Include="ObjectManager.cs" />
+    <Compile Include="ObjectGod.cs" />
     <Compile Include="Objects\DoodadControl.cs" />
     <Compile Include="Objects\HeroControl.cs" />
     <Compile Include="Objects\ObjectControl.cs" />

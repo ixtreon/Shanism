@@ -63,9 +63,9 @@ namespace AbilityIDE.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap dot_icon {
+        internal static System.Drawing.Bitmap ActionAdd {
             get {
-                object obj = ResourceManager.GetObject("dot_icon", resourceCulture);
+                object obj = ResourceManager.GetObject("ActionAdd", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace AbilityIDE.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Folder_icon {
+        internal static System.Drawing.Bitmap ActionCancel {
             get {
-                object obj = ResourceManager.GetObject("Folder_icon", resourceCulture);
+                object obj = ResourceManager.GetObject("ActionCancel", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,59 @@ namespace AbilityIDE.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap load_icon {
+        internal static System.Drawing.Bitmap ActionEvent {
             get {
-                object obj = ResourceManager.GetObject("load_icon", resourceCulture);
+                object obj = ResourceManager.GetObject("ActionEvent", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ActionModel {
+            get {
+                object obj = ResourceManager.GetObject("ActionModel", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ActionRename {
+            get {
+                object obj = ResourceManager.GetObject("ActionRename", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap FileBitmap {
+            get {
+                object obj = ResourceManager.GetObject("FileBitmap", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap FileFolder {
+            get {
+                object obj = ResourceManager.GetObject("FileFolder", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Spinner {
+            get {
+                object obj = ResourceManager.GetObject("Spinner", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

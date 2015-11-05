@@ -17,7 +17,7 @@ namespace ScenarioLib
     /// <summary>
     /// Compiles a bunch of files referencing IO/Engine
     /// </summary>
-    class ScenarioCompiler
+    internal class ScenarioCompiler
     {
         #region Static and const members
         public const string _OutputFileName = "scenario.dll";

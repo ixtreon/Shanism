@@ -390,9 +390,9 @@ namespace Client.UI
         /// Removes the given child control. 
         /// </summary>
         /// <param name="c"></param>
-        public void Remove(Control c)
+        public bool Remove(Control c)
         {
-            this.controls.Remove(c);
+            return controls.Remove(c);
         }
 
         /// <summary>

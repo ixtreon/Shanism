@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using IO.Objects;
+using Newtonsoft.Json;
 
 namespace ScenarioLib
 {
@@ -13,8 +14,7 @@ namespace ScenarioLib
     /// A compiled scenario that contains information about the types of objects defined in it
     /// as well as being a <see cref="ScenarioFile"/> object. 
     /// </summary>
-    public class CompiledScenario<TScript> : ScenarioFile
-        where TScript : IScript
+    public class CompiledScenario : ScenarioFile
     {
         /// <summary>
         /// Gets the assembly that contains the compiled scenario. 
@@ -24,7 +24,6 @@ namespace ScenarioLib
 
         List<Type> objectTypes = new List<Type>();
         List<IGameObject> objects = new List<IGameObject>();
-        List<TScript> scripts = new List<TScript>();
 
         /// <summary>
         /// Gets the types of game objects defined in this scenario. 
@@ -40,7 +39,6 @@ namespace ScenarioLib
         public IEnumerable<IGameObject> DefinedObjects
         {
             get { return objects; }
-
         }
 
         /// <summary>
@@ -59,23 +57,34 @@ namespace ScenarioLib
             get { return objects.OfType<IDoodad>(); }
         }
 
-        public IEnumerable<TScript> Scripts
-        {
-            get { return scripts; }
-        }
+
+        protected CompiledScenario() { }
 
         public CompiledScenario(string scenarioPath)
             : base(scenarioPath)
         {
+        }
+
+
+        public static new T Load<T>(string scenarioPath)
+            where T : CompiledScenario
+        {
+            //call base
+            var sc = ScenarioFile.Load<T>(scenarioPath);
+
             //compile
             var cmp = new ScenarioCompiler(scenarioPath);
             var errors = cmp.Compile();
             if (errors.Any())
                 throw new AggregateException(errors.Select(err => new CompilerException(err)));
-            //load
+            
+            //load assembly to memory
             cmp.LoadCompiledAssembly();
-            //parse
-            loadAssembly(cmp.Assembly);
+
+            //load objects from assembly
+            sc.loadAssembly(cmp.Assembly);
+
+            return sc;
         }
 
         void loadAssembly(Assembly scAssembly)
@@ -89,15 +98,6 @@ namespace ScenarioLib
             objects = objectTypes
                 .Select(ty => (IGameObject)Activator.CreateInstance(ty))
                 .ToList();
-
-            scripts = scAssembly.GetTypesDescending<TScript>()
-                .Select(ty => (TScript)Activator.CreateInstance(ty))
-                .ToList();
         }
-    }
-
-
-    public interface IScript
-    {
     }
 }

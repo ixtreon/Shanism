@@ -72,7 +72,7 @@ namespace Engine.Objects
         internal void Move(double msElapsed, double direction, double maxDistance = double.MaxValue, bool walk = false)
         {
             //if we have already moved or teleported this turn, return
-            if (Position != NewPosition)
+            if (Position != FuturePosition)
                 return;
 
             //get the distance, final position

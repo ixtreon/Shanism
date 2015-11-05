@@ -124,8 +124,8 @@
     <Compile Include="Common\MapChunkDef.cs" />
     <Compile Include="Common\ObjectType.cs" />
     <Compile Include="Common\OrderType.cs" />
-    <Compile Include="Contentz\AnimationDef.cs" />
-    <Compile Include="Contentz\ModelDef.cs" />
+    <Compile Include="Content\AnimationDef.cs" />
+    <Compile Include="Content\ModelDef.cs" />
     <Compile Include="IReceptor.cs" />
     <Compile Include="Message\Server\ObjectAnimation.cs" />
     <Compile Include="Objects\IBuff.cs" />
@@ -184,6 +184,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Contentz\" />
     <Folder Include="EnumType\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

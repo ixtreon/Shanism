@@ -37,6 +37,7 @@
             this.nHeight = new System.Windows.Forms.NumericUpDown();
             this.btnResizeMap = new System.Windows.Forms.Button();
             this.pFiniteSettings = new System.Windows.Forms.GroupBox();
+            this.btnCancelMapResize = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.pInfiniteSettings = new System.Windows.Forms.GroupBox();
             this.chkFixedSeed = new System.Windows.Forms.CheckBox();
@@ -45,7 +46,7 @@
             this.pMapSettings = new System.Windows.Forms.Panel();
             this.btnMinMap = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.btnMaxMap = new System.Windows.Forms.Button();
+            this.btnMaxTools = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.nWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nHeight)).BeginInit();
@@ -70,6 +71,8 @@
             this.chkInfinite.Size = new System.Drawing.Size(64, 20);
             this.chkInfinite.TabIndex = 0;
             this.chkInfinite.Text = "Infinite";
+            this.toolTip1.SetToolTip(this.chkInfinite, "Controls whether this scenario uses an \r\ninfinite, procedural map (not yet suppor" +
+        "ted),\r\nor a finite, fixed map. ");
             this.chkInfinite.UseVisualStyleBackColor = true;
             this.chkInfinite.CheckedChanged += new System.EventHandler(this.chkInfinite_CheckedChanged);
             // 
@@ -77,6 +80,7 @@
             // 
             this.shanoMap1.Brush = IO.Common.TerrainType.Dirt;
             this.shanoMap1.BrushSize = 1;
+            this.shanoMap1.Cursor = System.Windows.Forms.Cursors.Cross;
             this.shanoMap1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.shanoMap1.Location = new System.Drawing.Point(0, 0);
             this.shanoMap1.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
@@ -156,12 +160,13 @@
             // 
             this.btnResizeMap.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnResizeMap.Location = new System.Drawing.Point(15, 46);
-            this.btnResizeMap.Margin = new System.Windows.Forms.Padding(12, 3, 12, 0);
+            this.btnResizeMap.Location = new System.Drawing.Point(15, 47);
+            this.btnResizeMap.Margin = new System.Windows.Forms.Padding(12, 3, 0, 0);
             this.btnResizeMap.Name = "btnResizeMap";
-            this.btnResizeMap.Size = new System.Drawing.Size(168, 26);
+            this.btnResizeMap.Size = new System.Drawing.Size(139, 26);
             this.btnResizeMap.TabIndex = 8;
             this.btnResizeMap.Text = "Resize";
+            this.toolTip1.SetToolTip(this.btnResizeMap, "Applies the changes to the  map size. ");
             this.btnResizeMap.UseVisualStyleBackColor = true;
             this.btnResizeMap.Visible = false;
             this.btnResizeMap.Click += new System.EventHandler(this.btnResizeMap_Click);
@@ -170,6 +175,7 @@
             // 
             this.pFiniteSettings.AutoSize = true;
             this.pFiniteSettings.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.pFiniteSettings.Controls.Add(this.btnCancelMapResize);
             this.pFiniteSettings.Controls.Add(this.btnResizeMap);
             this.pFiniteSettings.Controls.Add(this.nWidth);
             this.pFiniteSettings.Controls.Add(this.nHeight);
@@ -178,10 +184,23 @@
             this.pFiniteSettings.Location = new System.Drawing.Point(12, 47);
             this.pFiniteSettings.Name = "pFiniteSettings";
             this.pFiniteSettings.Padding = new System.Windows.Forms.Padding(3, 3, 3, 0);
-            this.pFiniteSettings.Size = new System.Drawing.Size(198, 85);
+            this.pFiniteSettings.Size = new System.Drawing.Size(198, 89);
             this.pFiniteSettings.TabIndex = 10;
             this.pFiniteSettings.TabStop = false;
             this.pFiniteSettings.Text = "Finite Map Settings";
+            // 
+            // btnCancelMapResize
+            // 
+            this.btnCancelMapResize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancelMapResize.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCancelMapResize.Location = new System.Drawing.Point(157, 47);
+            this.btnCancelMapResize.Name = "btnCancelMapResize";
+            this.btnCancelMapResize.Size = new System.Drawing.Size(26, 26);
+            this.btnCancelMapResize.TabIndex = 9;
+            this.btnCancelMapResize.Text = "✕";
+            this.toolTip1.SetToolTip(this.btnCancelMapResize, "Cancels any changes to the map size. ");
+            this.btnCancelMapResize.UseVisualStyleBackColor = true;
+            this.btnCancelMapResize.Click += new System.EventHandler(this.btnCancelMapResize_Click);
             // 
             // panel1
             // 
@@ -251,7 +270,7 @@
             // 
             // mapSplitter.Panel2
             // 
-            this.mapSplitter.Panel2.Controls.Add(this.btnMaxMap);
+            this.mapSplitter.Panel2.Controls.Add(this.btnMaxTools);
             this.mapSplitter.Panel2.Controls.Add(this.shanoMap1);
             this.mapSplitter.Size = new System.Drawing.Size(580, 432);
             this.mapSplitter.SplitterDistance = 222;
@@ -286,7 +305,7 @@
             this.btnMinMap.Text = "▂";
             this.toolTip1.SetToolTip(this.btnMinMap, "Hide Map Settings");
             this.btnMinMap.UseVisualStyleBackColor = false;
-            this.btnMinMap.Click += new System.EventHandler(this.btnMinMap_Click);
+            this.btnMinMap.Click += new System.EventHandler(this.btnMinTools_Click);
             // 
             // label2
             // 
@@ -301,23 +320,23 @@
             this.label2.Text = "Map Settings";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // btnMaxMap
+            // btnMaxTools
             // 
-            this.btnMaxMap.BackColor = System.Drawing.SystemColors.Control;
-            this.btnMaxMap.FlatAppearance.BorderSize = 0;
-            this.btnMaxMap.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.btnMaxMap.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.ControlDark;
-            this.btnMaxMap.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnMaxMap.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnMaxMap.Location = new System.Drawing.Point(0, -1);
-            this.btnMaxMap.Name = "btnMaxMap";
-            this.btnMaxMap.Size = new System.Drawing.Size(25, 25);
-            this.btnMaxMap.TabIndex = 2;
-            this.btnMaxMap.Text = "▞";
-            this.toolTip1.SetToolTip(this.btnMaxMap, "Restore Map Settings");
-            this.btnMaxMap.UseVisualStyleBackColor = false;
-            this.btnMaxMap.Visible = false;
-            this.btnMaxMap.Click += new System.EventHandler(this.btnMaxMap_Click);
+            this.btnMaxTools.BackColor = System.Drawing.SystemColors.Control;
+            this.btnMaxTools.FlatAppearance.BorderSize = 0;
+            this.btnMaxTools.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.btnMaxTools.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.ControlDark;
+            this.btnMaxTools.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnMaxTools.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnMaxTools.Location = new System.Drawing.Point(0, -1);
+            this.btnMaxTools.Name = "btnMaxTools";
+            this.btnMaxTools.Size = new System.Drawing.Size(25, 25);
+            this.btnMaxTools.TabIndex = 2;
+            this.btnMaxTools.Text = "▞";
+            this.toolTip1.SetToolTip(this.btnMaxTools, "Restore Map Settings");
+            this.btnMaxTools.UseVisualStyleBackColor = false;
+            this.btnMaxTools.Visible = false;
+            this.btnMaxTools.Click += new System.EventHandler(this.btnMaxTools_Click);
             // 
             // MapView
             // 
@@ -361,10 +380,11 @@
         private System.Windows.Forms.Panel pMapSettings;
         private System.Windows.Forms.Button btnMinMap;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button btnMaxMap;
+        private System.Windows.Forms.Button btnMaxTools;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.GroupBox pInfiniteSettings;
         private System.Windows.Forms.CheckBox chkFixedSeed;
         private System.Windows.Forms.NumericUpDown txtFixedSeed;
+        private System.Windows.Forms.Button btnCancelMapResize;
     }
 }

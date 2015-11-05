@@ -1,4 +1,5 @@
 ﻿using IxSerializer.Attributes;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,12 +11,13 @@ namespace IO.Common
     /// Represents a rectangle in the 2D plane. 
     /// </summary>
     [SerialKiller]
+    [JsonObject(MemberSerialization.OptIn)]
     public struct Rectangle
     {
         public static readonly Rectangle Empty = new Rectangle();
 
         /// <summary>
-        /// Gets or sets the position of the top-left corner of the rectangle. 
+        /// Gets or sets the position of the bottom-left (low) corner of the rectangle. 
         /// </summary>
         [SerialMember]
         public Point Position;
@@ -27,21 +29,25 @@ namespace IO.Common
         [SerialMember]
         public Point Size;
 
+        [JsonProperty]
         public int X
         {
             get { return Position.X; }
             set { Position.X = value; }
         }
+        [JsonProperty]
         public int Y
         {
             get { return Position.Y; }
             set { Position.Y = value; }
         }
+        [JsonProperty]
         public int Width
         {
             get { return Size.X; }
             set { Size.X = value; }
         }
+        [JsonProperty]
         public int Height
         {
             get { return Size.Y; }
@@ -143,13 +149,36 @@ namespace IO.Common
         }
 
         /// <summary>
-        /// Gets whether the given point is inside this rectangle. 
+        /// Returns whether the given point lies inside this rectangle. 
         /// </summary>
-        /// <param name="p">The point to check. </param>
-        /// <returns>Whether the point is in the rectangle. </returns>
         public bool Contains(Point p)
         {
-            return p.X >= X && p.Y >= Y && p.X < (X + Width) && p.Y < (Y + Height);
+            return Contains(p.X, p.Y);
+        }
+
+        /// <summary>
+        /// Returns whether the given vector lies inside this rectangle. 
+        /// </summary>
+        public bool Contains(Vector v)
+        {
+            return Contains(v.X, v.Y);
+        }
+
+        /// <summary>
+        /// Returns whether the given coordinates lie inside this rectangle. 
+        /// </summary>
+        public bool Contains(double x, double y)
+        {
+            return x >= X && y >= Y && x < (X + Width) && y < (Y + Height);
+        }
+
+        public Rectangle MakePositive()
+        {
+            return new Rectangle(
+                Math.Min(X, X + Width),
+                Math.Min(Y, Y + Height),
+                Math.Abs(Width),
+                Math.Abs(Height));
         }
     }
 }

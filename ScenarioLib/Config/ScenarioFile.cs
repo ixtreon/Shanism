@@ -48,7 +48,7 @@ namespace ScenarioLib
         public MapConfig MapConfig { get; protected set; }
 
         [JsonProperty]
-        public ContentConfig ModelConfig { get; protected set; }
+        public ObjectsConfig ModelConfig { get; protected set; }
 
         [JsonConstructor]
         protected ScenarioFile() { }
@@ -63,7 +63,11 @@ namespace ScenarioLib
             Name = "Shano Scenario";
             Description = "Shanistic Description";
             MapConfig = new MapConfig();
-            ModelConfig = new ContentConfig();
+            ModelConfig = new ObjectsConfig();
+
+            var onlyDirt = MapConfig.Map
+                .ToEnumerable()
+                .All(ty => ty == IO.Common.TerrainType.Dirt);
 
             Save();
         }
@@ -93,7 +97,7 @@ namespace ScenarioLib
                 sc.BaseDirectory = dirPath;
                 sc.FilePath = filePath;
                 sc.MapConfig = sc.MapConfig ?? new MapConfig();
-                sc.ModelConfig = sc.ModelConfig ?? new ContentConfig();
+                sc.ModelConfig = sc.ModelConfig ?? new ObjectsConfig();
 
                 return sc;
             }

@@ -110,21 +110,21 @@ namespace Engine.Objects.Game
         internal Hero()
             : base()
         {
-            this.BaseMana = 5;
-            this.MaxMana = 5;
+            BaseLife = 100;
+            BaseMana = 5;
         }
 
 
         public Hero(Player owner, Vector location)
             : base("hero", owner, location)
         {
-            this.BaseMoveSpeed = 5;
-            this.Size = 0.6;
+            BaseMoveSpeed = 5;
+            Size = 0.6;
 
-            this.BaseStrength = 5;
-            this.BaseVitality= 5;
-            this.BaseIntellect = 5;
-            this.BaseAgility = 5;
+            BaseStrength  = 10;
+            BaseVitality  = 10;
+            BaseIntellect = 10;
+            BaseAgility   = 10;
         }
 
 
@@ -144,25 +144,26 @@ namespace Engine.Objects.Game
         internal override void UpdateBuffs(int msElapsed)
         {
             base.UpdateBuffs(msElapsed);
-            Strength = BaseStrength + Buffs.Sum(b => b.Strength);
-            Vitality = BaseVitality + Buffs.Sum(b => b.Vitality);
+
+            Strength  = BaseStrength + Buffs.Sum(b => b.Strength);
+            Vitality  = BaseVitality + Buffs.Sum(b => b.Vitality);
             Intellect = BaseIntellect + Buffs.Sum(b => b.Intellect);
-            Agility = BaseAgility + Buffs.Sum(b => b.Agility);
+            Agility   = BaseAgility + Buffs.Sum(b => b.Agility);
 
             MinDamage += Strength * Constants.Attributes.DamagePerStrength;
             MaxDamage += Strength * Constants.Attributes.DamagePerStrength;
-            Defense += Strength * Constants.Attributes.DefensePerStrength;
+            Defense   += Strength * Constants.Attributes.DefensePerStrength;
 
             Defense += Agility * Constants.Attributes.AtkSpeedPerAgility;
             Defense += Agility * Constants.Attributes.DodgePerAgility;
 
-            MaxLife += Vitality * Constants.Attributes.LifePerVitality;
+            MaxLife   += Vitality * Constants.Attributes.LifePerVitality;
             LifeRegen += Vitality * Constants.Attributes.LifeRegPerVitality;
-            MaxMana += Vitality * Constants.Attributes.ManaPerVitality;
+            MaxMana   += Vitality * Constants.Attributes.ManaPerVitality;
             ManaRegen += Vitality * Constants.Attributes.ManaRegPerVitality;
 
             MagicDamage += Intellect * Constants.Attributes.MagicDamagePerInt;
-            ManaRegen += Intellect * Constants.Attributes.ManaRegPerInt;
+            ManaRegen   += Intellect * Constants.Attributes.ManaRegPerInt;
         }
     }
 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using IO;
 using Engine.Events;
 using System.Diagnostics;
+using Engine.Systems.RangeEvents;
 
 namespace Engine.Objects
 {
@@ -24,6 +25,7 @@ namespace Engine.Objects
         int objectRangeHandlerId = -1;
 
 
+        double visionRange;
         HashSet<GameObject> visibleObjects = new HashSet<GameObject>();
 
         public event Action<GameObject> ObjectSeen;
@@ -36,8 +38,6 @@ namespace Engine.Objects
         {
             get { return visibleObjects; }
         }
-
-        double visionRange;
 
         /// <summary>
         /// Gets or sets the vision range of the unit. 
@@ -61,7 +61,7 @@ namespace Engine.Objects
 
                     visionRange = value;
 
-                    objectRangeHandlerId = Map.RegisterAnyObjectInRangeEvent(this, visionRange, Maps.EventType.LeavesOrEnters, raisePlayerObjectVisionEvent);
+                    objectRangeHandlerId = Map.RegisterAnyObjectInRangeEvent(this, visionRange, EventType.LeavesOrEnters, raisePlayerObjectVisionEvent);
                 }
             }
         }
@@ -80,7 +80,7 @@ namespace Engine.Objects
             var trigObject = args.TriggerObject;
 
             //inform the unit
-            if (args.EventType == Maps.EventType.EntersRange)
+            if (args.EventType == EventType.EntersRange)
                 ObjectSeen?.Invoke(trigObject);
             else
                 ObjectUnseen?.Invoke(trigObject);
@@ -89,7 +89,7 @@ namespace Engine.Objects
             Owner.OnObjectVisionRange(args);
 
             //add to or remove from the list of units that are seen
-            if (args.EventType == Maps.EventType.EntersRange)
+            if (args.EventType == EventType.EntersRange)
             {
                 visibleObjects.Add(trigObject);
                 trigObject.SeenBy.Add(this);
