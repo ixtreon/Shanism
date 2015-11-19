@@ -1,8 +1,8 @@
-﻿using AbilityIDE.ScenarioViews;
+﻿using ShanoEditor.ScenarioViews;
 
-namespace AbilityIDE
+namespace ShanoEditor
 {
-    partial class ShanoEditor
+    partial class ShanoEditorForm
     {
         /// <summary>
         /// Required designer variable.
@@ -30,7 +30,7 @@ namespace AbilityIDE
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ShanoEditor));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ShanoEditorForm));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.scenarioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,14 +58,14 @@ namespace AbilityIDE
             this.cCodeEditor = new System.Windows.Forms.RichTextBox();
             this.tpScenario = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.scenarioTree = new AbilityIDE.ScenarioTree();
-            this.modelsView1 = new AbilityIDE.ScenarioViews.ModelsView();
-            this.texturesView1 = new AbilityIDE.ScenarioViews.TexturesView();
-            this.mapView = new AbilityIDE.ScenarioViews.MapView();
-            this.detailsView = new AbilityIDE.ScenarioViews.DetailsView();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.scenarioTree = new ShanoEditor.ScenarioTree();
+            this.modelsView = new ShanoEditor.ScenarioViews.ModelsView();
+            this.texView = new ShanoEditor.ScenarioViews.TexturesView();
+            this.mapView = new ShanoEditor.ScenarioViews.MapView();
+            this.detailsView = new ShanoEditor.ScenarioViews.DetailsView();
             this.menuStrip1.SuspendLayout();
             this.tpCode.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pSplitCode)).BeginInit();
@@ -313,59 +313,13 @@ namespace AbilityIDE
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.modelsView1);
-            this.splitContainer1.Panel2.Controls.Add(this.texturesView1);
+            this.splitContainer1.Panel2.Controls.Add(this.modelsView);
+            this.splitContainer1.Panel2.Controls.Add(this.texView);
             this.splitContainer1.Panel2.Controls.Add(this.mapView);
             this.splitContainer1.Panel2.Controls.Add(this.detailsView);
             this.splitContainer1.Size = new System.Drawing.Size(755, 430);
             this.splitContainer1.SplitterDistance = 166;
             this.splitContainer1.TabIndex = 4;
-            // 
-            // scenarioTree
-            // 
-            this.scenarioTree.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.scenarioTree.Location = new System.Drawing.Point(0, 0);
-            this.scenarioTree.Name = "scenarioTree";
-            this.scenarioTree.Scenario = null;
-            this.scenarioTree.Size = new System.Drawing.Size(166, 430);
-            this.scenarioTree.TabIndex = 0;
-            // 
-            // modelsView1
-            // 
-            this.modelsView1.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.modelsView1.Location = new System.Drawing.Point(3, 310);
-            this.modelsView1.Name = "modelsView1";
-            this.modelsView1.Scenario = null;
-            this.modelsView1.Size = new System.Drawing.Size(181, 115);
-            this.modelsView1.TabIndex = 6;
-            this.modelsView1.TextureDictionary = null;
-            // 
-            // texturesView1
-            // 
-            this.texturesView1.Location = new System.Drawing.Point(3, 3);
-            this.texturesView1.Name = "texturesView1";
-            this.texturesView1.Scenario = null;
-            this.texturesView1.Size = new System.Drawing.Size(181, 143);
-            this.texturesView1.TabIndex = 5;
-            // 
-            // mapView
-            // 
-            this.mapView.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.mapView.Location = new System.Drawing.Point(190, 3);
-            this.mapView.MinimumSize = new System.Drawing.Size(310, 240);
-            this.mapView.Name = "mapView";
-            this.mapView.Scenario = null;
-            this.mapView.Size = new System.Drawing.Size(322, 347);
-            this.mapView.TabIndex = 4;
-            // 
-            // detailsView
-            // 
-            this.detailsView.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.detailsView.Location = new System.Drawing.Point(3, 152);
-            this.detailsView.Name = "detailsView";
-            this.detailsView.Scenario = null;
-            this.detailsView.Size = new System.Drawing.Size(181, 152);
-            this.detailsView.TabIndex = 3;
             // 
             // tabControl1
             // 
@@ -396,7 +350,45 @@ namespace AbilityIDE
             this.statusLabel.Name = "statusLabel";
             this.statusLabel.Size = new System.Drawing.Size(0, 17);
             // 
-            // ShanoEditor
+            // scenarioTree
+            // 
+            this.scenarioTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.scenarioTree.Location = new System.Drawing.Point(0, 0);
+            this.scenarioTree.Name = "scenarioTree";
+            this.scenarioTree.Scenario = null;
+            this.scenarioTree.Size = new System.Drawing.Size(166, 430);
+            this.scenarioTree.TabIndex = 0;
+            // 
+            // modelsView
+            // 
+            this.modelsView.Location = new System.Drawing.Point(3, 310);
+            this.modelsView.Name = "modelsView";
+            this.modelsView.Size = new System.Drawing.Size(181, 115);
+            this.modelsView.TabIndex = 6;
+            // 
+            // texView
+            // 
+            this.texView.Location = new System.Drawing.Point(3, 3);
+            this.texView.Name = "texView";
+            this.texView.Size = new System.Drawing.Size(181, 143);
+            this.texView.TabIndex = 5;
+            // 
+            // mapView
+            // 
+            this.mapView.Location = new System.Drawing.Point(190, 3);
+            this.mapView.MinimumSize = new System.Drawing.Size(310, 240);
+            this.mapView.Name = "mapView";
+            this.mapView.Size = new System.Drawing.Size(365, 329);
+            this.mapView.TabIndex = 4;
+            // 
+            // detailsView
+            // 
+            this.detailsView.Location = new System.Drawing.Point(3, 152);
+            this.detailsView.Name = "detailsView";
+            this.detailsView.Size = new System.Drawing.Size(181, 152);
+            this.detailsView.TabIndex = 3;
+            // 
+            // ShanoEditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -405,7 +397,7 @@ namespace AbilityIDE
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Name = "ShanoEditor";
+            this.Name = "ShanoEditorForm";
             this.Text = "ShanoEditor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ShanoEditor_FormClosing);
             this.menuStrip1.ResumeLayout(false);
@@ -464,8 +456,8 @@ namespace AbilityIDE
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private MapView mapView;
-        private TexturesView texturesView1;
-        private ModelsView modelsView1;
+        private TexturesView texView;
+        private ModelsView modelsView;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
     }
 }

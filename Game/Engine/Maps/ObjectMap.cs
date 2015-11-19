@@ -13,6 +13,7 @@ using Engine.Events;
 
 namespace Engine.Maps
 {
+    [Obsolete]
     internal class ObjectMap<T> : IEnumerable<T>
         where T : GameObject
     {
@@ -23,13 +24,9 @@ namespace Engine.Maps
         volatile List<T> pendingAdds = new List<T>();
 
         readonly object _addLock = new object();
-        
-        /// <summary>
-        /// Raised whenever an object changes its location. 
-        /// </summary>
-        public event Action<ObjectMoveArgs> ObjectMoves;
 
-        public event Action<T, byte[]> ObjectChanged;
+
+
 
 
         public void Add(T obj)
@@ -70,9 +67,11 @@ namespace Engine.Maps
                 obj.Update(msElapsed);
 
             //remove dead units
-            var deadObjs = map.Where(obj => obj.IsDestroyed).ToArray();
-            foreach (var obj in deadObjs)
+            var removedObjects = map.Where(obj => obj.IsDestroyed).ToArray();
+            foreach (var obj in removedObjects)
+            {
                 map.Remove(obj, obj.Position);
+            }
         }
 
 

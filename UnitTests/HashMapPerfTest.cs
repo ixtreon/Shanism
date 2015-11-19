@@ -15,105 +15,149 @@ namespace UnitTests
     [TestClass]
     public class HashMapPerfTest
     {
-        Random rnd = new Random();
+        static long TimeIt(Stopwatch sw, Action act)
+        {
+            sw.Reset();
+            sw.Start();
+            act();
+            sw.Stop();
+            return sw.ElapsedTicks;
+        }
+
+
+        static Random rnd = new Random(132);
 
         public TestContext TestContext { get; set; }
 
+
+        [TestMethod]
+        public void PerfTestConcurrentSeq()
+        {
+            const int ItemCount = 10000000;
+
+            var items = Enumerable.Range(0, ItemCount)
+                .Select(_ => rnd.NextVector())
+                .ToArray();
+
+            var a = new ConcurrentQueue<Vector>();
+            var b = new ConcurrentStack<Vector>();
+
+            var sw = new Stopwatch();
+            var resA = TimeIt(sw, () =>
+            {
+                foreach (var it in items)
+                    a.Enqueue(it);
+            });
+
+            var resB = TimeIt(sw, () =>
+            {
+                b.PushRange(items);
+            });
+
+            TestContext.WriteLine("QUEUE: {0} \tSTACK: {1}", resA, resB);
+        }
 
         [TestMethod]
         public void TestListPerformance()
         {
             const int ptsPerIter = 1000;
             const int n_tests = 10;
+
             for(int i = 0; i < n_tests; i++)
-                testLists(ptsPerIter * (i+1));
+                testLists(ptsPerIter * (i+1), repeats: 100);
         }
 
-        public void testLists(int ptsPerIter)
+        public void testLists(int pointCount, int repeats = 10)
         {
-            const int rectSz = 100;
-            const int spreadSz = 10;
-            const int nIters = 50;
+            const int queryCount = 100;
+            const int queryRectSize = 10;
+            const int areaLength = 1000;
 
-            long[] t_set = new long[3];
-            long[] t_get = new long[3];
+            long[] resultAdd = new long[3];
+            long[] resultQuery = new long[3];
 
-            var rect = new Rectangle(10, 10, rectSz, rectSz);
 
             var sw = new Stopwatch();
 
             var rnd = new Random();
 
-            Func<int, IEnumerable<Vector>> mkPts = 
-                (v) => 
-                Enumerable.Range(0, ptsPerIter)
-                .Select(i => new Vector(rnd.NextDouble() * spreadSz, rnd.NextDouble() * spreadSz));
+            TestContext.WriteLine("[ADD:QUERY], n={0}, area={1}, L then CM then TM", pointCount, queryRectSize * queryRectSize);
 
-            Func<Action, long> timeIt = (act) =>
-            {
-                sw.Reset();
-                sw.Start();
-                act();
-                sw.Stop();
-                return sw.ElapsedTicks;
-            };
-
-            TestContext.WriteLine("[SET:GET], n={0}, area={1}, L then M then M2", ptsPerIter, rectSz * rectSz);
-
-            for (int i = 0; i < nIters; i++)
+            for (int i = 0; i < repeats; i++)
             {
                 var list = new List<Vector>();
-                var map = new Engine.Maps.Concurrent.HashMap<Vector>(new Vector(7));
-                var map2 = new HashMap<Vector>(new Vector(7));
+                var cMap = new Engine.Maps.Concurrent.HashMap<Vector>(new Vector(7));
+                var tMap = new HashMap<Vector>(new Vector(7));
 
-                var pts = mkPts(i);
+                var pts = Enumerable.Range(0, pointCount)
+                    .Select(_ => new Vector(rnd.NextDouble(), rnd.NextDouble()) * areaLength)
+                    .ToArray();
 
-                t_set[0] += timeIt(() =>
+                var rects = Enumerable.Range(0, queryCount)
+                    .Select(_ => new Rectangle((rnd.NextVector() * (areaLength - queryRectSize)).ToPoint(), new Point(queryRectSize)))
+                    .ToArray();
+
+                resultAdd[0] += TimeIt(sw, () =>
                 {
                     foreach (var p in pts)
                         list.Add(p);
                 });
 
-                t_set[1] += timeIt(() =>
+                resultAdd[1] += TimeIt(sw, () =>
                 {
                     foreach (var p in pts)
-                        map.Add(p, p);
+                        cMap.Add(p, p);
                 });
 
-                t_set[2] += timeIt(() =>
+                resultAdd[2] += TimeIt(sw, () =>
                 {
                     foreach (var p in pts)
-                        map2.Add(p, p);
+                        tMap.Add(p, p);
                 });
 
 
-                t_get[0] += timeIt(() =>
+                //Range queries
+
+                resultQuery[0] += TimeIt(sw, () =>
                 {
-                    var count = 0;
-                    foreach (var p in list)
-                        if (p.Inside(rect.Position, rect.Size))
-                            count++;
+                    foreach (var rect in rects)
+                    {
+                        var count = 0;
+                        foreach (var p in list)
+                            if (p.Inside(rect.Position, rect.Size))
+                                count++;
+                    }
                 });
 
-                t_get[1] += timeIt(() =>
+                resultQuery[1] += TimeIt(sw, () =>
                 {
-                    var count = map.RangeQuery(rect.Position, rect.Size).Count();
+                    foreach (var rect in rects)
+                    {
+                        var count = cMap.RangeQuery(rect.Position, rect.Size).Count();
+                    }
                 });
 
-                t_get[2] += timeIt(() =>
+                resultQuery[2] += TimeIt(sw, () =>
                 {
-                    var count = map2.RangeQuery(rect.Position, rect.Size).Count();
+                    foreach(var rect in rects)
+                    {
+                        var count = tMap.RangeQuery(rect.Position, rect.Size).Count();
+                    }
                 });
                 
             }
 
+
             for(int i = 0; i < 3; i++)
             {
-                t_get[i] /= nIters;
-                t_set[i] /= nIters;
+                resultQuery[i] /= repeats;
+                resultAdd[i] /= repeats;
             }
 
-            TestContext.WriteLine("[{0:n0}|{1:n0}]\t[{2:n0}|{3:n0}]\t[{4:n0}|{5:n0}]", t_set[0], t_set[1], t_set[2], t_get[0], t_get[1], t_get[2]);
+            TestContext.WriteLine("[{0}|{1}]\t [{2}|{3}]\t [{4}|{5}]", 
+                resultAdd[0], resultQuery[0], 
+                resultAdd[1], resultQuery[1],
+                resultAdd[2], resultQuery[2]);
         }
 
     }

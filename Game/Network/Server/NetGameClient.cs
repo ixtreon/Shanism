@@ -1,5 +1,6 @@
 ﻿using IO;
 using IO.Common;
+using IO.Content;
 using IO.Message;
 using IO.Message.Client;
 using IO.Message.Server;
@@ -77,13 +78,6 @@ namespace Network.Server
         {
 
         }
-
-        public void SendHandshake(bool accepted)
-        {
-            var ioMsg = new HandshakeReplyMessage(accepted);
-            sendMessage(ioMsg);
-        }
-
 
         /// <summary>
         /// Hooks up the net client to the server receptor's events.

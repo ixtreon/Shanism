@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
-using Client.Sprites;
 using Client.Textures;
 using Color = Microsoft.Xna.Framework.Color;
 using IO.Common;
@@ -27,29 +26,29 @@ namespace Client.UI.Common
             ClickThrough = true;
         }
 
-        public override void Draw(SpriteBatch sb)
+        public override void Draw(Graphics g)
         {
             var hasText = ShowText && MaxValue != 0;
             var text = hasText ? (Value.ToString("0") + "/" + MaxValue.ToString("0")) : string.Empty;
 
-            DrawValueBar(sb, Value, MaxValue, ScreenPosition, ScreenSize, BackColor, ForeColor, text);
-        }
+            //background
+            g.Draw(Content.Textures.Blank, Vector.Zero, Size, BackColor);
 
-        public static void DrawValueBar(SpriteBatch sb, double value, double max, Point position, Point size, Color backColor, Color foreColor, string text = "")
-        {
-            SpriteFactory.Blank.DrawScreen(sb, position, size, backColor);
-
-            if (max != 0)
+            //value
+            if(MaxValue != 0)
             {
-                var borderSize = size.Y / 10;
-                position += new Point(borderSize, borderSize);
-                size -= new Point(borderSize * 2, borderSize * 2);
-                SpriteFactory.Blank.DrawScreen(sb, position, new Point((int)(size.X * value / max), size.Y), foreColor);
+                var borderSize = new Vector(Size.Y / 10);
+                var fullSize = Size - borderSize * 2;
+                var valSize = fullSize * new Vector(Value / MaxValue, 1);
+
+                g.Draw(Content.Textures.Blank, borderSize, valSize, ForeColor);
             }
-            if (!string.IsNullOrEmpty(text))
+
+            //text
+            if(!string.IsNullOrEmpty(text))
             {
-                var textPos = position + size / 2;
-                TextureCache.StraightFont.DrawStringScreen(sb, text, Color.White, textPos, 0.5f, 0.5f);
+                var textPos = Size / 2;
+                g.DrawString(Content.Fonts.MediumFont, text, Color.White, textPos, 0.5f, 0.5f);
             }
         }
     }

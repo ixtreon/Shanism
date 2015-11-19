@@ -123,11 +123,11 @@ namespace Client
         /// <summary>
         /// Converts the given Ui point to screen co-ordinates.  
         /// </summary>
-        public static IO.Common.Point UiToScreen(IO.Common.Vector p)
+        public static Vector UiToScreen(Vector p)
         {
-            return new IO.Common.Point(
-                ScreenHalfSize.X + (int)(p.X * UiScale),
-                ScreenHalfSize.Y + (int)(p.Y * UiScale));
+            return new Vector(
+                ScreenHalfSize.X + (p.X * UiScale),
+                ScreenHalfSize.Y + (p.Y * UiScale));
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace Client
         /// <summary>
         /// Converts the given screen point to Ui co-ordinates.  
         /// </summary>
-        public static Vector ScreenToUi(Point p)
+        public static Vector ScreenToUi(Vector p)
         {
             return new Vector(
                 (p.X - ScreenHalfSize.X) / UiScale,

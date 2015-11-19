@@ -9,21 +9,26 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ScenarioLib;
 
-namespace AbilityIDE.ScenarioViews
+namespace ShanoEditor.ScenarioViews
 {
-    public partial class DetailsView : ScenarioView
+    partial class DetailsView : ScenarioView
     {
         public override ScenarioViewType ViewType { get; } = ScenarioViewType.Details;
 
-        protected override async Task LoadScenario()
+        protected override async Task LoadModel()
         {
             txtName.Enabled =
-            txtDescription.Enabled = (Scenario != null);
+            txtDescription.Enabled = (Model != null);
 
-            txtName.Text = Scenario.Name ?? "";
-            txtDescription.Text = Scenario.Description ?? "";
+            txtName.Text = Model.Scenario.Name ?? "";
+            txtDescription.Text = Model.Scenario.Description ?? "";
         }
 
+        protected override void SaveModel()
+        {
+            Model.Scenario.Name = txtName.Text;
+            Model.Scenario.Description = txtDescription.Text;
+        }
 
         public DetailsView()
         {
@@ -32,13 +37,11 @@ namespace AbilityIDE.ScenarioViews
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
-            Scenario.Name = txtName.Text;
             MarkAsChanged();
         }
 
         private void txtDescription_TextChanged(object sender, EventArgs e)
         {
-            Scenario.Description = txtDescription.Text;
             MarkAsChanged();
         }
     }

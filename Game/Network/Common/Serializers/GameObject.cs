@@ -46,7 +46,7 @@ namespace Network.Objects.Serializers
             var goType = buf.ReadByte();
             var guid = buf.ReadInt32();
 
-            return ObjectFactory.GetOrCreate(goType, guid);
+            return ObjectFactory.GetOrCreate(ObjectType.Get(goType), guid);
         }
 
         public override bool AreEqual(Type ty, object a, object b)

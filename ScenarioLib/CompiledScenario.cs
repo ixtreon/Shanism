@@ -7,12 +7,12 @@ using System.Text;
 using System.Threading.Tasks;
 using IO.Objects;
 using Newtonsoft.Json;
+using IO.Common;
 
 namespace ScenarioLib
 {
     /// <summary>
-    /// A compiled scenario that contains information about the types of objects defined in it
-    /// as well as being a <see cref="ScenarioFile"/> object. 
+    /// A compiled scenario that contains information about the types of objects defined in it. 
     /// </summary>
     public class CompiledScenario : ScenarioFile
     {
@@ -22,47 +22,37 @@ namespace ScenarioLib
         public Assembly ScenarioAssembly { get; private set; }
 
 
-        List<Type> objectTypes = new List<Type>();
-        List<IGameObject> objects = new List<IGameObject>();
+        List<IUnit> units = new List<IUnit>();
+        List<IDoodad> doodads = new List<IDoodad>();
 
         /// <summary>
         /// Gets the types of game objects defined in this scenario. 
         /// </summary>
-        public IEnumerable<Type> DefinedObjectTypes
+        public IEnumerable<IDoodad> DefinedDoodads
         {
-            get { return objectTypes; }
+            get { return doodads; }
         }
 
         /// <summary>
         /// Gets an instance of each game object defined in this scenario. 
         /// </summary>
-        public IEnumerable<IGameObject> DefinedObjects
-        {
-            get { return objects; }
-        }
-
-        /// <summary>
-        /// Gets all units defined in this scenario. 
-        /// </summary>
         public IEnumerable<IUnit> DefinedUnits
         {
-            get { return objects.OfType<IUnit>(); }
-        }
-
-        /// <summary>
-        /// Gets all doodads defined in this scenario. 
-        /// </summary>
-        public IEnumerable<IDoodad> DefinedDoodads
-        {
-            get { return objects.OfType<IDoodad>(); }
+            get { return units; }
         }
 
 
+        [JsonConstructor]
         protected CompiledScenario() { }
 
         public CompiledScenario(string scenarioPath)
             : base(scenarioPath)
         {
+        }
+
+        public static new CompiledScenario Load(string scenarioPath)
+        {
+            return Load<CompiledScenario>(scenarioPath);
         }
 
 
@@ -91,13 +81,42 @@ namespace ScenarioLib
         {
             ScenarioAssembly = scAssembly;
 
-            objectTypes = scAssembly.GetTypesDescending<IGameObject>()
-                .Where(ty => ty.GetConstructor(Type.EmptyTypes) != null)
+            var unitTypes = scAssembly.GetTypesDescending<IUnit>()
+                .Where(canMakeUnit)
                 .ToList();
 
-            objects = objectTypes
-                .Select(ty => (IGameObject)Activator.CreateInstance(ty))
+            units = unitTypes
+                .Select(ty => (IUnit)Activator.CreateInstance(ty, null, Vector.Zero))
                 .ToList();
+
+
+            var doodadTypes = scAssembly.GetTypesDescending<IDoodad>()
+                .Where(canMakeDoodad)
+                .ToList();
+
+            doodads = doodadTypes
+                .Select(ty => (IDoodad)Activator.CreateInstance(ty, Vector.Zero))
+                .ToList();
+
+        }
+
+        //must have new T(Player, Vector)
+        bool canMakeUnit(Type ty)
+        {
+            return ty.GetConstructors()
+                .Select(c => c.GetParameters())
+                .Any(ps => ps.Length == 2
+                    && typeof(Vector).IsAssignableFrom(ps[1].ParameterType)
+                    && typeof(IPlayer).IsAssignableFrom(ps[0].ParameterType));
+        }
+
+        //must have new T(Vector)
+        bool canMakeDoodad(Type ty)
+        {
+            return ty.GetConstructors()
+                .Select(c => c.GetParameters())
+                .Any(ps => ps.Length == 1
+                    && typeof(Vector).IsAssignableFrom(ps[0].ParameterType));
         }
     }
 }

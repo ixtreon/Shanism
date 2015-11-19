@@ -1,8 +1,10 @@
 ﻿using IO;
+using Ionic.Zip;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,10 +29,6 @@ namespace ScenarioLib
         /// </summary>
         public string FilePath { get; protected set; }
 
-        /// <summary>
-        /// A custom flag indicating whether the scenario has changed. 
-        /// </summary>
-        public bool IsDirty { get; set; }
 
         /// <summary>
         /// Gets the name of the scenario. 
@@ -44,11 +42,23 @@ namespace ScenarioLib
         [JsonProperty]
         public string Description { get; set; }
 
+        /// <summary>
+        /// Gets the map configuration of the scenario. 
+        /// </summary>
         [JsonProperty]
         public MapConfig MapConfig { get; protected set; }
 
+        /// <summary>
+        /// Gets the content listing of the scenario. 
+        /// </summary>
         [JsonProperty]
-        public ObjectsConfig ModelConfig { get; protected set; }
+        public ContentConfig Content { get; protected set; }
+
+        /// <summary>
+        /// Gets the objects created on scenario startup. 
+        /// </summary>
+        [JsonProperty]
+        public ObjectConfig Objects { get; protected set; }
 
         [JsonConstructor]
         protected ScenarioFile() { }
@@ -60,14 +70,13 @@ namespace ScenarioLib
 
             BaseDirectory = Path.GetFullPath(scenarioPath);
             FilePath = Path.Combine(scenarioPath, ScenarioFileName);
+
             Name = "Shano Scenario";
             Description = "Shanistic Description";
-            MapConfig = new MapConfig();
-            ModelConfig = new ObjectsConfig();
 
-            var onlyDirt = MapConfig.Map
-                .ToEnumerable()
-                .All(ty => ty == IO.Common.TerrainType.Dirt);
+            MapConfig = new MapConfig();
+            Content = new ContentConfig();
+            Objects = new ObjectConfig();
 
             Save();
         }
@@ -89,28 +98,106 @@ namespace ScenarioLib
             if (!File.Exists(filePath))
                 return null;
 
+            string datas;
             try
             {
-                var datas = File.ReadAllText(filePath);
-            
+                datas = File.ReadAllText(filePath);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
+            return LoadString<T>(datas, dirPath, filePath);
+        }
+
+        public static ScenarioFile LoadBytes(byte[] datas)
+        {
+            var txt = Encoding.UTF8.GetString(datas);
+            return LoadString<ScenarioFile>(txt, null, null);
+        }
+
+        static T LoadString<T>(string datas, string baseDir, string filePath)
+            where T : ScenarioFile
+        {
+            try
+            {
                 var sc = JsonConvert.DeserializeObject<T>(datas);
-                sc.BaseDirectory = dirPath;
+                sc.BaseDirectory = baseDir;
                 sc.FilePath = filePath;
                 sc.MapConfig = sc.MapConfig ?? new MapConfig();
-                sc.ModelConfig = sc.ModelConfig ?? new ObjectsConfig();
+                sc.Content = sc.Content ?? new ContentConfig();
 
                 return sc;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return null;
             }
         }
 
+        /// <summary>
+        /// Saves the scenario file to disk. 
+        /// </summary>
         public void Save()
         {
-            var datas = JsonConvert.SerializeObject(this, Formatting.Indented);
-            File.WriteAllText(FilePath, datas);
+            File.WriteAllText(FilePath, GetText(Formatting.Indented));
         }
+
+        public string GetText(Formatting format = Formatting.None)
+        {
+            return JsonConvert.SerializeObject(this, format);
+        }
+
+        /// <summary>
+        /// object -> json -> utf8 bytes. 
+        /// </summary>
+        public byte[] GetBytes()
+        {
+            return Encoding.UTF8.GetBytes(GetText());
+        }
+
+        byte[] zippedContent;
+
+        /// <summary>
+        /// Compresses the file to a byte array. 
+        /// </summary>
+        public byte[] ZipContent()
+        {
+            if (zippedContent == null)
+            {
+                var files = Content.Textures.Select(tex => new
+                    {
+                        FileName = Path.Combine(BaseDirectory, tex.Name),
+                        ArchiveName = Path.GetDirectoryName(tex.Name),
+                    })
+                    .Where(f => File.Exists(f.FileName));
+                using (var zip = new ZipFile())
+                {
+                    foreach (var f in files)
+                        zip.AddFile(f.FileName, f.ArchiveName);
+
+                    using (var ms = new MemoryStream())
+                    {
+                        zip.Save(ms);
+                        zippedContent = ms.ToArray();
+                    }
+                }
+            }
+            return zippedContent;
+        }
+
+        public static void UnzipContent(byte[] content, string folder)
+        {
+            Directory.CreateDirectory(folder);
+
+            using (var ms = new MemoryStream(content))
+            using (var zip = ZipFile.Read(ms))
+            {
+                foreach (var zipEntry in zip)
+                    zipEntry.Extract(folder, ExtractExistingFileAction.OverwriteSilently);
+            }
+        }
+
     }
 }

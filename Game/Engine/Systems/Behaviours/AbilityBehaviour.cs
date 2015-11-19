@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Engine.Objects;
 using Engine.Objects.Game;
 using Engine.Systems.Orders;
+using Engine.Systems.Abilities;
 using IO.Common;
 
 namespace Engine.Systems.Behaviours
@@ -13,37 +14,16 @@ namespace Engine.Systems.Behaviours
     /// <summary>
     /// A behaviour that casts the given ability on the specified target, if that is possible. 
     /// </summary>
-    class AbilityBehaviour : Behaviour
+    class SpamBehaviour : Behaviour
     {
-        private readonly Ability Ability;
+        public Ability Ability { get; private set; }
 
         public Unit TargetUnit { get; set; }
 
-        private object AbilityTarget
-        {
-            get
-            {
-                if (!Ability.IsActive)
-                    throw new Exception("You have put a passive spell in AbilityBehaviour!");
-
-                if (!Ability.IsTargeted)
-                    return null;
-
-                if (Ability.CanTargetUnits())
-                    return TargetUnit;
-
-                if (Ability.CanTargetGround())
-                    return TargetUnit.Position;
-
-                throw new NotImplementedException();
-
-            }
-        }
-
-        public AbilityBehaviour(Behaviour b, Ability ab)
+        public SpamBehaviour(Behaviour b)
             : base(b)
         {
-            this.Ability = ab;
+
         }
 
 
@@ -51,12 +31,16 @@ namespace Engine.Systems.Behaviours
         {
             if (TargetUnit == null)
                 return false;
-            return Ability.CanCast(AbilityTarget);
+
+            Ability = Unit.GetAbilitiesOfType(AbilityType.Spammable).FirstOrDefault(a => a.CanCast(TargetUnit));
+            if (Ability != null)
+                return true;
+            return false;
         }
 
         public override void Update(int msElapsed)
         {
-            CurrentOrder = new CastOrder(Ability, AbilityTarget);
+            CurrentOrder = new CastOrder(Ability, TargetUnit);
         }
     }
 }

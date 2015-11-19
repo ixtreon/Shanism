@@ -1,7 +1,4 @@
-﻿using Client.Objects;
-using Client.Sprites;
-using IO;
-using IO.Content;
+﻿using IO;
 using IO.Objects;
 using System;
 using System.Collections.Generic;

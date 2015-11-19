@@ -16,101 +16,129 @@ namespace Client.UI
 {
     class UiManager : Control
     {
-        readonly HeroUi heroUi;
+        readonly UnitFrame heroFrame;
+        readonly UnitFrame targetFrame;
 
-        readonly TargetUi targetUi;
-
+        readonly SpellBar abilityBar;
         readonly SpellButton mainAbilityButton;
         readonly SpellButton secondaryAbilityButton;
 
-        readonly SpellBook spellBook;
+        readonly SpellBook spellbookMenu;
         readonly MainMenu mainMenu;
-        readonly CharacterInfo charInfo;
+
         readonly CastBar castBar;
 
         readonly ChatBox chatBox;
 
+        readonly CharacterMenu characterMenu;
+
 
         readonly BuffBar HeroBuffs;
-        private SpellBar abilityBar;
 
-        public IHero TargetHero { get; set; }
+        HeroControl _mainHeroControl;
+        public HeroControl MainHeroControl
+        {
+            get { return _mainHeroControl; }
+            set
+            {
+                if(_mainHeroControl != value)
+                {
+                    _mainHeroControl = value;
+
+                    abilityBar.Controls
+                        .OfType<SpellButton>()
+                        .Zip(MainHero.Abilities,
+                            (sb, a) => sb.Ability = a)
+                        .ToArray();
+                }
+            }
+        }
+
+        public IHero MainHero {  get { return MainHeroControl?.Hero; } }
 
         public event Action<ActionMessage> OnActionPerformed;
 
         public UnitControl Target
         {
-            get { return targetUi.Target; }
-            set { targetUi.Target = value; }
+            get { return targetFrame.Target; }
+            set { targetFrame.Target = value; }
         }
 
         public UiManager()
         {
-            // self checks
-            this.Size = new Vector(2f, 2f);
-            this.AbsolutePosition = new Vector(-1, -1);
-            
+            Size = new Vector(2, 1);
+
             //hero panel
-            this.heroUi = new HeroUi();
-            this.Add(heroUi, false);
+            this.heroFrame = new UnitFrame
+            {
+                ParentAnchor = AnchorMode.Top,
+                Location = new Vector(0.25, 0),
+                Size = new Vector(0.5, 0.15),
+            };
+            this.Add(heroFrame);
 
             //target panel
-            this.targetUi = new TargetUi();
-            this.Add(targetUi, false);
+            this.targetFrame = new UnitFrame
+            {
+                ParentAnchor = AnchorMode.Top,
+                Location = new Vector(1.25, 0),
+                Size = new Vector(0.5, 0.15),
+            };
+            this.Add(targetFrame);
 
-            const float btnSize = 0.2f;
+            const double btnSize = 0.15;
 
             //main ability
-            this.mainAbilityButton = new SpellButton()  
+            this.mainAbilityButton = new SpellButton(sz: btnSize)
             {
-                Size = new Vector(btnSize),
-                //Ability = hero.Abilities.First(),
-                RelativePosition = new Vector(heroUi.Left - btnSize, heroUi.Bottom - btnSize),
+                ParentAnchor = AnchorMode.Bottom,
+                Location = new Vector(0.4, 1 - btnSize),
             };
-            this.Add(mainAbilityButton, true);
+            this.Add(mainAbilityButton);
 
             //secondary ability
-            this.secondaryAbilityButton = new SpellButton()
+            this.secondaryAbilityButton = new SpellButton(sz: btnSize)
             {
-                Size = new Vector(btnSize),
-                //Ability = hero.Abilities.Skip(1).First(),
-                RelativePosition = new Vector(heroUi.Right, heroUi.Bottom - btnSize),
+                ParentAnchor = AnchorMode.Bottom,
+                Location = new Vector(1.6 - btnSize, 1 - btnSize),
             };
-            this.Add(secondaryAbilityButton, true);
+            this.Add(secondaryAbilityButton);
 
-            //TODO: Main ability bar
+            //ability bar
             this.abilityBar = new SpellBar
             {
-                ButtonCount = 16,
-                Size = new Vector(0.4, 0.25),
-                RelativePosition = new Vector(-0.2, -0.1),
+                ParentAnchor = AnchorMode.Bottom,
+                Location = new Vector(0.6, 0.8),
             };
-            this.Add(abilityBar, true);
+            this.Add(abilityBar);
 
             //main menu
-            this.mainMenu = new MainMenu();
-            this.Add(mainMenu, false);
+            this.mainMenu = new MainMenu
+            {
+                ParentAnchor = AnchorMode.None,
+                Location = new Vector(0.6, 0.2),
+                Size = new Vector(0.8, 0.6),
+            };
+            this.Add(mainMenu);
 
             //spell-book
-            this.spellBook = new SpellBook();
-            this.Add(spellBook, false);
+            this.spellbookMenu = new SpellBook();
+            this.Add(spellbookMenu);
 
             //character info
-            this.charInfo = new CharacterInfo();
-            this.Add(charInfo, false);
+            this.characterMenu = new CharacterMenu();
+            this.Add(characterMenu);
 
             //chatbox
             this.chatBox = new ChatBox();
-            this.Add(chatBox);
+            //this.Add(chatBox);
 
             //cast bar
             var castBarSize = new Vector(0.5f, 0.08f);
             this.castBar = new CastBar()
             {
                 Size = castBarSize,
-                AbsolutePosition = new Vector(
-                    -castBarSize.X / 2, 
-                    heroUi.AbsolutePosition.Y - 2 * castBarSize.Y),
+                Location = new Vector(-castBarSize.X / 2, 0.7),
             };
             this.Add(castBar, false);
 
@@ -119,17 +147,17 @@ namespace Client.UI
             {
                 AbsolutePosition = new Vector(0, 0),
             };
-            this.Add(HeroBuffs);
+            //this.Add(HeroBuffs);
 
             //tooltip
-            this.Add(new ToolTip());
+            this.Add(new Tooltips.SimpleTip());
+            this.Add(new Tooltips.AbilityTip());
 
             //spellbar?!
             //this.Add(new SpellBar()
             //{
             //    AbsolutePosition = new Vector(-1, 0.5f),
             //}, false);
-
         }
 
         public override void Update(int msElapsed)
@@ -137,27 +165,29 @@ namespace Client.UI
             base.UpdateMain(msElapsed);     // this is always the root control. 
 
 
-            castBar.Target = TargetHero;
-            HeroBuffs.Target = TargetHero;
-            heroUi.Target = TargetHero;
-            spellBook.Target = TargetHero;
-            charInfo.Target = TargetHero;
+            castBar.Target = MainHero;
+            HeroBuffs.Target = MainHero;
+            spellbookMenu.Target = MainHero;
+            characterMenu.Target = MainHero;
+            heroFrame.Target = MainHeroControl;
+            targetFrame.Target = MainHeroControl;
 
-            var mouseOnScreen = this.MouseOver || (HoverControl != null && typeof(ObjectControl).IsAssignableFrom(HoverControl.GetType()));
+            var mouseOnScreen = this.MouseOver || (HoverControl != null && HoverControl is ObjectControl);
             //check fire!
             if (mouseOnScreen)
             {
                 IAbility a=null;
-                if (mouseState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+                if (mouseState.LeftButton == ButtonState.Pressed)
                     a = mainAbilityButton.Ability;
-                if (mouseState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+                if (mouseState.RightButton == ButtonState.Pressed)
                     a = secondaryAbilityButton.Ability;
 
                 if (a != null && a.CurrentCooldown <= 0)
                 {
-                    var pos = Screen.ScreenToGame(mouseState.Position.ToPoint());
                     var actionId = a.Name;
-                    var message = new ActionMessage(actionId, pos);
+                    var targetLoc = Screen.ScreenToGame(mouseState.Position.ToPoint());
+                    var targetGuid = (HoverControl as ObjectControl)?.Object.Guid ?? -1;
+                    var message = new ActionMessage(actionId, targetGuid, targetLoc);
 
                     OnActionPerformed?.Invoke(message);
                 }

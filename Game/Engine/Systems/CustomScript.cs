@@ -14,10 +14,6 @@ namespace Engine.Systems
     /// </summary>
     public abstract class CustomScript : ScenarioObject
     {
-        /// <summary>
-        /// Uses the <paramref name="manager"/> object to declare the models used in this scenario. 
-        /// </summary>
-        public virtual void LoadModels(ModelManager manager) { }
 
         /// <summary>
         /// The method executed when the game has started. 

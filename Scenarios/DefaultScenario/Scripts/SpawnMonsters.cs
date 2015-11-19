@@ -33,13 +33,25 @@ class SpawnMonsters : CustomScript
             foreach(var iUnit in Enumerable.Range(0, UnitsPerCamp))
             {
                 var uPos = Rnd.PointInCircle(campCenter, UnitCampRadius);
-                var m = new Monster("mobche", uPos, 2)
+                var m = new Monster("devilkin", uPos, 2)
                 {
                     Life = 123,
                 };
                 Map.Add(m);
             }
         }
+
+        var c = Terrain.Bounds.Center;
+
+        var n_units = 1;
+        foreach(var i in Enumerable.Range(0, n_units))
+        {
+            var d = 2 * Math.PI * i / n_units;
+            var p = c.PolarProjection(d, 10);
+            var m = new Monster("devilkin", p, 1);
+            Map.Add(m);
+        }
+
     }
 
     public override async void OnUnitDeath(Unit unit)

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static IO.Constants.Content;
 
 namespace IO.Content
 {
@@ -20,8 +21,8 @@ namespace IO.Content
         [JsonIgnore]
         public AnimationDef Stand
         {
-            get { return Animations.TryGet("stand"); }
-            set { Animations["stand"] = value; }
+            get { return Animations.TryGet(DefaultAnimation); }
+            set { Animations[DefaultAnimation] = value; }
         }
 
         /// <summary>

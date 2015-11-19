@@ -14,6 +14,7 @@ namespace Engine.Systems.Abilities
     /// <summary>
     /// A simple melee attack ability that mirrors its owner's attack range and cooldown. 
     /// </summary>
+    [AbilityType(AbilityType.Spammable)]
     public class Attack : Ability
     {
 
@@ -24,12 +25,6 @@ namespace Engine.Systems.Abilities
             this.Description = "Attacks in the given direction. ";
             ManaCost = 0;
         }
-
-        public bool IsRanged
-        {
-            get { return Owner.RangedAttack; }
-        }
-
 
         public override void OnCast(AbilityCastArgs e)
         {
@@ -55,8 +50,8 @@ namespace Engine.Systems.Abilities
 
         public override void OnUpdate(int msElapsed)
         {
-            this.Cooldown = Owner.AttackCooldown;
-            this.CastRange = Owner.AttackRange;
+            Cooldown = Owner.AttackCooldown;
+            CastRange = Owner.AttackRange;
         }
     }
 }

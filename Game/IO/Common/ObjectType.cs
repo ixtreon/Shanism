@@ -41,7 +41,7 @@ namespace IO.Common
         }
 
 
-        public static implicit operator ObjectType(byte b)
+        public static ObjectType Get(byte b)
         {
             ObjectType val;
             if (!objectDict.TryGetValue(b, out val))

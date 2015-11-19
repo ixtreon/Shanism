@@ -27,7 +27,7 @@ namespace Client.UI.Common
             {
                 Value = Target.Experience;
                 MaxValue = Target.ExperienceNeeded;
-                TooltipText = "Level {0}\n{1}/{2}".Format(Target.Level, Target.Experience, Target.ExperienceNeeded);
+                ToolTip = "Level {0}\n{1}/{2}".Format(Target.Level, Target.Experience, Target.ExperienceNeeded);
             }
         }
     }

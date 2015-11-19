@@ -5,22 +5,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections;
-using Client.Sprites;
 using IO;
 using IO.Common;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace Client.UI
 {
+    [Flags]
+    public enum AnchorMode
+    {
+        None = 0,
+        Left = 1,
+        Right = 2,
+        Top = 4,
+        Bottom = 8,
+        All = Left | Right | Bottom | Top,
+    }
+
     /// <summary>
     /// Represents a user interface control. 
     /// </summary>
     abstract class Control
     {
+        #region Static/Const members
+
+
         /// <summary>
         /// Specifies the default distance between elements in UI scale. 
         /// </summary>
-        public const double Anchor = 0.01f;
+        public const double Padding = 0.01;
 
 
         protected static Control HoverControl;
@@ -38,64 +51,60 @@ namespace Client.UI
         protected static MouseState
             oldMouseState = Mouse.GetState(),
             mouseState = Mouse.GetState();
+        #endregion
 
 
-        private bool _visible;
-        private Keys MoveAroundKey = Keys.LeftAlt;
-        internal Vector _absolutePosition;
-        internal Vector _size = new Vector(0.1f, 0.1f);
+        bool _visible;
+        //Vector _absolutePosition;
+        //Vector _size = new Vector(0.1f, 0.1f);
 
-        readonly List<Control> controls = new List<Control>();
+        protected List<Control> controls { get; } = new List<Control>();
 
 
         /// <summary>
         /// Defines the background color drawn behind the whole control. 
         /// </summary>
-        public Color BackColor = Color.Transparent;
+        public Color BackColor { get; set; } = Color.Transparent;
 
         /// <summary>
         /// Gets or sets whether the control is draggable. 
         /// </summary>
-        public bool CanDrag = false;
-
-        /// <summary>
-        /// Gets or sets whether the control can accept dragged items. 
-        /// </summary>
-        public bool CanDrop = false;
+        public bool CanDrag { get; set; } = false;
 
         /// <summary>
         /// Gets or sets whether the control responds to mouse events. 
         /// </summary>
         public bool ClickThrough { get; set; }
 
-        //unused
-        public Keys DragDropKey = Keys.LeftAlt;
-
         /// <summary>
         /// Gets or sets whether this control can be moved. 
         /// </summary>
-        public bool Locked = true;
-
-        public IEnumerable<Control> Controls
-        {
-            get { return controls; }
-        }
-
-        public Control()
-        {
-            Visible = true;
-            MouseDown += UserControl_MouseDown;
-        }
+        public bool Locked { get; set; } = true;
 
         /// <summary>
-        /// Occurs when the control receives a drop from another control. 
+        /// Gets the parent of this control. 
         /// </summary>
-        public event Action<Control, Control> DragDrop;
+        public Control Parent { get; private set; }
 
         /// <summary>
-        /// Raised whenever a mouse button is pressed on this control. 
+        /// Gets or sets the tooltip text of this control. 
         /// </summary>
-        public event Action<Control, Vector> MouseDown;
+        public object ToolTip { get; set; }
+
+        /// <summary>
+        /// Gets the Z-order of the control. 
+        /// </summary>
+        public int ZOrder { get; set; }
+        #region Events
+        /// <summary>
+        /// Raised whenever the control receives a drag-drop from another control. 
+        /// </summary>
+        public event Action<Control> OnDrop;
+
+        /// <summary>
+        /// Raised whenever the control is drag-dropped onto another control. 
+        /// </summary>
+        public event Action<Control> OnDrag;
 
         /// <summary>
         /// Raised whenever the mouse enters the control's boundary. 
@@ -106,6 +115,11 @@ namespace Client.UI
         /// Raised whenever the mouse leaves the control's boundary. 
         /// </summary>
         public event Action MouseLeave;
+
+        /// <summary>
+        /// Raised whenever a mouse button is pressed on this control. 
+        /// </summary>
+        public event Action<Control, Vector> MouseDown;
 
         /// <summary>
         /// Raised whenever the mouse moves over the control's boundary. 
@@ -121,6 +135,13 @@ namespace Client.UI
         /// Raised whenever the control's visibility changes. 
         /// </summary>
         public event Action<Control> VisibleChanged;
+        #endregion
+
+
+        public IEnumerable<Control> Controls
+        {
+            get { return controls; }
+        }
 
         /// <summary>
         /// Gets or sets the absolute position of this control in UI coordinates. 
@@ -129,98 +150,30 @@ namespace Client.UI
         {
             get
             {
-                return _absolutePosition;
+                return ParentPosition + Location;
             }
             set
             {
-                if (value != _absolutePosition)
-                {
-                    var d = value - _absolutePosition;
-                    foreach (var c in this.controls)
-                        c.AbsolutePosition += d;
-                    this._absolutePosition = value;
-                }
+                Location = value - ParentPosition;
             }
         }
 
-        /// <summary>
-        /// Gets the top Y coordinate of this control relative to its parent. 
-        /// </summary>
-        public double Top
-        {
-            get { return RelativePosition.Y; }
-            set { RelativePosition = new Vector(RelativePosition.X, value); }
-        }
+
+        Vector _position;
+        Vector _size;
 
         /// <summary>
-        /// Gets the left X coordinate of this control relative to its parent. 
+        /// Gets the sticky sides in relation to the parent control. 
         /// </summary>
-        public double Left
-        {
-            get { return RelativePosition.X; }
-            set { RelativePosition = new Vector(value, RelativePosition.Y); }
-        }
-
-        /// <summary>
-        /// Gets the bottom Y coordinate of this control relative to its parent. 
-        /// </summary>
-        public double Bottom
-        {
-            get { return RelativePosition.Y + Size.Y; }
-        }
-
-        /// <summary>
-        /// Gets the right X coordinate of this control relative to its parent. 
-        /// </summary>
-        public double Right
-        {
-            get { return RelativePosition.X + Size.X; }
-        }
-
-        public bool MouseOver
-        {
-            get { return HoverControl == this; }
-        }
-
-        public Control Parent { get; private set; }
+        public AnchorMode ParentAnchor { get; set; } = AnchorMode.Left | AnchorMode.Top;
 
         /// <summary>
         /// Gets or sets the position of this control in its parent's coordinate space. 
         /// </summary>
-        public Vector RelativePosition
+        public Vector Location
         {
-            get
-            {
-                return (AbsolutePosition - ParentPosition);
-            }
-            set
-            {
-                this.AbsolutePosition = ParentPosition + value;
-            }
-        }
-
-        public int ScreenAnchor
-        {
-            get { return Screen.UiToScreen(Anchor); }
-        }
-        /// <summary>
-        /// Gets or sets the screen position of this control, in pixels. 
-        /// </summary>
-        public Point ScreenPosition
-        {
-            get { return Screen.UiToScreen(_absolutePosition); }
-            set { AbsolutePosition = Screen.ScreenToUi(value); }
-        }
-
-        /// <summary>
-        /// Gets the screen size of this control, in pixels. 
-        /// </summary>
-        public Point ScreenSize
-        {
-            get
-            {
-                return new Point(Screen.UiToScreen(_size.X), Screen.UiToScreen(_size.Y));
-            }
+            get { return _position; }
+            set { _position = value; }
         }
 
         /// <summary>
@@ -231,18 +184,94 @@ namespace Client.UI
             get { return _size; }
             set
             {
-                if (_size != value)
+                if(_size != value)
                 {
+                    var d = value - _size;
                     _size = value;
+                    resizeChildren(AnchorMode.Left, AnchorMode.Right, new Vector(d.X, 0));
+                    resizeChildren(AnchorMode.Top, AnchorMode.Bottom, new Vector(0, d.Y));
                 }
+
             }
         }
 
-        /// <summary>
-        /// Gets or sets the tooltip text of this control. 
-        /// </summary>
-        public string TooltipText { get; set; }
+        void resizeChildren(AnchorMode min, AnchorMode max, Vector d)
+        {
+            foreach(var c in controls)
+            {
+                var hasMin = c.ParentAnchor.HasFlag(min);
+                var hasMax = c.ParentAnchor.HasFlag(max);
 
+                if (hasMax && hasMin)    //anchor both sides -> modify size
+                    c.Size += d;
+                else if (hasMax && !hasMin)  // anchor at max (right/top) -> modify loc
+                    c.Location += d;
+                else if (!hasMin && !hasMax) // has no anchor -> float
+                    c.Location += d / 2;
+            }
+        }
+
+        public double Top
+        {
+            get { return _position.Y; }
+            //set { Location = new Vector(Location.X, value); }
+        }
+
+        /// <summary>
+        /// Gets the left X coordinate of this control relative to its parent. 
+        /// </summary>
+        public double Left
+        {
+            get { return _position.X; }
+            //set { Location = new Vector(value, Location.Y); }
+        }
+
+        /// <summary>
+        /// Gets the bottom Y coordinate of this control relative to its parent. 
+        /// </summary>
+        public double Bottom
+        {
+            get { return Location.Y + Size.Y; }
+        }
+
+        /// <summary>
+        /// Gets the right X coordinate of this control relative to its parent. 
+        /// </summary>
+        public double Right
+        {
+            get { return Location.X + Size.X; }
+        }
+
+        /// <summary>
+        /// Gets whether the mouse is currently over this control. 
+        /// </summary>
+        public bool MouseOver
+        {
+            get { return HoverControl == this; }
+        }
+
+
+        #region screen stuff
+        /// <summary>
+        /// Gets or sets the screen position of this control, in pixels. 
+        /// </summary>
+        public Vector ScreenPosition
+        {
+            get { return Screen.UiToScreen(_position); }
+            set { AbsolutePosition = Screen.ScreenToUi(value); }
+        }
+
+        /// <summary>
+        /// Gets the screen size of this control, in pixels. 
+        /// </summary>
+        public Point ScreenSize
+        {
+            get
+            {
+                return (Size * Screen.UiScale).ToPoint();
+            }
+        }
+        #endregion 
 
         /// <summary>
         /// Gets or sets whether the control is visible. 
@@ -255,16 +284,10 @@ namespace Client.UI
                 if (value != _visible)
                 {
                     _visible = value;
-                    if (VisibleChanged != null)
-                        VisibleChanged(this);
+                    VisibleChanged?.Invoke(this);
                 }
             }
         }
-
-        /// <summary>
-        /// Gets the Z-order of the control. 
-        /// </summary>
-        public int ZOrder { get; set; }
 
         /// <summary>
         /// Gets the absolute position of this control's parent. 
@@ -272,7 +295,7 @@ namespace Client.UI
         /// <returns></returns>
         private Vector ParentPosition
         {
-            get { return Parent != null ? Parent._absolutePosition : Vector.Zero; }
+            get { return Parent?.AbsolutePosition ?? Vector.Zero; }
         }
 
         /// <summary>
@@ -281,20 +304,66 @@ namespace Client.UI
         /// <returns></returns>
         private Vector ParentSize
         {
-            get { return Parent != null ? Parent.Size : Vector.Zero; }
+            get { return Parent?.Size ?? Vector.Zero; }
+        }
+
+
+        public Control()
+        {
+            Visible = true;
+            MouseDown += UserControl_MouseDown;
         }
 
         #region Drag to move
 
-        Vector dragPoint = Vector.Zero;
+        Vector dragLast = Vector.Zero;
+        Vector dragStart = Vector.Zero;
+        Keys dragToMoveKey = Keys.Q;
+
         void UserControl_MouseDown(Control sender, Vector p)
         {
-            if (!Locked && oldKeyboardState.IsKeyDown(Keys.Q))
+            if (keyboardState.IsKeyDown(dragToMoveKey))
             {
-                dragPoint = p;
+                var cc = this;
+                while (cc.Locked && cc.Parent != null)
+                    cc = cc.Parent;
+
+                if (!cc.Locked)
+                {
+                    cc.dragLast = p;
+                    cc.dragStart = p;
+                }
             }
         }
+
+        void checkDragMove()
+        {
+            if (dragStart == Vector.Zero)
+                return;
+
+            //stop holding keyboard button -> reset control
+            if (!keyboardState.IsKeyDown(dragToMoveKey))
+            {
+                Location += (dragStart - dragLast);
+                dragStart = Vector.Zero;
+                return;
+            }
+
+            //stop holding mouse button -> move control
+            if (mouseState.LeftButton == ButtonState.Released)
+            {
+                dragStart = Vector.Zero;
+                return;
+            }
+
+            //TODO: controls can't get out of their parents!
+            var dragNow = Screen.ScreenToUi(mouseState.Position.ToPoint());
+            Location += (dragNow - dragLast);
+            dragLast = dragNow;
+        }
         #endregion
+
+
 
         /// <summary>
         /// Adds the specified control as a child of this control. 
@@ -303,11 +372,10 @@ namespace Client.UI
         /// <param name="relativeAnchor">True to position the control according to its relative position, false to keep the absolute one. </param>
         public void Add(Control c, bool relativeAnchor = true)
         {
-            var pos = c.RelativePosition;
+            var pos = c.Location;
             this.controls.Add(c);
+
             c.Parent = this;
-            if (relativeAnchor)
-                c.RelativePosition = pos;
             c.BringToFront();
         }
 
@@ -320,7 +388,7 @@ namespace Client.UI
             {
                 var maxZ = Parent.controls.Max(c => c.ZOrder);
                 this.ZOrder = maxZ + 1;
-            } 
+            }
             else
                 this.ZOrder = 0;
         }
@@ -339,14 +407,23 @@ namespace Client.UI
 
         public void DoDraw(SpriteBatch sb)
         {
-            if (this.Visible)
-                this.Draw(sb);
+            DoDraw(new Graphics(sb, Location, Size));
+        }
 
-            // draw controls
-            // sort by z order - lower is first
-            if(this.Visible && this.controls.Any())
-                foreach (var c in this.controls.OrderBy(c => c.ZOrder))
-                    c.DoDraw(sb);
+        public void DoDraw(Graphics g)
+        {
+            if (Visible)
+            {
+                Draw(g);
+
+                // draw controls
+                // sort by z order - lower is first
+                if (controls.Any())
+                {
+                    foreach (var c in controls.OrderBy(c => c.ZOrder))
+                        c.DoDraw(new Graphics(g.SpriteBatch, g.Position + c.Location, c.Size));
+                }
+            }
         }
 
         /// <summary>
@@ -362,15 +439,7 @@ namespace Client.UI
             foreach (var c in this.controls)
                 c.DoUpdate(msElapsed);
 
-            //mouse dragging
-            if (mouseState.LeftButton == ButtonState.Released)
-                dragPoint = Vector.Zero;
-            else if (dragPoint != Vector.Zero)  //the control is being moved around by the user. 
-            {
-                var d = Screen.ScreenToUi(mouseState.Position.ToPoint()) - dragPoint;
-                this.RelativePosition += d;
-                dragPoint += d;
-            }
+            checkDragMove();
         }
 
         static Control MoveControl = null;
@@ -380,10 +449,10 @@ namespace Client.UI
         /// Draws a background over the whole control. 
         /// </summary>
         /// <param name="sb"></param>
-        public virtual void Draw(SpriteBatch sb)
+        public virtual void Draw(Graphics g)
         {
-            if (this.BackColor.A > 0)
-                SpriteFactory.Blank.DrawScreen(sb, ScreenPosition, ScreenSize, this.BackColor);
+            if (BackColor.A > 0)
+                g.Draw(Content.Textures.Blank, Vector.Zero, Size, BackColor);
         }
 
         /// <summary>
@@ -439,83 +508,75 @@ namespace Client.UI
             return null;
         }
 
+        #region Mouse key helpers
+        bool holdDownLeft { get { return mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Pressed; } }
+        bool holdDownRight { get { return mouseState.RightButton == ButtonState.Pressed && oldMouseState.RightButton == ButtonState.Pressed; } }
+        bool justPressedLeft { get { return mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released; } }
+        bool justPressedRight { get { return mouseState.RightButton == ButtonState.Pressed && oldMouseState.RightButton == ButtonState.Released; } }
+        bool justReleasedLeft { get { return mouseState.LeftButton == ButtonState.Released && oldMouseState.LeftButton == ButtonState.Pressed; } }
+        bool justReleasedRight { get { return mouseState.RightButton == ButtonState.Released && oldMouseState.RightButton == ButtonState.Pressed; } }
+        #endregion
+
         internal void UpdateMain(int msElapsed)
         {
             //span the whole window
             var min = Screen.ScreenToUi(Point.Zero);
             var max = Screen.ScreenToUi(new Point(Screen.Size.X, Screen.Size.Y));
-            this._absolutePosition = min;   //use the lowercase field so we don't move children..
-            this.Size = max - min;
+            Location = min;   //use the lowercase field so we don't move children..
+            Size = max - min;
+
 
             //update keyboard/mouse info
+            oldMouseState = mouseState;
+            oldKeyboardState = keyboardState;
             mouseState = Mouse.GetState();
             keyboardState = Keyboard.GetState();
 
-            //get hover control (the one under the mouse pointer)
-            var oldHover = HoverControl ?? this;
-            var newHover = GetHoverControl() ?? this;
-
-            //get the mouse position
             var mPos = Screen.ScreenToUi(mouseState.Position.ToPoint());
             var oldMPos = Screen.ScreenToUi(oldMouseState.Position.ToPoint());
 
-            var btnHeldDown =
-                (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Pressed) ||
-                (mouseState.RightButton == ButtonState.Pressed && oldMouseState.RightButton == ButtonState.Pressed);
+            //check drag-drop start before updating hover
+            if (holdDownLeft)
+                return;
 
+            //update the hover control
+            var oldHover = HoverControl ?? this;
+            HoverControl = GetHoverControl() ?? this;
 
-            if (MoveControl != null)
+            //mouse move
+            if (mPos != oldMPos)
+                HoverControl.MouseMove?.Invoke(HoverControl, mPos);
+
+            if (HoverControl == oldHover)
             {
-                MoveControl.ScreenPosition += (mPos - oldMPos).ToPoint();
+                //mouse down
+                if (justPressedLeft)
+                    HoverControl.MouseDown?.Invoke(HoverControl, mPos);
+
+                //mouse up
+                if (justReleasedLeft)
+                    HoverControl.MouseUp?.Invoke(HoverControl, mPos);
             }
-
-            //fire events for the hover controls
-            else if (!btnHeldDown)
+            else
             {
-                HoverControl = newHover;
-                if (newHover != null)
+                //leave old control
+                oldHover.MouseLeave?.Invoke();
+
+                // if we also released the button this frame
+                // and the source supports drag-drop
+                // raise the events
+                // hover is kept when mouse is down so that's what a drag-drop is
+                if (justReleasedLeft && oldHover.CanDrag)
                 {
-
-                    if (mPos != oldMPos && newHover.MouseMove != null)
-                        newHover.MouseMove(newHover, mPos);
-
-                    Func<ButtonState, ButtonState, bool> justPressed = (now, old) =>
-                        (now == ButtonState.Pressed && old == ButtonState.Released);
-
-                    Func<ButtonState, ButtonState, bool> justReleased = (now, old) =>
-                        (now == ButtonState.Released && old == ButtonState.Pressed);
-                    if (newHover == oldHover)
-                    {
-                        if (justPressed(mouseState.LeftButton, oldMouseState.LeftButton))
-                        {
-                            if (newHover.MouseDown != null)  // if we *just* pressed the mouse button, fire the MouseDown event. 
-                                newHover.MouseDown(newHover, mPos);
-                        }
-                        else if (justReleased(mouseState.LeftButton, oldMouseState.LeftButton))
-                        {
-                            if (newHover.MouseUp != null)    // if we *just* released the mouse button, fire the MouseUp event. 
-                                newHover.MouseUp(newHover, mPos);
-                        }
-                    }
-                    else    // hover control changed
-                    {
-                        //leave old control
-                        if (oldHover.MouseLeave != null)
-                            oldHover.MouseLeave();
-                        // if we also released the button this frame, do a shano-drag-drop event. 
-                        if (justReleased(mouseState.LeftButton, oldMouseState.LeftButton))
-                        {
-                            if (newHover.DragDrop != null && oldHover.CanDrag)    // if we *just* released the mouse button, fire the MouseUp event. 
-                                newHover.DragDrop(newHover, oldHover);
-                        }
-                        //enter new control
-                        if (newHover.MouseEnter != null)
-                            newHover.MouseEnter();
-                    }
+                    oldHover.OnDrag?.Invoke(HoverControl);
+                    HoverControl.OnDrop?.Invoke(oldHover);
+                    Console.WriteLine("DRAG DROP?");
                 }
+
+                //enter new control
+                HoverControl.MouseEnter?.Invoke();
             }
-            oldMouseState = mouseState;
-            oldKeyboardState = keyboardState;
         }
+
     }
 }

@@ -48,9 +48,15 @@ namespace Engine.Systems.RangeEvents
 
         protected override bool DoCheck(GameObject target)
         {
-            var newDist = (Origin.FuturePosition - target.FuturePosition).LengthSquared();
+            var newDist = (Origin.Position - target.Position).LengthSquared();
             var oldDist = (Origin.OldPosition - target.OldPosition).LengthSquared();
-            return (oldDist > RangeSquared) && (newDist < RangeSquared);
+            var inDist = (oldDist > RangeSquared || double.IsNaN(oldDist)) && (newDist < RangeSquared);
+
+            if (!inDist)
+                return false;
+
+            return true;
+
         }
     }
     

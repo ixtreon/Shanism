@@ -18,9 +18,7 @@ namespace Network.Objects
         //public readonly int Guid;
 
         public Vector Position { get; internal set; }
-
-        public AnimationDefOld Animation { get; internal set; }
-
+        
         public string Name { get; internal set; }
 
         public double Size { get; internal set; }
@@ -30,6 +28,10 @@ namespace Network.Objects
         public ObjectType ObjectType { get; internal set; }
 
         public IEnumerable<IUnit> SeenBy { get; internal set; }
+
+        public string Model { get; internal set; }
+
+        public string Animation { get; internal set; }
 
 
         public ObjectStub(int guid)

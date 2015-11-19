@@ -61,15 +61,17 @@ namespace Engine.Systems.RangeEvents
 
         internal bool Check(GameObject target, int currentFrame)
         {
-            if (LastChecked >= currentFrame)
+            //check frame
+            if (LastChecked >= currentFrame && Target != null)
                 return false;
             LastChecked = currentFrame;
 
-            if (Target != target)
+            //check target matches
+            if (Target != null && Target != target)
                 return false;
 
+            //do abstract check, invoke event if necessary
             var isRaised = DoCheck(target);
-
             if (isRaised)
                 Triggered?.Invoke(target);
 

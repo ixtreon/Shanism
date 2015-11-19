@@ -17,6 +17,12 @@ namespace IO.Objects
         /// </summary>
         string Icon { get; }
 
+
+        bool Visible { get; }
+        string Name { get; }
+        string Description { get; }
+
+
         /// <summary>
         /// Gets the type of this buff. 
         /// </summary>

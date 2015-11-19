@@ -1,5 +1,4 @@
-﻿using Client.Sprites;
-using IO.Common;
+﻿using IO.Common;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -78,18 +77,18 @@ namespace Client.Map
                 foreach (var x in Enumerable.Range(0, Width))
                     foreach (var y in Enumerable.Range(0, Height))
                     {
-                        var sprite = SpriteFactory.Terrain.GetSprite(Tiles[x, y]);
-                        var pos = Chunk.BottomLeft + new Vector(x, y);
+                        var pi = Content.Terrain.GetTile(Tiles[x, y]);
+                        var pos = Chunk.BottomLeft + new Vector(Chunk.Span.Width * x / Width, Chunk.Span.Height * y / Height);
                         var _tileFar = 1;
                         var _tileClose = 0;
 
-                        vertexData.Add(genPoint(pos.X + _tileClose, pos.Y + _tileClose, sprite.Points.TopLeft));
-                        vertexData.Add(genPoint(pos.X + _tileFar, pos.Y + _tileClose, sprite.Points.TopRight));
-                        vertexData.Add(genPoint(pos.X + _tileClose, pos.Y + _tileFar, sprite.Points.BottomLeft));
+                        vertexData.Add(genPoint(pos.X + _tileClose, pos.Y + _tileClose, pi.TopLeft));
+                        vertexData.Add(genPoint(pos.X + _tileFar, pos.Y + _tileClose, pi.TopRight));
+                        vertexData.Add(genPoint(pos.X + _tileClose, pos.Y + _tileFar, pi.BottomLeft));
 
-                        vertexData.Add(genPoint(pos.X + _tileClose, pos.Y + _tileFar, sprite.Points.BottomLeft));
-                        vertexData.Add(genPoint(pos.X + _tileFar, pos.Y + _tileClose, sprite.Points.TopRight));
-                        vertexData.Add(genPoint(pos.X + _tileFar, pos.Y + _tileFar, sprite.Points.BottomRight));
+                        vertexData.Add(genPoint(pos.X + _tileClose, pos.Y + _tileFar, pi.BottomLeft));
+                        vertexData.Add(genPoint(pos.X + _tileFar, pos.Y + _tileClose, pi.TopRight));
+                        vertexData.Add(genPoint(pos.X + _tileFar, pos.Y + _tileFar, pi.BottomRight));
                     }
 
                 buffer = new VertexBuffer(device, typeof(VertexPositionTexture), 6 * Area, BufferUsage.WriteOnly);

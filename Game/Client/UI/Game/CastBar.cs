@@ -51,13 +51,13 @@ namespace Client.UI
             get {  return Math.Max(0, (Target.CastingAbility.CastTime - Target.CastingProgress) / 1000.0); }
         }
 
-        public override void Draw(SpriteBatch sb)
+        public override void Draw(Graphics g)
         {
-            base.Draw(sb);
+            base.Draw(g);
 
-            if(this.Visible)
-                Textures.TextureCache.StraightFont.DrawString(sb, "- {0:0.0}s".Format(castTimeLeft), Color.White,
-                    AbsolutePosition + new Vector(Size.X, Size.Y / 2), 1, 0.5f);
+            //if(Visible)
+                g.DrawString(Content.Fonts.MediumFont, "- {0:0.0}s".Format(castTimeLeft), Color.White,
+                    Location + new Vector(Size.X, Size.Y / 2), 1, 0.5f);
         }
     }
 }

@@ -7,8 +7,8 @@
     <ProjectGuid>{2587E0B9-0242-4142-882F-6D893EC45F89}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AbilityIDE</RootNamespace>
-    <AssemblyName>AbilityIDE</AssemblyName>
+    <RootNamespace>ShanoEditor</RootNamespace>
+    <AssemblyName>ShanoEditor</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -95,6 +95,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\ContentViewModel.cs" />
     <Compile Include="ScenarioViews\DetailsView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -103,6 +104,21 @@
     </Compile>
     <Compile Include="ScenarioTree.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ScenarioViews\Maps\GameObjectButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ScenarioViews\Maps\ListPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ScenarioViews\Maps\ListPanel.Designer.cs">
+      <DependentUpon>ListPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ScenarioViews\Maps\GameObjectList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ScenarioViews\Maps\GameObjectList.Designer.cs">
+      <DependentUpon>GameObjectList.cs</DependentUpon>
     </Compile>
     <Compile Include="ScenarioViews\Maps\ShanoMap.cs">
       <SubType>UserControl</SubType>
@@ -122,34 +138,34 @@
     <Compile Include="ScenarioViews\MapView.Designer.cs">
       <DependentUpon>MapView.cs</DependentUpon>
     </Compile>
-    <Compile Include="ScenarioViews\Models\AnimationModelView.cs" />
-    <Compile Include="ScenarioViews\Models\AnimationView.cs">
+    <Compile Include="ScenarioViews\Content\AnimationView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ScenarioViews\Models\AnimationView.Designer.cs">
+    <Compile Include="ScenarioViews\Content\AnimationView.Designer.cs">
       <DependentUpon>AnimationView.cs</DependentUpon>
     </Compile>
-    <Compile Include="ScenarioViews\Models\ModelsView.cs">
+    <Compile Include="ScenarioViews\Content\ModelsView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ScenarioViews\Models\ModelsView.Designer.cs">
+    <Compile Include="ScenarioViews\Content\ModelsView.Designer.cs">
       <DependentUpon>ModelsView.cs</DependentUpon>
     </Compile>
-    <Compile Include="ScenarioViews\Models\TextureModelView.cs" />
-    <Compile Include="ScenarioViews\Models\TextureView.cs">
+    <Compile Include="ViewModels\ScenarioViewModel.cs" />
+    <Compile Include="ViewModels\TextureViewModel.cs" />
+    <Compile Include="ScenarioViews\Content\TextureBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ScenarioViews\Models\TextureView.Designer.cs">
-      <DependentUpon>TextureView.cs</DependentUpon>
+    <Compile Include="ScenarioViews\Content\TextureBox.Designer.cs">
+      <DependentUpon>TextureBox.cs</DependentUpon>
     </Compile>
     <Compile Include="ScenarioViews\ScenarioView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ScenarioViews\ScenarioViewType.cs" />
-    <Compile Include="ScenarioViews\Models\TexturesView.cs">
+    <Compile Include="ScenarioViews\TexturesView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ScenarioViews\Models\TexturesView.Designer.cs">
+    <Compile Include="ScenarioViews\TexturesView.Designer.cs">
       <DependentUpon>TexturesView.cs</DependentUpon>
     </Compile>
     <Compile Include="ScenarioViews\SingletonImageList.cs" />
@@ -171,6 +187,12 @@
     <EmbeddedResource Include="ScenarioTree.resx">
       <DependentUpon>ScenarioTree.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ScenarioViews\Maps\GameObjectList.resx">
+      <DependentUpon>GameObjectList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScenarioViews\Maps\ListPanel.resx">
+      <DependentUpon>ListPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ScenarioViews\Maps\ShanoMap.resx">
       <DependentUpon>ShanoMap.cs</DependentUpon>
     </EmbeddedResource>
@@ -180,13 +202,13 @@
     <EmbeddedResource Include="ScenarioViews\MapView.resx">
       <DependentUpon>MapView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ScenarioViews\Models\AnimationView.resx">
+    <EmbeddedResource Include="ScenarioViews\Content\AnimationView.resx">
       <DependentUpon>AnimationView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ScenarioViews\Models\ModelsView.resx">
+    <EmbeddedResource Include="ScenarioViews\Content\ModelsView.resx">
       <DependentUpon>ModelsView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ScenarioViews\Models\TexturesView.resx">
+    <EmbeddedResource Include="ScenarioViews\TexturesView.resx">
       <DependentUpon>TexturesView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ShanoEditor.resx">

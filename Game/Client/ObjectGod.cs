@@ -102,7 +102,7 @@ namespace Client
         /// <summary>
         /// Removes a game object by its GUID. 
         /// </summary>
-        /// <param name="guid">The GUID of the object to remove. </param>
+        /// <param name="guid">The GUID of the object to remove. </pa   ram>
         public void RemoveObject(int guid)
         {
             try //being lazy..

@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IO;
-using Client.Sprites;
 using IO.Common;
 using Color = Microsoft.Xna.Framework.Color;
+using Client.Assets.Fonts;
 
 namespace Client.UI
 {
@@ -81,7 +81,7 @@ namespace Client.UI
 
         public ChatBox()
         {
-            Font = TextureCache.StraightFont;
+            Font = Content.Fonts.MediumFont;
             CurrentText = string.Empty;
             KeyManager.ChatProvider.CharPressed += ChatProvider_CharPressed;
 
@@ -180,25 +180,25 @@ namespace Client.UI
             get { return new Vector(Font.CharSpacing, Font.Height); }
         }
 
-        public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch sb)
+        public override void Draw(Graphics g)
         {
-            base.Draw(sb);
+            base.Draw(g);
             
             if(CursorVisible)           // cursor
             {
-                var pos = AbsolutePosition + new Vector((float)textPositions[CursorPosition], Size.Y - CursorSize.Y);
-                SpriteFactory.Blank.Draw(sb, pos, CursorSize, CursorColor);
+                var pos = Location + new Vector((float)textPositions[CursorPosition], Size.Y - CursorSize.Y);
+                g.Draw(Content.Textures.Blank, pos, CursorSize, CursorColor);
             }
 
             //text
-            Font.DrawString(sb, CurrentText, ForeColor, AbsolutePosition + new Vector(0, Size.Y), 0, 1);
+            g.DrawString(Font, CurrentText, ForeColor, Location + new Vector(0, Size.Y), 0, 1);
 
             if (SelectionLength != 0)    // selection
             {
                 var start = textPositions[CursorPosition];
                 var end = textPositions[CursorPosition + SelectionLength];
-                SpriteFactory.Blank.Draw(sb, 
-                    AbsolutePosition + new Vector(start, Size.Y - CursorSize.Y), 
+                g.Draw(Content.Textures.Blank,
+                    Location + new Vector(start, Size.Y - CursorSize.Y), 
                     new Vector(end - start, CursorSize.Y), 
                     SelectionColor);
             }

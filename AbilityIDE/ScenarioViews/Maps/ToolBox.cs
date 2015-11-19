@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace AbilityIDE.ScenarioViews.Maps
+namespace ShanoEditor.ScenarioViews.Maps
 {
     public partial class ToolBox : UserControl
     {

@@ -1,5 +1,4 @@
-﻿using Client.Sprites;
-using Client.Textures;
+﻿using Client.Assets.Fonts;
 using IO.Common;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -13,42 +12,36 @@ namespace Client.UI.Common
 {
     class Label : Control
     {
-        public string Text = string.Empty;
+        public string Text { get; set; } = string.Empty;
 
-        public Color TextColor = Color.Goldenrod;
+        public Color TextColor { get; set; } = Color.Goldenrod;
 
-        public TextureFont Font { get; set; }
+        public TextureFont Font { get; set; } = Content.Fonts.FancyFont;
 
         /// <summary>
         /// Gets or sets whether this label automatically fits to the text inside it. 
         /// </summary>
-        public bool AutoSize { get; set; }
+        public bool AutoSize { get; set; } = true;
 
         public Label()
         {
-            this.BackColor = Color.Transparent;
-            this.Font = TextureCache.FancyFont;
-            this.AutoSize = true;
+            BackColor = Color.Transparent;
+            Size = new Vector(0.4, 0.1);
 
-            this.Size = new Vector(0.37f, 0.08f);
-            this.Locked = true;
-            this.ClickThrough = true;
+            ClickThrough = true;
         }
         public override void Update(int msElapsed)
         {
             if(AutoSize)
-                this.Size = Screen.ScreenToUi(Font.MeasureString(Text)) + new Vector(Anchor * 2, Anchor * 2);
+                Size = Font.MeasureStringUi(Text) + new Vector(Padding * 2);
 
             base.Update(msElapsed);
         }
 
-        public override void Draw(SpriteBatch sb)
+        public override void Draw(Graphics g)
         {
-            SpriteFactory.Blank.Draw(sb, AbsolutePosition, Size, BackColor);
-
-            Font.DrawString(sb, Text, TextColor, AbsolutePosition + new Vector(Anchor, Anchor), yAnchor: 0.5f);
-
-            //Font.DrawStringScreen(sb, Text, TextColor, ScreenPosition.Add(6, ScreenSize.Y / 2), yAnchor: 0.5f);
+            g.Draw(Content.Textures.Blank, Vector.Zero, Size, BackColor);
+            g.DrawString(Font, Text, TextColor, new Vector(Padding, Padding), yAnchor: 0.5f);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using AbilityIDE.ScenarioViews;
+﻿using ShanoEditor.ScenarioViews;
 using ScenarioLib;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace AbilityIDE
+namespace ShanoEditor
 {
     class ScenarioTree : TreeView
     {
@@ -26,7 +26,7 @@ namespace AbilityIDE
             }
         }
         //public MapFile Map { get; private set; }
-        public ObjectsConfig Models { get; private set; }
+        public ContentConfig Models { get; private set; }
 
         /// <summary>
         /// Always one 

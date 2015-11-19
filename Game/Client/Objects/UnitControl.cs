@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using IO;
 using Microsoft.Xna.Framework.Graphics;
 using Client.Properties;
-using Client.Sprites;
 using Client.UI;
 using Client.UI.Common;
 using IO.Objects;
@@ -36,17 +35,12 @@ namespace Client.Objects
                 this.ZOrder -= 10 * Constants.Client.WindowHeight;
         }
         
-        public override void Draw(SpriteBatch sb)
+        public override void Draw(Graphics g)
         {
-            //update period depending on move state
-            var moving = false;
-            if(Sprite is AnimatedSprite)
-                ((AnimatedSprite)Sprite).Period = moving ? 100 : 1000;
-
             var sz = new Vector(Unit.Size);
 
             var c = Unit.IsDead ? Color.Black : Color.White;
-            Sprite.DrawScreen(sb, ScreenPosition, ScreenSize, c);
+            g.Draw(Sprite, Vector.Zero, Size, c);
 
             if ((MouseOver || Settings.Default.AlwaysShowHealthBars) && !Unit.IsDead)
             {
@@ -54,7 +48,7 @@ namespace Client.Objects
                 var barForeColor = Color.DarkRed.SetAlpha(210);
                 var barHeight = Screen.UiToScreen(0.03);
                 var barPosition = ScreenPosition - new Point(0, barHeight);
-                ValueBar.DrawValueBar(sb, Unit.Life, Unit.MaxLife, barPosition, new Point(ScreenSize.X, barHeight), barBackColor, barForeColor);
+                //ValueBar.DrawValueBar(g.SpriteBatch, Unit.Life, Unit.MaxLife, barPosition, new Point(ScreenSize.X, barHeight), barBackColor, barForeColor);
             }
 
         }

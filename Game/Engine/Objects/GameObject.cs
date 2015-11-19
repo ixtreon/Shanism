@@ -1,4 +1,5 @@
-﻿using Engine.Systems.RangeEvents;
+﻿using Engine.Maps.Concurrent;
+using Engine.Systems.RangeEvents;
 using IO;
 using IO.Common;
 using IO.Content;
@@ -52,8 +53,6 @@ namespace Engine.Objects
         /// </summary>
         public double Size { get; set; }
 
-        public string ModelString { get; set; }
-
         /// <summary>
         /// Gets the globally unique identifier of the object. 
         /// </summary>
@@ -79,31 +78,58 @@ namespace Engine.Objects
             set { setLocation(value, false); }
         }
 
+        /// <summary>
+        /// Gets the location of this object in the previous game frame. 
+        /// A value of <see cref="double.NaN"/> indicates the object was just added to the map. 
+        /// </summary>
         internal Vector OldPosition { get { return _oldPosition; } }
 
+        /// <summary>
+        /// Gets the location where this object will move next game frame. 
+        /// </summary>
         internal Vector FuturePosition {  get { return _newPosition; } }
 
         /// <summary>
-        /// Gets whether the unit was moved by magix this turn. 
+        /// Gets whether the object was moved by magix this turn. 
         /// </summary>
         public bool HasCustomPosition {  get { return _customPosition; } }
 
         /// <summary>
+        /// Gets whether this object should be removed from the map.
+        /// </summary>
+        internal bool IsDestroyed { get; private set; }
+
+
+        #region Model and Animations
+        /// <summary>
         /// Gets the model of the object. 
         /// </summary>
-        public AnimationDefOld Animation
+        public string Model { get; }
+
+        public string Animation { get; private set; } = IO.Constants.Content.DefaultAnimation;
+
+        public void SetAnimation(string anim)
         {
-            get
-            {
-                return Game.Scenario.Models[this.ModelString];
-            }
+            if (string.IsNullOrWhiteSpace(anim))
+                Animation = IO.Constants.Content.DefaultAnimation;
+            else
+                Animation = anim;
         }
+
+        /// <summary>
+        /// Resets this object's current animation to the default one. 
+        /// </summary>
+        public void ResetAnimation()
+        {
+            Animation = IO.Constants.Content.DefaultAnimation;
+        }
+        #endregion
 
 
         protected GameObject()
         {
             this.Size = 0.4;
-            this.ModelString = "default";
+            this.Model = IO.Constants.Content.DefaultModel;
             Guid = ObjectGuid.GetNew();
             _oldPosition = new Vector(double.NaN);
         }
@@ -112,10 +138,23 @@ namespace Engine.Objects
             : this()
         {
             this.Name = "Dummy";
-            this.ModelString = model;
+            this.Model = model;
             _position = _newPosition = location;
         }
 
+
+
+
+        /// <summary>
+        /// Marks this GameObject for destruction, eventually removing it from the game. 
+        /// </summary>
+        public virtual void Destroy()
+        {
+            if (IsDestroyed)
+                throw new InvalidOperationException("Trying to destroy an object twice!");
+
+            IsDestroyed = true;
+        }
 
         /// <summary>
         /// Updates the externally visible <see cref="Position"/> and <see cref="OldPosition"/> values. 

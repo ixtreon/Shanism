@@ -8,6 +8,24 @@ namespace IO
 {
     public static class Constants
     {
+        public static class Content
+        {
+            public const string DefaultModel = "dummy";
+
+            public const string DefaultIcon = "default";
+
+            /// <summary>
+            /// The name of the animation used by default with all models. 
+            /// </summary>
+            public const string DefaultAnimation = "stand";
+
+            public const string TerrainFile = "terrain";
+
+            public const int TerrainFileSplitsX = 8;
+            public const int TerrainFileSplitsY = 8;
+
+        }
+
         public static class Client
         {
             public const int WindowWidth = 24;

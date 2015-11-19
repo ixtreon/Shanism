@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -154,6 +155,16 @@ namespace IO
             return rand_normal;
         }
 
+        /// <summary>
+        /// Returns a vector with random X and Y values in the range [0;1]
+        /// </summary>
+        /// <param name="r"></param>
+        /// <returns></returns>
+        public static Vector NextVector(this Random r)
+        {
+            return new Vector(r.NextDouble(), r.NextDouble());
+        }
+
         public static IEnumerable<T> Prepend<T>(this IEnumerable<T> e, T item)
         {
             yield return item;
@@ -171,6 +182,16 @@ namespace IO
 
 
         public static TVal TryGet<TKey, TVal>(this Dictionary<TKey, TVal> dict, TKey val)
+        {
+            TVal result;
+            dict.TryGetValue(val, out result);
+
+            return result;
+        }
+
+        public static TVal TryGet<TKey, TVal>(this ConditionalWeakTable<TKey, TVal> dict, TKey val)
+            where TKey : class
+            where TVal : class
         {
             TVal result;
             dict.TryGetValue(val, out result);

@@ -11,6 +11,8 @@ namespace ScenarioLib
 {
     /// <summary>
     /// Contains the configuration for the map layer. 
+    /// Specifies whether the map is procedural or fixed
+    /// and if the latter, also its size and terrain. 
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class MapConfig
@@ -32,10 +34,19 @@ namespace ScenarioLib
         /// </summary>
         public int Height { get { return Map.GetLength(1); } }
 
+        /// <summary>
+        /// Gets or sets the terrain data for a finite map. 
+        /// </summary>
         [JsonProperty]
         public TerrainType[,] Map { get; set; }
 
-        public Point Size {  get { return new Point(Width, Height); } }
+        /// <summary>
+        /// Gets the size of the map. 
+        /// </summary>
+        public Point Size
+        {
+            get { return new Point(Width, Height); }
+        }
 
 
         public MapConfig()
@@ -57,6 +68,7 @@ namespace ScenarioLib
 
             if (Map != null)
             {
+                //copy old map over
                 var mw = Math.Min(Width, w);
                 var mh = Math.Min(Height, h);
                 foreach (var x in Enumerable.Range(0, mw))

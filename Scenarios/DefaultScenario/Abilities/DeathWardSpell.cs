@@ -12,6 +12,7 @@ public class DeathWardSpell : Ability
         : base(AbilityTargetType.PointTarget)
     {
         CastTime = 1000;
+
         Icon = "ice-sky-2";
         Name = "Death Ward";
         Description = "Places a death ward which shoots nearby enemies on the specified point. ";

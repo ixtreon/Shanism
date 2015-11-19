@@ -20,6 +20,7 @@ namespace Engine.Maps
     /// Allows efficient concurrent range queries of a pre-specified size. 
     /// </summary>
     /// <typeparam name="T">The type of objects to track. </typeparam>
+    [Obsolete]
     public class HashMap<T> : IEnumerable<T>
     {
         /// <summary>
@@ -41,12 +42,6 @@ namespace Engine.Maps
         public IEnumerable<T> Items
         {
             get { return hashTable.Values.Cast<Hashtable>().SelectMany(bin => bin.Keys.Cast<T>().ToArray()).ToArray(); }
-            //get
-            //{
-            //    foreach (var tbl in hashTable.Values.Cast<Hashtable>().ToArray())
-            //        foreach (DictionaryEntry val in tbl)
-            //            yield return (T)val.Key;
-            //}
         }
 
         public HashMap(Vector cellSize)
@@ -76,15 +71,17 @@ namespace Engine.Maps
         /// <param name="position"></param>
         public bool Remove(T item, Vector position)
         {
-            //remove from the hashmap using the item's current key to locate it. 
+            //get bin
             var binId = getBin(position);
-            if (!hashTable.ContainsKey(binId))
+            var binTable = TryGet(binId);
+            if (binTable == null)
                 return false;
 
-            var binTable = Get(binId);
+            //get item
             if (!binTable.ContainsKey(item))
                 return false;
 
+            //remove it
             binTable.Remove(item);
             Count--;
             return true;
@@ -103,11 +100,11 @@ namespace Engine.Maps
             var oldId = getBin(position);
             var newId = getBin(newPos);
 
-            if(position.IsNan() || oldId == newId)
+            if (position.IsNan() || oldId == newId)
             {
                 var ht = Get(newId);
                 //lock (ht)
-                    ht[item] = newPos;
+                ht[item] = newPos;
             }
             else
             {
@@ -115,7 +112,7 @@ namespace Engine.Maps
 
                 Hashtable ht = GetOrAdd(newId);
                 //lock(ht)
-                    ht[item] = newPos;
+                ht[item] = newPos;
             }
         }
 
@@ -137,7 +134,7 @@ namespace Engine.Maps
             foreach (var b in bins)
             {
                 if ((binTable = TryGet(b)) != null)
-                        foreach (DictionaryEntry kvp in binTable)
+                    foreach (DictionaryEntry kvp in binTable)
                         if (((Vector)kvp.Value).Inside(pos, size))
                             yield return (T)kvp.Key;
             }

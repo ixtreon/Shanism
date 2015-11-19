@@ -91,7 +91,7 @@ namespace Engine.Objects.Game
 
         private Ability()
         {
-            this.Icon = "default";
+            this.Icon = IO.Constants.Content.DefaultIcon;
         }
 
         /// <summary>
@@ -217,12 +217,13 @@ namespace Engine.Objects.Game
 
             if (isUnit && CanTargetUnits())
                 return ((Unit)target).Position;
-
-            if (isPoint && CanTargetGround())
+            else if (isPoint && CanTargetGround())
                 return (Vector)target;
+            else if (isUnit && CanTargetGround())
+                return ((Unit)target).Position;
 
-            //return null;
-            throw new Exception("Expected a {0} target but received a {1}".Format(TargetType, target?.GetType()));
+                //return null;
+                throw new Exception("Expected a {0} target but received a {1}".Format(TargetType, target?.GetType()));
         }
 
         public override string ToString()

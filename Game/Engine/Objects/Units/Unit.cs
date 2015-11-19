@@ -207,9 +207,7 @@ namespace Engine.Objects
             : base(model, location)
         {
             this.Owner = owner;
-            Owner.AddControlledUnit(this);
 
-            this.VisionRange = 5;
             this.Level = level;
             this.Size = 0.4;
 
@@ -225,6 +223,13 @@ namespace Engine.Objects
             BaseLife = 5;
             LifePercentage = 1;
             ManaPercentage = 1;
+
+            //loaded from editor
+            if (Game == null)
+                return;
+
+            Owner?.AddControlledUnit(this);
+            this.VisionRange = 5;
         }
 
         /// <summary>
@@ -251,8 +256,6 @@ namespace Engine.Objects
             LifeRegen = Constants.BaseLifeRegen;
             ManaRegen = Constants.BaseManaRegen;
             MagicDamage = Constants.BaseMagicDamage;
-
-            MoveSpeed = 3;
         }
 
         /// <summary>
@@ -269,6 +272,7 @@ namespace Engine.Objects
                 return;
 
             UpdateBuffs(msElapsed);
+            updateVision(msElapsed);
             regenerate(msElapsed);
 
             //update abilities

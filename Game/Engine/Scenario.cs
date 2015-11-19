@@ -16,12 +16,6 @@ namespace Engine
 {
     public class Scenario : CompiledScenario
     {
-        /// <summary>
-        /// Used to list all models used by the scenario. 
-        /// </summary>
-        [Obsolete]
-        readonly internal ModelManager Models = new ModelManager();
-
 
         readonly List<CustomScript> scripts = new List<CustomScript>();
 

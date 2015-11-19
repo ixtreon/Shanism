@@ -23,7 +23,8 @@ namespace Engine.Maps.Concurrent
     public class HashMap<T>
     {
 
-        readonly ConcurrentDictionary<Vector, ConcurrentDictionary<T, Vector>> hashTable = new ConcurrentDictionary<Vector, ConcurrentDictionary<T, Vector>>();
+         ConcurrentDictionary<Vector, ConcurrentDictionary<T, Vector>> hashTable 
+            = new ConcurrentDictionary<Vector, ConcurrentDictionary<T, Vector>>();
 
         public readonly Vector CellSize;
 
@@ -43,22 +44,10 @@ namespace Engine.Maps.Concurrent
         {
             var binId = getBin(position);
 
-            var z = hashTable.AddOrUpdate(binId,
-                ((v) =>
-                {
-                    var d = new ConcurrentDictionary<T, Vector>();
-                    if (d.TryAdd(item, position))
-                        Count++;
-                    return d;
-                }),
-                (v, t) =>
-                {
-                    if (t.TryAdd(item, position))
-                        Count++;
-                    return t;
-                });
-            //if(t.TryAdd(item, position))
-            //    Count++;
+            var bin = hashTable.GetOrAdd(binId, (v) => new ConcurrentDictionary<T, Vector>());
+
+            if (bin.TryAdd(item, position))
+                Count++;
         }
 
         public bool TryRemove(T item, Vector position)
@@ -102,7 +91,6 @@ namespace Engine.Maps.Concurrent
         {
             var cellStart = getBin(pos);
             var cellEnd = getBin(pos + size);
-            var l = new List<T>();
 
             // get the distinct bin IDs of all bins inbetween (and including)
             // the start and end points, then get their entries in the table. 
@@ -111,12 +99,11 @@ namespace Engine.Maps.Concurrent
                 {
                     var binId = new Bin(ix, iy);
                     ConcurrentDictionary<T, Vector> bin;
-                    if(hashTable.TryGetValue(binId, out bin))
+                    if (hashTable.TryGetValue(binId, out bin))
                         foreach (var u in bin)
                             if (u.Value.Inside(pos, size))
-                                l.Add(u.Key);
+                                yield return u.Key;
                 }
-            return l;
         }
 
         /// <summary>

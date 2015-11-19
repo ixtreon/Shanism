@@ -139,7 +139,7 @@ namespace Engine.Objects
                 return;
 
             object target = null;
-            switch(msg.TargetType)
+            switch(ability.TargetType)
             {
                 case AbilityTargetType.PointTarget:
                     target = msg.TargetLocation;
@@ -149,6 +149,14 @@ namespace Engine.Objects
                     target = Map.GetByGuid(msg.TargetGuid);
                     if (target == null)
                         return;
+                    break;
+
+                case AbilityTargetType.PointOrUnitTarget:
+                    target = (object)Map.GetByGuid(msg.TargetGuid) ?? msg.TargetLocation;
+                    break;
+
+                case AbilityTargetType.NoTarget:
+
                     break;
             }
             CastAbility(ability, target);

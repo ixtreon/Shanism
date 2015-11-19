@@ -113,18 +113,18 @@ namespace Engine.Maps
         {
             currentFrame++;
 
-            var objs = Objects.ToArray();
-
-            //shouldn't have destroyed units inside the map. 
-            Debug.Assert(!objs.Any(o => o.IsDestroyed));
 
             //state update pass
             map.AddPendingObjects();
 
+            //shouldn't have destroyed units inside the map. 
+            var objs = Objects.ToArray();
+            Debug.Assert(!objs.Any(o => o.IsDestroyed));
+
             //update constraints
-            //TODO: still pass enum of all objects
+            //TODO: still passing all objects
             //      rather than nearby ones
-            foreach(var obj in objs)
+            foreach (var obj in objs)
                 RangeProvider.CheckAllConstraints(obj, objs, currentFrame);
 
             //update units n map

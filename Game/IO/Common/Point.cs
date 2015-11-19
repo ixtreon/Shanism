@@ -13,28 +13,39 @@ namespace IO.Common
     {
         public static readonly Point Zero = new Point();
 
+        /// <summary>
+        /// The X coordinate of the point. 
+        /// </summary>
         [SerialMember]
         public int X;
+
+        /// <summary>
+        /// The Y coordinate of the point. 
+        /// </summary>
         [SerialMember]
         public int Y;
 
+
+        /// <summary>
+        /// Creates a new point with both its X and Y set to the given value. 
+        /// </summary>
+        /// <param name="v">The value for both the X and Y values of the point. </param>
         public Point(int v)
         {
             X = Y = v;
         }
 
+        /// <summary>
+        /// Creates a new point with the given X and Y coordinates. 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         public Point(int x, int y)
         {
             this.X = x;
             this.Y = y;
         }
 
-        public IEnumerable<Point> IterateToInclusive(Point b)
-        {
-            for (int ix = X; ix <= b.X; ix++)
-                for (int iy = Y; iy <= b.Y; iy++)
-                    yield return new Point(ix, iy);
-        }
 
         #region Point-point operators
         public static bool operator ==(Point a, Point b)
@@ -49,16 +60,6 @@ namespace IO.Common
         public static Point operator +(Point a, Point b)
         {
             return new Point(a.X + b.X, a.Y + b.Y);
-        }
-
-        /// <summary>
-        /// Constrains the first point between the other two. 
-        /// </summary>
-        public Point ConstrainWithin(Point low, Point high)
-        {
-            var x = Math.Min(high.X, Math.Max(low.X, X));
-            var y = Math.Min(high.Y, Math.Max(low.Y, Y));
-            return new Point(x, y);
         }
 
         public static Point operator -(Point a, Point b)
@@ -93,20 +94,42 @@ namespace IO.Common
         }
         #endregion
 
-        #region Point-double operators
-        public static Vector operator /(Point a, double divisor)
+
+        /// <summary>
+        /// Returns all points on the rectangle having this point as its bottom-left corner
+        /// and the given point as its top-right corner. 
+        /// </summary>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public IEnumerable<Point> IterateToInclusive(Point b)
         {
-            return new Vector(a.X / divisor, a.Y / divisor);
+            for (int ix = X; ix <= b.X; ix++)
+                for (int iy = Y; iy <= b.Y; iy++)
+                    yield return new Point(ix, iy);
         }
-        #endregion
 
+        /// <summary>
+        /// Returns a point with coordinates clamped 
+        /// within the rectangle specified by the given points. 
+        /// </summary>
+        public Point Clamp(Point lowLeft, Point topRight)
+        {
+            var x = Math.Min(topRight.X, Math.Max(lowLeft.X, X));
+            var y = Math.Min(topRight.Y, Math.Max(lowLeft.Y, Y));
+            return new Point(x, y);
+        }
 
+        /// <summary>
+        /// Gets the Euclidean distance from this point to the given point. 
+        /// </summary>
         public double DistanceTo(Point other)
         {
             var dx = X - other.X;
             var dy = Y - other.Y;
             return Math.Sqrt(dx * dx + dy * dy);
         }
+
+        #region Overrides
 
         public override bool Equals(object obj)
         {
@@ -132,11 +155,6 @@ namespace IO.Common
             }
         }
 
-        public Point Clamp(Point min, Point max)
-        {
-            return new Point(
-                Math.Min(Math.Max(min.X, X), max.X),
-                Math.Min(Math.Max(min.Y, Y), max.Y));
-        }
+        #endregion
     }
 }

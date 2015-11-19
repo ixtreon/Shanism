@@ -16,6 +16,12 @@ namespace Engine.Objects.Game
     /// </summary>
     public class Monster : Unit
     {
+        public Monster(string model, Vector location)
+            : this(model, location, 1, false)
+        {
+
+        }
+
         /// <summary>
         /// Creates a new monster of the specified level. 
         /// </summary>
@@ -23,7 +29,7 @@ namespace Engine.Objects.Game
         /// <param name="location">The position of the monster. </param>
         /// <param name="level">The level of the monster. </param>
         /// <param name="isElite">Whether the monster gets bonus life n damage and is considered elite. </param>
-        public Monster(string model, Vector location, int level, bool isElite = false)
+        public Monster(string model, Vector location, int level = 1, bool isElite = false)
             : base(model, Player.NeutralAggressive, location, level)
         {
             if(isElite)
@@ -55,7 +61,7 @@ namespace Engine.Objects.Game
             var ab = new Attack();
             AddAbility(ab);
 
-            Behaviour = new AggroBehaviour(this, ab);
+            Behaviour = new AggroBehaviour(this);
         }
 
         /// <summary>
@@ -63,7 +69,7 @@ namespace Engine.Objects.Game
         /// </summary>
         /// <param name="prototype"></param>
         public Monster(Monster prototype)
-            : this(prototype.ModelString, prototype.Position, prototype.Level)
+            : this(prototype.Model, prototype.Position, prototype.Level)
         {
 
         }

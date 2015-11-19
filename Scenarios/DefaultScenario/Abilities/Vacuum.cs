@@ -28,7 +28,7 @@ class Vacuum : Ability
         this.ManaCost = 1;
         this.Name = "Vacuum";
         this.Description = "wtf";
-        this.Icon = "lightning-1";
+        Icon = "air-burst-magenta-2";
 
         SuckInSpeed = 10;
         VacuumRange = 0.3;

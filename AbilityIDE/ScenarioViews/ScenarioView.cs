@@ -1,4 +1,6 @@
-﻿using ScenarioLib;
+﻿using IO.Objects;
+using ScenarioLib;
+using ShanoEditor.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,44 +8,57 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace AbilityIDE.ScenarioViews
+namespace ShanoEditor.ScenarioViews
 {
-    public class ScenarioView : UserControl
+    class ScenarioView : UserControl
     {
         public virtual ScenarioViewType ViewType { get; }
 
         public event Action ScenarioChanged;
 
-        protected bool _loadingScenario;
-        ScenarioFile _scenario;
-        public ScenarioFile Scenario
-        {
-            get { return _scenario; }
-            set
-            {
-                if (_scenario != value)
-                {
-                    _scenario = value;
+        /// <summary>
+        /// Gets or sets whether changes to the model are ignored. 
+        /// Gets useful when we start loading the scenario. 
+        /// </summary>
+        protected bool Loading;
 
-                    Task.Run(async () =>
-                    {
-                        _loadingScenario = true;
-                        await LoadScenario();
-                        _loadingScenario = false;
-                    });
-                }
+        public ScenarioViewModel Model { get; private set; }
+        
+
+        public void SetModel(ScenarioViewModel model)
+        {
+            if (Model != model)
+            {
+                Model = model;
+
+                Task.Run(async () =>
+                {
+                    Loading = true;
+                    await LoadModel();
+                    Loading = false;
+                });
             }
         }
 
-        protected virtual async Task LoadScenario() { }
+        public void Save()
+        {
+            SaveModel();
+        }
 
-        public virtual void SaveScenario() { }
+        protected virtual async Task LoadModel() { }
+
+        /// <summary>
+        /// Made for controls to update the ViewModel 
+        /// in case they are being lazy about it. 
+        /// </summary>
+        protected virtual void SaveModel() { }
+
 
         public void MarkAsChanged()
         {
-            if (!_loadingScenario)
+            if (!Loading)
             {
-                Scenario.IsDirty = true;
+                Model.IsDirty = true;
                 ScenarioChanged?.Invoke();
             }
         }

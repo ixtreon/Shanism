@@ -8,17 +8,17 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using AbilityIDE.Properties;
+using ShanoEditor.Properties;
 using System.IO;
-using AbilityIDE.ScenarioViews;
+using ShanoEditor.ScenarioViews;
 
-namespace AbilityIDE
+namespace ShanoEditor
 {
-    public partial class ShanoEditor : Form
+    public partial class ShanoEditorForm : Form
     {
 
         ScenarioView[] scenarioViews;
-
+        
 
         public bool StatusLoading
         {
@@ -44,14 +44,12 @@ namespace AbilityIDE
         }
 
 
-        public ShanoEditor()
+        public ShanoEditorForm()
         {
             InitializeComponent();
             populateRecentMenu();
 
             scenarioTree.SelectionChanged += tree_SelectionChanged;
-
-
 
             scenarioViews = enumControls(this)
                 .Cast<Control>()
@@ -66,10 +64,11 @@ namespace AbilityIDE
                 c.ScenarioChanged += scenarioView_ChangedScenario;
             }
         }
+        
 
         private void scenarioView_ChangedScenario()
         {
-            updateUi();
+            updateCaption();
         }
 
         private void tree_SelectionChanged(ScenarioViewType ty)
@@ -144,22 +143,11 @@ namespace AbilityIDE
         {
             //checkSyntax();
         }
-
-        private void scenarioView1_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-            var n = e.Node;
-
-            //if (Files.ContainsKey(n))
-            //{
-            //    var txt = Files[n];
-
-            //    cCodeEditor.Text = txt;
-            //}
-        }
+        
 
         private void ShanoEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (Scenario == null || !Scenario.IsDirty)
+            if (Model == null || !Model.IsDirty)
                 return;
 
             var z = MessageBox.Show(

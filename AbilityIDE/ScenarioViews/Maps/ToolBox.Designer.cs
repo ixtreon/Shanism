@@ -1,4 +1,4 @@
-﻿namespace AbilityIDE.ScenarioViews.Maps
+﻿namespace ShanoEditor.ScenarioViews.Maps
 {
     partial class ToolBox
     {

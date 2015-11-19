@@ -126,6 +126,7 @@
     <Compile Include="Common\OrderType.cs" />
     <Compile Include="Content\AnimationDef.cs" />
     <Compile Include="Content\ModelDef.cs" />
+    <Compile Include="INetReceptor.cs" />
     <Compile Include="IReceptor.cs" />
     <Compile Include="Message\Server\ObjectAnimation.cs" />
     <Compile Include="Objects\IBuff.cs" />
@@ -170,6 +171,7 @@
     <Compile Include="Objects\UnitType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\ChunkTests.cs" />
+    <Compile Include="Ticker.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

@@ -8,40 +8,36 @@ using Engine.Systems;
 using Engine.Objects.Game;
 using IO.Common;
 
-class SpawnHeroes : CustomScript
+namespace DefaultScenario
 {
-    public override void LoadModels(ModelManager manager)
+    class SpawnHeroes : CustomScript
     {
-        manager.Include("hero", 3, 1);
-        manager.Include("mobche", 4, 1);
-        manager.Include("lightning_ball", 20, 1, 100);
-        manager.Include("pruchka");
-        manager.Include("tree");
-    }
 
-    public override void OnHeroSpawned(Hero hero)
-    {
-        var spellz = new Ability[]
+        public override void OnHeroSpawned(Hero hero)
         {
-            new Teleport(),
-            new Spark(),
-            new Vacuum(),
-            new DeathWardSpell(),
-        };
+            var spellz = new Ability[]
+            {
+                new Abilities.Haste(),
+                new Teleport(),
+                new Spark(),
+                new Vacuum(),
+                new DeathWardSpell(),
+            };
 
-        foreach (var s in spellz)
-            hero.AddAbility(s);
-    }
-
-    public override void OnPlayerJoined(Player p)
-    {
-        if (!p.HasHero)
-        {
-            var h = new Hero(p, Terrain.Bounds.Center);
-            Map.Add(h);
-
-            p.SetMainHero(h);
+            foreach (var s in spellz)
+                hero.AddAbility(s);
         }
 
+        public override void OnPlayerJoined(Player p)
+        {
+            if (!p.HasHero)
+            {
+                var h = new Hero(p, Terrain.Bounds.Center) { Name = p.Name ?? "?!" };
+                Map.Add(h);
+
+                p.SetMainHero(h);
+            }
+
+        }
     }
 }

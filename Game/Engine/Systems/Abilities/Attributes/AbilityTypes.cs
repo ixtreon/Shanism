@@ -10,20 +10,22 @@ namespace Engine.Systems.Abilities
 {
     static class AbilityTypes
     {
-        public static IEnumerable<Ability> GetAbilitiesOfType(Unit u, AbilityType type)
+        public static IEnumerable<Ability> GetAbilitiesOfType(this Unit u, AbilityType type)
         {
-            return u.Abilities.Where(a => a.GetType().GetCustomAttributes(typeof(AbilityTypeAttribute), false)
+            return u.Abilities
+                .Where(a => a.GetType()
+                    .GetCustomAttributes(typeof(AbilityTypeAttribute), false)
                     .Cast<AbilityTypeAttribute>()
-                    .FirstOrDefault()
-                    ?.Type == type);
+                    .FirstOrDefault()?.Type.HasFlag(type) ?? false);
         }
     }
 
+    [Flags]
     public enum AbilityType
     {
         /// <summary>
         /// Indicates that an ability is to be spammed. 
         /// </summary>
-        Spammable,
+        Spammable = 1,
     }
 }

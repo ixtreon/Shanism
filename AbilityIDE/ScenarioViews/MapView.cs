@@ -9,17 +9,21 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ScenarioLib;
 
-namespace AbilityIDE.ScenarioViews
+namespace ShanoEditor.ScenarioViews
 {
-    public partial class MapView : ScenarioView
+    partial class MapView : ScenarioView
     {
         public override ScenarioViewType ViewType { get; } = ScenarioViewType.Map;
 
-        public MapConfig Map { get { return Scenario?.MapConfig; } }
+        public MapConfig Map { get { return Model.Scenario.MapConfig; } }
 
-        protected override async Task LoadScenario()
+        protected override async Task LoadModel()
         {
             if (Map == null) return;
+
+            //update child controls' models
+            pObjects.SetModel(Model);
+
 
             chkInfinite.Checked = Map.Infinite;
             chkInfinite_CheckedChanged(null, null);
@@ -27,25 +31,42 @@ namespace AbilityIDE.ScenarioViews
             nWidth.Value = Map.Width;
             nHeight.Value = Map.Height;
 
-            shanoMap1.SetMap(Scenario.MapConfig);
+            pObjects.AddObjects("Units", Model.Scenario.DefinedUnits);
+            pObjects.AddObjects("Doodads", Model.Scenario.DefinedDoodads);
+
+            shanoMap1.SetMap(Model.Scenario.MapConfig);
         }
 
-        public override void SaveScenario()
+
+        protected override void SaveModel()
         {
             if (Map == null) return;
 
             Map.Infinite = chkInfinite.Checked;
-            //Map.Height = (int)nHeight.Value;
         }
 
         public MapView()
         {
             InitializeComponent();
-            shanoMap1.MapRedrawn += ShanoMap1_MapRedrawn;
 
+            //post-designer fixes
             pFiniteSettings.Top =
             pInfiniteSettings.Top =
                 Math.Min(pFiniteSettings.Top, pInfiniteSettings.Top);
+
+            shanoMap1.MapRedrawn += ShanoMap1_MapRedrawn;
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            listPanel1.Dock = DockStyle.Fill;
+            listPanel1.Width = mapSplitter.Panel1.Width;
+
+            listPanel1.AddPanel(pMapSettings, "Settings");
+            listPanel1.AddPanel(pTerrain, "Terrain");
+            listPanel1.AddPanel(pObjects, "Objects");
         }
 
         private void ShanoMap1_MapRedrawn()
@@ -58,14 +79,18 @@ namespace AbilityIDE.ScenarioViews
             pFiniteSettings.Visible = !chkInfinite.Checked;
             pInfiniteSettings.Visible = chkInfinite.Checked;
 
+            if (chkInfinite.Checked)
+                pMapSettings.Height = pInfiniteSettings.Bottom + 12;
+            else
+                pMapSettings.Height = pFiniteSettings.Bottom + 12;
             MarkAsChanged();
         }
 
 
         private void WidthHeight_ValueChanged(object sender, EventArgs e)
         {
-            btnResizeMap.Visible = 
-            btnCancelMapResize.Visible =
+            btnResizeMap.Enabled = 
+            btnCancelMapResize.Enabled =
                 (nWidth.Value != Map.Width || nHeight.Value != Map.Height);
         }
         
@@ -79,20 +104,23 @@ namespace AbilityIDE.ScenarioViews
             MarkAsChanged();
 
             //hide the button
-            btnResizeMap.Hide();
-            btnCancelMapResize.Hide();
+            btnResizeMap.Enabled = false;
+            btnCancelMapResize.Enabled = false;
         }
-
-        private void btnMinTools_Click(object sender, EventArgs e)
-        {
-            mapSplitter.Panel1Collapsed = true;
-            btnMaxTools.Visible = true;
-        }
+        
 
         private void btnMaxTools_Click(object sender, EventArgs e)
         {
-            mapSplitter.Panel1Collapsed = false;
-            btnMaxTools.Visible = false;
+            if(mapSplitter.Panel1Collapsed)
+            {
+                mapSplitter.Panel1Collapsed = false;
+                btnMaxTools.Text = "◀";
+            }
+            else
+            {
+                mapSplitter.Panel1Collapsed = true;
+                btnMaxTools.Text = "▶";
+            }
         }
 
         private void chkFixedSeed_CheckedChanged(object sender, EventArgs e)

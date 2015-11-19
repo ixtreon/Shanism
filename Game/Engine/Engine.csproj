@@ -145,6 +145,8 @@
     <Compile Include="Events\AbilityCastArgs.cs" />
     <Compile Include="Events\LocationChangeArgs.cs" />
     <Compile Include="Events\ObjectMoveArgs.cs" />
+    <Compile Include="Maps\Concurrent\HashMapNew.cs" />
+    <Compile Include="Maps\Concurrent\ObjectMapNew.cs" />
     <Compile Include="Systems\RangeEvents\Constraints\Constraint.cs" />
     <Compile Include="Systems\RangeEvents\Constraints\MapConstraint.cs" />
     <Compile Include="Systems\RangeEvents\Constraints\ObjectConstraint.cs" />
@@ -161,7 +163,6 @@
     <Compile Include="Maps\ObjectMap.cs" />
     <Compile Include="Maps\Terrain\RandomMap.cs" />
     <Compile Include="Maps\Terrain\FixedMap.cs" />
-    <Compile Include="ModelManager.cs" />
     <Compile Include="Objects\ObjectGuid.cs" />
     <Compile Include="Objects\Units\Abilities.cs" />
     <Compile Include="Objects\Units\Combat.cs" />

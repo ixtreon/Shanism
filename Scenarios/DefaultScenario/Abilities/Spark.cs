@@ -15,7 +15,7 @@ using Engine.Events;
 /// </summary>
 public class Spark : Ability
 {
-    const string SparkModel = "lightning_ball";
+    const string SparkModel = "spark";
 
     public int Bounces { get; set; } = 3;
 

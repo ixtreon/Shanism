@@ -9,7 +9,10 @@ namespace IO.Objects
         int Guid { get; }
         Vector Position { get; }
 
-        AnimationDefOld Animation { get; }
+        string Model { get; }
+
+        string Animation { get; }
+
         double Size { get; }
 
 

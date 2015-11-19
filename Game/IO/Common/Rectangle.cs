@@ -91,6 +91,13 @@ namespace IO.Common
             return new Rectangle(r.X * p.X, r.Y * p.Y, r.Width * p.X, r.Height * p.Y);
         }
 
+        public static Rectangle operator *(Rectangle r, Vector v)
+        {
+            return new Rectangle(
+                (int)(r.X * v.X), (int)(r.Y * v.Y), 
+                (int)(r.Width * v.X), (int)(r.Height * v.Y));
+        }
+
         public static Rectangle operator /(Rectangle r, Point p)
         {
             return new Rectangle(r.X / p.X, r.Y / p.Y, r.Width / p.X, r.Height / p.Y);
@@ -112,8 +119,10 @@ namespace IO.Common
 
         public Vector Center
         {
-            get { return Position + Size / 2.0; }
+            get { return Position + (Vector)Size / 2.0; }
         }
+
+        public int Area { get { return Width * Height; } }
 
         public Rectangle(Point position, Point size)
         {
@@ -125,6 +134,17 @@ namespace IO.Common
         {
             this.Position = new Point(x, y);
             this.Size = new Point(width, height);
+        }
+
+        /// <summary>
+        /// Inflates this rectangle to the right. 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public Rectangle Inflate(int x, int y)
+        {
+            return new Rectangle(X, Y, Width + x, Height + y);
         }
 
         public IEnumerable<Point> Iterate()
@@ -179,6 +199,11 @@ namespace IO.Common
                 Math.Min(Y, Y + Height),
                 Math.Abs(Width),
                 Math.Abs(Height));
+        }
+
+        public override string ToString()
+        {
+            return "[ {0}, {1}, {2}, {3} ]".F(X, Y, Width, Height);
         }
     }
 }

@@ -23,11 +23,9 @@ namespace Client.UI
         public MainMenu()
         {
             this.BackColor = Color.Black.SetAlpha(150);
-            this.Size = new Vector(0.8f, 0.6f);
-            this.AbsolutePosition = Vector.Zero - Size / 2;
             this.Visible = false;
 
-            var menuAnchor = 3 * Anchor;
+            var menuAnchor = 3 * Padding;
 
             buttons = new[]
             {
@@ -41,9 +39,8 @@ namespace Client.UI
             foreach(var btn in buttons)
             {
                 this.Add(btn);
-                btn.RelativePosition = new Vector(menuAnchor, y);
+                btn.Location = new Vector(menuAnchor, y);
                 btn.Size = btnSize;
-                btn.BackColor = Color.White.Darken(95);
                 y += menuAnchor + btnSize.Y;
             }
 
@@ -75,9 +72,9 @@ namespace Client.UI
             }
         }
 
-        public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch sb)
+        public override void Draw(Graphics g)
         {
-            base.Draw(sb);
+            base.Draw(g);
         }
     }
 }

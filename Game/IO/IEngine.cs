@@ -22,8 +22,8 @@ namespace IO
         /// If the client is accepted returns the network recepter responsible for it. Otherwise returns null. 
         /// </summary>
         /// <returns></returns>
-        IReceptor AcceptClient(IClient c);
+        INetReceptor AcceptClient(IClient c);
 
-        void StartPlaying(IReceptor rec);
+        void StartPlaying(INetReceptor rec);
     }
 }

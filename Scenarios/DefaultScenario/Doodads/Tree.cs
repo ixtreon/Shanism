@@ -14,7 +14,7 @@ namespace DefaultScenario.Doodads
             : base("pruchka", location)
         {
             this.Size = 5;
-            this.ModelString = "tree";
+            this.Name = "Tree";
         }
     }
 }

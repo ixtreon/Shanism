@@ -1,21 +1,20 @@
-﻿using System;
-using System.Linq;
+﻿using Client.Controls;
+using Client.Map;
+using Client.Properties;
+using Client.UI;
+using IO;
+using IO.Message;
+using IO.Message.Client;
+using IO.Message.Server;
+using IO.Objects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using IO;
-using Client.UI;
+using ScenarioLib;
+using System;
 using System.Collections.Generic;
-using Client.Sprites;
-using Client.Properties;
+using System.Linq;
 using MovementState = IO.Common.MovementState;
-using Client.Map;
-using Client.Controls;
-using Client.Textures;
-using IO.Message.Client;
-using IO.Message.Server;
-using IO.Message;
-using IO.Objects;
 
 namespace Client
 {
@@ -55,7 +54,7 @@ namespace Client
         /// <summary>
         /// The guy that handles objects. 
         /// </summary>
-        ObjectGod ObjectManager = new ObjectGod();
+        ObjectGod ObjectManager { get; set; }
 
         MapManager MapManager;
 
@@ -94,15 +93,6 @@ namespace Client
             Content.RootDirectory = "Content";
         }
         
-
-        public void SetEngine(IEngine engine)
-        {
-            if (Server != null)
-                throw new InvalidOperationException("Already got a server!");
-
-            //request to join lel
-        }
-
         public void SetReceptor(IReceptor server)
         {
             Server = server;
@@ -116,14 +106,38 @@ namespace Client
 
         void server_ConnectionChanged(HandshakeReplyMessage msg)
         {
-            IsConnected = msg.Success;
+            if(!msg.Success)
+            {
+                IsConnected = false;
+                return;
+            }
+
+            //get the scenario
+            var sc = ScenarioFile.LoadBytes(msg.ScenarioData);
+
+            //load its content
+            Client.Content.UnzipContent(msg.ContentData, "Scenario", "Content");
+
+
+            Client.Content.LoadScenario(Content, sc.Content);
+            
+
+            //start playing!
+            IsConnected = true;
         }
 
+        /// <summary>
+        /// When a chunk is received, inform the <see cref="MapManager"/>. 
+        /// </summary>
         void server_MapChunkReceived(MapReplyMessage msg)
         {
             MapManager.HandleMapReply(msg);
         }
 
+        /// <summary>
+        /// When the main hero is changed update the <see cref="ObjectManager"/> records. 
+        /// </summary>
+        /// <param name="msg"></param>
         void server_MainHeroChanged(PlayerStatusMessage msg)
         {
             ObjectManager.SetMainHero(msg.HeroId);
@@ -152,21 +166,30 @@ namespace Client
                 CullMode = CullMode.None,
             };
 
+            //UI Manager
             mainInterface = new UiManager();
             mainInterface.OnActionPerformed += MainInterface_OnActionPerformed;
 
+            //MapManager
             this.MapManager = new MapManager(GraphicsDevice);
             MapManager.ChunkRequested += MapManager_ChunkRequested;
 
+            //ObjectManager
+            this.ObjectManager = new ObjectGod
+            {
+                Location = new IO.Common.Vector(),
+            };
             this.mainInterface.Add(ObjectManager);
 
-            ObjectManager.UnitClicked += (u) =>
+            this.ObjectManager.UnitClicked += (u) =>
             {
                 mainInterface.Target = u;
             };
 
+            //screen center
             Screen.Update(graphics, ObjectManager.MainHero);
 
+            //window stuff
             IsMouseVisible = true;
             Window.AllowUserResizing = true;
             Window.ClientSizeChanged += Window_ClientSizeChanged;
@@ -195,11 +218,16 @@ namespace Client
             ActionActivated(msg);
         }
 
+
+        bool _noRecurse;
         /// <summary>
         /// Changes the back buffer size in response to window resize. 
         /// </summary>
         private void Window_ClientSizeChanged(object sender, EventArgs e)
         {
+            if (_noRecurse) return;
+            _noRecurse = true;
+
             var sz = Window.ClientBounds;
             if (sz != lastWindowBounds)
             {
@@ -208,6 +236,8 @@ namespace Client
                 graphics.PreferredBackBufferHeight = sz.Height;
                 graphics.ApplyChanges();
             }
+
+            _noRecurse = false;
         }
 
 
@@ -220,18 +250,10 @@ namespace Client
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            TextureCache.LoadContent(Content);
-            SpriteFactory.Load();
+            Client.Content.LoadDefault(Content);
+            Content.RootDirectory = "Scenario";
         }
 
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// all content.
-        /// </summary>
-        protected override void UnloadContent()
-        {
-            // TODO: Unload any non ContentManager content here
-        }
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -248,7 +270,7 @@ namespace Client
             if (!IsConnected)
                 return;
 
-            mainInterface.TargetHero = ObjectManager.MainHero;
+            mainInterface.MainHeroControl = ObjectManager.MainHeroControl;
 
             //update cameraInfo
             Screen.Update(graphics, ObjectManager.MainHero);
@@ -320,13 +342,17 @@ namespace Client
 
             if (Server != null)
             {
-                GraphicsDevice.Clear(Color.CornflowerBlue);
+                GraphicsDevice.Clear(Color.DarkBlue);
 
                 //1. draw terrain (basiceffect)
+                //graphics.PreferMultiSampling = false;
+                //graphics.SynchronizeWithVerticalRetrace = true;
+                GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+                
                 MapManager.DrawTerrain(CameraPosition);
 
                 //start spritebatch drawing
-                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.DepthRead, RasterizerState.CullNone);
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.DepthRead, RasterizerState.CullNone);
 
                 // 2. draw interface + gameobjects 
                 // TODO: effects
@@ -349,7 +375,7 @@ namespace Client
         private void drawConnectingScreen()
         {
             var txt = "Connecting...";
-            var font = TextureCache.HugeFont;
+            var font = Client.Content.Fonts.LargeFont;
             var pos = new IO.Common.Point(Screen.Size.X / 10);
 
             spriteBatch.Begin();
@@ -370,17 +396,22 @@ namespace Client
             smoothFrameDelay = smoothFrameDelay * (1 - frameConst) + msElapsed * frameConst;
             var sFps =
                 "FPS: " + (1000 / smoothFrameDelay).ToString("00.0");
-            TextureCache.FancyFont.DrawStringScreen(spriteBatch, sFps, Color.Goldenrod, new IO.Common.Point(24, 18));
+            Client.Content.Fonts.FancyFont.DrawStringScreen(spriteBatch, sFps, Color.Goldenrod, new IO.Common.Point(24, 18));
 
             //UI coordinates of mouse
             var sUiCoord = string.Format(
                 "UI X/Y: {0} {1}", mpUi.X.ToString("0.00"), mpUi.Y.ToString("0.00"));
-            TextureCache.FancyFont.DrawStringScreen(spriteBatch, sUiCoord, Color.Black, new IO.Common.Point(24, 3 * 24));
+            Client.Content.Fonts.FancyFont.DrawStringScreen(spriteBatch, sUiCoord, Color.Black, new IO.Common.Point(24, 2 * 24));
+
+            //UI coordinates of hero
+            var sHeroCoord = string.Format(
+                "Hero X/Y: {0} {1}", ObjectManager.MainHero?.Position.X.ToString("0.00"), ObjectManager.MainHero?.Position.Y.ToString("0.00"));
+            Client.Content.Fonts.FancyFont.DrawStringScreen(spriteBatch, sHeroCoord, Color.Black, new IO.Common.Point(24, 3 * 24));
 
             //in-game coordinates of mouse
             var sGameCoord = string.Format(
                 "Game X/Y: {0} {1}", mpGame.X.ToString("0.00"), mpGame.Y.ToString("0.00"));
-            TextureCache.FancyFont.DrawStringScreen(spriteBatch, sGameCoord, Color.Black, new IO.Common.Point(24, 2 * 24));
+            Client.Content.Fonts.FancyFont.DrawStringScreen(spriteBatch, sGameCoord, Color.Black, new IO.Common.Point(24, 4 * 24));
 
         }
 

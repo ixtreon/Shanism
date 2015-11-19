@@ -1,4 +1,4 @@
-﻿namespace AbilityIDE.ScenarioViews
+﻿namespace ShanoEditor.ScenarioViews
 {
     partial class DetailsView
     {

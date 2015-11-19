@@ -19,23 +19,19 @@ namespace Engine.Systems.Behaviours
 
         Dictionary<Unit, double> aggroTable = new Dictionary<Unit, double>();
 
-        protected AbilityBehaviour AttackBehaviour;
+        protected SpamBehaviour AttackBehaviour;
         protected FollowBehaviour FollowBehaviour;
         protected ReturnBehaviour ReturnBehaviour;
-
-        private readonly Ability Ability;
 
 
         public Unit Target { get; internal set; }
 
-        public AggroBehaviour(Unit u, Ability ab)
+        public AggroBehaviour(Unit u)
             : base(u)
         {
-            this.Ability = ab;
-
             FollowBehaviour = new FollowBehaviour(this);
-            AttackBehaviour = new AbilityBehaviour(this, ab);
-            ReturnBehaviour = new ReturnBehaviour(this, u.Position, u.VisionRange * 3);
+            AttackBehaviour = new SpamBehaviour(this);
+            ReturnBehaviour = new ReturnBehaviour(this, u.Position, u.VisionRange * 2);
 
             this.AddRange(new Behaviour[]
             {
@@ -124,6 +120,7 @@ namespace Engine.Systems.Behaviours
 
         public override void Update(int msElapsed)
         {
+            FollowBehaviour.Distance = AttackBehaviour.Ability?.CastRange ?? 1;
             var newTarget = pickTarget();
 
 
@@ -140,7 +137,6 @@ namespace Engine.Systems.Behaviours
                 Target = newTarget;
             }
 
-            FollowBehaviour.Distance = Ability.CastRange;
             base.Update(msElapsed);
         }
     }

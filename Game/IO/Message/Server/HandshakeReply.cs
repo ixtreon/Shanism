@@ -1,4 +1,5 @@
-﻿using IxSerializer.Attributes;
+﻿using IO.Content;
+using IxSerializer.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,30 +21,19 @@ namespace IO.Message.Server
         [SerialMember]
         public readonly bool Success;
 
-        /// <summary>
-        /// Gets the scenario name. 
-        /// </summary>
         [SerialMember]
-        public readonly string ScenarioName;
+        public readonly byte[] ScenarioData;
 
-        /// <summary>
-        /// Gets the size of the scenario, in bytes. 
-        /// </summary>
         [SerialMember]
-        public readonly long ScenarioSize;
-
-        /// <summary>
-        /// Gets the hash value for the scenario. 
-        /// </summary>
-        [SerialMember]
-        public readonly string ScenarioHash;
-
+        public readonly byte[] ContentData;
 
         public HandshakeReplyMessage() { }
 
-        public HandshakeReplyMessage(bool isSuccessful)
+        public HandshakeReplyMessage(bool isSuccessful, byte[] scenarioData, byte[] contentData)
         {
             Success = isSuccessful;
+            ScenarioData = scenarioData;
+            ContentData = contentData;
         }
 
     }

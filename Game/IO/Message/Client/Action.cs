@@ -21,11 +21,6 @@ namespace IO.Message.Client
 
         public bool HasTarget;
 
-        /// <summary>
-        /// The type of the action that is being performed. 
-        /// </summary>
-        [SerialMember]
-        public readonly AbilityTargetType TargetType;
 
         /// <summary>
         /// The string id of the action being performed. 
@@ -48,41 +43,16 @@ namespace IO.Message.Client
         private ActionMessage() { }
 
         /// <summary>
-        /// Creates a new message for the specified unit-targeted action. 
+        /// Creates a new message for the specified action. 
+        /// Validity of targets is determined by the server. 
         /// </summary>
         /// <param name="abilityId">The string id of the action to perform. </param>
-        /// <param name="targetGuid"></param>
-        public ActionMessage(string abilityId, int targetGuid)
+        /// <param name="targetGuid">The target of the ability, if any. </param>
+        /// <param name="targetLoc">The location this ability is cast towards. </param>
+        public ActionMessage(string abilityId, int targetGuid, Vector targetLoc)
         {
-            TargetType = AbilityTargetType.UnitTarget;
-
             this.TargetGuid = targetGuid;
-            this.AbilityId = abilityId;
-        }
-
-        /// <summary>
-        /// Creates a new message for the specified point-targeted action. 
-        /// </summary>
-        /// <param name="abilityId">The string id of the action to perform. </param>
-        /// <param name="targetLoc"></param>
-        public ActionMessage(string abilityId, Vector targetLoc)
-            : this()
-        {
-            TargetType = AbilityTargetType.PointTarget;
-
             this.TargetLocation = targetLoc;
-            this.AbilityId = abilityId;
-        }
-
-        /// <summary>
-        /// Creates a new message for the specified no-target action. 
-        /// </summary>
-        /// <param name="abilityId">The string id of the action to perform. </param>
-        public ActionMessage(string abilityId)
-            : this()
-        {
-            TargetType = AbilityTargetType.NoTarget;
-
             this.AbilityId = abilityId;
         }
     }

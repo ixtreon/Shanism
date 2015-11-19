@@ -23,52 +23,53 @@ namespace Engine
     /// There are 2 players for all NPC characters, 
     /// see <see cref="NeutralAggressive"/> and <see cref="NeutralFriendly"/>. 
     /// </summary>
-    public class Player : IPlayer, IReceptor
+    public class Player : IPlayer, INetReceptor
     {
         public static int LastPlayerId = 0;
 
         /// <summary>
         /// The neutral aggressive NPC player. Attacks players on sight. 
         /// </summary>
-        public static readonly Player NeutralAggressive = new Player("Neutral Aggressive");
+        public static Player NeutralAggressive { get; } = new Player("Neutral Aggressive");
 
         /// <summary>
         /// The neutral friendly NPC player. It's just chilling. 
         /// </summary>
-        public static readonly Player NeutralFriendly = new Player("Neutral Friendly");
+        public static Player NeutralFriendly { get; } = new Player("Neutral Friendly");
 
 
 
         /// <summary>
         /// The engine this player is part of. 
         /// </summary>
-        readonly ShanoEngine Engine;
+        ShanoEngine Engine { get; }
 
         /// <summary>
         /// Gets the client handle of this player. 
         /// </summary>
-        readonly IClient InputDevice;
+        IClient InputDevice { get; }
 
+        /// <summary>
+        /// Gets the id of this player. 
+        /// </summary>
+        public int PlayerId { get; }
+
+        /// <summary>
+        /// Gets the name of the player. 
+        /// </summary>
+        public string Name { get; }
 
         /// <summary>
         /// All units controlled by the player. 
         /// </summary>
-        readonly HashSet<Unit> controlledUnits = new HashSet<Unit>();
-        
-        /// <summary>
-        /// Gets the id of this player. 
-        /// </summary>
-        public readonly int PlayerId;
+        HashSet<Unit> controlledUnits { get; } = new HashSet<Unit>();
+
+        HashSet<GameObject> objectsSeen { get; } = new HashSet<GameObject>();
 
         /// <summary>
         /// Gets the player's hero, if he has one. 
         /// </summary>
         public Hero MainHero { get; private set; }
-
-        /// <summary>
-        /// Gets the name of the player. 
-        /// </summary>
-        public string Name { get; private set; }
 
         #region IReceptor Implementation
         public event Action<IGameObject> ObjectSeen;
@@ -89,7 +90,10 @@ namespace Engine
         /// </summary>
         public bool HasHero { get { return MainHero != null; } }
 
-        public bool Connected { get { return true; } }
+        /// <summary>
+        /// Gets all units controlled by the player. 
+        /// </summary>
+        internal IEnumerable<IUnit> ControlledUnits { get { return controlledUnits; } }
 
         /// <summary>
         /// Gets whether this player is the neutral aggressive player. 
@@ -106,19 +110,12 @@ namespace Engine
         /// </summary>
         public bool IsHuman {  get { return !IsNeutralAggressive && !IsNeutralFriendly; } }
 
-        internal IEnumerable<IUnit> ControlledUnits { get { return controlledUnits; } }
-
+        /// <summary>
+        /// Gets all objects visible by this player. 
+        /// </summary>
         public IEnumerable<IGameObject> VisibleObjects
         {
-            get { return controlledUnits
-                    .SelectMany(u => u.VisibleObjects)
-                    .Concat(controlledUnits)
-                    .Distinct(); }
-        }
-
-        internal void SendHandshake(bool isSuccessful)
-        {
-            HandshakeReplied(new HandshakeReplyMessage(isSuccessful));
+            get { return objectsSeen; }
         }
 
         /// <summary>
@@ -129,18 +126,17 @@ namespace Engine
             get { return MainHero?.Position ?? Vector.Zero; }
         }
 
+
+        #region Constructors
         Player(string name)
         {
             PlayerId = Interlocked.Increment(ref LastPlayerId);
-            Name = Name;
+            Name = name;
         }
 
         public Player(ShanoEngine engine, IClient inputDevice)
             : this(inputDevice.Name)
         {
-            PlayerId = Interlocked.Increment(ref LastPlayerId);
-            Name = inputDevice.Name;
-
             Engine = engine;
 
             InputDevice = inputDevice;
@@ -150,6 +146,7 @@ namespace Engine
             InputDevice.MovementStateChanged += inputDevice_MovementStateChanged;
             InputDevice.HandshakeInit += inputDevice_HandshakeInit;
         }
+        #endregion
 
         #region GameClient listeners
         void inputDevice_ActionActivated(ActionMessage obj)
@@ -234,27 +231,44 @@ namespace Engine
         {
             return IsEnemy(u.Owner);
         }
-        
-        internal void OnObjectVisionRange(RangeArgs<GameObject> args)
-        {
-            if (!this.IsHuman)
-                return;
-            if (args.EventType == EventType.EntersRange)
-            {
-                ObjectSeen(args.TriggerObject);
-            }
-            else
-            {
-                ObjectUnseen(args.TriggerObject);
-            }
-        }
-        
 
+        public void SendHandshake(bool isSuccessful)
+        {
+            var sc = Engine.Scenario;
+
+            HandshakeReplied(new HandshakeReplyMessage(isSuccessful, sc.GetBytes(), sc.ZipContent()));
+        }
+
+        /// <summary>
+        /// Adds a unit owned by this player to the player's list. 
+        /// </summary>
+        /// <param name="unit"></param>
         internal void AddControlledUnit(Unit unit)
         {
             controlledUnits.Add(unit);
+            objectsSeen.Add(unit);
+            
+            //register events
+            unit.ObjectSeen += ownedUnit_ObjectSeen;
+            unit.ObjectUnseen += ownedUnit_ObjectUnseen;
 
             ObjectSeen?.Invoke(unit);
+        }
+
+        private void ownedUnit_ObjectUnseen(GameObject obj)
+        {
+            if (!obj.SeenBy.Any(u => u.Owner == this))
+            {
+                var removed = objectsSeen.Remove(obj);
+                System.Diagnostics.Debug.Assert(removed);
+                ObjectUnseen?.Invoke(obj);
+            }
+        }
+
+        private void ownedUnit_ObjectSeen(GameObject obj)
+        {
+            if (objectsSeen.Add(obj))
+                ObjectSeen?.Invoke(obj);
         }
 
         public void UpdateServer(int msElapsed)

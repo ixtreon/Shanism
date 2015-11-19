@@ -1,5 +1,4 @@
-﻿using Client.Sprites;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,30 +13,49 @@ namespace Client.UI.Common
 {
     abstract class Window : Control
     {
-        public const float TitleHeight = 0.08f;
+        public const double TitleHeight = 0.08;
 
-        public static readonly Vector DefaultSize = new Vector(1.0f, 1.2f);
+        public static readonly Vector DefaultSize = new Vector(1.0, 1.2);
 
-        public WindowAlign Align { get; set; }
-
-        public readonly Button CloseButton = new Button()
+        public readonly Button CloseButton = new Button
         {
-            Size = new Vector(0.05f),
-            RelativePosition = new Vector(0.85f, 0.02f),
-            Texture = TextureCache.Get(@"UI\close"),
-            BackColor = Color.Black.SetAlpha(50),
+            ParentAnchor = AnchorMode.Top | AnchorMode.Right,
+            Size = new Vector(0.1, 0.07),
+            Location = new Vector(0.9, 0),
+
+            Texture = Content.Textures.TryGetUI("close"),
+            TextureColor = Color.Black,
+
+            BackColor = Color.Red.SetAlpha(50),
+            BackHoverColor = Color.Red.SetAlpha(150),
         };
 
         public Keybind? Key { get; set; } 
 
         public string Title { get; set; }
 
-        public Window(WindowAlign align = WindowAlign.None)
+        public Window(AnchorMode anchor = AnchorMode.None)
         {
             this.Size = DefaultSize;
-            this.AbsolutePosition = new Vector(-1, (2 - DefaultSize.Y) / 2 - 1);
+
+            switch(anchor)
+            {
+                case AnchorMode.Left:
+                    ParentAnchor = AnchorMode.Left;
+                    Location = new Vector(0, 0.25);
+                    break;
+
+                case AnchorMode.Right:
+                    ParentAnchor = AnchorMode.Right;
+                    Location = new Vector(2 - Size.X, 0.25);
+                    break;
+
+                default:
+                    Location = new Vector(0.25, 0.25);
+                    break;
+            }
+
             this.BackColor = Color.SaddleBrown;
-            this.Align = align;
 
             CloseButton.MouseUp += CloseButton_MouseUp;
             this.VisibleChanged += Window_VisibleChanged;
@@ -57,46 +75,23 @@ namespace Client.UI.Common
             this.Visible = false;
         }
 
-        private void updatePosition()
-        {
-            const int anchor = 3;
-
-            switch(Align)
-            {
-                case WindowAlign.Left:
-                    ScreenPosition = new Point(anchor, Screen.ScreenHalfSize.Y - ScreenSize.Y / 2);
-                    break;
-                case WindowAlign.Right:
-                    ScreenPosition = new Point(Screen.Size.X - ScreenSize.X - anchor, Screen.ScreenHalfSize.Y - ScreenSize.Y / 2);
-                    break;
-                case WindowAlign.None:
-                    break;
-            }
-        }
 
         public override void Update(int msElapsed)
         {
-            updatePosition();
-            CloseButton.AbsolutePosition = AbsolutePosition + new Vector(Size.X - CloseButton.Size.X - 0.01f, 0.01f);
             if (KeyManager.IsActivated(Key.Value))
-                this.Visible = !this.Visible;
-            base.Update(msElapsed);
+                Visible = !Visible;
         }
 
         /// <summary>
         /// Draws the background and title-bar of this window. 
         /// </summary>
         /// <param name="sb"></param>
-        public override void Draw(SpriteBatch sb)
+        public override void Draw(Graphics g)
         {
-            base.Draw(sb);
-            SpriteFactory.Blank.Draw(sb, AbsolutePosition, new Vector(Size.X, TitleHeight), Color.Black.SetAlpha(100));
-            TextureCache.FancyFont.DrawStringScreen(sb, Title, Color.White, ScreenPosition + new Point(ScreenSize.X / 2, 0), xAnchor: 0.5f, yAnchor: 0f);
-        }
-    }
+            base.Draw(g);
 
-    enum WindowAlign
-    {
-        Left, Right, None
+            g.Draw(Content.Textures.Blank, Vector.Zero, new Vector(Size.X, TitleHeight), Color.Black.SetAlpha(100));
+            g.DrawString(Content.Fonts.FancyFont, Title, Color.White, new Vector(Size.X / 2, 0), xAnchor: 0.5f, yAnchor: 0f);
+        }
     }
 }

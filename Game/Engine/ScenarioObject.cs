@@ -15,11 +15,17 @@ namespace Engine
     {
         internal ShanoEngine Game { get; set; }
 
+        /// <summary>
+        /// Gets the map that contains the units in this scenario. 
+        /// </summary>
         public EntityMap Map
         {
             get { return Game.EntityMap; }
         }
 
+        /// <summary>
+        /// Gets the terrain map of this scenario. 
+        /// </summary>
         public ITerrainMap Terrain
         {
             get { return Game.TerrainMap; }
@@ -28,20 +34,6 @@ namespace Engine
         public ScenarioObject()
         {
             Game = ShanoEngine.Current;     // the ugly hack bites back
-        }
-
-        internal bool IsDestroyed { get; private set; }
-
-
-        /// <summary>
-        /// Marks this GameObject for destruction, eventually removing it from the game. 
-        /// </summary>
-        public virtual void Destroy()
-        {
-            if (IsDestroyed)
-                throw new InvalidOperationException("Trying to destroy an object twice!");
-
-            IsDestroyed = true;
         }
 
         /// <summary>

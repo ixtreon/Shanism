@@ -23,7 +23,7 @@ namespace Engine.Systems.Behaviours
         /// <summary>
         /// Gets the unit this behaviour controls. 
         /// </summary>
-        public IUnit Unit
+        public Unit Unit
         {
             get { return unit; }
         }
@@ -51,6 +51,10 @@ namespace Engine.Systems.Behaviours
                 OnUnitInVisionRange((Unit)obj);
         }
 
+        /// <summary>
+        /// Creates a new behaviour for the same unit. 
+        /// </summary>
+        /// <param name="b"></param>
         public Behaviour(Behaviour b)
          : this(b.unit)
         { }

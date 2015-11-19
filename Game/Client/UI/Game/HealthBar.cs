@@ -36,7 +36,7 @@ namespace Client.UI.Common
 
             //set values, text
 
-            TooltipText = string.Empty;
+            ToolTip = string.Empty;
             ShowText = false;
             if (Target.IsDead)
                 MaxValue = 0;
@@ -47,11 +47,11 @@ namespace Client.UI.Common
                 ShowText = true;
                 Value = Target.Life;
                 MaxValue = Target.MaxLife;
-                TooltipText = "{0:+0.0;-0.0;0}/sec".Format(Target.LifeRegen);
+                ToolTip = "{0:+0.0;-0.0;0}/sec".Format(Target.LifeRegen);
             }
         }
 
-        public override void Draw(SpriteBatch sb)
+        public override void Draw(Graphics g)
         {
             if (Target == null)
                 return;
@@ -79,7 +79,7 @@ namespace Client.UI.Common
                     break;
             }
 
-            DrawValueBar(sb, Value, MaxValue, ScreenPosition, ScreenSize, BackColor, ForeColor, text);
+            base.Draw(g);
         }
     }
 

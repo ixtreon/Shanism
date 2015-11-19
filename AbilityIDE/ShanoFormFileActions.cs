@@ -1,4 +1,4 @@
-﻿using AbilityIDE.Properties;
+﻿using ShanoEditor.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,14 +8,15 @@ using System.Windows.Forms;
 using IO;
 using System.IO;
 using ScenarioLib;
+using ShanoEditor.ViewModels;
 
-namespace AbilityIDE
+namespace ShanoEditor
 {
-    public partial class ShanoEditor : Form
+    public partial class ShanoEditorForm : Form
     {
         const string WindowTitle = "ShanoEditor";
 
-        public ScenarioFile Scenario { get; private set; }
+        ScenarioViewModel Model { get; set; }
 
 
 
@@ -24,56 +25,96 @@ namespace AbilityIDE
         /// </summary>
         private async void open(string filePath = null)
         {
+            var dialog = new OpenFileDialog
+            {
+                ValidateNames = false,
+                CheckFileExists = false,
+                CheckPathExists = true,
+                Filter = "Folders|%",
+                FileName = "Pick a folder",
+            };
+
             //ask the user to pick a file if none given
-            if(string.IsNullOrEmpty(filePath) && openDialog.ShowDialog() == DialogResult.OK)
-                filePath = openDialog.SelectedPath;
+            if(string.IsNullOrEmpty(filePath))
+            {
+                if(dialog.ShowDialog() == DialogResult.OK)
+                {
+                    filePath = Path.GetDirectoryName(dialog.FileName);
+                }
+            }
+
+
 
             //wtf
             if (string.IsNullOrEmpty(filePath))
                 return;
 
-            StatusLoading = true;
             //load a scenario, if any
-            Scenario = await Task.Run(() => ScenarioFile.Load(filePath));
-            if(Scenario == null)
+            StatusLoading = true;
+            Model = null;
+
+            CompiledScenario scenario = null;
+            string _error = string.Empty;
+            try
             {
-                MessageBox.Show("Unable to find a scenario in the directory '{0}'".F(filePath), "ShanoEditor", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                scenario = await Task.Run(() => CompiledScenario.Load(filePath));
+                if(scenario == null)
+                    _error = "Cannot find a scenario at `{0}`. ".F(filePath);
+            }
+            catch(Exception e)
+            {
+                _error = e.Message;
+            }
+
+            if(scenario == null)
+            {
+                MessageBox.Show("Unable to load the scenario: \n\n{0}".F(_error), "ShanoEditor", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-
-            Settings.Default.UpdateRecentFiles(filePath);
+            //why set the directory?..
             Directory.SetCurrentDirectory(filePath);
 
-            //load up UI changes
-            scenarioTree.Scenario = Scenario;
-            foreach (var view in scenarioViews)
-                view.Scenario = Scenario;
+            //create the viewmodel
+            Model = new ScenarioViewModel(scenario);
+            await Model.Load();
 
-            updateUi();
+            //set the views' model
+            scenarioTree.Scenario = Model.Scenario;
+            foreach (var view in scenarioViews)
+                view.SetModel(Model);
+
+            //update UI
+            Settings.Default.UpdateRecentFiles(filePath);
+
+            updateCaption();
             StatusLoading = false;
         }
 
 
         void save()
         {
-            if (Scenario == null || !Scenario.IsDirty)
+            if (Model == null || !Model.IsDirty)
                 return;
+
+            //inform views
             foreach (var view in scenarioViews)
-                view.SaveScenario();
+                view.Save();
 
-            Scenario.Save();
-            Scenario.IsDirty = false;
+            //save model
+            Model.Save();
+            Model.IsDirty = false;
 
-            updateUi();
+            //update ui
+            updateCaption();
         }
 
-        void updateUi()
+        void updateCaption()
         {
-            if(Scenario != null)
+            if(Model != null)
             {
-                var editPostfix = Scenario.IsDirty ? " *" : "";
-                Text = "{0} - {1}{2}".F(Scenario.Name, WindowTitle, editPostfix);
+                var editPostfix = Model.IsDirty ? " *" : "";
+                Text = "{0} - {1}{2}".F(Model.Scenario.Name, WindowTitle, editPostfix);
             }
             else
             {

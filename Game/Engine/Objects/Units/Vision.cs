@@ -13,22 +13,20 @@ namespace Engine.Objects
     partial class Unit
     {
 
-        /// <summary>
-        /// The event executed whenever another unit approaches our vision range. 
-        /// </summary>
-        //public event Action<RangeArgs<Unit>> UnitInVisionRange;
+        ObjectConstraint objectInRangeConstraint;
 
+        double _visionRange;
 
-        //public static event Action<RangeArgs<Unit>> AnyUnitInVisionRange;
-        //handles to the events registered to track units/objects in range
-        int unitInRangeHandlerId = -1;
-        int objectRangeHandlerId = -1;
-
-
-        double visionRange;
         HashSet<GameObject> visibleObjects = new HashSet<GameObject>();
 
+        /// <summary>
+        /// The event raised whenever a game object enters this unit's vision range. 
+        /// </summary>
         public event Action<GameObject> ObjectSeen;
+
+        /// <summary>
+        /// The event raised whenever a game object leaves this unit's vision range. 
+        /// </summary>
         public event Action<GameObject> ObjectUnseen;
 
         /// <summary>
@@ -46,59 +44,76 @@ namespace Engine.Objects
         {
             get
             {
-                return visionRange;
+                return _visionRange;
             }
 
             set
             {
-                if (!visionRange.AlmostEqualTo(value, 0.0005))  //should be ok, lel
+                if (Map != null && !_visionRange.AlmostEqualTo(value, 0.0005))  //should be ok, lel
                 {
-                    if (unitInRangeHandlerId != -1)
-                    {
-                        Map.UnregisterRangeEvent(unitInRangeHandlerId);
-                        Map.UnregisterRangeEvent(objectRangeHandlerId);
-                    }
+                    //remove old handler
+                    if (objectInRangeConstraint != null)
+                        Map.RangeProvider.RemoveConstraint(objectInRangeConstraint);
 
-                    visionRange = value;
+                    _visionRange = value;
 
-                    objectRangeHandlerId = Map.RegisterAnyObjectInRangeEvent(this, visionRange, EventType.LeavesOrEnters, raisePlayerObjectVisionEvent);
+                    //add a new handler
+                    objectInRangeConstraint = new ObjectConstraint(this, _visionRange);
+                    objectInRangeConstraint.Triggered += onObjectInVisionRange;
+                    Map.RangeProvider.AddConstraint(objectInRangeConstraint);
                 }
             }
         }
 
+        readonly object _visibleObjectsLock = new object();
 
-        //TODO: add visibility checks?
-        public bool IsInVisionRange(GameObject o)
+        void onObjectInVisionRange(GameObject obj)
         {
-            return (Position.DistanceTo(o.Position) <= VisionRange);
+            //add the unit to the list
+            visibleObjects.Add(obj);
+            obj.SeenBy.Add(this);
+            ObjectSeen?.Invoke(obj);
         }
 
-
-        void raisePlayerObjectVisionEvent(RangeArgs<GameObject> args)
+        /// <summary>
+        /// Updates the list of visible objects. 
+        /// </summary>
+        void updateVision(int msElapsed)
         {
-            Debug.Assert(this == args.OriginUnit);
-            var trigObject = args.TriggerObject;
-
-            //inform the unit
-            if (args.EventType == EventType.EntersRange)
-                ObjectSeen?.Invoke(trigObject);
-            else
-                ObjectUnseen?.Invoke(trigObject);
-
-            //inform its owner 
-            Owner.OnObjectVisionRange(args);
-
-            //add to or remove from the list of units that are seen
-            if (args.EventType == EventType.EntersRange)
+            //re-evaluate visible objects. 
+            var toRemove = visibleObjects.Where(o => !doVisionCheck(o)).ToArray();
+            foreach (var obj in toRemove)
             {
-                visibleObjects.Add(trigObject);
-                trigObject.SeenBy.Add(this);
+                visibleObjects.Remove(obj);
+                obj.SeenBy.Remove(this);
+                ObjectUnseen?.Invoke(obj);
             }
-            else
-            {
-                trigObject.SeenBy.Remove(this);
-                visibleObjects.Remove(trigObject);
-            }
+        }
+
+        /// <summary>
+        /// Gets whether the specified object is visible by us. 
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
+        public bool IsInVisionRange(GameObject o)
+        {
+            return visibleObjects.Contains(o);
+        }
+
+        bool doVisionCheck(GameObject o)
+        {
+            //not destroyed
+            if (o.IsDestroyed)
+                return false;
+
+            //inside our vision range
+            if (Position.DistanceTo(o.Position) > VisionRange)
+                return false;
+
+            //TODO:
+            //is it behind an object?
+
+            return true;
         }
     }
 }

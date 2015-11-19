@@ -1,5 +1,6 @@
 ﻿using Engine.Maps;
 using Engine.Objects;
+using Engine.Objects.Game;
 using Engine.Systems.RangeEvents;
 using System;
 using System.Collections.Generic;
@@ -56,16 +57,16 @@ namespace Engine.Systems
         public void CheckAllConstraints(GameObject origin, IEnumerable<GameObject> nearbyObjects, int frame)
         { 
             // continue only if we moved
-            // TODO: treshold is arbitrary
+            // TODO: treshold of 1e-8 is arbitrary
             var d = origin.FuturePosition - origin.OldPosition;
-            if (origin.FuturePosition.DistanceToSquared(origin.OldPosition) < 1e-8)
+            if (origin.Position.DistanceToSquared(origin.OldPosition) < 1e-8)
                 return;
 
             foreach(var target in nearbyObjects)
             {
                 var newDist = target.Position.DistanceTo(origin.Position);
                 var oldDist = target.OldPosition.DistanceTo(origin.OldPosition);
-
+                
                 foreach (var c in origin.RangeConstraints)
                     c.Check(target, frame);
 

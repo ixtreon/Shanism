@@ -66,6 +66,12 @@ namespace Engine.Systems.Buffs
         public int FullDuration { get { return Buff.FullDuration; } }
 
         public BuffType Type { get { return Buff.Type; } }
+
+        public bool Visible { get { return Buff.Visible; } }
+
+        public string Name { get { return Buff.Name; } }
+
+        public string Description { get { return Buff.Description; } }
         #endregion
 
         internal void Update(int msElapsed)
@@ -76,7 +82,6 @@ namespace Engine.Systems.Buffs
                 if (ShouldDestroy)
                 {
                     Buff.OnExpired(this);
-                    Buff.Destroy();
                     return;
                 }
             }

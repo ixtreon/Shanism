@@ -10,12 +10,13 @@ using Engine.Events;
 
 class Teleport : Ability
 {
-
     public Teleport()
         : base(AbilityTargetType.PointTarget)
     {
         Name = "Teleport";
         Description = "Teleports to the selected location";
+        Icon = "air-burst-jade-3";
+
         CastRange = 10;
         ManaCost = 1;
         Cooldown = 100;

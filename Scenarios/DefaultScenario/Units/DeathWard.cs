@@ -22,7 +22,7 @@ namespace Engine._DefaultScenario.Units
         public DeathWard(Player owner, Vector location, int duration = 5000)
             : base("pruchka", owner, location, 1)
         {
-            ModelString = "pruchka";
+            Name = "Death Ward";
 
             //Behaviour = new AggroBehaviour();
             AddAbility(spell);

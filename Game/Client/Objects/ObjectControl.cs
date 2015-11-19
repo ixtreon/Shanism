@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using IO;
 using Microsoft.Xna.Framework.Graphics;
-using Client.Sprites;
 using Client.UI;
 using IO.Content;
 using IO.Objects;
 using IO.Common;
+using Client.Assets.Sprites;
 
 namespace Client.Objects
 {
@@ -40,9 +40,9 @@ namespace Client.Objects
         /// <param name="obj">The underlying game object. </param>
         public ObjectControl(IGameObject obj)
         {
-            this.Object = obj;
-            var model = obj.Animation ?? AnimationDefOld.Default;
-            Sprite = SpriteFactory.FromModel(model);
+            Object = obj;
+
+            Sprite = Content.Sprites[obj];
             //Sprite.Tint = obj.Tint;
         }
 

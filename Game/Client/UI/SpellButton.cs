@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using IO;
-using Client.Sprites;
 using Client.Textures;
 using Client.UI.Common;
 using IO.Objects;
@@ -21,16 +20,25 @@ namespace Client.UI
 
         public event Action AbilityChanged;
 
+        /// <summary>
+        /// Gets whether dragging from this spell button removes the spell in it. 
+        /// </summary>
+        public bool Sticky { get; set; } = false;
+
         void OnAbilityChanged()
         {
-            this.TooltipText =
-                string.Format("{0}\n\nCooldown: {1}s\nMana: {2}\n\n{3}",
-                ability.Name,
-                ((double)Ability.Cooldown / 1000).ToString("0.0"),
-                Ability.ManaCost,
-                ability.Description);
-            this.Texture = TextureCache.Get(TextureType.Icon, ability.Icon);
-
+            if (ability == null)
+            {
+                ToolTip = string.Empty;
+                Texture = Content.Textures.Blank;
+                TextureColor = Color.Black;
+            }
+            else
+            {
+                ToolTip = ability;
+                Texture = Content.Textures.TryGetIcon(ability.Icon);
+                TextureColor = Color.White;
+            }
             if (AbilityChanged != null)
                 AbilityChanged();
         }
@@ -48,45 +56,53 @@ namespace Client.UI
             }
         }
 
-        public SpellButton(Keys k = Keys.None, double sz = 0.12f)
+        public SpellButton(Keys k = Keys.None, double sz = 0.12)
         {
-            this.CanDrag = true;
-            this.Texture = SpriteFactory.Icon.Nothing.Texture;
-            this.Size = new Vector(sz, sz);
-            this.Keybind = k;
-            this.HasBorder = true;
+            HasBorder = true;
+            CanDrag = true;
 
-            this.DragDrop += SpellButton_DragDrop;
+            Keybind = k;
+            Size = new Vector(sz, sz);
+
+            OnDrop += SpellButton_OnDrop;
+
+            OnAbilityChanged();
         }
 
-        void SpellButton_DragDrop(Control arg1, Control arg2)
+        void SpellButton_OnDrop(Control src)
         {
-            if(arg2 is SpellButton)
+            if (Sticky)
+                return;
+
+            var srcButton = src as SpellButton;
+            if (srcButton?.Ability != null)
             {
-                var sb = (SpellButton)arg2;
-                if (sb.Ability != null)
-                    this.Ability = sb.Ability;
+                var oldAb = Ability;
+                Ability = srcButton.Ability;
+                if (!srcButton.Sticky)
+                    srcButton.Ability = oldAb;
             }
         }
 
-        public override void Draw(SpriteBatch sb)
+        public override void Draw(Graphics g)
         {
-            base.Draw(sb);
+            base.Draw(g);
 
-            var cooldown = (ability != null) ? (ability.CurrentCooldown) : (0);
+            var cooldown = ability?.CurrentCooldown ?? 0;
 
             if (cooldown > 0)
             {
-                var cdHeight = ScreenSize.Y * cooldown / Ability.Cooldown;
-                var cdPos = new Point(ScreenPosition.X, ScreenPosition.Y + ScreenSize.Y - cdHeight);
-                SpriteFactory.Blank.DrawScreen(sb, cdPos, new Point(ScreenSize.X, cdHeight), Color.Black.SetAlpha(120));
+                var cdSize = Size * new Vector(1, (double)cooldown / Ability.Cooldown);
+                var cdPos = new Vector(0, Size.Y - cdSize.Y);
+
+                g.Draw(Content.Textures.Blank, cdPos, cdSize, Color.Black.SetAlpha(120));
             }
 
             if(MouseOver && ability != null)
             {
                 if(ability.CastRange > 0)
                 {
-                    
+                    //TODO: visuals on button hover
                 }
             }
         }

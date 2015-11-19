@@ -14,7 +14,7 @@ namespace DefaultScenario.Units
         public Albimon(Player owner, Vector loc)
             : base(owner, loc)
         {
-
+            Name = "Albimon";
         }
     }
 }

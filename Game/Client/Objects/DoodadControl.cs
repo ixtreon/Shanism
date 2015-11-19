@@ -4,10 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IO.Objects;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Client.Sprites;
-using Client.UI;
+using IO.Common;
 
 namespace Client.Objects
 {
@@ -28,7 +25,7 @@ namespace Client.Objects
         public DoodadControl(IDoodad d)
             : base(d)
         {
-            this.ClickThrough = true;
+            ClickThrough = true;
         }
 
         public override void Update(int msElapsed)
@@ -36,12 +33,9 @@ namespace Client.Objects
             base.Update(msElapsed);
         }
 
-        public override void Draw(SpriteBatch sb)
+        public override void Draw(Graphics g)
         {
-            Vector2 sz = new Vector2((float)Doodad.Size);
-
-            var c = Color.White;
-            Sprite.DrawScreen(sb, ScreenPosition, ScreenSize, c);
+            g.Draw(Sprite, Vector.Zero, Size);
         }
     }
 }

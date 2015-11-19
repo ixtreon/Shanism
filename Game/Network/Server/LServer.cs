@@ -151,7 +151,7 @@ namespace Network
             Log.Default.Info("Got a handshake from {0}! Do we accept it? {1}", peerConnection.RemoteEndPoint.Address, accepted ? "yep" : "nope");
 
             //prepare and send the handshake reply
-            client.SendHandshake(accepted);
+            receptor.SendHandshake(accepted);
 
             if (!accepted)
             {

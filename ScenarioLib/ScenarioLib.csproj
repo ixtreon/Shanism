@@ -85,6 +85,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Zip, Version=1.9.7.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetZip.1.9.7\lib\net20\Ionic.Zip.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CodeAnalysis, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeAnalysis.Common.1.0.0\lib\net45\Microsoft.CodeAnalysis.dll</HintPath>
       <Private>True</Private>
@@ -118,6 +122,7 @@
     <Compile Include="CompiledScenario.cs" />
     <Compile Include="CompilerException.cs" />
     <Compile Include="Config\ContentConfig.cs" />
+    <Compile Include="Config\ObjectConfig.cs" />
     <Compile Include="Designer\ObjectsDesigner.cs" />
     <Compile Include="Ext.cs" />
     <Compile Include="Config\MapConfig.cs" />

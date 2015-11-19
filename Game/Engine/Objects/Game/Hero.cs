@@ -116,7 +116,7 @@ namespace Engine.Objects.Game
 
 
         public Hero(Player owner, Vector location)
-            : base("hero", owner, location)
+            : base("Hero", owner, location)
         {
             BaseMoveSpeed = 5;
             Size = 0.6;

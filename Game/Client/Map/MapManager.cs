@@ -1,5 +1,4 @@
 ﻿using Client;
-using Client.Sprites;
 using IO;
 using IO.Common;
 using IO.Message.Server;
@@ -159,8 +158,8 @@ namespace Client.Map
             effect.World = Microsoft.Xna.Framework.Matrix.CreateTranslation((float)-cameraPos.X, (float)-cameraPos.Y, 0);
             effect.VertexColorEnabled = false;
             effect.TextureEnabled = true;
-            effect.Texture = SpriteFactory.Terrain.TerrainAtlas.Texture;
-
+            effect.Texture = Content.Terrain.Texture;
+            
             //draw all chunks around us
             foreach (var chunkId in EnumerateNearbyChunks(cameraPos))
             {

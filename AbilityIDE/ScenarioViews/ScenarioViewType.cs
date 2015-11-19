@@ -4,8 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AbilityIDE.ScenarioViews
+namespace ShanoEditor.ScenarioViews
 {
+    /// <summary>
+    /// Used to mark scenario views and automagically create the tree. 
+    /// Up to 10 one-level-deep branches for each root node. 
+    /// </summary>
     public enum ScenarioViewType
     {
         Details = 0,

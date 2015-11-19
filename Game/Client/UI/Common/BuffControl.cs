@@ -23,24 +23,31 @@ namespace Client.UI.Common
 
         private Texture2D buffTexture;
 
-        public BuffControl(float size = 0.05f)
+        public BuffControl()
         {
-            Size = size;
-            TooltipText = "lapai pishki :D";
+            ToolTip = "asdasdasdasd";
         }
 
         public override void Update(int msElapsed)
         {
-            buffTexture = Buff?.GetIconTexture();
+            if (Buff != null)
+                buffTexture = Content.Textures.TryGetIcon(Buff.Icon);
         }
 
-        public override void Draw(SpriteBatch sb)
+        public override void Draw(Graphics g)
         {
-            base.Draw(sb);
+            base.Draw(g);
 
             //draw the buff
             if(buffTexture != null)
-                sb.DrawUi(buffTexture, AbsolutePosition, base.Size, Color.White);
+                g.Draw(buffTexture, Vector.Zero, base.Size, Color.White);
+
+            if(Buff.Type != BuffType.Aura)
+            {
+                var shSize = base.Size * new Vector(1, (double)Buff.DurationLeft / Buff.FullDuration);
+                var shPos = base.Size - shSize;
+                g.Draw(Content.Textures.Blank, shPos, shSize, Color.Black.SetAlpha(150));
+            }
         }
     }
 }

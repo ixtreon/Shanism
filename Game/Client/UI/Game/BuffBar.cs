@@ -23,9 +23,8 @@ namespace Client.UI
         public IEnumerable<IBuffInstance> BuffList { get; private set; }
 
 
-        Dictionary<IBuffInstance, BuffControl> buffDict = new Dictionary<IBuffInstance, BuffControl>();
+        SortedDictionary<IBuffInstance, BuffControl> buffDict = new SortedDictionary<IBuffInstance, BuffControl>(new BuffComparer());
 
-        private int lastBuffsPerRow;
         /// <summary>
         /// Gets or sets the maximum size of the bar in terms of buffs. 
         /// </summary>
@@ -69,52 +68,40 @@ namespace Client.UI
                 BuffList = Target.Buffs?.Take(MaxBuffs) ?? Enumerable.Empty<IBuffInstance>();
 
                 //update the underlying controls
-                buffDict.SyncValues(BuffList, addBuff);
+                buffDict.SyncValues(BuffList, addBuff, removeBuff);
+
+                var i = 0;
+                foreach(var bc in buffDict.Values)
+                {
+                    var x = (i % BuffsPerRow);
+                    var y = (i / BuffsPerRow);
+                    bc.Location = new Vector(x, y) * (BuffSize + Padding);
+                    i++;
+                }
             }
+        }
+
+        void removeBuff(IBuffInstance b, BuffControl c)
+        {
+            Remove(c);
         }
 
         private BuffControl addBuff(IBuffInstance b)
         {
-            return new BuffControl(BuffSize)
+            var bc = new BuffControl
             {
+                Size = BuffSize,
                 Buff = b,
-                TooltipText = "some tooltip",
+                ToolTip = b.Name + "\n\n" + b.Description,
             };
+            Add(bc);
+            return bc;
         }
 
 
-        public override void Draw(SpriteBatch sb)
+        public override void Draw(Graphics g)
         {
-            base.Draw(sb);
-
-            if (!Visible)
-                return;
-
-            var currentPos = AbsolutePosition + new Vector(Anchor);
-            var i = 0;
-            var growDist = BuffSize + Anchor;
-
-            foreach (var b in BuffList)
-            {
-                //get the buff's texture
-                var tex = TextureCache.Get(TextureType.Icon, b.Icon);
-
-                //draw the buff
-                sb.DrawUi(tex, currentPos, new Vector(BuffSize), Color.White);
-
-                i++;
-                var isNewRow = (i % BuffsPerRow) == 0;
-                if (isNewRow)
-                {
-                    if (GrowDown)
-                        currentPos.Y += growDist;
-                    else
-                        currentPos.Y -= growDist;
-                    currentPos.X = AbsolutePosition.X + Anchor;
-                }
-                else
-                    currentPos.X += growDist;
-            }
+            base.Draw(g);
         }
 
     }

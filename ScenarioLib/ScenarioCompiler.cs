@@ -55,7 +55,7 @@ namespace ScenarioLib
         };
 
 
-        private static readonly AppDomain ScenarioAppDomain;
+        //private static readonly AppDomain ScenarioAppDomain;
         #endregion
 
 

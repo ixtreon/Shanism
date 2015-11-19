@@ -53,7 +53,10 @@ namespace Engine
         /// </summary>
         internal EntityMap EntityMap { get; }
 
-        internal Scenario Scenario { get; private set; }
+        /// <summary>
+        /// Gets the scenario this engine is playing. 
+        /// </summary>
+        internal Scenario Scenario { get; }
 
         internal Network.LServer NetworkServer { get; private set; }
 
@@ -93,15 +96,13 @@ namespace Engine
 
             EntityMap = new EntityMap(rangeSystem);
 
-
             //run scripts
-            Scenario.RunScripts(cs => cs.LoadModels(Scenario.Models));
             Scenario.RunScripts(cs => cs.GameStart());
         }
 
         #region IEngine implementation
 
-        public IReceptor AcceptClient(IClient c)
+        public INetReceptor AcceptClient(IClient c)
         {
             //TODO: do some checks???!?
 
@@ -109,7 +110,7 @@ namespace Engine
             return pl;
         }
 
-        public void StartPlaying(IReceptor rec)
+        public void StartPlaying(INetReceptor rec)
         {
             var pl = rec as Player;
             if (pl == null)

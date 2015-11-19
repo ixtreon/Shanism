@@ -138,14 +138,16 @@ namespace Engine.Systems.Buffs
 
         public BuffType Type { get; private set; }
 
+        public bool Visible { get; set; }
+
 
         /// <summary>
-        /// Creates a new aura. 
+        /// Creates a new non-timed buff (aura). 
         /// </summary>
         public Buff(BuffType type)
         {
-            this.Type = type;
-            this.Icon = "default2";
+            Type = type;
+            Icon = IO.Constants.Content.DefaultIcon;
         }
 
 
@@ -155,7 +157,7 @@ namespace Engine.Systems.Buffs
         public Buff(BuffType type, int duration)
             : this(type)
         {
-            this.FullDuration = duration;
+            FullDuration = duration;
         }
         
 

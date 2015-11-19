@@ -26,14 +26,14 @@ namespace Client.UI.Common
             {
                 ShowText = false;
                 MaxValue = Value = 0;
-                TooltipText = string.Empty;
+                ToolTip = string.Empty;
             }
             else
             {
                 ShowText = true;
                 Value = Target.Mana;
                 MaxValue = Target.MaxMana;
-                TooltipText = "{0:+0.0;-0.0;0}/sec".Format(Target.ManaRegen);
+                ToolTip = "{0:+0.0;-0.0;0}/sec".Format(Target.ManaRegen);
             }
         }
     }

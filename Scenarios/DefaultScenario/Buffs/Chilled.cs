@@ -16,7 +16,7 @@ namespace DefaultScenario.Buffs
         {
             Name = "Chilled";
             RawDescription = "Slows the unit's movement by {MoveSpeed:0;0}%, its attack speed by {AttackSpeed:0;0}%, but also provides {strength} strength. ";
-
+            Icon = "horror-eerie-2";
 
             MoveSpeedPercentage = -190;
             AttackSpeed = -25;

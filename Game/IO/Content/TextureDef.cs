@@ -28,6 +28,11 @@ namespace IO.Content
         [SerialMember]
         public string Name;
 
+        /// <summary>
+        /// Gets the total number of segments in this texture. 
+        /// </summary>
+        public int SegmentsCount {  get { return Splits.X * Splits.Y; } }
+
         TextureDef() { }
 
         /// <summary>
@@ -36,8 +41,8 @@ namespace IO.Content
         /// <param name="name">The name (or path) of the file. </param>
         public TextureDef(string name, Point logicalSize)
         {
-            this.Name = name;
-            this.Splits = logicalSize;
+            Name = name;
+            Splits = logicalSize;
         }
 
 
