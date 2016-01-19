@@ -1,4 +1,5 @@
-﻿using Client.Textures;
+﻿using Client.Common;
+using Client.Textures;
 using IO;
 using IO.Common;
 using IO.Content;
@@ -10,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static IO.Constants.Content;
 
-namespace Client.Assets.Terrain
+namespace Client.Assets
 {
     class TerrainCache
     {

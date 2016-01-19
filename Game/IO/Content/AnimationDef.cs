@@ -10,6 +10,11 @@ namespace IO.Content
 {
     public class AnimationDef
     {
+        /// <summary>
+        /// A placeholder animation that is present in all games. Uses <see cref="TextureDef.Default"/> as its texture. 
+        /// </summary>
+        public static readonly AnimationDef Default = new AnimationDef(TextureDef.Default);
+
         public TextureDef Texture { get; set; }
 
         /// <summary>
@@ -47,6 +52,10 @@ namespace IO.Content
         /// </summary>
         public int Frames {  get { return IsDynamic ? Span.Area : 1; } }
 
+        /// <summary>
+        /// Returns the span of the n'th frame in this animation. 
+        /// </summary>
+        /// <param name="frame">The consecutive number of the frame, starting from 0. </param>
         public Rectangle GetFrame(int frame)
         {
             if (!IsDynamic)
@@ -68,6 +77,13 @@ namespace IO.Content
             Span = new Rectangle(Point.Zero, tex.Splits);
         }
 
+        /// <summary>
+        /// Creates a new dynamic animation all or part of a texture. 
+        /// </summary>
+        /// <param name="tex">The source texture for the animation. </param>
+        /// <param name="span"></param>
+        /// <param name="period"></param>
+        /// <param name="isLooping"></param>
         public AnimationDef(TextureDef tex, Rectangle span, int period = 100, bool isLooping = true)
         {
             IsDynamic = true;

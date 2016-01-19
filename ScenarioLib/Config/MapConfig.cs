@@ -27,18 +27,24 @@ namespace ScenarioLib
         /// <summary>
         /// Gets or sets the width of the map, if it is finite. 
         /// </summary>
-        public int Width { get { return Map.GetLength(0); } }
+        public int Width { get { return Terrain.GetLength(0); } }
 
         /// <summary>
         /// Gets or sets the height of the map, if it is finite. 
         /// </summary>
-        public int Height { get { return Map.GetLength(1); } }
+        public int Height { get { return Terrain.GetLength(1); } }
 
         /// <summary>
         /// Gets or sets the terrain data for a finite map. 
         /// </summary>
         [JsonProperty]
-        public TerrainType[,] Map { get; set; }
+        public TerrainType[,] Terrain { get; set; }
+
+        /// <summary>
+        /// Gets or sets the list of <see cref="ObjectConstructor"/>s that are created. 
+        /// </summary>
+        [JsonProperty]
+        public List<ObjectConstructor> ObjectList { get; set; } = new List<ObjectConstructor>();
 
         /// <summary>
         /// Gets the size of the map. 
@@ -53,7 +59,7 @@ namespace ScenarioLib
         {
             Infinite = false;
 
-            Map = new TerrainType[64, 64];
+            Terrain = new TerrainType[64, 64];
         }
 
         /// <summary>
@@ -66,17 +72,17 @@ namespace ScenarioLib
         {
             var newMap = new TerrainType[w, h];
 
-            if (Map != null)
+            if (Terrain != null)
             {
                 //copy old map over
                 var mw = Math.Min(Width, w);
                 var mh = Math.Min(Height, h);
                 foreach (var x in Enumerable.Range(0, mw))
                     foreach (var y in Enumerable.Range(0, mh))
-                        newMap[x, y] = Map[x, y];
+                        newMap[x, y] = Terrain[x, y];
             }
 
-            Map = newMap;
+            Terrain = newMap;
         }
     }
 }

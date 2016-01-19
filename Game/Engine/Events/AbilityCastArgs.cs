@@ -1,5 +1,5 @@
 ﻿using Engine.Objects;
-using Engine.Objects.Game;
+using Engine.Systems.Abilities;
 using IO.Common;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Engine.Events
 {
     /// <summary>
-    /// The arguments passed whenever an ability is being casted. 
+    /// The arguments passed whenever an ability is being cast. 
     /// </summary>
     public class AbilityCastArgs
     {
@@ -18,17 +18,22 @@ namespace Engine.Events
         /// <summary>
         /// Gets the type of target this ability was cast on. 
         /// </summary>
-        public readonly AbilityTargetType TargetType;
+        public AbilityTargetType TargetType { get; }
+
+        /// <summary>
+        /// Gets the unit that cast this ability. 
+        /// </summary>
+        public Unit CastingUnit { get; }
 
         /// <summary>
         /// Gets the unit this ability targeted, if there was one. 
         /// </summary>
-        public Unit TargetUnit { get; private set; }
+        public Unit TargetUnit { get; }
 
         /// <summary>
         /// Gets the location this spell targeted. If a unit was targeted, returns its position at the time. 
         /// </summary>
-        public Vector TargetLocation { get; private set; }
+        public Vector TargetLocation { get; }
 
         /// <summary>
         /// Gets or sets whether the spell cast was successful. True by default. 
@@ -37,8 +42,10 @@ namespace Engine.Events
         public bool Success { get; set; } = true;
 
 
-        public AbilityCastArgs(Ability a, object target)
+        public AbilityCastArgs(Ability a, Unit caster, object target)
         {
+            CastingUnit = caster;
+
             if(target is Unit)
             {
                 TargetType = AbilityTargetType.UnitTarget;
@@ -51,7 +58,11 @@ namespace Engine.Events
                 TargetLocation = (Vector)target;
             }
             else
+            {
                 TargetType = AbilityTargetType.NoTarget;
+                TargetUnit = caster;
+                TargetLocation = TargetUnit.Position;
+            }
         }
     }
 

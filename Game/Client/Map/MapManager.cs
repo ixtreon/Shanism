@@ -126,7 +126,7 @@ namespace Client.Map
         public void RemoveOldChunks(Vector cameraPos)
         {
             var isLocked = Interlocked.Exchange(ref chunkRemoveLock, 1);
-            if(isLocked == 0)
+            if (isLocked == 0)
             {
                 if (ChunksAvailable.Count > MaxChunks)
                 {
@@ -150,7 +150,6 @@ namespace Client.Map
 
         public void DrawTerrain(Vector cameraPos)
         {
-
             var device = effect.GraphicsDevice;
 
             //setup texturestuff
@@ -159,17 +158,18 @@ namespace Client.Map
             effect.VertexColorEnabled = false;
             effect.TextureEnabled = true;
             effect.Texture = Content.Terrain.Texture;
-            
+
             //draw all chunks around us
-            foreach (var chunkId in EnumerateNearbyChunks(cameraPos))
+            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
-                var chunk = GetChunk(chunkId);
-                if (chunk != null && chunk.HasBuffer)
+                pass.Apply();
+
+                foreach (var chunkId in EnumerateNearbyChunks(cameraPos))
                 {
-                    device.SetVertexBuffer(chunk.Buffer);
-                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                    var chunk = GetChunk(chunkId);
+                    if (chunk != null && chunk.HasBuffer)
                     {
-                        pass.Apply();
+                        device.SetVertexBuffer(chunk.Buffer);
                         device.DrawPrimitives(PrimitiveType.TriangleList, 0, 2 * chunk.Area);
                     }
                 }

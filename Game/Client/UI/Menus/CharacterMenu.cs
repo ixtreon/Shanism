@@ -1,4 +1,4 @@
-﻿using Client.Controls;
+﻿using Client.Input;
 using Client.UI.Common;
 using IO;
 using System;
@@ -21,9 +21,8 @@ namespace Client.UI.Menus
         public CharacterMenu()
              : base(AnchorMode.Left)
         {
-            this.Title = "Character";
-            this.Key = Keybind.Character;
-            this.Visible = false;
+            TitleText = "Character";
+            Action = GameAction.ToggleCharacterMenu;
 
 
             Add(lblCharName);
@@ -37,7 +36,7 @@ namespace Client.UI.Menus
             Visible &= (Target != null);
         }
 
-        public override void Update(int msElapsed)
+        protected override void OnUpdate(int msElapsed)
         {
             if (Target == null)
                 return;
@@ -45,7 +44,7 @@ namespace Client.UI.Menus
             //lblCharName.Text = Target?.Owner.Name ?? string.Empty;
             //lblCharName.Left = (Size.X - lblCharName.Size.X) / 2;
 
-            base.Update(msElapsed);
+            base.OnUpdate(msElapsed);
         }
     }
 }

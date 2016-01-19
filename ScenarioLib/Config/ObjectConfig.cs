@@ -9,18 +9,6 @@ using System.Threading.Tasks;
 
 namespace ScenarioLib
 {
-    /// <summary>
-    /// Lists all objects that should be created on map startup. 
-    /// </summary>
-    [JsonObject(MemberSerialization.OptIn)]
-    public class ObjectConfig
-    {
-        /// <summary>
-        /// Gets or sets the list of <see cref="ObjectConstructor"/>s that are created. 
-        /// </summary>
-        [JsonProperty]
-        public List<ObjectConstructor> ObjectList { get; set; } = new List<ObjectConstructor>();
-    }
 
     /// <summary>
     /// A <see cref="IGameObject"/> instance created on scenario startup. 
@@ -45,5 +33,11 @@ namespace ScenarioLib
 
         [JsonConstructor]
         internal ObjectConstructor() { }
+
+        public ObjectConstructor(IGameObject obj, Vector location)
+        {
+            TypeName = obj.GetType().FullName;
+            Location = location;
+        }
     }
 }

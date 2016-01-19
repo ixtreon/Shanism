@@ -10,6 +10,7 @@ namespace Engine.Objects.Game
 {
     /// <summary>
     /// Represents an item which lies on the ground. 
+    /// NYI
     /// </summary>
     public class GameItem : Doodad
     {
@@ -22,7 +23,7 @@ namespace Engine.Objects.Game
         /// Creates a new GameItem object containing the given item, on the point specified. 
         /// </summary>
         public GameItem(Item item, Vector location)
-            : base("item", location)
+            : base(location)
         {
             this.Item = item;
 

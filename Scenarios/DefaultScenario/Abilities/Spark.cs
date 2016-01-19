@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using Engine.Objects.Game;
 using DefaultScenario.Buffs;
 using Engine.Events;
+using Engine.Systems.Abilities;
 
 /// <summary>
 /// A point-target spell that launches a spark to damage and bounce from the units it hits. 
@@ -34,7 +35,7 @@ public class Spark : Ability
 
     // Run whenever the spell is cast. 
     // Note the second parameter is a Vector, in line with the type of the ability. 
-    public override void OnCast(AbilityCastArgs e)
+    protected override void OnCast(AbilityCastArgs e)
     {
         castSpark(Bounces, Owner, Owner, e.TargetLocation);
     }
@@ -53,13 +54,15 @@ public class Spark : Ability
         var angle = start.Position.AngleTo(target);
 
         // Create the projectile and set its parameters. 
-        var p = new Projectile(SparkModel, start.Position, ignoredUnits: new[] { start })
+        var p = new Projectile(start.Position, ignoredUnits: new[] { start })
         {
-            Size = 0.45,
-            Direction = angle,
+            ModelName = SparkModel,
+            Scale = 0.45,
             Speed = 4,
             DestroyOnCollision = false,
             MaxRange = 8,
+
+            Direction = angle,
             Data = new  //add some custom data to the projectile
             {
                 Damage = caster.DamageRoll(),
@@ -83,7 +86,7 @@ public class Spark : Ability
         if (p.Data.Bounces > 0)
         {
             var tar = Map.GetUnitsInRange(targetUnit.Position, 5, aliveOnly: true)
-                .Where(u => u.Owner.IsEnemy(Owner))
+                .Where(u => u.Owner.IsEnemyOf(Owner))
                 .OrderBy(u => u.Position.DistanceTo(targetUnit.Position))
                 .FirstOrDefault();
 
@@ -105,10 +108,5 @@ public class Spark : Ability
         }
         //no bounces or no targets
         p.Destroy();
-    }
-
-    public override void OnUpdate(int msElapsed)
-    {
-
     }
 }

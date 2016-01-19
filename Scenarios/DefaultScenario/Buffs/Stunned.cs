@@ -18,6 +18,10 @@ namespace DefaultScenario.Buffs
             this.Name = "Stunned";
         }
 
+        /// <summary>
+        /// The <see cref="OnApplied(BuffInstance)"/> method is called every time this buff is applied to a unit. 
+        /// </summary>
+        /// <param name="buff">The buff instance containing the buff, the target unit and possibly the duration left. </param>
         public override void OnApplied(BuffInstance buff)
         {
             Console.WriteLine("Stunned");
@@ -25,11 +29,19 @@ namespace DefaultScenario.Buffs
             base.OnApplied(buff);
         }
 
+        /// <summary>
+        /// This method is called every frame an instance of this buff remains on a unit. 
+        /// </summary>
+        /// <param name="buff">The buff instance containing the buff, the target unit and possibly the duration left. </param>
         public override void OnUpdate(BuffInstance buff)
         {
             base.OnUpdate(buff);
         }
 
+        /// <summary>
+        /// This method is called every time a buff instance expires from a target unit. 
+        /// </summary>
+        /// <param name="buff">The buff instance that references the buff, the target unit and possibly the duration left. </param>
         public override void OnExpired(BuffInstance buff)
         {
             Console.WriteLine("Unstunned");

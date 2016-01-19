@@ -12,12 +12,12 @@ namespace Client.UI.Common
     {
         public ManaBar()
         {
-            this.ColorPalette[0] = Color.DarkBlue;
-            this.ColorPalette[1] = Color.Blue;
-            this.ColorPalette[2] = Color.LightBlue;
+            this.ColorPalette[0] = new Color(0, 0, 191);
+            this.ColorPalette[1] = new Color(50, 50, 223);
+            this.ColorPalette[2] = new Color(100, 100, 255);
         }
 
-        public override void Update(int msElapsed)
+        protected override void OnUpdate(int msElapsed)
         {
             if (Target == null)
                 return;
@@ -33,7 +33,7 @@ namespace Client.UI.Common
                 ShowText = true;
                 Value = Target.Mana;
                 MaxValue = Target.MaxMana;
-                ToolTip = "{0:+0.0;-0.0;0}/sec".Format(Target.ManaRegen);
+                ToolTip = "{0:+0.0;-0.0;0}/sec".F(Target.ManaRegen);
             }
         }
     }

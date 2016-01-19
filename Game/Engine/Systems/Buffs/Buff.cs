@@ -18,16 +18,16 @@ namespace Engine.Systems.Buffs
     public class Buff : ScenarioObject, IBuff
     {
         int _moveSpeed;
-
+        string _rawDescription;
 
         /// <summary>
         /// Gets or sets icon of the buff. 
         /// </summary>
         public string Icon { get; set; }
 
-
-
-
+        /// <summary>
+        /// Gets or sets the name of the buff. 
+        /// </summary>
         public string Name { get; set; }
 
         /// <summary>
@@ -35,15 +35,20 @@ namespace Engine.Systems.Buffs
         /// <para/>
         /// Uses <see cref="IO.Ext.FormatWith{T}(string, T)"/> to parse "{strength}" into "5". 
         /// </summary>
-        public string RawDescription { get; set; }
+        public string RawDescription
+        {
+            get { return _rawDescription; }
+            set
+            {
+                _rawDescription = value;
+                Description = _rawDescription.FormatWith(this);
+            }
+        }
         
         /// <summary>
         /// Gets the formatted description of this buff. 
         /// </summary>
-        public string Description
-        {
-            get { return RawDescription.FormatWith(this); }
-        }
+        public string Description { get; private set; }
 
         /// <summary>
         /// Gets the identifier of this buff. Currently its name. 
@@ -52,7 +57,6 @@ namespace Engine.Systems.Buffs
         {
             get { return Name; }
         }
-
 
         /// <summary>
         /// Gets or sets the life modifier of this buff. 
@@ -133,38 +137,50 @@ namespace Engine.Systems.Buffs
         /// </summary>
         public bool IsTimed
         {
-            get { return Type != BuffType.Aura; }
+            get { return StackingType != BuffType.Aura; }
         }
 
-        public BuffType Type { get; private set; }
+        public BuffType StackingType { get; set; }
 
         public bool Visible { get; set; }
 
 
+
         /// <summary>
-        /// Creates a new non-timed buff (aura). 
+        /// Creates a new buff.
         /// </summary>
-        public Buff(BuffType type)
+        /// <param name="type">The type of the buff.</param>
+        /// <param name="duration">The duration of the buff if it is timed. </param>
+        public Buff(BuffType type = BuffType.NonStacking, int duration = 5000)
         {
-            Type = type;
+            StackingType = type;
             Icon = IO.Constants.Content.DefaultIcon;
-        }
-
-
-        /// <summary>
-        /// Creates a new buff with duration. 
-        /// </summary>
-        public Buff(BuffType type, int duration)
-            : this(type)
-        {
             FullDuration = duration;
         }
-        
 
+
+        /// <summary>
+        /// The method executed whenever a buff expires from a target. 
+        /// </summary>
+        /// <param name="buff"></param>
         public virtual void OnExpired(BuffInstance buff) { }
 
+        /// <summary>
+        /// The method executed on every update frame for which a buff is on a target. 
+        /// </summary>
+        /// <param name="buff"></param>
         public virtual void OnUpdate(BuffInstance buff) { }
 
+        /// <summary>
+        /// The method executed whenever a buff is refreshed on a target. 
+        /// </summary>
+        /// <param name="buff"></param>
+        public virtual void OnRefresh(BuffInstance buff) { }
+
+        /// <summary>
+        /// The method executed whenever a buff is initially applied to a target. 
+        /// </summary>
+        /// <param name="buff"></param>
         public virtual void OnApplied(BuffInstance buff) { }
 
 

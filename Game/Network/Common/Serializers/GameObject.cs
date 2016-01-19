@@ -34,7 +34,7 @@ namespace Network.Objects.Serializers
         public override void Serialize(BinaryWriter buf, Type ty, object obj)
         {
             if (!CanSerialize(ty))
-                throw new Exception("Cannot serialize type {0}".Format(ty));
+                throw new Exception("Cannot serialize type {0}".F(ty));
 
             var go = (IGameObject)obj;
             buf.Write(go.ObjectType);
@@ -44,7 +44,7 @@ namespace Network.Objects.Serializers
         public override object Deserialize(BinaryReader buf, Type ty)
         {
             var goType = buf.ReadByte();
-            var guid = buf.ReadInt32();
+            var guid = buf.ReadUInt32();
 
             return ObjectFactory.GetOrCreate(ObjectType.Get(goType), guid);
         }

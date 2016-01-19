@@ -9,7 +9,7 @@ using IO.Common;
 using Color = Microsoft.Xna.Framework.Color;
 using System.IO;
 
-namespace Client.Assets.Fonts
+namespace Client.Assets
 {
     class TextureFont
     {
@@ -18,58 +18,66 @@ namespace Client.Assets.Fonts
         /// <summary>
         /// The base height of the font. 
         /// </summary>
-        private readonly int _baseHeight;
-
-        /// <summary>
-        /// The user-defined scale of this font. 
-        /// </summary>
-        private readonly double _baseScale;
+        readonly int _baseHeight;
 
         /// <summary>
         /// The base character spacing of this font. 
         /// </summary>
-        private readonly double _charSpacing = 2;
+        readonly double _baseCharSpacing = 2;
 
         /// <summary>
-        /// Gets the height of the font in pixels. 
+        /// The user-defined scale of this font. 
         /// </summary>
-        public double Height
-        {
-            get { return Screen.ScreenToUi(ScreenHeight); }
-        }
+        readonly double _fontScale;
+
+
+
 
         public int ScreenHeight
         {
             get { return (int)(_baseHeight * Scale); }
         }
 
-        /// <summary>
-        /// Gets the current scaling factor based on the screen size and the user scaling. 
-        /// </summary>
-        private double Scale
-        {
-            get {  return _baseScale * Screen.FontScale; }
-        }
 
         /// <summary>
         /// Gets the character spacing of the font in pixels. 
         /// </summary>
         public int ScreenSpacing
         {
-            get { return (int)(_charSpacing * Scale); }
+            get { return (int)(_baseCharSpacing * Scale); }
         }
 
-        public double CharSpacing
+
+        /// <summary>
+        /// Gets the height of the font in UI units. 
+        /// </summary>
+        public double UiHeight
         {
-            get { return Screen.ScreenToUi(ScreenSpacing); }
+            get { return ScreenHeight / Screen.UiScale; }
+        }
+
+        /// <summary>
+        /// Gets the char spacing of this font in UI units. 
+        /// </summary>
+        public double UiCharSpacing
+        {
+            get { return ScreenSpacing / Screen.UiScale; }
+        }
+
+        /// <summary>
+        /// Gets the current scaling factor based on the screen size and the user scaling. 
+        /// </summary>
+        double Scale
+        {
+            get {  return _fontScale * Screen.FontScale; }
         }
 
         public readonly Texture2D Texture;
 
         public TextureFont(ContentManager content, string name, double scale = 1f, double characterSpacing = 2)
         {
-            this._charSpacing = characterSpacing;
-            this._baseScale = scale;
+            this._baseCharSpacing = characterSpacing;
+            this._fontScale = scale;
             this.Texture = content.Load<Texture2D>(name);
 
             var xmlSchema = new XmlDocument();
@@ -96,8 +104,9 @@ namespace Client.Assets.Fonts
         public TextureFont(TextureFont f, double relativeScale = 1)
         {
             this.Texture = f.Texture;
-            this._baseScale = f._baseScale * relativeScale;
+            this._fontScale = f._fontScale * relativeScale;
             this._baseHeight = f._baseHeight;
+            this._baseCharSpacing = f._baseCharSpacing;
 
             this.keys = f.keys.Clone() as Rectangle[];
         }

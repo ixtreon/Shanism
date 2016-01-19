@@ -13,19 +13,26 @@ namespace IO.Content
     /// Contains the name of the texture along with the logical splits that divide it into chunks. 
     /// </summary>
     [SerialKiller]
-    [JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true, MemberSerialization = MemberSerialization.OptIn)]
     public class TextureDef
     {
         /// <summary>
-        /// The number of segments in the file, if there is more than one. 
+        /// A placeholder texture that is present in all games. 
+        /// </summary>
+        public static readonly TextureDef Default = new TextureDef(Constants.Content.DefaultModelTexture);
+
+        /// <summary>
+        /// The number of logical divisions in the file, if there is more than one such segment.  
         /// </summary>
         [SerialMember]
+        [JsonProperty]
         public Point Splits;
 
         /// <summary>
-        /// The name, also the path, to the file. 
+        /// The name, also the path, to the file behind this texture. 
         /// </summary>
         [SerialMember]
+        [JsonProperty]
         public string Name;
 
         /// <summary>
@@ -48,7 +55,7 @@ namespace IO.Content
 
 
         /// <summary>
-        /// Creates a new TextureDef for the given file of a single segment. 
+        /// Creates a new TextureDef for the given file. 
         /// </summary>
         /// <param name="name">The name (or path) of the file. </param>
         public TextureDef(string name)

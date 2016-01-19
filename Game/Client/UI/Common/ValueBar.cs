@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
-using Client.Textures;
 using Color = Microsoft.Xna.Framework.Color;
 using IO.Common;
 
@@ -23,10 +22,10 @@ namespace Client.UI.Common
         public ValueBar()
         {
             BackColor = new Color(64, 64, 64, 64);
-            ClickThrough = true;
+            CanHover = true;
         }
 
-        public override void Draw(Graphics g)
+        public override void OnDraw(Graphics g)
         {
             var hasText = ShowText && MaxValue != 0;
             var text = hasText ? (Value.ToString("0") + "/" + MaxValue.ToString("0")) : string.Empty;
@@ -48,7 +47,7 @@ namespace Client.UI.Common
             if(!string.IsNullOrEmpty(text))
             {
                 var textPos = Size / 2;
-                g.DrawString(Content.Fonts.MediumFont, text, Color.White, textPos, 0.5f, 0.5f);
+                g.DrawString(Content.Fonts.NormalFont, text, Color.White, textPos, 0.5f, 0.5f);
             }
         }
     }

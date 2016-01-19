@@ -15,17 +15,20 @@ using System.Threading;
 using IO.Objects;
 using Engine.Events;
 using Engine.Systems.RangeEvents;
+using System.Collections.Concurrent;
+using IO.Util;
 
 namespace Engine
 {
     /// <summary>
     /// Represents a player connected to the game
-    /// There are 2 players for all NPC characters, 
+    /// <para/>
+    /// There are 2 default players for all NPC characters, 
     /// see <see cref="NeutralAggressive"/> and <see cref="NeutralFriendly"/>. 
     /// </summary>
-    public class Player : IPlayer, INetReceptor
+    public class Player : IPlayer, INetReceptor, IReceptor
     {
-        public static int LastPlayerId = 0;
+        static int LastPlayerId = 0;
 
         /// <summary>
         /// The neutral aggressive NPC player. Attacks players on sight. 
@@ -62,28 +65,26 @@ namespace Engine
         /// <summary>
         /// All units controlled by the player. 
         /// </summary>
-        HashSet<Unit> controlledUnits { get; } = new HashSet<Unit>();
+        ConcurrentSet<Unit> controlledUnits { get; } = new ConcurrentSet<Unit>();
 
-        HashSet<GameObject> objectsSeen { get; } = new HashSet<GameObject>();
+        ConcurrentSet<GameObject> objectsSeen { get; } = new ConcurrentSet<GameObject>();
 
         /// <summary>
         /// Gets the player's hero, if he has one. 
         /// </summary>
         public Hero MainHero { get; private set; }
 
+
         #region IReceptor Implementation
+        public event Action<IOMessage> MessageSent;
+
         public event Action<IGameObject> ObjectSeen;
 
         public event Action<IGameObject> ObjectUnseen;
 
         public event Action<IUnit, string> AnyUnitAction;
-
-        public event Action<HandshakeReplyMessage> HandshakeReplied;
-
-        public event Action<PlayerStatusMessage> MainHeroChanged;
-
-        public event Action<MapReplyMessage> MapChunkReceived;
         #endregion
+
 
         /// <summary>
         /// Gets whether the player has a hero. 
@@ -180,7 +181,7 @@ namespace Engine
                 Engine.GetTiles(this, ref chunkData, chunkId);
             });
 
-            MapChunkReceived(new MapReplyMessage(chunkId, chunkData));
+            MessageSent(new MapReplyMessage(chunkId, chunkData));
         }
 
         #endregion
@@ -193,6 +194,7 @@ namespace Engine
             
         }
 
+
         public void SetMainHero(Hero h)
         {
             if (HasHero)
@@ -200,7 +202,7 @@ namespace Engine
 
             MainHero = h;
 
-            MainHeroChanged(new PlayerStatusMessage(h));
+            MessageSent(new PlayerStatusMessage(h));
 
             //fire custom scripts
             Engine.Scenario.RunScripts(s => s.OnHeroSpawned(h));    //should remove or change to 'OnPlayerMainHeroChanged' ...
@@ -213,9 +215,10 @@ namespace Engine
         }
 
         /// <summary>
-        /// Gets whether this player is an enemy to the given player. 
+        /// Gets whether the given player is an enemy of this player. 
+        /// Currently all players are friends. 
         /// </summary>
-        public bool IsEnemy(Player p)
+        public bool IsEnemyOf(Player p)
         {
             var oneIsPlayer = (p.IsHuman || this.IsHuman);
             var oneIsAggressive = (p.IsNeutralAggressive || this.IsNeutralAggressive);
@@ -223,20 +226,20 @@ namespace Engine
         }
 
         /// <summary>
-        /// Gets whether the given unit is an enemy to this player. 
+        /// Gets whether the given unit is an enemy of this player. 
         /// </summary>
         /// <param name="u"></param>
         /// <returns></returns>
-        public bool IsEnemy(Unit u)
+        public bool IsEnemyOf(Unit u)
         {
-            return IsEnemy(u.Owner);
+            return IsEnemyOf(u.Owner);
         }
 
         public void SendHandshake(bool isSuccessful)
         {
             var sc = Engine.Scenario;
 
-            HandshakeReplied(new HandshakeReplyMessage(isSuccessful, sc.GetBytes(), sc.ZipContent()));
+            MessageSent(new HandshakeReplyMessage(isSuccessful, sc.GetBytes(), sc.ZipContent()));
         }
 
         /// <summary>
@@ -245,29 +248,31 @@ namespace Engine
         /// <param name="unit"></param>
         internal void AddControlledUnit(Unit unit)
         {
-            controlledUnits.Add(unit);
-            objectsSeen.Add(unit);
-            
+            //update the current player
+            controlledUnits.TryAdd(unit);
+            if(objectsSeen.TryAdd(unit))
+                ObjectSeen?.Invoke(unit);
+
             //register events
             unit.ObjectSeen += ownedUnit_ObjectSeen;
             unit.ObjectUnseen += ownedUnit_ObjectUnseen;
 
-            ObjectSeen?.Invoke(unit);
+            
         }
 
-        private void ownedUnit_ObjectUnseen(GameObject obj)
+        void ownedUnit_ObjectUnseen(GameObject obj)
         {
             if (!obj.SeenBy.Any(u => u.Owner == this))
             {
-                var removed = objectsSeen.Remove(obj);
-                System.Diagnostics.Debug.Assert(removed);
-                ObjectUnseen?.Invoke(obj);
+                if(objectsSeen.TryRemove(obj))
+                    ObjectUnseen?.Invoke(obj);
             }
         }
 
-        private void ownedUnit_ObjectSeen(GameObject obj)
+        //fired whenever an owned unit sees an object. 
+        void ownedUnit_ObjectSeen(GameObject obj)
         {
-            if (objectsSeen.Add(obj))
+            if (objectsSeen.TryAdd(obj))
                 ObjectSeen?.Invoke(obj);
         }
 

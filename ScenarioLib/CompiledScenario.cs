@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using IO.Objects;
 using Newtonsoft.Json;
 using IO.Common;
+using System.IO;
 
 namespace ScenarioLib
 {
@@ -16,21 +17,32 @@ namespace ScenarioLib
     /// </summary>
     public class CompiledScenario : ScenarioFile
     {
+        static readonly string[] FolderNames = new[]
+        {
+            "Abilities",
+            "Buffs",
+            "Doodads",
+            "Effects",
+            //"Items",
+            "Scripts",
+            "Units",
+        };
+
         /// <summary>
         /// Gets the assembly that contains the compiled scenario. 
         /// </summary>
         public Assembly ScenarioAssembly { get; private set; }
 
 
-        List<IUnit> units = new List<IUnit>();
-        List<IDoodad> doodads = new List<IDoodad>();
+        Dictionary<string, IUnit> units = new Dictionary<string, IUnit>();
+        Dictionary<string, IDoodad> doodads = new Dictionary<string, IDoodad>();
 
         /// <summary>
         /// Gets the types of game objects defined in this scenario. 
         /// </summary>
         public IEnumerable<IDoodad> DefinedDoodads
         {
-            get { return doodads; }
+            get { return doodads.Values; }
         }
 
         /// <summary>
@@ -38,16 +50,27 @@ namespace ScenarioLib
         /// </summary>
         public IEnumerable<IUnit> DefinedUnits
         {
-            get { return units; }
+            get { return units.Values; }
         }
 
 
         [JsonConstructor]
         protected CompiledScenario() { }
 
+        /// <summary>
+        /// Creates a new scenario at the given path. 
+        /// </summary>
+        /// <param name="scenarioPath"></param>
         public CompiledScenario(string scenarioPath)
             : base(scenarioPath)
         {
+
+        }
+
+
+        public IGameObject TryGet(string fullTypeName)
+        {
+            return (IGameObject)units.TryGet(fullTypeName) ?? doodads.TryGet(fullTypeName);
         }
 
         public static new CompiledScenario Load(string scenarioPath)
@@ -87,7 +110,7 @@ namespace ScenarioLib
 
             units = unitTypes
                 .Select(ty => (IUnit)Activator.CreateInstance(ty, null, Vector.Zero))
-                .ToList();
+                .ToDictionary(o => o.GetType().FullName, o => o);
 
 
             var doodadTypes = scAssembly.GetTypesDescending<IDoodad>()
@@ -96,7 +119,8 @@ namespace ScenarioLib
 
             doodads = doodadTypes
                 .Select(ty => (IDoodad)Activator.CreateInstance(ty, Vector.Zero))
-                .ToList();
+                .ToDictionary(o => o.GetType().FullName, o => o);
+
 
         }
 

@@ -10,7 +10,7 @@ using Color = Microsoft.Xna.Framework.Color;
 using IO.Objects;
 using Client.UI.Common;
 using IO;
-using Client.Assets.Fonts;
+using Client.Assets;
 
 namespace Client.UI.Tooltips
 {
@@ -33,21 +33,21 @@ namespace Client.UI.Tooltips
         {
             Location = new Vector(0.02, 0.10),
             Text = "lalalal",
-            Font = Content.Fonts.MediumFont,
+            Font = Content.Fonts.NormalFont,
             TextColor = Color.White,
         };
         
 
         public AbilityTip()
         {
-            Font = Content.Fonts.MediumFont;
+            Font = Content.Fonts.NormalFont;
             BackColor = Color.Black.SetAlpha(25);
 
             Add(txtName);
             Add(txtStuff);
         }
         
-        public override void Update(int msElapsed)
+        protected override void OnUpdate(int msElapsed)
         {
             var ability = HoverControl?.ToolTip as IAbility;
 
@@ -60,7 +60,11 @@ namespace Client.UI.Tooltips
             Ability = ability;
 
             txtName.Text = ability.Name;
-            txtStuff.Text = "MC: {0}  R: {1}  CD: {2}  CT: {3}".F(ability.ManaCost, ability.CastRange, ability.Cooldown, ability.CastTime);
+            txtStuff.Text = "MC: {0}  R: {1}  CD: {2}s  CT: {3}s".F(
+                ability.ManaCost, 
+                ability.CastRange, 
+                (ability.Cooldown / 1000.0).ToString("0.0"), 
+                (ability.CastTime / 1000.0).ToString("0.0"));
 
             var descriptionMaxWidth = BaseSize.X - Padding * 4;
             var desc = Font.MeasureStringUi(ability.Description, descriptionMaxWidth);
@@ -72,7 +76,7 @@ namespace Client.UI.Tooltips
             AbsolutePosition = Screen.ScreenToUi(screenPos);
         }
 
-        public override void Draw(Graphics g)
+        public override void OnDraw(Graphics g)
         {
             if (Visible)
             {
@@ -80,7 +84,7 @@ namespace Client.UI.Tooltips
                 g.Draw(Content.Textures.Blank, Vector.Zero, Size, Color.Black.SetAlpha(150));
 
                 //text
-                g.DrawString(Font, Ability.Description, Color.White, new Vector(Padding, BaseSize.Y + Padding) , 0, 0, txtMaxWidth: BaseSize.X - 2 * Padding);
+                g.DrawString(Font, Ability?.Description, Color.White, new Vector(Padding, BaseSize.Y + Padding) , 0, 0, txtMaxWidth: BaseSize.X - 2 * Padding);
             }
         }
     }

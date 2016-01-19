@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace Engine.Systems.Behaviours
 {
+    /// <summary>
+    /// A behaviour that makes the controlled unit follow the specified target unit. 
+    /// </summary>
     class FollowBehaviour : Behaviour
     {
         public Unit Target { get; set; }

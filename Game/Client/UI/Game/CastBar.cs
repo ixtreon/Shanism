@@ -33,30 +33,34 @@ namespace Client.UI
             this.Add(Bar);
         }
 
-        public override void Update(int msElapsed)
+        protected override void OnUpdate(int msElapsed)
         {
             this.Visible = (Target != null && Target.OrderType == OrderType.Casting && Target.CastingAbility.CastTime > 0);
 
-            if(this.Visible)
+            if (this.Visible)
             {
                 Bar.Value = Target.CastingProgress;
                 Bar.MaxValue = Target.CastingAbility.CastTime;
                 Bar.Size = this.Size;
             }
-            base.Update(msElapsed);
+            base.OnUpdate(msElapsed);
         }
 
         public double castTimeLeft
         {
-            get {  return Math.Max(0, (Target.CastingAbility.CastTime - Target.CastingProgress) / 1000.0); }
+            get
+            {
+                var timeLeft = (Target?.CastingAbility.CastTime - Target?.CastingProgress) ?? 0;
+                return timeLeft / 1000.0;
+            }
         }
 
-        public override void Draw(Graphics g)
+        public override void OnDraw(Graphics g)
         {
-            base.Draw(g);
+            base.OnDraw(g);
 
-            //if(Visible)
-                g.DrawString(Content.Fonts.MediumFont, "- {0:0.0}s".Format(castTimeLeft), Color.White,
+            if (Visible)
+                g.DrawString(Content.Fonts.NormalFont, "- {0:0.0}s".F(castTimeLeft), Color.White,
                     Location + new Vector(Size.X, Size.Y / 2), 1, 0.5f);
         }
     }

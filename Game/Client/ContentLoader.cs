@@ -1,28 +1,31 @@
-﻿using Client.Assets.Fonts;
+﻿using Client.Assets;
 using Client.Textures;
+using IO;
+using IO.Content;
 using Microsoft.Xna.Framework.Content;
+using ScenarioLib;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ScenarioLib;
 using System.IO;
-using IO.Content;
-using Client.Assets;
-using Client.Assets.Sprites;
-using Client.Assets.Terrain;
-using System.Threading;
+using System.Linq;
 
 namespace Client
 {
+    /// <summary>
+    /// A singleton class that loads the content (mainly textures) needed to play the game. 
+    /// There is the default content that is always loaded, 
+    /// and the scenario content that is map-specific. 
+    /// </summary>
     static class Content
     {
         public const string DefaultTexDir = @"Content\";
+
         public const string ScenarioTexDir = @"Scenario\";
 
 
-
+        /// <summary>
+        /// Gets the listing of the
+        /// </summary>
         static ContentList ContentList { get; } = new ContentList();
 
 
@@ -39,10 +42,17 @@ namespace Client
         {
 
             var textures = Directory.EnumerateFiles(DefaultTexDir, "*.png", SearchOption.AllDirectories)
-                .Select(fn => new TextureDef(fn));
+                .Select(fn => fn
+                    .ToLowerInvariant()
+                    .GetRelativePath(DefaultTexDir))
+                .Select(fn => new TextureDef(fn))
+                .ToArray();
 
             // add to content listing
             ContentList.Parse(textures);
+
+            //var effect = content.Load<Microsoft.Xna.Framework.Graphics.Effect>("Shaders\\shader");
+
 
             //load textures, terrain, fonts
             Textures.LoadContent(content, DefaultTexDir, textures);
@@ -50,10 +60,7 @@ namespace Client
             Fonts.Load(content);
 
             //load the only (dummy) model for the content list
-            var dummyTex = textures.Single(t => t.Name == @"Content\Objects\dummy.png");
-            var dummyModel = new ModelDef(IO.Constants.Content.DefaultModel);
-            dummyModel.Animations.Add("stand", new AnimationDef(dummyTex));
-            ContentList.Parse(new[] { dummyModel });
+            ContentList.Parse(new[] { ModelDef.Default });
         }
 
 
@@ -77,24 +84,23 @@ namespace Client
             //unzip to temp
             ScenarioFile.UnzipContent(texData, tempDir);
 
-            var tempPath = Path.Combine(tempDir, archivePath);
-            var newPath = Path.GetFullPath(outputDir); 
+            var newDir = Path.GetFullPath(outputDir); 
 
             //delete old scenarios
-            if(Directory.Exists(newPath))
-                Directory.Delete(newPath, true);
+            if(Directory.Exists(newDir))
+                Directory.Delete(newDir, true);
 
             //create sub-directories
-            if(Directory.Exists(tempPath))
+            if(Directory.Exists(tempDir))
             {
-                foreach (string dirPath in Directory.GetDirectories(tempPath, "*",
+                foreach (string dirPath in Directory.GetDirectories(tempDir, "*",
                     SearchOption.AllDirectories))
-                    Directory.CreateDirectory(dirPath.Replace(tempPath, newPath));
+                    Directory.CreateDirectory(dirPath.Replace(tempDir, newDir));
 
                 //copy all files
-                foreach (string filePath in Directory.GetFiles(tempPath, "*.*",
+                foreach (string filePath in Directory.GetFiles(tempDir, "*.*",
                     SearchOption.AllDirectories))
-                    File.Copy(filePath, filePath.Replace(tempPath, newPath), true);
+                    File.Copy(filePath, filePath.Replace(tempDir, newDir), true);
             }
         }
 

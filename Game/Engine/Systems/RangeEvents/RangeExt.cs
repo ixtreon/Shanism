@@ -61,16 +61,18 @@ namespace Engine
 
     public static class UnitRangeEvents
     {
-        public static ObjectConstraint RegisterAnyObjectInRange(this Unit u, double range)
-        {
-            var c = new ObjectConstraint(u, range);
-            u.Map.RangeProvider.AddConstraint(c);
-            return c;
-        }
+        //public static ObjectRangeEvent RegisterAnyObjectInRange(this Unit u, double range, Action<GameObject> triggerFunc)
+        //{
+        //    var c = new ObjectRangeEvent(u, range);
+        //    c.Triggered += triggerFunc;
 
-        public static bool UnregisterRangeEvent(this Unit u, ObjectConstraint c)
-        {
-            return u.Map.RangeProvider.RemoveConstraint(c);
-        }
+        //    u.Map.RangeProvider.AddConstraint(c);
+        //    return c;
+        //}
+
+        //public static bool UnregisterRangeEvent(this Unit u, ObjectRangeEvent c)
+        //{
+        //    return u.Map.RangeProvider.RemoveConstraint(c);
+        //}
     }
 }

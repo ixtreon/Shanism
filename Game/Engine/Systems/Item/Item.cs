@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Engine.Common;
-using Engine.Objects.Game;
 using Engine.Systems.Buffs;
+using Engine.Systems.Abilities;
 
 namespace Engine.Objects
 {

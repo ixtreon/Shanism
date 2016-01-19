@@ -16,12 +16,12 @@ namespace Engine.Systems.Orders
         /// 
         /// The default value is 0.05, or a 1/20th of a square
         /// </summary>
-        public readonly double DistanceThrehsold;
+        public double DistanceThrehsold { get; }
 
         /// <summary>
         /// Gets the target location. 
         /// </summary>
-        public readonly Vector TargetLocation;
+        public Vector TargetLocation { get; }
 
 
         public OrderType Type
@@ -30,14 +30,12 @@ namespace Engine.Systems.Orders
         }
 
         public double Direction { get; private set; }
-        public Vector SuggestedLocation { get; private set; }
 
         public MoveLocation(Vector target, double distanceThreshold = 0.05)
         {
-            this.TargetLocation = target;
-            this.DistanceThrehsold = distanceThreshold;
-            Direction = -1;
-            SuggestedLocation = target;
+            DistanceThrehsold = distanceThreshold;
+            Direction = -1; //wat
+            TargetLocation = target;
         }
 
         public bool Update(Unit unit, int msElapsed)
@@ -65,7 +63,19 @@ namespace Engine.Systems.Orders
 
         public static bool operator !=(MoveLocation o1, MoveLocation o2)
         {
-            return !o1.Equals(o2);
+            return !(o1 == o2);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is MoveLocation))
+                return false;
+            return (MoveLocation)obj == this;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 }

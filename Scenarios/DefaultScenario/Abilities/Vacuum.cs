@@ -35,7 +35,7 @@ class Vacuum : Ability
     }
 
 
-    public async override void OnCast(AbilityCastArgs e)
+    protected async override void OnCast(AbilityCastArgs e)
     {
         var target = e.TargetLocation;
         var badUnits = Map.GetUnitsInRange(target, 3)

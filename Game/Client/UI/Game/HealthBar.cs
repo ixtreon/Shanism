@@ -12,7 +12,7 @@ namespace Client.UI.Common
 {
     class HealthBar : ValueBar
     {
-        public BarColorStyle ColorStyle { get; set; }
+        public BarColorStyle ColorStyle { get; set; } = BarColorStyle.Value;
 
         public readonly Color[] ColorPalette = 
         {
@@ -29,7 +29,7 @@ namespace Client.UI.Common
             ShowText = true;
         }
 
-        public override void Update(int msElapsed)
+        protected override void OnUpdate(int msElapsed)
         {
             if (Target == null)
                 return;
@@ -47,16 +47,16 @@ namespace Client.UI.Common
                 ShowText = true;
                 Value = Target.Life;
                 MaxValue = Target.MaxLife;
-                ToolTip = "{0:+0.0;-0.0;0}/sec".Format(Target.LifeRegen);
+                ToolTip = "{0:+0.0;-0.0;0}/sec".F(Target.LifeRegen);
             }
         }
 
-        public override void Draw(Graphics g)
+        public override void OnDraw(Graphics g)
         {
             if (Target == null)
                 return;
 
-            var text = ShowText ? "{0:0}/{1:0}".Format(Value, MaxValue) : string.Empty;
+            var text = ShowText ? "{0:0}/{1:0}".F(Value, MaxValue) : string.Empty;
 
             switch(ColorStyle)
             {
@@ -74,12 +74,13 @@ namespace Client.UI.Common
                         var n = 1.0 / (ColorPalette.Length - 1);
                         var paletteId = (int)((Value / MaxValue) / n);
                         var amount = (float)(((Value / MaxValue) % n) / n);
-                        ForeColor = Color.Lerp(ColorPalette[paletteId], ColorPalette[paletteId + 1], amount);
+                        if(paletteId >= 0 && paletteId < n)
+                            ForeColor = Color.Lerp(ColorPalette[paletteId], ColorPalette[paletteId + 1], amount);
                     }
                     break;
             }
 
-            base.Draw(g);
+            base.OnDraw(g);
         }
     }
 

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Engine.Events;
-
+using Engine.Systems.Abilities;
 
 class Teleport : Ability
 {
@@ -22,7 +22,7 @@ class Teleport : Ability
         Cooldown = 100;
     }
 
-    public override void OnCast(AbilityCastArgs e)
+    protected override void OnCast(AbilityCastArgs e)
     {
         Owner.Position = e.TargetLocation;
     }

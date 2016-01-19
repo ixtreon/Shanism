@@ -17,14 +17,14 @@ namespace Engine.Systems.Orders
 
         public double Direction { get; set; }
 
-        public Vector SuggestedLocation { get; private set; }
+        public Vector TargetLocation { get; private set; }
 
         public PlayerMoveOrder(MovementState state) 
         {
             this.State = state;
 
             Direction = state.DirectionVector.Angle;
-            SuggestedLocation = Vector.Zero;
+            TargetLocation = Vector.Zero;
         }
 
         Vector nextLocation(Unit u)
@@ -39,7 +39,7 @@ namespace Engine.Systems.Orders
 
         public bool Update(Unit unit, int msElapsed)
         {
-            SuggestedLocation = nextLocation(unit);
+            TargetLocation = nextLocation(unit);
             unit.Move(msElapsed, Direction);
 
             return true;

@@ -9,6 +9,12 @@ using Engine.Objects.Game;
 
 namespace Engine.Objects.Game
 {
+    /// <summary>
+    /// A projectile is a special type of doodad that travels in a straight line
+    /// and fires an event whenever it collides with <see cref="Unit"/>s on its way. 
+    /// This class also supports setting the max distance travelled, whether the projectile is
+    /// destroyed on collision and tracking of the units that are hit.  
+    /// </summary>
     public class Projectile : Doodad
     {
         /// <summary>
@@ -53,7 +59,7 @@ namespace Engine.Objects.Game
         /// Gets or sets the owner of this projectile. 
         /// </summary>
         /// <returns></returns>
-        public Hero Owner { get; set; }
+        public Unit Owner { get; set; }
 
         /// <summary>
         /// Marks the selected unit as already hit, so it won't be damaged twice. 
@@ -64,15 +70,34 @@ namespace Engine.Objects.Game
             unitsHit.Add(u);
         }
 
-        public Projectile(string model, Vector location, Hero owner = null, string name = "streli mreli", IEnumerable<Unit> ignoredUnits = null)
-            : base(model, location)
+        /// <summary>
+        /// Creates a new projectile at the specified in-game location. 
+        /// </summary>
+        /// <param name="location">The starting position of the projectile. </param>
+        /// <param name="model">The name of the model of this projectile. </param>
+        /// <param name="owner">The owner unit of the projectile, if known. </param>
+        /// <param name="name">The in-game name of the projectile. </param>
+        /// <param name="ignoredUnits">The collection this projectile will not collide with. </param>
+        public Projectile(Vector location, 
+            string model = IO.Constants.Content.DefaultModelName, 
+            Unit owner = null,
+            string name = "streli mreli", 
+            IEnumerable<Unit> ignoredUnits = null)
+            : base(location)
         {
+            ModelName = model;
             this.Owner = owner;
             this.Invulnerable = true;
-            foreach(var u in ignoredUnits)
-                unitsHit.Add(u);
+
+            if(ignoredUnits != null)
+                foreach(var u in ignoredUnits)
+                    unitsHit.Add(u);
         }
 
+        /// <summary>
+        /// This method is run every time a projectile is updated. 
+        /// </summary>
+        /// <param name="msElapsed"></param>
         internal override void Update(int msElapsed)
         {
             // update location
@@ -81,7 +106,8 @@ namespace Engine.Objects.Game
             this.DistanceTravelled += dist;
 
             //get valid targets
-            var units = Map.GetUnitsInRange(Position, Size / 2)
+            //TODO: use Bounds.Size instead of textureSize
+            var units = Map.GetUnitsInRange(Position, Scale / 2)
                 .Where(u => u.IsNonPlayable() && !u.IsDead);
 
             if(units.Any())
@@ -89,7 +115,8 @@ namespace Engine.Objects.Game
                 //get units hit by the projectile
                 var collidedUnits = units
                     .Where(u => !unitsHit.Contains(u))
-                    .OrderBy(u => u.Position.DistanceToSquared(Position));
+                    .OrderBy(u => u.Position.DistanceToSquared(Position))
+                    .ToList();
 
                 // and fire the event. 
                 foreach (var target in collidedUnits)
@@ -108,7 +135,8 @@ namespace Engine.Objects.Game
 
             if (DistanceTravelled > MaxRange && MaxRange != 0)
                 this.Destroy();
-            
+
+            base.Update(msElapsed);
         }
 
     }

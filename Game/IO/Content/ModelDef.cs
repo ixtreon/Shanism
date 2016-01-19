@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using IO.Common;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +9,30 @@ using static IO.Constants.Content;
 
 namespace IO.Content
 {
+    [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
     public class ModelDef
     {
+        /// <summary>
+        /// A placeholder model that is present in all games. 
+        /// </summary>
+        public static readonly ModelDef Default = new ModelDef(DefaultModelName, AnimationDef.Default);
+
+        /// <summary>
+        /// Gets or sets the name of this model. 
+        /// </summary>
+        [JsonProperty]
         public string Name { get; set; }
 
+        [JsonProperty]
+        public RectangleF HitBox { get; set; } = new RectangleF(0, 0, 1, 1);
+
+        /// <summary>
+        /// Gets the collection of animations keyed by their name, defined for this model. 
+        /// </summary>
+        [JsonProperty]
         public readonly Dictionary<string, AnimationDef> Animations = new Dictionary<string, AnimationDef>();
 
-        #region specific animations
+        #region Default Animations
         /// <summary>
         /// Gets or sets the stand animation of this model. 
         /// </summary>
@@ -56,9 +74,18 @@ namespace IO.Content
         }
         #endregion
 
+        [JsonConstructor]
+        private ModelDef() { }
+
         public ModelDef(string name)
         {
             Name = name;
+        }
+
+        public ModelDef(string name, AnimationDef standAnim)
+        {
+            Name = name;
+            Animations[DefaultAnimation] = standAnim;
         }
     }
 }

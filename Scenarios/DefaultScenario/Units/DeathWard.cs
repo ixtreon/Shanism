@@ -1,6 +1,7 @@
 ﻿using Engine.Objects;
 using Engine.Objects.Game;
 using Engine.Systems;
+using Engine.Systems.Abilities;
 using IO.Common;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace Engine._DefaultScenario.Units
 {
     public class DeathWard : Unit
     {
-        Ability spell = new Spark()
+        Ability wardSpell = new Spark
         {
             Bounces = 3,
             ManaCost = 0,
@@ -20,14 +21,15 @@ namespace Engine._DefaultScenario.Units
 
 
         public DeathWard(Player owner, Vector location, int duration = 5000)
-            : base("pruchka", owner, location, 1)
+            : base(owner, location, 1)
         {
+            ModelName = "pruchka";
             Name = "Death Ward";
 
             //Behaviour = new AggroBehaviour();
-            AddAbility(spell);
+            Abilities.Add(wardSpell);
 
-            spell.ManaCost = 0;
+            wardSpell.ManaCost = 0;
 
             castSpark();
             timedKill(duration);
@@ -42,17 +44,18 @@ namespace Engine._DefaultScenario.Units
             while (!this.IsDead)
             {
                 //get nearby enemy units
-                var us = Map.GetUnitsInRange(Position, 5, aliveOnly: true)
-                    .Where(u => u.Owner.IsEnemy(Owner))
+                var target = Map.GetUnitsInRange(Position, 5, aliveOnly: true)
+                    .Where(u => u.Owner.IsEnemyOf(Owner))
                     .Where(u => u != this)
-                    .OrderBy(u => u.Position.DistanceTo(this.Position));
+                    .OrderBy(u => u.Position.DistanceTo(this.Position))
+                    .FirstOrDefault();
 
-                if (us.Any())
+                if (target != null)
                 {
-                    this.CastAbility(spell, us.First().Position);
+                    this.CastAbility(wardSpell, target.Position);
                 }
 
-                await Task.Delay(spell.CurrentCooldown + 1);
+                await Task.Delay(wardSpell.CurrentCooldown + 1);
             }
         }
 

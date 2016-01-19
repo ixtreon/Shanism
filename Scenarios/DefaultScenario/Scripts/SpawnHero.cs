@@ -7,6 +7,8 @@ using Engine;
 using Engine.Systems;
 using Engine.Objects.Game;
 using IO.Common;
+using DefaultScenario.Abilities;
+using Engine.Systems.Abilities;
 
 namespace DefaultScenario
 {
@@ -17,7 +19,11 @@ namespace DefaultScenario
         {
             var spellz = new Ability[]
             {
-                new Abilities.Haste(),
+                new Hook(),
+                new SpawnTree(),
+                new LudHook(),
+                new Flameshit(),
+                new Haste(),
                 new Teleport(),
                 new Spark(),
                 new Vacuum(),
@@ -25,7 +31,7 @@ namespace DefaultScenario
             };
 
             foreach (var s in spellz)
-                hero.AddAbility(s);
+                hero.Abilities.Add(s);
         }
 
         public override void OnPlayerJoined(Player p)

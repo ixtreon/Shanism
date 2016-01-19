@@ -28,21 +28,21 @@ namespace Client.UI.Common
             ToolTip = "asdasdasdasd";
         }
 
-        public override void Update(int msElapsed)
+        protected override void OnUpdate(int msElapsed)
         {
             if (Buff != null)
                 buffTexture = Content.Textures.TryGetIcon(Buff.Icon);
         }
 
-        public override void Draw(Graphics g)
+        public override void OnDraw(Graphics g)
         {
-            base.Draw(g);
+            base.OnDraw(g);
 
             //draw the buff
             if(buffTexture != null)
                 g.Draw(buffTexture, Vector.Zero, base.Size, Color.White);
 
-            if(Buff.Type != BuffType.Aura)
+            if(Buff.StackingType != BuffType.Aura)
             {
                 var shSize = base.Size * new Vector(1, (double)Buff.DurationLeft / Buff.FullDuration);
                 var shPos = base.Size - shSize;

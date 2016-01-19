@@ -13,20 +13,20 @@ using IO.Objects;
 using System.Runtime.CompilerServices;
 using ScenarioLib;
 
-namespace Client.Assets.Sprites
+namespace Client.Assets
 {
     /// <summary>
     /// Manages the creation and handling of sprites for game objects. 
-    /// Assumes the <see cref="IGameObject.Model"/> is not changed. 
+    /// Assumes the <see cref="IGameObject.ModelName"/> is not changed. 
     /// </summary>
     class SpriteCache
     {
-        public static ModelDef DefaultModel { get; } = new ModelDef(Constants.Content.DefaultModel);
+        public static ModelDef DefaultModel { get; } = new ModelDef(Constants.Content.DefaultModelName);
 
         static SpriteCache()
         {
             DefaultModel.Animations.Add(Constants.Content.DefaultAnimation,
-                new AnimationDef(new TextureDef(@"Content\Objects\dummy.png")));
+                new AnimationDef(new TextureDef(Constants.Content.DefaultModelTexture)));
         }
 
         ContentList content { get; }

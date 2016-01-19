@@ -5,21 +5,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
+using IO.Util;
 
 namespace Engine.Objects
 {
+    /// <summary>
+    /// Represents all buffs currently applied on a target unit. 
+    /// </summary>
     public class BuffSystem : IEnumerable<BuffInstance>
     {
-        /// <summary>
-        /// Gets the buffs of the unit. 
-        /// </summary>
-        private readonly Dictionary<string, BuffInstance> buffs = new Dictionary<string, BuffInstance>();
+        ConcurrentSet<BuffInstance> buffs { get; }
 
-        public readonly Unit Unit;
+        Unit Target { get; }
 
         public BuffSystem(Unit u)
         {
-            Unit = u;
+            buffs = new ConcurrentSet<BuffInstance>();
+            Target = u;
         }
 
         /// <summary>
@@ -28,26 +30,75 @@ namespace Engine.Objects
         /// <param name="b">The buff to apply. </param>
         public void Add(Buff b)
         {
-            if(Unit.IsDead)
+            if (Target.IsDead)
                 return;
 
-            if (!buffs.ContainsKey(b.Id))
-                buffs.Add(b.Id, new BuffInstance(b, Unit));
+
+            //if no such buffs, just apply a new instance. 
+            if (buffs.TryAdd(new BuffInstance(b, Target)))
+                return;
+
+            var existing = buffs
+                .Where(buff => b.Id == buff.Prototype.Id)
+                .ToList();
+
+            //if such a buff already exists, refer to the stacking type of the buff. 
+            switch (b.StackingType)
+            {
+                case IO.Common.BuffType.Aura:
+                case IO.Common.BuffType.NonStacking:
+                    existing.FirstOrDefault()?.RefreshDuration();   //should have just one such buff
+                    break;
+
+                case IO.Common.BuffType.StackingRefresh:            //add new, refresh existing
+                    foreach (var eb in existing)
+                        eb.RefreshDuration();
+                    buffs.TryAdd(new BuffInstance(b, Target));
+                    break;
+
+                case IO.Common.BuffType.StackingNormal:             //just add new buff instance
+                    buffs.TryAdd(new BuffInstance(b, Target));
+                    break;
+            }
         }
 
-        public void Remove(string buffId)
-        {
-            throw new NotImplementedException();
-        }
-
+        /// <summary>
+        /// Removes all instances of the given buff. 
+        /// </summary>
+        /// <param name="buffType">The buff prototype to remove instances of. </param>
         public void Remove(Buff buffType)
         {
-            throw new NotImplementedException();
+            var toRemove = buffs
+                .Where(b => b.Prototype == buffType)
+                .ToList();
+
+            foreach (var b in toRemove)
+                buffs.TryRemove(b);
         }
 
+        /// <summary>
+        /// Removes a specified number of instances of the given buff from this unit's buffs. 
+        /// </summary>
+        /// <param name="buffType">The buff prototype to remove instances of. </param>
+        /// <param name="nStacks">The maximum number of stacks of this buff to remove. </param>
+        public void Remove(Buff buffType, int nStacks)
+        {
+            var toRemove = buffs
+                .Where(b => b.Prototype == buffType)
+                .Take(nStacks)
+                .ToList();
+
+            foreach (var b in toRemove)
+                buffs.TryRemove(b);
+        }
+
+        /// <summary>
+        /// Removes the given buff instance from this unit. 
+        /// </summary>
+        /// <param name="buff"></param>
         public void Remove(BuffInstance buff)
         {
-            throw new NotImplementedException();
+            buffs.TryRemove(buff);
         }
 
         /// <summary>
@@ -58,11 +109,11 @@ namespace Engine.Objects
             buffs.Clear();
         }
 
-        public void Update(int msElapsed)
+        internal void Update(int msElapsed)
         {
             var toRemove = new List<BuffInstance>();
 
-            foreach (var b in buffs.Values)
+            foreach (var b in buffs)
             {
                 b.Update(msElapsed);
                 if (b.ShouldDestroy)
@@ -70,19 +121,19 @@ namespace Engine.Objects
             }
 
             foreach (var b in toRemove)
-            {
-                buffs.Remove(b.Buff.Id);
-            }
+                buffs.TryRemove(b);
         }
 
+        #region IEnumerable<Buff> Implementation
         public IEnumerator<BuffInstance> GetEnumerator()
         {
-            return buffs.Values.GetEnumerator();
+            return buffs.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return buffs.Values.GetEnumerator();
+            return buffs.GetEnumerator();
         }
+        #endregion
     }
 }

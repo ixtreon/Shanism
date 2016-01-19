@@ -7,21 +7,20 @@ using System.Threading.Tasks;
 
 namespace Engine.Objects
 {
-    struct ObjectGuid
+    /// <summary>
+    /// Provides static methods for the creation of unique identifiers for game objects. 
+    /// </summary>
+    static class ObjectGuid
     {
         static int guidCount = 0;
 
-        public static int GetNew()
+        /// <summary>
+        /// Generates a new, unique id. 
+        /// </summary>
+        /// <returns></returns>
+        public static uint GetNew()
         {
-            return Interlocked.Increment(ref guidCount);
+            return (uint)Interlocked.Increment(ref guidCount);
         }
-
-        //private readonly int value;
-
-
-        //public static implicit operator int (ObjectGuid guid)
-        //{
-        //    return guid.value;
-        //}
     }
 }

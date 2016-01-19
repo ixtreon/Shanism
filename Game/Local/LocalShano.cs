@@ -44,7 +44,7 @@ namespace Local
             ShanoClient = ShanoGame.Create(playerName);
 
             var receptor = ShanoEngine.AcceptClient(ShanoClient);
-            ShanoClient.SetReceptor(receptor);
+            ShanoClient.SetServer(receptor);
 
             ShanoClient.GameLoaded += () => ShanoEngine.StartPlaying(receptor);
 

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using Engine.Objects;
 using Engine.Systems;
 using IO.Common;
-using Engine.Common;
 using Engine.Objects.Game;
+using Engine;
 
 class SpawnMonsters : CustomScript
 {
@@ -17,41 +17,68 @@ class SpawnMonsters : CustomScript
     int UnitsPerCamp = 3;
     int UnitCampRadius = 5;
 
-    public override void GameStart()
+    public override void OnGameStart()
+    {
+        spawnMonsterCamps();
+        spawnDoodadCircle();
+        spawnNRandomMonsters(500);
+    }
+
+    void spawnNRandomMonsters(int n)
+    {
+        foreach(var i in Enumerable.Range(0, n))
+        {
+            var uPos = Rnd.PointInside(Terrain.Bounds);
+            Map.Add(new Monster(uPos, 2)
+            {
+                ModelName = "devilkin",
+                Life = 123,
+                BaseMoveSpeed = 0.1,
+            });
+        }
+    }
+
+    private void spawnDoodadCircle()
+    {
+        var c = Terrain.Bounds.Center;
+
+        const double DoodadDist = 2;
+        const int DoodadCount = 50;
+        foreach (var i in Enumerable.Range(0, DoodadCount))
+        {
+            var dist = 2 * Math.PI * i / DoodadCount;
+            var pos = c.PolarProjection(dist, DoodadDist);
+            var m = new Effect(pos) { ModelName = "tree-1" };
+
+            Map.Add(m);
+        }
+    }
+
+    private void spawnMonsterCamps()
     {
         //restrain the camp spawn area to the terrain bounds
-        var campSpawnRect = 
+        var campSpawnRect =
             new Rectangle(-CampSpawnRadius, -CampSpawnRadius, 2 * CampSpawnRadius, 2 * CampSpawnRadius)
             .IntersectWith(Terrain.Bounds);
 
-        foreach(var iCamp in Enumerable.Range(0, CampCount))
+        foreach (var iCamp in Enumerable.Range(0, CampCount))
         {
             //center it at a random spot
             var campCenter = Rnd.PointInside(campSpawnRect);
 
             //make some units
-            foreach(var iUnit in Enumerable.Range(0, UnitsPerCamp))
+            foreach (var iUnit in Enumerable.Range(0, UnitsPerCamp))
             {
                 var uPos = Rnd.PointInCircle(campCenter, UnitCampRadius);
-                var m = new Monster("devilkin", uPos, 2)
+                var m = new Monster(uPos, 2)
                 {
+                    ModelName = "devliklin",
                     Life = 123,
+                    BaseMoveSpeed = 0.1,
                 };
                 Map.Add(m);
             }
         }
-
-        var c = Terrain.Bounds.Center;
-
-        var n_units = 1;
-        foreach(var i in Enumerable.Range(0, n_units))
-        {
-            var d = 2 * Math.PI * i / n_units;
-            var p = c.PolarProjection(d, 10);
-            var m = new Monster("devilkin", p, 1);
-            Map.Add(m);
-        }
-
     }
 
     public override async void OnUnitDeath(Unit unit)

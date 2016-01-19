@@ -5,6 +5,7 @@ using System.Linq;
 using IO.Common;
 using Engine.Objects.Game;
 using Engine.Systems.Behaviours;
+using Engine.Systems.Abilities;
 
 namespace Engine.Systems.Orders
 {
@@ -26,9 +27,9 @@ namespace Engine.Systems.Orders
 
         public CastOrder(Ability ability, object target)
         {
-            this.Target = target;
-            this.Ability = ability;
-            this.Progress = 0;
+            Target = target;
+            Ability = ability;
+            Progress = 0;
         }
 
         public bool Update(Unit unit, int msElapsed)
@@ -40,19 +41,19 @@ namespace Engine.Systems.Orders
                 return true;
 
             //cast the spell
-            unit.activateAbility(Ability, Target);
+            unit.Abilities.ActivateAbility(Ability, Target);
             Progress = 0;
             return false;
         }
 
-        // DOES NOT CHECK PROGRESS
-        // cuz an order is still the same, right?
-        public override bool Equals(object other)
+        // Progress doesn't matter
+        // 'cause the order is still the same, right?
+        public override bool Equals(object obj)
         {
-            if (other == null || other.GetType() != this.GetType())
+            if (obj == null || obj.GetType() != this.GetType())
                 return false;
 
-            var oa = (CastOrder)other;
+            var oa = (CastOrder)obj;
             return Ability == oa.Ability && Target == oa.Target;    // the last check is flaky for point targets; who cares..
         }
 
@@ -64,6 +65,11 @@ namespace Engine.Systems.Orders
         public static bool operator !=(CastOrder o1, CastOrder o2)
         {
             return !o1.Equals(o2);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 }

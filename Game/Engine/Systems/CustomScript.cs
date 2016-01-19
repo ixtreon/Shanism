@@ -18,7 +18,7 @@ namespace Engine.Systems
         /// <summary>
         /// The method executed when the game has started. 
         /// </summary>
-        public virtual void GameStart() { }
+        public virtual void OnGameStart() { }
 
         /// <summary>
         /// The method executed when a player has joined the game. 

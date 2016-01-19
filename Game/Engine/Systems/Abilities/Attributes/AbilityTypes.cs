@@ -10,6 +10,12 @@ namespace Engine.Systems.Abilities
 {
     static class AbilityTypes
     {
+        /// <summary>
+        /// Returns all abilities of this unit that are of the given <see cref="AbilityType"/>. 
+        /// </summary>
+        /// <param name="u"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public static IEnumerable<Ability> GetAbilitiesOfType(this Unit u, AbilityType type)
         {
             return u.Abilities

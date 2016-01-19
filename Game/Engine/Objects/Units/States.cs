@@ -1,4 +1,5 @@
-﻿using IO.Common;
+﻿using IO;
+using IO.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,49 +15,49 @@ namespace Engine.Objects
         public Dictionary<UnitState, int> StateStacks = new Dictionary<UnitState, int>();
 
         /// <summary>
-        /// Applies (an instance of) the given state to the unit. 
+        /// Applies a single instance of the given state to the unit. 
         /// </summary>
         public void ApplyState(UnitState state)
         {
-            int stacks = 0;
-            if (state.IsStacking())
-                StateStacks.TryGetValue(state, out stacks);
+            var stacks = StateStacks.TryGet(state);
 
             stacks++;
             StateStacks[state] = stacks;
             StateFlags |= state;
-            Console.WriteLine("Added state {0}", state);
+
+            Console.WriteLine("Added state {0} from unit {1}", state, this);
         }
 
         /// <summary>
         /// Removes one or all instances of the given UnitState. 
         /// </summary>
         /// <param name="state">The UnitState to remove. </param>
-        /// <param name="purge">Whether to remove all instances of the state. </param>
-        public void RemoveState(UnitState state, bool purge = false)
+        /// <param name="purgeAll">Whether to remove all instances of the state. </param>
+        public void RemoveState(UnitState state, bool purgeAll = false)
         {
             //get n of stacks
-            int stacks = 1;
-            if (state.IsStacking())
-                StateStacks.TryGetValue(state, out stacks);
+            var stacks = StateStacks.TryGet(state);
 
             if (stacks == 0)
                 return;
 
-            //update the # stacks
-            stacks--;
-
-            //if there is at least one more instance, we done
-            if (stacks > 0 && !purge)
+            //if no purge, reduce stacks, then mb short-exit
+            if (!purgeAll)
             {
-                StateStacks[state] = stacks;
-                return;
+                stacks--;
+
+                //if there is at least one more instance we done
+                if (stacks > 0)
+                {
+                    StateStacks[state] = stacks;
+                    return;
+                }
             }
 
             //remove the state flag, dictionary entry
             StateFlags &= (~state);
             StateStacks.Remove(state);
-            Console.WriteLine("Removed state {0}", state);
+            Console.WriteLine("Removed state {0} from unit {1}", state, this);
         }
 
 

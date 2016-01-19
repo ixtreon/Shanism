@@ -7,17 +7,24 @@ using IO;
 using Engine.Events;
 using System.Diagnostics;
 using Engine.Systems.RangeEvents;
+using IO.Util;
 
 namespace Engine.Objects
 {
     partial class Unit
     {
 
-        ObjectConstraint objectInRangeConstraint;
 
         double _visionRange;
 
-        HashSet<GameObject> visibleObjects = new HashSet<GameObject>();
+        ConcurrentSet<GameObject> visibleObjects { get; } = new ConcurrentSet<GameObject>();
+
+
+        /// <summary>
+        /// Gets or sets the RangeEvent that is fired whenever an object approaches this unit. 
+        /// </summary>
+        internal ObjectRangeEvent ObjectVisionRangeEvent { get; set; }
+
 
         /// <summary>
         /// The event raised whenever a game object enters this unit's vision range. 
@@ -28,6 +35,12 @@ namespace Engine.Objects
         /// The event raised whenever a game object leaves this unit's vision range. 
         /// </summary>
         public event Action<GameObject> ObjectUnseen;
+
+        /// <summary>
+        /// The event raised whenever this unit's vision range is changed. 
+        /// </summary>
+        public event Action<Unit> VisionRangeChanged;
+
 
         /// <summary>
         /// Gets all units this guy can see. 
@@ -49,30 +62,24 @@ namespace Engine.Objects
 
             set
             {
-                if (Map != null && !_visionRange.AlmostEqualTo(value, 0.0005))  //should be ok, lel
+                if (!_visionRange.AlmostEqualTo(value, 0.0005))  //should be ok, lel
                 {
-                    //remove old handler
-                    if (objectInRangeConstraint != null)
-                        Map.RangeProvider.RemoveConstraint(objectInRangeConstraint);
 
                     _visionRange = value;
 
-                    //add a new handler
-                    objectInRangeConstraint = new ObjectConstraint(this, _visionRange);
-                    objectInRangeConstraint.Triggered += onObjectInVisionRange;
-                    Map.RangeProvider.AddConstraint(objectInRangeConstraint);
+                    VisionRangeChanged?.Invoke(this);
                 }
             }
         }
 
-        readonly object _visibleObjectsLock = new object();
 
-        void onObjectInVisionRange(GameObject obj)
+        internal void AddObjectInVision(GameObject obj)
         {
-            //add the unit to the list
-            visibleObjects.Add(obj);
-            obj.SeenBy.Add(this);
-            ObjectSeen?.Invoke(obj);
+            if (visibleObjects.TryAdd(obj))
+            {
+                ObjectSeen?.Invoke(obj);
+                obj.SeenBy.TryAdd(this);
+            }
         }
 
         /// <summary>
@@ -84,8 +91,8 @@ namespace Engine.Objects
             var toRemove = visibleObjects.Where(o => !doVisionCheck(o)).ToArray();
             foreach (var obj in toRemove)
             {
-                visibleObjects.Remove(obj);
-                obj.SeenBy.Remove(this);
+                visibleObjects.TryRemove(obj);
+                obj.SeenBy.TryRemove(this);
                 ObjectUnseen?.Invoke(obj);
             }
         }

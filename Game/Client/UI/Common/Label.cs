@@ -1,4 +1,4 @@
-﻿using Client.Assets.Fonts;
+﻿using Client.Assets;
 using IO.Common;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -23,25 +23,32 @@ namespace Client.UI.Common
         /// </summary>
         public bool AutoSize { get; set; } = true;
 
+        /// <summary>
+        /// Gets or sets the position of the text. Recommended values are 0 (left), 0.5 (center) and 1 (right). 
+        /// </summary>
+        public float TextXAlign { get; set; }
+
+
         public Label()
         {
             BackColor = Color.Transparent;
             Size = new Vector(0.4, 0.1);
 
-            ClickThrough = true;
+            CanHover = true;
         }
-        public override void Update(int msElapsed)
+        protected override void OnUpdate(int msElapsed)
         {
             if(AutoSize)
                 Size = Font.MeasureStringUi(Text) + new Vector(Padding * 2);
 
-            base.Update(msElapsed);
+            base.OnUpdate(msElapsed);
         }
 
-        public override void Draw(Graphics g)
+        public override void OnDraw(Graphics g)
         {
+            var textPos = new Vector(Padding) + new Vector(Size.X - Padding * 2, 0) * TextXAlign;
             g.Draw(Content.Textures.Blank, Vector.Zero, Size, BackColor);
-            g.DrawString(Font, Text, TextColor, new Vector(Padding, Padding), yAnchor: 0.5f);
+            g.DrawString(Font, Text, TextColor, textPos, TextXAlign, 0.5f);
         }
     }
 }

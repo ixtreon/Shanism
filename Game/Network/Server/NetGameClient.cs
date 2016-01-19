@@ -87,28 +87,21 @@ namespace Network.Server
             GameReceptor = receptor;
 
             //attach to the game receptor events
-            GameReceptor.AnyUnitAction += GameReceptor_AnyUnitAction;
-            GameReceptor.HandshakeReplied += GameReceptor_ConnectionChanged;
+            GameReceptor.MessageSent += GameReceptor_MessageSent;
 
-            GameReceptor.MainHeroChanged += GameReceptor_MainHeroChanged;
-            GameReceptor.MapChunkReceived += GameReceptor_MapChunkReceived;
+            GameReceptor.AnyUnitAction += GameReceptor_AnyUnitAction;
 
             GameReceptor.ObjectSeen += GameReceptor_ObjectSeen;
             GameReceptor.ObjectUnseen += GameReceptor_ObjectUnseen;
         }
 
+        void GameReceptor_MessageSent(IOMessage msg)
+        {
+            sendMessage(msg);
+        }
+
 
         #region Outgoing message handlers
-        private void GameReceptor_MapChunkReceived(MapReplyMessage msg)
-        {
-            sendMessage(msg);
-        }
-
-        private void GameReceptor_ConnectionChanged(HandshakeReplyMessage msg)
-        {
-            sendMessage(msg);
-        }
-
 
         private void GameReceptor_ObjectSeen(IGameObject obj)
         {
@@ -119,12 +112,6 @@ namespace Network.Server
         {
             throw new NotImplementedException();
         }
-
-        private void GameReceptor_MainHeroChanged(PlayerStatusMessage msg)
-        {
-            sendMessage(msg);
-        }
-
         private void GameReceptor_ObjectUnseen(IGameObject obj)
         {
             throw new NotImplementedException();

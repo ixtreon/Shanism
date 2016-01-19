@@ -29,7 +29,7 @@ namespace IO.Message.Server
 
         private ObjectAnimationMessage() { }
 
-        public ObjectAnimationMessage(IUnit u, AnimationDefOld anim)
+        public ObjectAnimationMessage(IUnit u, AnimationDef anim)
         {
 
         }

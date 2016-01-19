@@ -10,9 +10,25 @@ namespace IO
     {
         public static class Content
         {
-            public const string DefaultModel = "dummy";
+            /// <summary>
+            /// Gets the name of a default object texture that is always present. 
+            /// </summary>
+            public const string DefaultObjectTexture = "dummy";
+
+            /// <summary>
+            /// Gets the name of a default model that is always defined. 
+            /// </summary>
+            public const string DefaultModelName = "dummy";
+
+            /// <summary>
+            /// Gets the path to the default model's texture on the client. 
+            /// </summary>
+            public const string DefaultModelTexture = "objects\\dummy.png";
+
 
             public const string DefaultIcon = "default";
+
+            public const string TextureExtension = ".png";
 
             /// <summary>
             /// The name of the animation used by default with all models. 
@@ -42,6 +58,8 @@ namespace IO
         public static class Engine
         {
             public const double DamageReductionPerDefense = 0.05;
+
+            public static readonly double MaximumObjectSize = 3;
         }
     }
 }

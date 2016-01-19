@@ -10,52 +10,47 @@ using System.Diagnostics;
 using System.Collections;
 using Engine.Systems;
 using Engine.Systems.RangeEvents;
+using System.Collections.Concurrent;
+using IO;
 
 namespace Engine.Maps
 {
     /// <summary>
-    /// Another needless layer of abstraction over the HashMap. 
+    /// Contains all entities (such as units, doodads and effects) currently in the game.  
     /// </summary>
-    public partial class EntityMap
+    public class EntityMap
     {
         //contains objects keyed by their location
-        readonly ObjectMap<GameObject> map;
+        internal ObjectMap Map { get; }  = new ObjectMap();
+
 
         //contains objects keyed by their guid
-        readonly Hashtable objectsGuidTable;
+        readonly ConcurrentDictionary<uint, GameObject> objectsGuidTable = new ConcurrentDictionary<uint, GameObject>();
 
 
-        internal readonly RangeEventProvider RangeProvider;
 
-        private int currentFrame = -1;
+        internal event Action<GameObject> ObjectAdded;
 
-        /// <summary>
-        /// Gets all objects in the entity map. 
-        /// </summary>
-        public IEnumerable<GameObject> Objects
+
+
+        internal EntityMap()
         {
-            get { return map; }
-        }
-
-        internal EntityMap(RangeEventProvider rangeProvider)
-        {
-            this.RangeProvider = rangeProvider;
-
-            objectsGuidTable = new Hashtable();
-
-            map = new ObjectMap<GameObject>();
         }
 
         public void Add(GameObject obj)
         {
-            objectsGuidTable.Add(obj.Guid, obj);
-            map.Add(obj);
+            var guidAdded = objectsGuidTable.TryAdd(obj.Guid, obj);
+            if (!guidAdded)
+                throw new InvalidOperationException("An unit with the same GUID already exists on the map!");
+
+            Map.Add(obj);
+            ObjectAdded?.Invoke(obj);
         }
 
-        public GameObject GetByGuid(int guid)
+
+        public GameObject GetByGuid(uint guid)
         {
-            var obj = objectsGuidTable[guid];
-            return obj as GameObject;
+            return objectsGuidTable.TryGet(guid) as GameObject;
         }
 
         /// <summary>
@@ -64,10 +59,10 @@ namespace Engine.Maps
         /// <param name="pos">The coordinates of the upper-left (min) corner of the rectangle. </param>
         /// <param name="size">The size of the rectangle. </param>
         /// <returns>All units within the specified rectangle. </returns>
-        public IEnumerable<Unit> GetUnitsInRect(Vector pos, Vector size, bool aliveOnly = true)
+        public IEnumerable<Unit> GetUnitsInRect(RectangleF rect, bool aliveOnly = true)
         {
-            return map
-                .RangeQuery(pos, size)
+            return Map
+                .RangeQuery(rect)
                 .OfType<Unit>()
                 .Where(u => !(u.IsDead && aliveOnly));
         }
@@ -78,9 +73,9 @@ namespace Engine.Maps
         /// <param name="pos">The coordinates of the upper-left (min) corner of the rectangle. </param>
         /// <param name="size">The size of the rectangle. </param>
         /// <returns>All units within the specified rectangle. </returns>
-        public IEnumerable<GameObject> GetObjectsInRect(Vector pos, Vector size)
+        public IEnumerable<GameObject> GetObjectsInRect(RectangleF rect)
         {
-            return map.RangeQuery(pos, size);
+            return Map.RangeQuery(rect);
         }
 
         
@@ -93,11 +88,10 @@ namespace Engine.Maps
         public IEnumerable<Unit> GetUnitsInRange(Vector pos, double range, bool aliveOnly = true)
         {
             //get a rectangle around the query region. 
-            var windowPos = pos - range;
-            var windowSize = new Vector(range * 2);
+            var window = new RectangleF(pos - range, new Vector(range * 2));
 
             //pick the units in this rectangle. 
-            var us = GetUnitsInRect(windowPos, windowSize, aliveOnly);
+            var us = GetUnitsInRect(window, aliveOnly);
 
             //get exactly the units within the circle. 
             var rangeSq = range * range;
@@ -111,24 +105,10 @@ namespace Engine.Maps
         /// <param name="msElapsed">The time elapsed since the last update, in milliseconds. </param>
         internal void Update(int msElapsed)
         {
-            currentFrame++;
 
-
-            //state update pass
-            map.AddPendingObjects();
-
-            //shouldn't have destroyed units inside the map. 
-            var objs = Objects.ToArray();
-            Debug.Assert(!objs.Any(o => o.IsDestroyed));
-
-            //update constraints
-            //TODO: still passing all objects
-            //      rather than nearby ones
-            foreach (var obj in objs)
-                RangeProvider.CheckAllConstraints(obj, objs, currentFrame);
 
             //update units n map
-            map.Update(msElapsed);
+            Map.Update(msElapsed);
         }
     }
 }

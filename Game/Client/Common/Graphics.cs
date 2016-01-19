@@ -1,34 +1,68 @@
-﻿using IO.Common;
-using Color = Microsoft.Xna.Framework.Color;
+﻿using Client.Assets;
+using IO;
+using IO.Common;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Client.Textures;
-using IO;
-using Client.Assets.Fonts;
-using Client.Assets.Sprites;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace Client
 {
+    /// <summary>
+    /// A graphics object used to draw on top of some or all the MonoGame SpriteBatch. 
+    /// </summary>
     class Graphics
     {
+        /// <summary>
+        /// Gets the SpriteBatch this Graphics works on.
+        /// </summary>
         public SpriteBatch SpriteBatch { get; }
-        public Vector Position { get; }
-        public Vector Size { get; }
+
+        /// <summary>
+        /// Gets the bounds of the drawing area. 
+        /// </summary>
+        public RectangleF Bounds { get; }
+
+        /// <summary>
+        /// Gets the position of the drawing area. 
+        /// </summary>
+        public Vector Position { get { return Bounds.Position; } }
+
+        /// <summary>
+        /// Gets the size of the drawing area. 
+        /// </summary>
+        public Vector Size { get { return Bounds.Size; } }
+
+        /// <summary>
+        /// Creates a new graphics object that spans the whole sprite batch. 
+        /// </summary>
+        /// <param name="sb"></param>
+        public Graphics(SpriteBatch sb)
+        {
+            SpriteBatch = sb;
+            Bounds = new RectangleF(Vector.Zero, Vector.MaxValue);
+        }
+
+        public Graphics(Graphics parent, Vector offset, Vector sz)
+        {
+            SpriteBatch = parent.SpriteBatch;
+            Bounds = new RectangleF(parent.Position + offset, sz);
+        }
 
         public Graphics(SpriteBatch sb, Vector pos, Vector sz)
         {
             SpriteBatch = sb;
-            Position = pos;
-            Size = sz;
+            Bounds = new RectangleF(pos, sz);
         }
 
 
         public void Draw(Texture2D tex, Vector texPos, Vector texSize, Color? color = null)
         {
+            if (tex == null) throw new ArgumentNullException(nameof(tex), "The texture cannot be null!");
+
             var screenPos = getClampedScreenPos(texPos);
             var screenSz = getClampedScreenSize(texPos, texSize);
 
@@ -37,6 +71,8 @@ namespace Client
 
         public void Draw(Sprite s, Vector sPos, Vector sSize, Color? color = null)
         {
+            if (s.Texture == null) throw new ArgumentException("The sprite has a null texture!");
+
             var screenPos = getClampedScreenPos(sPos);
             var screenSz = getClampedScreenSize(sPos, sSize);
 

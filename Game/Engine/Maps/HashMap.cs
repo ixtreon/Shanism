@@ -1,204 +1,264 @@
-﻿using System;
+﻿using Engine.Objects.Game;
+using IO;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Objects;
-using IO;
-using IO.Common;
-using Bin = IO.Common.Point;
-using System.Collections.ObjectModel;
-using System.Threading;
-using System.Collections.Concurrent;
 using System.Collections;
 
 namespace Engine.Maps
 {
-    /// <summary>
-    /// Maps objects in 2D space by dividing the space into equally-sized bins contained in a hash-table. 
-    /// Allows efficient concurrent range queries of a pre-specified size. 
-    /// </summary>
-    /// <typeparam name="T">The type of objects to track. </typeparam>
-    [Obsolete]
-    public class HashMap<T> : IEnumerable<T>
+
+    class HashMap<TKey, TVal> : IEnumerable<TVal>
     {
+        #region Delegates
         /// <summary>
-        /// The main table of tables. 
+        /// A method executed when an item changes its bin. 
         /// </summary>
-        readonly Hashtable hashTable = new Hashtable();
+        /// <param name="obj">The object that changes bins. </param>
+        /// <param name="oldBin">The old bin of the object. </param>
+        /// <param name="newBin">The new bin of the object. </param>
+        public delegate void BinChangeDelegate(TVal obj, TKey oldBin, TKey newBin);
 
         /// <summary>
-        /// The span of a sub-table. 
+        /// A method executed when something happens to an item in the map. 
         /// </summary>
-        public readonly Vector CellSize;
+        /// <param name="obj">The object that triggered the event. </param>
+        public delegate void ItemDelegate(TVal obj);
+        #endregion
+
+
+        ConcurrentDictionary<TKey, HashBin> binDict { get; }
+
+        IObjectMapper<TVal, TKey> objectMapper { get; }
+
 
         /// <summary>
-        /// The total amount of objects in the HashMap
+        /// The event raised whenever an item is added to this HashMap. 
         /// </summary>
-        public int Count { get; private set; }
+        public event ItemDelegate ItemAdded;
 
+        /// <summary>
+        /// The event raised whenever an item is removed from this HashMap. 
+        /// </summary>
+        public event ItemDelegate ItemRemoved;
 
-        public IEnumerable<T> Items
+        /// <summary>
+        /// The event raised whenever an item changes a bin inside this HashMap. 
+        /// </summary>
+        public event BinChangeDelegate ItemBinChanged;
+
+        /// <summary>
+        /// Gets a snapshot of all the bins that are initialized. 
+        /// </summary>
+        internal IEnumerable<HashBin> Bins
         {
-            get { return hashTable.Values.Cast<Hashtable>().SelectMany(bin => bin.Keys.Cast<T>().ToArray()).ToArray(); }
+            get { return binDict.Values; }
         }
 
-        public HashMap(Vector cellSize)
+
+
+        public HashMap(IObjectMapper<TVal, TKey> mapper)
         {
-            this.CellSize = cellSize;
+            binDict = new ConcurrentDictionary<TKey, HashBin>();
+            objectMapper = mapper;
+        }
+
+
+        /// <summary>
+        /// Gets or creates the bin with the given bin id. 
+        /// </summary>
+        /// <param name="id">The id of the bin to get or create. </param>
+        HashBin getOrCreate(TKey id)
+        {
+            var b = binDict.GetOrAdd(id, (_) => new HashBin(objectMapper, id, onObjectBinChange, onObjectRemoved));
+            return b;
+        }
+
+        void onObjectRemoved(TVal obj)
+        {
+            ItemRemoved?.Invoke(obj);
+        }
+
+        void onObjectBinChange(TVal obj, TKey oldBin, TKey newBin)
+        {
+            //move the item
+            var bin = getOrCreate(newBin);
+            bin.Add(obj);
+
+            //raise the event
+            ItemBinChanged?.Invoke(obj, oldBin, newBin);
         }
 
         /// <summary>
-        /// A non thread-safe Add operation. 
+        /// Adds the given item to this HashMap. 
         /// </summary>
-        /// <param name="item"></param>
-        /// <param name="position"></param>
-        public void Add(T item, Vector position)
+        /// <param name="obj">The item to add to the HashMap. </param>
+        public void Add(TVal obj)
         {
-            var binId = getBin(position);
-
-            Hashtable binTable = GetOrAdd(binId);
-
-            binTable[item] = position;
-            Count++;
+            var bin = getOrCreate(objectMapper.GetBinId(obj));
+            bin.Add(obj);
+            ItemAdded?.Invoke(obj);
         }
 
         /// <summary>
-        /// A non thread-safe Remove operation. 
+        /// Adds the given collection of items to this HashMap. 
         /// </summary>
-        /// <param name="item"></param>
-        /// <param name="position"></param>
-        public bool Remove(T item, Vector position)
+        /// <param name="objs">The items to add to the HashMap. </param>
+        public void AddRange(IEnumerable<TVal> objs)
         {
-            //get bin
-            var binId = getBin(position);
-            var binTable = TryGet(binId);
-            if (binTable == null)
-                return false;
-
-            //get item
-            if (!binTable.ContainsKey(item))
-                return false;
-
-            //remove it
-            binTable.Remove(item);
-            Count--;
-            return true;
-        }
-
-        /// <summary>
-        /// Updates the recorded position of the given item in this HashMap. 
-        /// Not thread-safe. Or maybe it is?
-        /// </summary>
-        /// <param name="item"></param>
-        public void Update(T item, Vector position, Vector newPos)
-        {
-            if (position == newPos)
-                return;
-
-            var oldId = getBin(position);
-            var newId = getBin(newPos);
-
-            if (position.IsNan() || oldId == newId)
+            foreach (var group in objs.GroupBy(obj => objectMapper.GetBinId(obj)))
             {
-                var ht = Get(newId);
-                //lock (ht)
-                ht[item] = newPos;
-            }
-            else
-            {
-                Get(oldId).Remove(item);
-
-                Hashtable ht = GetOrAdd(newId);
-                //lock(ht)
-                ht[item] = newPos;
-            }
-        }
-
-        /// <summary>
-        /// Retrieves all units within the specified rectangle. 
-        /// Thread-safe. 
-        /// </summary>
-        /// <param name="pos">The lower left point of the rectangle. </param>
-        /// <param name="size"></param>
-        /// <returns></returns>
-        public IEnumerable<T> RangeQuery(Vector pos, Vector size)
-        {
-            var cellStart = getBin(pos);
-            var cellEnd = getBin(pos + size);
-
-            var bins = SelectBins(cellStart, cellEnd);
-
-            Hashtable binTable;
-            foreach (var b in bins)
-            {
-                if ((binTable = TryGet(b)) != null)
-                    foreach (DictionaryEntry kvp in binTable)
-                        if (((Vector)kvp.Value).Inside(pos, size))
-                            yield return (T)kvp.Key;
+                var bin = getOrCreate(group.Key);
+                foreach (var obj in group)
+                    bin.Add(obj);
             }
         }
 
-        public IEnumerable<T> RawQuery(Vector pos, Vector size)
+        /// <summary>
+        /// Gets all objects in the specified bin. 
+        /// </summary>
+        /// <param name="binId">The bin identifier.</param>
+        public IEnumerable<TVal> GetBinObjects(TKey binId)
         {
-            var cellStart = getBin(pos);
-            var cellEnd = getBin(pos + size);
-            var bins = SelectBins(cellStart, cellEnd);
-
-            Hashtable binTable;
-            foreach (var b in bins)
-                if ((binTable = TryGet(b)) != null)
-                    foreach (DictionaryEntry kvp in binTable)
-                        yield return (T)kvp.Key;
-        }
-
-        Hashtable Get(Bin id)
-        {
-            return (Hashtable)hashTable[id];
-        }
-
-        Hashtable GetOrAdd(Bin id)
-        {
-            if (hashTable.ContainsKey(id))
-                return Get(id);
-
-            Hashtable ht = new Hashtable();
-            hashTable[id] = ht;
-            return ht;
-        }
-
-        Hashtable TryGet(Bin id)
-        {
-            if (!hashTable.ContainsKey(id))
-                return null;
-            return (Hashtable)hashTable[id];
-        }
-
-        IEnumerable<Bin> SelectBins(Bin start, Bin end)
-        {
-            for (int ix = start.X; ix <= end.X; ix++)
-                for (int iy = start.Y; iy <= end.Y; iy++)
-                    yield return new Bin(ix, iy);
+            HashBin bin = null;
+            binDict.TryGetValue(binId, out bin);
+            return bin?.Objects ?? Enumerable.Empty<TVal>();
         }
 
         /// <summary>
-        /// Returns the bin of the given item, as determined by the bin size. 
+        /// Updates all bins (and all objects in them) in parallel.  
         /// </summary>
-        Bin getBin(Vector pos)
+        public void Update(int msElapsed)
         {
-            return (pos / CellSize).Floor();
+            Parallel.ForEach(binDict, (kvp) => kvp.Value.Update(msElapsed));
         }
 
-        public IEnumerator<T> GetEnumerator()
+        public IEnumerator<TVal> GetEnumerator()
         {
-            return Items.GetEnumerator();
+            return Bins.SelectMany(b => b.Objects).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
+
+        internal class HashBin
+        {
+            readonly BinChangeDelegate ObjectMovedToAnotherBin;
+            readonly ItemDelegate ObjectRemoved;
+
+            /// <summary>
+            /// All the values kept in the hashbin. 
+            /// </summary>
+            volatile ConcurrentQueue<TVal> objects = new ConcurrentQueue<TVal>();
+
+            volatile ConcurrentQueue<TVal> newObjects = new ConcurrentQueue<TVal>();
+
+            IObjectMapper<TVal, TKey> objectMapper { get; }
+
+            /// <summary>
+            /// Gets the ID of this bin. 
+            /// </summary>
+            public TKey Id { get; }
+
+            /// <summary>
+            /// Gets all objects currently in the bin. 
+            /// </summary>
+            public IEnumerable<TVal> Objects { get { return objects; } }
+
+
+            public HashBin(IObjectMapper<TVal, TKey> mapper, TKey id, 
+                BinChangeDelegate onObjectMovedToAnotherBin,
+                ItemDelegate onObjectRemoved)
+            {
+                objectMapper = mapper;
+                Id = id;
+
+                ObjectMovedToAnotherBin = onObjectMovedToAnotherBin;
+                ObjectRemoved = onObjectRemoved;
+            }
+
+
+            /// <summary>
+            /// Adds the given object to this bin. 
+            /// </summary>
+            public void Add(TVal obj)
+            {
+                Debug.Assert(objectMapper.GetBinId(obj).Equals(Id));
+                newObjects.Enqueue(obj);
+            }
+
+            /// <summary>
+            /// Calls obj.Update. Checks the object for removal, 
+            /// otherwise checks if the object moved out, 
+            /// eventually raising an event to move it to another bin. 
+            /// 
+            /// Is not thread safe. Also creates a new queue every frame. 
+            /// </summary>
+            public void Update(int msElapsed)
+            {
+                foreach (var obj in objects)
+                {
+                    //update object state
+                    objectMapper.Update(obj, msElapsed);
+
+                    //check for removal
+                    if (objectMapper.ShouldRemove(obj))
+                    {
+                        ObjectRemoved(obj);
+                        continue;
+                    }
+
+                    //raise bin changed event?
+                    var newBinId = objectMapper.GetBinId(obj);
+                    if (!newBinId.Equals(Id))
+                    {
+                        ObjectMovedToAnotherBin(obj, Id, newBinId);
+                        continue;
+                    }
+
+                    newObjects.Enqueue(obj);
+                }
+
+                objects = newObjects;
+                newObjects = new ConcurrentQueue<TVal>();
+            }
+
+            public override string ToString()
+            {
+                return "HashBin @ {0} ({1} items)".F(Id, objects.Count);
+            }
+        }
     }
 
+    interface IObjectMapper<TVal, TKey>
+    {
+        /// <summary>
+        /// Returns the id of the bin an object belongs to. 
+        /// </summary>
+        TKey GetBinId(TVal obj);
+
+        /// <summary>
+        /// Updates the custom state of an object based on the time elapsed since the last update. 
+        /// </summary>
+        /// <param name="msElapsed">The time elapsed since the last update, in milliseconds. </param>
+        void Update(TVal obj, int msElapsed);
+
+        /// <summary>
+        /// Gets whether an object should be removed from the map as soon as possible. 
+        /// </summary>
+        bool ShouldRemove(TVal obj);
+
+        /// <summary>
+        /// Returns whether this object keeps a bin alive by forcing it to update. 
+        /// If all objects in a chunk return false, the chunk is marked as inactive. NYI. 
+        /// </summary>
+        /// <returns></returns>
+        bool ForcesBinUpdates(TVal obj);
+    }
 }

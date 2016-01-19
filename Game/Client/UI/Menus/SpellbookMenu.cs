@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using IO.Common;
-using Client.Controls;
+using Client.Input;
 using Client.UI.Common;
 using IO.Objects;
 
@@ -23,7 +23,7 @@ namespace Client.UI
         int _currentPage = 0;
 
         SortedSet<SpellButton> spellButtons = new SortedSet<SpellButton>(
-            new GenericComparer<SpellButton>((x,y) => x.Ability.Name.CompareTo(y.Ability.Name)));
+            new GenericComparer<SpellButton>((x, y) => x.Ability.Name.CompareTo(y.Ability.Name)));
 
         public int Pages
         {
@@ -41,7 +41,7 @@ namespace Client.UI
             }
             set
             {
-                if(value != _currentPage)
+                if (value != _currentPage)
                 {
                     foreach (var sb in spellButtons)
                         sb.Visible = false;
@@ -55,8 +55,8 @@ namespace Client.UI
         public SpellBook()
             : base(AnchorMode.Right)
         {
-            this.Key = Keybind.SpellBook;
-            this.Title = "Spell Book";
+            this.Action = GameAction.ToggleSpellBook;
+            this.TitleText = "Spell Book";
             this.Visible = false;
             this.VisibleChanged += SpellBook_VisibleChanged;
         }
@@ -65,13 +65,13 @@ namespace Client.UI
         {
 
             //update contents
-            if(Target != null && this.Visible)
+            if (Target != null && this.Visible)
             {
                 var newAbils = new HashSet<IAbility>(Target.Abilities);
                 //remove old abilities and mark existing ones
-                foreach(var sb in spellButtons.ToArray())
+                foreach (var sb in spellButtons.ToArray())
                     if (newAbils.Contains(sb.Ability))  //ability is already in the book; don't add it again
-                        newAbils.Remove(sb.Ability);    
+                        newAbils.Remove(sb.Ability);
                     else    //ability is in the book but not in the new list; remove it
                     {
                         spellButtons.Remove(sb);
@@ -79,7 +79,11 @@ namespace Client.UI
                     }
                 foreach (var ab in newAbils)     // add the actually new abilities
                 {
-                    SpellButton sb = new SpellButton { Sticky = true };
+                    SpellButton sb = new SpellButton
+                    {
+                        CanSelect = false,
+                        Size = new Vector(0.15),
+                    };
                     sb.Ability = ab;
                     spellButtons.Add(sb);
                     this.Add(sb);
@@ -89,14 +93,14 @@ namespace Client.UI
                 var page = 0;
 
                 // update their positions
-                foreach(var sb in spellButtons)
+                foreach (var sb in spellButtons)
                 {
                     var id = new Vector(i / AbilitiesPerColumn, i % AbilitiesPerColumn);
                     //var relativePos = new Vector(0.075, 0.1) + id * new Vector(0.5, 0.2);
-                    sb.Location = new Vector(0.075f + (i / AbilitiesPerColumn) * 0.5f, 
+                    sb.Location = new Vector(0.075f + (i / AbilitiesPerColumn) * 0.5f,
                         0.1f + (i % AbilitiesPerColumn) * 0.2f);
 
-                    if(++i == AbilitiesPerPage)
+                    if (++i == AbilitiesPerPage)
                     {
                         i = 0;
                         page++;
@@ -108,17 +112,17 @@ namespace Client.UI
             }
         }
 
-        public override void Draw(Graphics g)
+        public override void OnDraw(Graphics g)
         {
-            base.Draw(g);
+            base.OnDraw(g);
         }
 
-        public override void Update(int msElapsed)
+        protected override void OnUpdate(int msElapsed)
         {
             if (Target == null)
                 Visible = false;
 
-            base.Update(msElapsed);
+            base.OnUpdate(msElapsed);
         }
     }
 }

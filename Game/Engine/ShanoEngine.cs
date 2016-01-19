@@ -3,10 +3,12 @@ using Engine.Systems;
 using IO;
 using IO.Common;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using IO.Message;
 
 namespace Engine
 {
@@ -15,9 +17,6 @@ namespace Engine
     /// </summary>
     public class ShanoEngine : IEngine
     {
-        public static ShanoEngine Current { get; private set; } // ugly hax :|
-
-
         /// <summary>
         /// The frames per second we aim to run at. 
         /// </summary>
@@ -46,7 +45,7 @@ namespace Engine
         /// <summary>
         /// A list of all players currently in game. 
         /// </summary>
-        internal List<Player> Players { get; } = new List<Player>();
+        internal ConcurrentBag<Player> Players { get; } = new ConcurrentBag<Player>();
 
         /// <summary>
         /// The current game map containing unit/doodad/sfx info. 
@@ -58,24 +57,33 @@ namespace Engine
         /// </summary>
         internal Scenario Scenario { get; }
 
-        internal Network.LServer NetworkServer { get; private set; }
+        /// <summary>
+        /// Gets the time elapsed since the game started. 
+        /// </summary>
+        public double GameTime { get; private set; }
 
         /// <summary>
         /// Gets whether this engine is open for online play. 
         /// </summary>
         internal bool IsOnline { get; private set; }
 
-        #region Subsystems
-        RangeEventProvider rangeSystem = new RangeEventProvider();
-        #endregion
+
+
+        internal RangeEventSystem RangeSystem { get; }
+        internal VisionSystem VisionSystem { get; }
+
+        internal Network.LServer NetworkServer { get; private set; }
+
+        internal ObjectMap Map
+        {
+            get
+            {
+                return EntityMap.Map;
+            }
+        }
 
         public ShanoEngine(int mapSeed, string scenarioDir)
         {
-            
-            // allow only one instance of the server. An ugly hack..
-            if (Current != null)
-                throw new Exception("Please run only one instance of the server!");
-            Current = this;
 
             //compile the scenario
             try
@@ -84,27 +92,29 @@ namespace Engine
             }
             catch(Exception e)
             {
-                throw;
+                throw e;
             }
 
+            ScenarioObject.Init(this);
 
-            //create the terrain map from the scenario. 
+
+            //create the terrain, object map from the scenario. 
             TerrainMap = Maps.Terrain.MapGod.Create(Scenario.MapConfig, mapSeed);
+            EntityMap = new EntityMap();
 
-            //create systems, entity map
-            rangeSystem = new RangeEventProvider();
-
-            EntityMap = new EntityMap(rangeSystem);
+            //create systems
+            RangeSystem = new RangeEventSystem(this);
+            VisionSystem = new VisionSystem(this, RangeSystem);
 
             //run scripts
-            Scenario.RunScripts(cs => cs.GameStart());
+            Scenario.RunScripts(cs => cs.OnGameStart());
         }
 
         #region IEngine implementation
 
         public INetReceptor AcceptClient(IClient c)
         {
-            //TODO: do some checks???!?
+            // TODO: do some checks on player join?x
 
             var pl = new Player(this, c);
             return pl;
@@ -177,14 +187,14 @@ namespace Engine
         /// <param name="pl"></param>
         public void AddPlayer(Player pl)
         {
-            this.Players.Add(pl);
+            Players.Add(pl);
 
             Scenario.RunScripts(s => s.OnPlayerJoined(pl));
         }
 
 
         /// <summary>
-        /// Starts the basic game loop. 
+        /// Runs the game loop. 
         /// </summary>
         void mainLoop()
         {
@@ -197,7 +207,7 @@ namespace Engine
                 if (!isThrottled)
                     Thread.Sleep(toSleep);
                 else
-                    Console.WriteLine("Warning: Updating too slow!");
+                    Console.WriteLine("Warning: Server updating too slow!");
 
                 frameStartTime = Environment.TickCount;
                 this.Update(1000 / FPS);
@@ -214,11 +224,15 @@ namespace Engine
             if (IsOnline)
                 NetworkServer.Update(msElapsed);
 
+            GameTime += msElapsed;
+
             //update range system before locations 
             //so new units get properly detected
+            RangeSystem.Update(msElapsed);
+            VisionSystem.Update(msElapsed);
 
 
-            //update entity locations
+            //update the map along with all units. 
             EntityMap.Update(msElapsed);
 
             foreach (var p in Players)

@@ -12,8 +12,11 @@ namespace DefaultScenario.Buffs
     class Haste : Buff
     {
         public Haste(int duration = 5000)
-            : base(BuffType.NonStacking, duration)
+            : base(BuffType.NonStacking, duration)  // same as:
         {
+            // Type = BuffType.NonStacking;
+            // FullDuration = duration;
+
             Name = "Haste";
             RawDescription = "Increases the unit's movement speed by {MoveSpeed:0;0}% and its attack speed by {AttackSpeed:0;0}%. ";
             Icon = "enchant-orange-3";

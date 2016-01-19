@@ -9,10 +9,10 @@ using System.Linq;
 namespace Engine.Systems.Behaviours
 {
     /// <summary>
-    /// A compound aggro behaviour which keeps the aggro table of a unit and switches between following and attacking, 
+    /// A compound aggro behaviour which keeps an aggro table for a unit 
+    /// and switches between following and attacking the current target with max aggro. 
     /// 
-    /// Returns the unit to the starting position if the target runs too far away. 
-    /// 
+    /// Returns the unit to the starting position if the main target runs too far away. 
     /// </summary>
     class AggroBehaviour : BehaviourList
     {
@@ -33,7 +33,7 @@ namespace Engine.Systems.Behaviours
             AttackBehaviour = new SpamBehaviour(this);
             ReturnBehaviour = new ReturnBehaviour(this, u.Position, u.VisionRange * 2);
 
-            this.AddRange(new Behaviour[]
+            AddRange(new Behaviour[]
             {
                 ReturnBehaviour,
                 AttackBehaviour,

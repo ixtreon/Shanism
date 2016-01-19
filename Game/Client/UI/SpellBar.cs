@@ -17,6 +17,8 @@ namespace Client.UI
 
         int _buttonsPerRow = 8;
 
+        readonly int BarId;
+
         public static double ButtonSize { get; } = 0.1;
 
         public int MaxButtonsPerRow
@@ -38,6 +40,18 @@ namespace Client.UI
             }
         }
 
+        public SpellBar(int barId)
+        {
+            BarId = barId;
+            BackColor = new Color(50, 50, 50, 200);
+
+            ButtonCount = 16;
+            MaxButtonsPerRow = 8;
+
+            Locked = false;
+        }
+
+
         void updateButtonCount(int newCount)
         {
             var oldCount = Controls.Count();
@@ -47,7 +61,7 @@ namespace Client.UI
             if (oldCount < newCount)
             {
                 foreach (var i in Enumerable.Range(oldCount, newCount - oldCount))
-                    Add(new SpellButton
+                    Add(new SpellBarButton(BarId, i)
                     {
                         Size = new Vector(ButtonSize, ButtonSize),
                     });
@@ -71,15 +85,5 @@ namespace Client.UI
             Size = new Vector(w, h) * ButtonSize;
         }
 
-
-        public SpellBar()
-        {
-            BackColor = new Color(50, 50, 50, 200);
-
-            ButtonCount = 16;
-            MaxButtonsPerRow = 8;
-
-            Locked = false;
-        }
     }
 }

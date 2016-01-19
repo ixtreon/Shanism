@@ -14,34 +14,18 @@ using IO.Common;
 
 namespace Client.UI
 {
+    /// <summary>
+    /// A simple button that displays an ability's icon and a tooltip. 
+    /// </summary>
     class SpellButton : Button
     {
+
         IAbility ability;
 
-        public event Action AbilityChanged;
-
         /// <summary>
-        /// Gets whether dragging from this spell button removes the spell in it. 
+        /// The event raised whenever the ability on this button is changed. 
         /// </summary>
-        public bool Sticky { get; set; } = false;
-
-        void OnAbilityChanged()
-        {
-            if (ability == null)
-            {
-                ToolTip = string.Empty;
-                Texture = Content.Textures.Blank;
-                TextureColor = Color.Black;
-            }
-            else
-            {
-                ToolTip = ability;
-                Texture = Content.Textures.TryGetIcon(ability.Icon);
-                TextureColor = Color.White;
-            }
-            if (AbilityChanged != null)
-                AbilityChanged();
-        }
+        public event Action AbilityChanged;
 
         public IAbility Ability
         {
@@ -56,37 +40,35 @@ namespace Client.UI
             }
         }
 
-        public SpellButton(Keys k = Keys.None, double sz = 0.12)
+        public SpellButton()
         {
             HasBorder = true;
             CanDrag = true;
 
-            Keybind = k;
-            Size = new Vector(sz, sz);
-
-            OnDrop += SpellButton_OnDrop;
-
             OnAbilityChanged();
         }
 
-        void SpellButton_OnDrop(Control src)
+        void OnAbilityChanged()
         {
-            if (Sticky)
-                return;
-
-            var srcButton = src as SpellButton;
-            if (srcButton?.Ability != null)
+            if (ability == null)
             {
-                var oldAb = Ability;
-                Ability = srcButton.Ability;
-                if (!srcButton.Sticky)
-                    srcButton.Ability = oldAb;
+                ToolTip = string.Empty;
+                Texture = Content.Textures.Blank;
+                TextureColor = Color.Black;
             }
+            else
+            {
+                ToolTip = ability;
+                Texture = Content.Textures.TryGetIcon(ability.Icon) ?? Content.Textures.DefaultIcon;
+                TextureColor = Color.White;
+            }
+
+            AbilityChanged?.Invoke();
         }
 
-        public override void Draw(Graphics g)
+        public override void OnDraw(Graphics g)
         {
-            base.Draw(g);
+            base.OnDraw(g);
 
             var cooldown = ability?.CurrentCooldown ?? 0;
 

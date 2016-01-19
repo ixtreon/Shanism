@@ -1,4 +1,5 @@
-﻿using Engine;
+﻿using DefaultScenario.Abilities;
+using Engine;
 using Engine.Objects.Game;
 using IO.Common;
 using System;
@@ -15,6 +16,7 @@ namespace DefaultScenario.Units
             : base(owner, loc)
         {
             Name = "Albimon";
+
         }
     }
 }

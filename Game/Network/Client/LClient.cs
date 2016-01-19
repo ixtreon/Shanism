@@ -33,12 +33,13 @@ namespace Network
         bool isConnected = false;
 
         #region GameReceptor fields and properties
-        public event Action<HandshakeReplyMessage> HandshakeReplied;
-        public event Action<PlayerStatusMessage> MainHeroChanged;
-        public event Action<MapReplyMessage> MapChunkReceived;
+        //public event Action<HandshakeReplyMessage> HandshakeReplied;
+        //public event Action<PlayerStatusMessage> MainHeroChanged;
+        //public event Action<MapReplyMessage> MapChunkReceived;
         public event Action<IGameObject> ObjectUnseen;
         public event Action<IGameObject> ObjectSeen;
         public event Action<IUnit, string> AnyUnitAction;
+        public event Action<IOMessage> MessageSent;
 
         #endregion
 
@@ -100,15 +101,9 @@ namespace Network
             switch(ioMsg.Type)
             {
                 case MessageType.HandshakeReply:
-                    HandshakeReplied((HandshakeReplyMessage)ioMsg);
-                    break;
-
                 case MessageType.PlayerStatusUpdate:
-                    MainHeroChanged((PlayerStatusMessage)ioMsg);
-                    break;
-
                 case MessageType.MapReply:
-                    MapChunkReceived((MapReplyMessage)ioMsg);
+                    MessageSent(ioMsg);
                     break;
 
                 case MessageType.ObjectSeen:

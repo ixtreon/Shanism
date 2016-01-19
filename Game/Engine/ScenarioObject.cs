@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Engine.Maps;
+using IO;
 
 namespace Engine
 {
@@ -13,27 +14,35 @@ namespace Engine
     /// </summary>
     public abstract class ScenarioObject
     {
-        internal ShanoEngine Game { get; set; }
+        static ShanoEngine Game { get; set; }
+
+        public static void Init(ShanoEngine game)
+        {
+            Game = game;
+        }
 
         /// <summary>
         /// Gets the map that contains the units in this scenario. 
         /// </summary>
         public EntityMap Map
         {
-            get { return Game.EntityMap; }
+            get { return Game?.EntityMap; }
         }
 
         /// <summary>
-        /// Gets the terrain map of this scenario. 
+        /// Gets the terrain map of the scenario this object is part of. 
         /// </summary>
         public ITerrainMap Terrain
         {
-            get { return Game.TerrainMap; }
+            get { return Game?.TerrainMap; }
         }
 
-        public ScenarioObject()
+        /// <summary>
+        /// Gets the scenario this object is part of. 
+        /// </summary>
+        public Scenario Scenario
         {
-            Game = ShanoEngine.Current;     // the ugly hack bites back
+            get { return Game?.Scenario; }
         }
 
         /// <summary>

@@ -43,15 +43,16 @@ namespace Engine.Objects
         /// </summary>
         /// 
         /// <example>
-        /// For example a unit with 0 armor should have 0% physical reduction 
-        /// or in other words has a modifier of 1.0. 
+        /// For example a unit with 0 armor should have 0% physical reduction or a multiplier of 1.0. 
+        /// A unit with positive armor will then have a multiplier between 0 and 1,
+        /// and one with negative armor will have a multiplier greater than 1. 
         /// </example>
         double getArmorMultiplier(DamageType damageType)
         {
             switch (damageType)
             {
                 case DamageType.Physical:
-                    return 1 / (Constants.DamageReductionPerDefense * Defense + 1);
+                    return 1 / (Constants.Units.DamageReductionPerDefense * Defense + 1);
                 case DamageType.Light:
                     return 1;
                 case DamageType.Shadow:
@@ -69,7 +70,7 @@ namespace Engine.Objects
         /// <returns></returns>
         public virtual int GetExperienceReward()
         {
-            return Constants.Experience.Base + this.Level * Constants.Experience.LevelFactor;
+            return Constants.Units.Experience.Base + this.Level * Constants.Units.Experience.LevelFactor;
         }
 
         /// <summary>
@@ -110,7 +111,7 @@ namespace Engine.Objects
                 target.Kill(this);
 
                 //fire scenario event
-                target.Game.Scenario.RunScripts(s => s.OnUnitDeath(target));
+                target.Scenario.RunScripts(s => s.OnUnitDeath(target));
             }
 
             return true;

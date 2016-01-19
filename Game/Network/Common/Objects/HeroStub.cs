@@ -33,9 +33,9 @@ namespace Network.Objects
 
         public double Vitality { get; private set; }
 
-        public HeroStub() : base(-1) { }
+        public HeroStub() : base(0) { }
 
-        public HeroStub(int guid)
+        public HeroStub(uint guid)
             : base(guid)
         {
 

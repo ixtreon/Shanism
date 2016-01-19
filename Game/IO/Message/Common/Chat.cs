@@ -19,13 +19,13 @@ namespace IO.Message
         /// The Guid of the sender, or 0 if this is a system message. 
         /// </summary>
         [SerialMember]
-        public readonly int SenderGuid;
+        public readonly uint SenderGuid;
 
         /// <summary>
         /// The Guid of the sender, or 0 if this is a public message. 
         /// </summary>
         [SerialMember]
-        public readonly int ReceiverGuid;
+        public readonly uint ReceiverGuid;
 
         [SerialMember]
         public readonly string Message;

@@ -32,7 +32,7 @@ namespace IO.Message.Client
         /// The Guid of the target, if there is one. 
         /// </summary>
         [SerialMember]
-        public readonly int TargetGuid = -1;
+        public readonly uint TargetGuid = 0;
 
         /// <summary>
         /// The target location, if there is one. 
@@ -40,7 +40,7 @@ namespace IO.Message.Client
         [SerialMember]
         public readonly Vector TargetLocation;
 
-        private ActionMessage() { }
+        ActionMessage() { }
 
         /// <summary>
         /// Creates a new message for the specified action. 
@@ -49,11 +49,11 @@ namespace IO.Message.Client
         /// <param name="abilityId">The string id of the action to perform. </param>
         /// <param name="targetGuid">The target of the ability, if any. </param>
         /// <param name="targetLoc">The location this ability is cast towards. </param>
-        public ActionMessage(string abilityId, int targetGuid, Vector targetLoc)
+        public ActionMessage(string abilityId, uint targetGuid, Vector targetLoc)
         {
-            this.TargetGuid = targetGuid;
-            this.TargetLocation = targetLoc;
-            this.AbilityId = abilityId;
+            TargetGuid = targetGuid;
+            TargetLocation = targetLoc;
+            AbilityId = abilityId;
         }
     }
 }

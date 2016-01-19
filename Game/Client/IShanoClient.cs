@@ -7,9 +7,12 @@ using System.Threading.Tasks;
 
 namespace Client
 {
+    /// <summary>
+    /// A local game client. 
+    /// </summary>
     public interface IShanoClient : IClient
     {
-        void SetReceptor(IReceptor server);
+        void SetServer(IReceptor server);
 
         void Run();
 

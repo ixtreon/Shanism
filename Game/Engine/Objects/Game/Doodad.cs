@@ -5,13 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using IO.Objects;
 using IO.Common;
+using IO;
 
 namespace Engine.Objects.Game
 {
     /// <summary>
     /// Represents all in-game objects which are not units, such as trees, rocks, barrels, projectiles, special effects. 
-    /// 
-    /// Can be either destructible or not. 
     /// </summary>
     public class Doodad : GameObject, IDoodad
     {
@@ -37,10 +36,21 @@ namespace Engine.Objects.Game
 
         public bool Invulnerable = false;
 
-        public Doodad(string model, Vector location)
-            : base(model, location)
+        /// <summary>
+        /// Creates a new doodad with a default model and size at the target location. 
+        /// </summary>
+        /// <param name="location">The location of the doodad. </param>
+        public Doodad(Vector location)
+            : base(location)
         {
+        }
 
+        public Doodad(Doodad @base)
+            : base(@base) { }
+
+        public override string ToString()
+        {
+            return "Doodad @ {0}".F(Position);
         }
     }
 }

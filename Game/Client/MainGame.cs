@@ -1,6 +1,5 @@
-﻿using Client.Controls;
+﻿using Client.Input;
 using Client.Map;
-using Client.Properties;
 using Client.UI;
 using IO;
 using IO.Message;
@@ -28,10 +27,12 @@ namespace Client
 
         SpriteBatch spriteBatch;
 
-        /// <summary>
-        /// The main UI window. 
-        /// </summary>
-        UiManager mainInterface;
+        RenderTarget2D terrainTexture;
+        RenderTarget2D objectsTexture;
+        RenderTarget2D interfaceTexture;
+        RenderTarget2D shadowTextureA;
+        RenderTarget2D shadowTextureB;
+
 
         /// <summary>
         /// Gets the server this client is connected to. 
@@ -43,19 +44,22 @@ namespace Client
         /// </summary>
         public GameStatus GameState { get; private set; } = GameStatus.Loading;
 
+        /// <summary>
+        /// Gets the name of the current player. 
+        /// </summary>
+        public string PlayerName { get; }
 
-        public readonly string PlayerName;
-        
 
-        public string LoadState { get; private set; }
-
-        Rectangle lastWindowBounds;
+        Rectangle WindowSize;
 
         /// <summary>
-        /// The guy that handles objects. 
+        /// Contains the UI, ObjectGod objects. 
         /// </summary>
-        ObjectGod ObjectManager { get; set; }
+        GameManager Game;
 
+        /// <summary>
+        /// Manages chunks and sends requests for new ones. 
+        /// </summary>
         MapManager MapManager;
 
         /// <summary>
@@ -81,32 +85,55 @@ namespace Client
 
         IO.Common.Vector CameraPosition
         {
-            get { return ObjectManager.MainHero?.Position ?? IO.Common.Vector.Zero; }
+            get { return Game.Objects.MainHero?.Position ?? IO.Common.Vector.Zero; }
         }
 
 
         public MainGame(string playerName)
-            : base()
         {
             PlayerName = playerName;
             graphics = new GraphicsDeviceManager(this);
+
             Content.RootDirectory = "Content";
+            Window.Title = "ShanoRPG";
         }
-        
-        public void SetReceptor(IReceptor server)
+
+
+        public void SetServer(IReceptor server)
         {
             Server = server;
 
             Server.ObjectSeen += server_ObjectSeen;
             Server.ObjectUnseen += server_ObjectUnseen;
-            Server.MainHeroChanged += server_MainHeroChanged;
-            Server.MapChunkReceived += server_MapChunkReceived;
-            Server.HandshakeReplied += server_ConnectionChanged;
+            server.MessageSent += Server_MessageSent;
         }
 
-        void server_ConnectionChanged(HandshakeReplyMessage msg)
+        void Server_MessageSent(IOMessage msg)
         {
-            if(!msg.Success)
+            switch(msg.Type)
+            {
+                case MessageType.HandshakeReply:
+                    onHandshakeReply((HandshakeReplyMessage)msg);
+                    break;
+
+                case MessageType.MapReply:
+                    MapManager.HandleMapReply((MapReplyMessage)msg);
+                    break;
+
+                case MessageType.PlayerStatusUpdate:
+                    onStatusChanged((PlayerStatusMessage)msg);
+                    break;
+            }
+        }
+
+        void onStatusChanged(PlayerStatusMessage msg)
+        {
+            Game.Objects.SetMainHero(msg.HeroId);
+        }
+
+        void onHandshakeReply(HandshakeReplyMessage msg)
+        {
+            if (!msg.Success)
             {
                 IsConnected = false;
                 return;
@@ -115,42 +142,25 @@ namespace Client
             //get the scenario
             var sc = ScenarioFile.LoadBytes(msg.ScenarioData);
 
-            //load its content
+            //unzip
             Client.Content.UnzipContent(msg.ContentData, "Scenario", "Content");
 
-
+            Content.RootDirectory = "Scenario";
             Client.Content.LoadScenario(Content, sc.Content);
-            
 
             //start playing!
             IsConnected = true;
         }
 
-        /// <summary>
-        /// When a chunk is received, inform the <see cref="MapManager"/>. 
-        /// </summary>
-        void server_MapChunkReceived(MapReplyMessage msg)
-        {
-            MapManager.HandleMapReply(msg);
-        }
-
-        /// <summary>
-        /// When the main hero is changed update the <see cref="ObjectManager"/> records. 
-        /// </summary>
-        /// <param name="msg"></param>
-        void server_MainHeroChanged(PlayerStatusMessage msg)
-        {
-            ObjectManager.SetMainHero(msg.HeroId);
-        }
 
         void server_ObjectUnseen(IGameObject obj)
         {
-            ObjectManager.RemoveObject(obj.Guid);
+            Game.Objects.RemoveObject(obj.Guid);
         }
 
         void server_ObjectSeen(IGameObject obj)
         {
-            ObjectManager.AddObject(obj);
+            Game.Objects.AddObject(obj);
         }
 
         /// <summary>
@@ -166,28 +176,22 @@ namespace Client
                 CullMode = CullMode.None,
             };
 
-            //UI Manager
-            mainInterface = new UiManager();
-            mainInterface.OnActionPerformed += MainInterface_OnActionPerformed;
+            //no vsync
+            graphics.SynchronizeWithVerticalRetrace = false;
+            this.IsFixedTimeStep = false;
+            graphics.ApplyChanges();
+
+            //game manager
+            Game = new GameManager();
+            Game.ActionPerformed += onActionPerformed;
 
             //MapManager
             this.MapManager = new MapManager(GraphicsDevice);
             MapManager.ChunkRequested += MapManager_ChunkRequested;
 
-            //ObjectManager
-            this.ObjectManager = new ObjectGod
-            {
-                Location = new IO.Common.Vector(),
-            };
-            this.mainInterface.Add(ObjectManager);
 
-            this.ObjectManager.UnitClicked += (u) =>
-            {
-                mainInterface.Target = u;
-            };
-
-            //screen center
-            Screen.Update(graphics, ObjectManager.MainHero);
+            ////screen center
+            //Screen.Update(graphics, ObjectManager.MainHero);
 
             //window stuff
             IsMouseVisible = true;
@@ -201,6 +205,8 @@ namespace Client
                 GameLoaded();
         }
 
+
+
         /// <summary>
         /// Listens to the MapManager requesting chunks and relays them to the server. 
         /// </summary>
@@ -213,7 +219,7 @@ namespace Client
         /// Listens to the interface sending actions and relays them to the server. 
         /// </summary>
         /// <param name="msg"></param>
-        private void MainInterface_OnActionPerformed(ActionMessage msg)
+        private void onActionPerformed(ActionMessage msg)
         {
             ActionActivated(msg);
         }
@@ -223,18 +229,26 @@ namespace Client
         /// <summary>
         /// Changes the back buffer size in response to window resize. 
         /// </summary>
-        private void Window_ClientSizeChanged(object sender, EventArgs e)
+        void Window_ClientSizeChanged(object sender, EventArgs e)
         {
             if (_noRecurse) return;
             _noRecurse = true;
 
             var sz = Window.ClientBounds;
-            if (sz != lastWindowBounds)
+            if (sz != WindowSize && sz.Width > 0 && sz.Height > 0)
             {
-                lastWindowBounds = sz;
+                //update graphics size
+                WindowSize = sz;
                 graphics.PreferredBackBufferWidth = sz.Width;
                 graphics.PreferredBackBufferHeight = sz.Height;
                 graphics.ApplyChanges();
+
+                //update drawtargets
+                terrainTexture = new RenderTarget2D(GraphicsDevice, sz.Width, sz.Height, false, SurfaceFormat.Bgra32SRgb, DepthFormat.None);
+                objectsTexture = new RenderTarget2D(GraphicsDevice, sz.Width, sz.Height, false, SurfaceFormat.Bgra32SRgb, DepthFormat.None);
+                shadowTextureA = new RenderTarget2D(GraphicsDevice, sz.Width, sz.Height);
+                shadowTextureB = new RenderTarget2D(GraphicsDevice, sz.Width, sz.Height);
+                interfaceTexture = new RenderTarget2D(GraphicsDevice, sz.Width, sz.Height);
             }
 
             _noRecurse = false;
@@ -250,8 +264,11 @@ namespace Client
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+
             Client.Content.LoadDefault(Content);
-            Content.RootDirectory = "Scenario";
+
+            Shaders.Load(GraphicsDevice, Content);
+
         }
 
 
@@ -270,21 +287,15 @@ namespace Client
             if (!IsConnected)
                 return;
 
-            mainInterface.MainHeroControl = ObjectManager.MainHeroControl;
-
-            //update cameraInfo
-            Screen.Update(graphics, ObjectManager.MainHero);
-
-            // keyboard
-            KeyManager.Update(msElapsed);
+            //keyboard
+            KeyboardInfo.Update(msElapsed);
             UpdateKeys();
 
-            // object manager
-            ObjectManager.Update(msElapsed);
-            ObjectManager.SendToBack();
+            //camera
+            Screen.Update(graphics, Game.Objects.MainHero);
 
-            //user interface
-            mainInterface.DoUpdate(msElapsed);
+            //ui, objects
+            Game.Update(msElapsed);
 
             //terrain
             MapManager.Update(CameraPosition);
@@ -300,27 +311,25 @@ namespace Client
 
         MovementState lastMoveState;
 
-        public void UpdateKeys()
+        void UpdateKeys()
         {
-            //converts a bool to an int
-            Func<bool, int> b2i = (b) => (b ? 1 : 0);
-
             //movement
-            var dx = b2i(KeyManager.IsDown(Keybind.MoveRight)) - b2i(KeyManager.IsDown(Keybind.MoveLeft));
-            var dy = b2i(KeyManager.IsDown(Keybind.MoveDown)) - b2i(KeyManager.IsDown(Keybind.MoveUp));
+            var dx = Convert.ToInt32(KeyboardInfo.IsDown(GameAction.MoveRight)) - Convert.ToInt32(KeyboardInfo.IsDown(GameAction.MoveLeft));
+            var dy = Convert.ToInt32(KeyboardInfo.IsDown(GameAction.MoveDown)) - Convert.ToInt32(KeyboardInfo.IsDown(GameAction.MoveUp));
 
             var moveState = new MovementState(dx, dy);
-            if(moveState != lastMoveState)
+            if (moveState != lastMoveState)
             {
                 lastMoveState = moveState;
                 MovementStateChanged(new MoveMessage(moveState));
             }
 
             //health bars
-            if(KeyManager.IsActivated(Keybind.ShowHealthBars))
-                Settings.Default.AlwaysShowHealthBars = !Settings.Default.AlwaysShowHealthBars;
+            if (KeyboardInfo.IsActivated(GameAction.ShowHealthBars))
+                ShanoSettings.Current.QuickButtonPress = !ShanoSettings.Current.QuickButtonPress;
 
-
+            if (KeyboardInfo.IsActivated(new Keybind(ModifierKeys.Control | ModifierKeys.Shift, Keys.R)))
+                Game.ReloadUi();
         }
 
 
@@ -333,7 +342,7 @@ namespace Client
         protected override void Draw(GameTime gameTime)
         {
 
-            if(!IsConnected)
+            if (!IsConnected)
             {
                 drawConnectingScreen();
                 return;
@@ -342,37 +351,79 @@ namespace Client
 
             if (Server != null)
             {
-                GraphicsDevice.Clear(Color.DarkBlue);
+                //GraphicsDevice.Clear(Color.DarkBlue);
 
-                //1. draw terrain (basiceffect)
-                //graphics.PreferMultiSampling = false;
-                //graphics.SynchronizeWithVerticalRetrace = true;
+                // 1. draw terrain
+                GraphicsDevice.SetRenderTarget(terrainTexture);
+                GraphicsDevice.Clear(Color.Transparent);
                 GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-                
-                MapManager.DrawTerrain(CameraPosition);
+                {
+                    MapManager.DrawTerrain(CameraPosition);
+                }
 
-                //start spritebatch drawing
-                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.DepthRead, RasterizerState.CullNone);
 
-                // 2. draw interface + gameobjects 
-                // TODO: effects
-                mainInterface.DoDraw(spriteBatch);
+                // 2. draw gameobjects
+                StartDrawing(spriteBatch, objectsTexture, 
+                    clearColor: Color.Transparent, 
+                    drawCode: () =>
+                    {
+                        Game.Objects.Draw(spriteBatch);
+                    });
 
-                //draw debug
-                drawDebugStats(spriteBatch, gameTime.ElapsedGameTime.TotalMilliseconds);
+                // 3. draw shadow layer
+                //todo
 
-                //end drawing
-                spriteBatch.End();
+                // 4. draw interface + debug
+                StartDrawing(spriteBatch, interfaceTexture, 
+                    clearColor: Color.Transparent, 
+                    blend: BlendState.AlphaBlend,
+                    drawCode: () =>
+                    {
+                        Game.Interface.Draw(spriteBatch);
+                        drawDebugStats(spriteBatch, gameTime.ElapsedGameTime.TotalMilliseconds);
+                    });
 
-                //draw shadow
-                //Server.
+
+
+                // 5. reset surface, put all textures on
+                StartDrawing(spriteBatch, null, 
+                    clearColor: Color.LightBlue, 
+                    blend: BlendState.NonPremultiplied,
+                    drawCode: () =>
+                    {
+                        spriteBatch.Draw(terrainTexture, Vector2.Zero, Color.White);
+                        spriteBatch.Draw(objectsTexture, Vector2.Zero, Color.White);
+                        //spriteBatch.Draw(shadowTextureB, Vector2.Zero, Color.White);
+                        spriteBatch.Draw(interfaceTexture, Vector2.Zero, Color.White);
+                    });
             }
 
             base.Draw(gameTime);
         }
 
+        void StartDrawing(SpriteBatch sb, RenderTarget2D target,
+            Color? clearColor = null,
+            Effect shader = null,
+            Action drawCode = null,
+            BlendState blend = null)
+        {
+            GraphicsDevice.SetRenderTarget(target);
+            if (clearColor.HasValue)
+                GraphicsDevice.Clear(clearColor.Value);
 
-        private void drawConnectingScreen()
+            sb.Begin(SpriteSortMode.Deferred, blend ?? BlendState.NonPremultiplied,
+                SamplerState.PointClamp, DepthStencilState.DepthRead,
+                RasterizerState.CullNone, shader);
+
+            drawCode?.Invoke();
+
+            sb.End();
+
+        }
+
+
+
+        void drawConnectingScreen()
         {
             var txt = "Connecting...";
             var font = Client.Content.Fonts.LargeFont;
@@ -386,32 +437,27 @@ namespace Client
         }
 
 
-        private void drawDebugStats(SpriteBatch sb, double msElapsed)
+        void drawDebugStats(SpriteBatch sb, double msElapsed)
         {
+            const double frameConst = 0.1;
+
+            // FPS
+            smoothFrameDelay = smoothFrameDelay * (1 - frameConst) + msElapsed * frameConst;
+            var sFps = "FPS: {0:00}".F(1000 / smoothFrameDelay);
+            // mouse
             var mpUi = Screen.ScreenToUi(Mouse.GetState().Position.ToPoint());
             var mpGame = Screen.ScreenToGame(Mouse.GetState().Position.ToPoint());
 
-            //FPS
-            const double frameConst = 0.1;
-            smoothFrameDelay = smoothFrameDelay * (1 - frameConst) + msElapsed * frameConst;
-            var sFps =
-                "FPS: " + (1000 / smoothFrameDelay).ToString("00.0");
-            Client.Content.Fonts.FancyFont.DrawStringScreen(spriteBatch, sFps, Color.Goldenrod, new IO.Common.Point(24, 18));
+            var debugString =
+                "FPS: {0:00}".F(1000 / smoothFrameDelay) + "\n" +
+                "UI X/Y: {0:0.00}".F(mpUi) + "\n" +
+                "Hero X/Y: {0:0.00}".F(Game.Objects.MainHero?.Position) + "\n" +
+                "Game X/Y: {0:0.00}".F(mpGame) + "\n" + 
+                "{0} objects".F(Game.Objects.Controls.Count()) + "\n" +
+                "Hover: " + Control.HoverControl.GetType().Name;
 
-            //UI coordinates of mouse
-            var sUiCoord = string.Format(
-                "UI X/Y: {0} {1}", mpUi.X.ToString("0.00"), mpUi.Y.ToString("0.00"));
-            Client.Content.Fonts.FancyFont.DrawStringScreen(spriteBatch, sUiCoord, Color.Black, new IO.Common.Point(24, 2 * 24));
-
-            //UI coordinates of hero
-            var sHeroCoord = string.Format(
-                "Hero X/Y: {0} {1}", ObjectManager.MainHero?.Position.X.ToString("0.00"), ObjectManager.MainHero?.Position.Y.ToString("0.00"));
-            Client.Content.Fonts.FancyFont.DrawStringScreen(spriteBatch, sHeroCoord, Color.Black, new IO.Common.Point(24, 3 * 24));
-
-            //in-game coordinates of mouse
-            var sGameCoord = string.Format(
-                "Game X/Y: {0} {1}", mpGame.X.ToString("0.00"), mpGame.Y.ToString("0.00"));
-            Client.Content.Fonts.FancyFont.DrawStringScreen(spriteBatch, sGameCoord, Color.Black, new IO.Common.Point(24, 4 * 24));
+            Client.Content.Fonts.FancyFont.DrawStringScreen(sb, debugString, Color.Black, 
+                new IO.Common.Point(24, 18), 0, 0);
 
         }
 

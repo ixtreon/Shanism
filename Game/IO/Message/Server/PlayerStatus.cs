@@ -18,7 +18,7 @@ namespace IO.Message.Server
         }
 
         [SerialMember]
-        public readonly int HeroId = -1;
+        public readonly uint HeroId = 0;
 
         [SerialMember]
         public readonly Vector CameraPosition;

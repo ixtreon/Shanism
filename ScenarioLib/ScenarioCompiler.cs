@@ -93,18 +93,6 @@ namespace ScenarioLib
 
             var policyLevel = PolicyLevel.CreateAppDomainLevel();
             policyLevel.RootCodeGroup.PolicyStatement = new PolicyStatement(permissions);
-            //AppDomain.CurrentDomain.SetAppDomainPolicy(policyLevel);
-
-            //We want the sandboxer assembly's strong name, so that we can add it to the full trust list.
-            //StrongName fullTrustAssembly = typeof(ScenarioCompiler).Assembly.Evidence.GetHostEvidence<StrongName>();
-
-            ////var fullTrustAssembly = Assembly.GetExecutingAssembly().Evidence.GetHostEvidence<StrongName>();
-            //var ass = Assembly.GetEntryAssembly();
-            ////the ApplicationBase should be different to this one. 
-            //var adSetup = new AppDomainSetup();
-            //adSetup.ApplicationBase = Path.GetFullPath(_ScenarioSubDir);
-            
-            //ScenarioAppDomain = AppDomain.CreateDomain("ScenarioSandbox", null, adSetup, permissions);
         }
 
         public ScenarioCompiler()
@@ -132,6 +120,7 @@ namespace ScenarioLib
 
             var rawAssembly = File.ReadAllBytes(_OutputFilePath);
             var rawSymbols = File.ReadAllBytes(_OutputPdbPath);
+
             //TODO: Load in the sandboxed assembly!
             Assembly = AppDomain.CurrentDomain.Load(rawAssembly, rawSymbols);
         }
@@ -140,19 +129,29 @@ namespace ScenarioLib
             where T : ScenarioFile
         {
             //compile the assemblies
-            errors = Compile()
-                .Select(d => d.ToString())
-                .Aggregate((a, b) => a + Environment.NewLine + b);
 
-            if (!string.IsNullOrEmpty(errors))
+            var compileErrors = Compile();
+
+            if(compileErrors.Any())
+            {
+                errors = compileErrors
+                    .Select(d => d.ToString())
+                    .Aggregate((a, b) => a + Environment.NewLine + b);
                 return null;
+            }
 
             //parse the scenario config
             var scenario = ScenarioFile.Load<T>(ScenarioDir);
             if (scenario == null)
+            {
+                errors = "Invalid scenario declaration. ";
                 return null;
+            }
 
+            //load the assembly
             LoadCompiledAssembly();
+
+            errors = string.Empty;
             return scenario;
         }
 
@@ -162,27 +161,16 @@ namespace ScenarioLib
         /// </summary>
         public IEnumerable<Diagnostic> Compile()
         {
-            var files = Directory.EnumerateFiles(ScenarioDir, "*.cs", SearchOption.AllDirectories);
-            return Compile(files);
-        }
-
-
-        /// <summary>
-        /// Compiles the given files. 
-        /// If successful, returns an empty enumerable, otherwise returns the list of compile errors. 
-        /// </summary>
-        public IEnumerable<Diagnostic> Compile(IEnumerable<string> files)
-        {
             if (string.IsNullOrEmpty(ScenarioDir))
                 throw new InvalidOperationException("Please select a Scenario directory first!");
 
-            //get all the files in AbilityDir and compile them
-            var res = compileFiles(files, Path.GetFullPath(_OutputFilePath));
+            var files = Directory.EnumerateFiles(ScenarioDir, "*.cs", SearchOption.AllDirectories);
+            var compilationResult = compile(files, Path.GetFullPath(_OutputFilePath));
 
-            IsCompiled = res.Success;
+            IsCompiled = compilationResult.Success;
             if (IsCompiled)
                 return Enumerable.Empty<Diagnostic>();
-            return res.Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error);
+            return compilationResult.Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error);
         }
 
         /// <summary>
@@ -191,7 +179,7 @@ namespace ScenarioLib
         /// <param name="inFiles"></param>
         /// <param name="outFile">The path where the compiled file should be written. </param>
         /// <returns>The result of the compilation. </returns>
-        EmitResult compileFiles(IEnumerable<string> inFiles, string outFile)
+        EmitResult compile(IEnumerable<string> inFiles, string outFile)
         {
             //get the syntax tree
             var syntaxTrees = inFiles

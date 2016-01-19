@@ -13,22 +13,24 @@ namespace Client
     /// </summary>
     static class Screen
     {
-        private const int DefaultUiScale = 240;
+        const int DefaultUiScale = 240;
 
-        private static Point screenSize;
+
+
+        static Point screenSize = new Point(800, 600);
 
         /// <summary>
         /// Gets the UI-to-pixel scaling. 
         /// </summary>
-        public static double UiScale { get; private set; }
+        public static double UiScale { get; private set; } = DefaultUiScale;
 
         /// <summary>
-        /// Gets or sets the camera center point in game co-ordinates. 
+        /// Gets or sets the camera center point in in-game coordinates. 
         /// </summary>
         public static Vector CenterPoint { get; set; }
 
         /// <summary>
-        /// Gets whether the camera is locked, i.e. there is a current hero. 
+        /// Gets whether the camera is locked to the center. NYI. 
         /// </summary>
         public static bool IsLocked { get; private set; }
 
@@ -52,7 +54,7 @@ namespace Client
         {
             get { return UiScale / DefaultUiScale; }
         }
-        
+
         /// <summary>
         /// Gets half the size of the sreen in pixels. 
         /// </summary>
@@ -78,10 +80,19 @@ namespace Client
         /// <summary>
         /// Gets the screen co-ordinates of the given in-game point. 
         /// </summary>
-        public static Point GameToScreen(Vector p)
+        public static Vector GameToScreen(Vector p)
         {
-            return GameToScreen(p.X, p.Y);
+            return (p - CenterPoint) * Size / Constants.Client.WindowSize + ScreenHalfSize;
         }
+
+        /// <summary>
+        /// Converts the given screen point to in-game co-ordinates.  
+        /// </summary>
+        public static Vector ScreenToGame(Vector position)
+        {
+            return (position - ScreenHalfSize) * Constants.Client.WindowSize / Size + CenterPoint;
+        }
+
 
         /// <summary>
         /// Converts the given in-game point to Ui co-ordinates. 
@@ -92,31 +103,9 @@ namespace Client
             return ScreenToUi(GameToScreen(v));
         }
 
-
-        /// <summary>
-        /// Converts the given in-game point to screen co-ordinates.  
-        /// </summary>
-        public static Point GameToScreen(double x, double y)
+        public static Vector UiToGame(Vector absolutePosition)
         {
-            return new Point(
-                (int)((x - CenterPoint.X) * Size.X / Constants.Client.WindowWidth) + ScreenHalfSize.X,
-                (int)((y - CenterPoint.Y) * Size.Y / Constants.Client.WindowHeight) + ScreenHalfSize.Y);
-        }
-
-        public static double GameToScreen(double sz)
-        {
-            return sz * Size.X / Constants.Client.WindowWidth;
-        }
-
-        /// <summary>
-        /// Converts the given screen point to in-game co-ordinates.  
-        /// </summary>
-        public static Vector ScreenToGame(Point position)
-        {
-            return new Vector(
-                ((double)position.X - ScreenHalfSize.X) * Constants.Client.WindowWidth / Size.X + CenterPoint.X,
-                ((double)position.Y - ScreenHalfSize.Y) * Constants.Client.WindowHeight / Size.Y + CenterPoint.Y
-                );
+            return ScreenToGame(UiToScreen(absolutePosition));
         }
 
 
@@ -125,27 +114,17 @@ namespace Client
         /// </summary>
         public static Vector UiToScreen(Vector p)
         {
-            return new Vector(
-                ScreenHalfSize.X + (p.X * UiScale),
-                ScreenHalfSize.Y + (p.Y * UiScale));
+            return ScreenHalfSize + p * UiScale;
         }
 
-        /// <summary>
-        /// Gets the screen size of the given Ui size. 
-        /// </summary>
-        public static int UiToScreen(double sz)
-        {
-            return (int)(sz * UiScale);
-        }
+
 
         /// <summary>
         /// Converts the given screen point to Ui co-ordinates.  
         /// </summary>
         public static Vector ScreenToUi(Vector p)
         {
-            return new Vector(
-                (p.X - ScreenHalfSize.X) / UiScale,
-                (p.Y - ScreenHalfSize.Y) / UiScale);
+            return (p - ScreenHalfSize) / UiScale;
         }
 
         /// <summary>

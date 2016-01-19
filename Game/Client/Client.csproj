@@ -135,31 +135,38 @@
     <Compile Include="ContentLoader.cs" />
     <Compile Include="Assets\ContentList.cs" />
     <Compile Include="Assets\FontCache.cs" />
-    <Compile Include="Common\Sprite.cs" />
+    <Compile Include="Assets\Sprite.cs" />
     <Compile Include="Common\PointsInfo.cs" />
     <Compile Include="Assets\TerrainCache.cs" />
+    <Compile Include="Input\Keybind.cs" />
+    <Compile Include="Input\KeyMap.cs" />
+    <Compile Include="Input\MouseButtonEvent.cs" />
+    <Compile Include="Input\MouseEvent.cs" />
     <Compile Include="Ext\Effects.cs" />
     <Compile Include="Ext\SpriteBatch.cs" />
     <Compile Include="Input\ChatProvider.cs" />
-    <Compile Include="Input\DefaultKeyAttribute.cs" />
-    <Compile Include="Input\Keybind.cs" />
-    <Compile Include="Input\KeyManager.cs" />
+    <Compile Include="Input\ModifierKeys.cs" />
+    <Compile Include="Input\GameAction.cs" />
+    <Compile Include="Input\KeyboardInfo.cs" />
+    <Compile Include="GameManager.cs" />
+    <Compile Include="Objects\Controls\EffectControl.cs" />
+    <Compile Include="UI\Game\UnitHoverFrame.cs" />
+    <Compile Include="UI\Menus\MenuBar.cs" />
+    <Compile Include="UI\SpellBarButton.cs" />
+    <Compile Include="Settings\Application.cs" />
+    <Compile Include="Settings\Keybinds.cs" />
+    <Compile Include="Shaders.cs" />
     <Compile Include="ShanoGame.cs" />
     <Compile Include="Common\GameStatus.cs" />
     <Compile Include="IShanoClient.cs" />
     <Compile Include="Map\ChunkData.cs" />
     <Compile Include="Map\FogLayer.cs" />
     <Compile Include="Map\MapManager.cs" />
-    <Compile Include="ObjectGod.cs" />
-    <Compile Include="Objects\DoodadControl.cs" />
-    <Compile Include="Objects\HeroControl.cs" />
-    <Compile Include="Objects\ObjectControl.cs" />
-    <Compile Include="Objects\UnitControl.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
+    <Compile Include="Objects\ObjectGod.cs" />
+    <Compile Include="Objects\Controls\DoodadControl.cs" />
+    <Compile Include="Objects\Controls\HeroControl.cs" />
+    <Compile Include="Objects\Controls\ObjectControl.cs" />
+    <Compile Include="Objects\Controls\UnitControl.cs" />
     <Compile Include="Screen.cs" />
     <Compile Include="Ext\General.cs" />
     <Compile Include="Common\Graphics.cs" />
@@ -173,12 +180,11 @@
     <Compile Include="UI\Game\BuffBar.cs" />
     <Compile Include="UI\Game\BuffComparer.cs" />
     <Compile Include="UI\Game\CastBar.cs" />
-    <Compile Include="UI\Game\ChatBox.cs" />
+    <Compile Include="UI\Chat\ChatBox.cs" />
     <Compile Include="UI\Common\Button.cs" />
     <Compile Include="UI\Game\HealthBar.cs" />
     <Compile Include="UI\Game\ManaBar.cs" />
     <Compile Include="UI\Common\XpBar.cs" />
-    <Compile Include="UI\Game\HeroUI.cs" />
     <Compile Include="UI\Common\Label.cs" />
     <Compile Include="UI\Menus\CharacterMenu.cs" />
     <Compile Include="UI\Menus\KeybindMenu.cs" />
@@ -194,10 +200,15 @@
     <Compile Include="UI\Common\ValueBar.cs" />
     <Compile Include="UI\Common\ValueLabel.cs" />
     <Compile Include="UI\Common\Window.cs" />
+    <Compile Include="Settings\ShanoSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework, Version=3.4.0.459, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\MonoGame.Framework.WindowsDX.3.4.0.459\lib\net40\MonoGame.Framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -214,6 +225,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Objects\dummy.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\terrain.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\UI\close.png">
@@ -248,13 +262,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="ClientContent.mgcb" />
     <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    <None Include="Shaders\shader.fx" />
+    <None Include="Shaders\shader.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="UI\StatBox\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

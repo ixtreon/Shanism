@@ -63,9 +63,11 @@ namespace Network.Objects
 
         public double MoveDirection { get; set; }
 
-        public UnitStub() : base(-1) {  }
+        public double VisionRange { get; set; }
 
-        public UnitStub(int guid)
+        public UnitStub() : base(0) {  }
+
+        public UnitStub(uint guid)
             : base(guid)
         {
             Buffs = Enumerable.Empty<IBuffInstance>();

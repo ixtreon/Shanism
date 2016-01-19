@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using IO;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,11 +7,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.Controls
+namespace Client.Input
 {
     class ChatProvider
     {
+        /// <summary>
+        /// The initial delay, in milliseconds, a key must be held in order for the repeat sequence to start. 
+        /// </summary>
         const int KeyInitialDelay = 300;
+
+        /// <summary>
+        /// The repeat delay, in milliseconds, a key must be held in order for a character to be repeated. 
+        /// </summary>
         const int KeyRepeatDelay = 100;
 
         /// <summary>
@@ -50,12 +58,12 @@ namespace Client.Controls
                 return;
             }
 
-            //check if there was any key down before that
+            //if no new and no current key, there is nothing to be done
             if (CurrentKey == Keys.None)
                 return;
 
-            //check if the current key is still down
-            if(!KeyManager.IsDown(CurrentKey))
+            //if current key was released, 
+            if(!KeyboardInfo.IsDown(CurrentKey))
             {
                 CurrentKey = Keys.None;
                 return;
@@ -74,66 +82,13 @@ namespace Client.Controls
         /// Gets the current character corresponding to the <see cref="CurrentKey"/>
         /// </summary>
         /// <returns>The character that is pressed, or '\0' if no character was found. </returns>
-        private char getCharacter()
+        char getCharacter()
         {
-            char keyChar;
-            if (KeyManager.IsShiftDown)
-            {
-                if (capsCharDict.TryGetValue(CurrentKey, out keyChar))
-                    return keyChar;
-            }
-            else
-            {
-                if (normalCharDict.TryGetValue(CurrentKey, out keyChar))
-                    return keyChar;
-            }
+            var c = KeyMap.GetChar(CurrentKey, KeyboardInfo.IsShiftDown) ?? '\0';
+            if(c == '\0') Console.WriteLine("Unrecognized character: {0}", CurrentKey.ToString());
 
-            Console.WriteLine("Unrecognized character: {0}", CurrentKey.ToString());
-            return '\0';
+            return c;
         }
 
-        static readonly Dictionary<Keys, char> normalCharDict = new Dictionary<Keys, char>();
-        static readonly Dictionary<Keys, char> capsCharDict = new Dictionary<Keys, char>();
-
-        static ChatProvider()
-        {
-            addSimpleMap(Keys.Space, ' ');
-            addSimpleMap(Keys.Back, '\b');
-
-
-            addSequentialMap(Keys.A, Keys.Z, 'a', 'A');
-            addSequentialMap(Keys.NumPad0, Keys.NumPad9, '0', '0');
-
-
-            addCustomMap(Keys.D0, Keys.D9, "0123456789", ")!@#$%^&*(");
-            addCustomMap(Keys.OemSemicolon, Keys.OemTilde, ";=,-./`", ":+<_>?~");
-            addCustomMap(Keys.OemOpenBrackets, Keys.OemQuotes, "[\\]'", "{|}\"");
-        }
-
-        static void addSimpleMap(Keys k, char c)
-        {
-            normalCharDict[k] = c;
-            capsCharDict[k] = c;
-        }
-
-        static void addSequentialMap(Keys from, Keys to, char cFrom, char cFromCaps)
-        {
-            for(var i = from; i <= to; i++)
-            {
-                normalCharDict[i] = (char)(i - from + cFrom);
-                capsCharDict[i] = (char)(i - from + cFromCaps);
-            }
-        }
-
-        static void addCustomMap(Keys from, Keys to, string sNormal, string sCaps)
-        {
-            Debug.Assert(sNormal.Length == sCaps.Length);
-
-            for (var i = from; i <= to; i++)
-            {
-                normalCharDict[i] = sNormal[i - from];
-                capsCharDict[i] = sCaps[i - from];
-            }
-        }
     }
 }

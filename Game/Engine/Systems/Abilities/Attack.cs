@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-
 using Engine.Systems;
 using Engine.Objects;
 using Engine;
@@ -26,13 +25,15 @@ namespace Engine.Systems.Abilities
             ManaCost = 0;
         }
 
-        public override void OnCast(AbilityCastArgs e)
+        protected override void OnCast(AbilityCastArgs e)
         {
-            var units = Map.GetUnitsInRange(Owner.Position, Owner.AttackRange);
+
+            var units = Map.GetUnitsInRange(Owner.Position, CastRange);
 
             var potentialTargets = units
                 .Where(u => u != Owner)
-                .OrderBy(u => u.Position.DistanceTo(e.TargetLocation));
+                .OrderBy(u => u.Position.DistanceTo(e.TargetLocation))
+                .ToArray();
 
             if (!potentialTargets.Any())
             {
@@ -48,7 +49,7 @@ namespace Engine.Systems.Abilities
             Console.WriteLine("BAAM!");
         }
 
-        public override void OnUpdate(int msElapsed)
+        protected override void OnUpdate(int msElapsed)
         {
             Cooldown = Owner.AttackCooldown;
             CastRange = Owner.AttackRange;

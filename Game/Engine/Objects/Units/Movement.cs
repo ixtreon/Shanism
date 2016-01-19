@@ -63,7 +63,7 @@ namespace Engine.Objects
         /// Causes the unit to move in the given direction. Works only once per update frame 
         /// and only if the unit has not moved during this frame already. 
         /// 
-        /// This is the official way to make units walk around. 
+        /// This is the standard way to make units walk around. 
         /// </summary>
         /// <param name="msElapsed"></param>
         /// <param name="direction"></param>
@@ -72,7 +72,7 @@ namespace Engine.Objects
         internal void Move(double msElapsed, double direction, double maxDistance = double.MaxValue, bool walk = false)
         {
             //if we have already moved or teleported this turn, return
-            if (Position != FuturePosition)
+            if (Position != OldPosition)
                 return;
 
             //get the distance, final position

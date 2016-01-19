@@ -7,109 +7,143 @@ using Microsoft.Xna.Framework.Graphics;
 using Client.Objects;
 using Client.Textures;
 using IO;
+using IO.Common;
 using Client.UI.Common;
 using Color = Microsoft.Xna.Framework.Color;
-using IO.Common;
 
 namespace Client.UI
 {
+    /// <summary>
+    /// Displays information about a given unit such as its name, level, life and mana. 
+    /// </summary>
     class UnitFrame : Control
     {
-        const double modelOffset = Padding * 2;
-        const double barHeight = Padding * 3;
+        const double spriteOffset = Padding * 2;
+
+        const double hpBarHeight = Padding * 4;
+        const double manaBarHeight = Padding * 3;
 
         public UnitControl Target;
 
-        ValueBar healthBar, manaBar;
 
-        BuffBar buffBar;
+        readonly HealthBar healthBar;
+        readonly ManaBar manaBar;
+        readonly BuffBar buffBar;
+        readonly Label nameLabel;
+        readonly Label xpLabel;
+
 
         public double SpriteSize
         {
-            get { return Size.Y - 2 * modelOffset; }
+            get { return Size.Y - 2 * spriteOffset; }
         }
 
         public double SpriteBoxSize
         {
-            get { return SpriteSize + 2 * modelOffset; }
+            get { return SpriteSize + 2 * spriteOffset; }
         }
+
 
         public UnitFrame()
         {
-            this.Size = new Vector(0.5f, 0.15f);
-            this.AbsolutePosition = new Vector(-Size.X / 2, -1);
-            this.BackColor = Color.Black.SetAlpha(100);
+            Size = new Vector(0.6f, 0.2f);
+            BackColor = Color.Black.SetAlpha(100);
 
-            healthBar = new ValueBar()
+            var nameFont = Content.Fonts.FancyFont;
+            nameLabel = new Label
             {
+                ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
+                Location = new Vector(SpriteBoxSize, 2 * Padding),
+                Size = new Vector(Size.X - SpriteBoxSize - Padding, nameFont.UiHeight),
+                AutoSize = false,
+
+                Font = nameFont,
+                Text = "Manqche",
+                TextColor = Color.White,
+                TextXAlign = 0.5f,
+            };
+
+            var xpFont = Content.Fonts.SmallFont;
+            xpLabel = new Label
+            {
+                ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
+                Location = new Vector(SpriteBoxSize, nameLabel.Bottom),
+                Size = new Vector(Size.X - SpriteBoxSize - Padding, xpFont.UiHeight),
+                AutoSize = false,
+
+                Font = Content.Fonts.SmallFont,
+                Text = "Level ???",
+                TextColor = Color.White,
+                TextXAlign = 0.5f,
+
+                ToolTip = "???/???",
+            };
+
+            manaBar = new ManaBar
+            {
+                ParentAnchor = AnchorMode.Left | AnchorMode.Bottom | AnchorMode.Right,
+                Location = new Vector(SpriteBoxSize, Size.Y - Padding - manaBarHeight),
+                Size = new Vector(Size.X - SpriteBoxSize - Padding, manaBarHeight),
+
+                ForeColor = Color.DarkBlue,
+            };
+
+            healthBar = new HealthBar
+            {
+                ParentAnchor = AnchorMode.Left | AnchorMode.Bottom | AnchorMode.Right,
+                Location = new Vector(SpriteBoxSize, manaBar.Top - hpBarHeight),
+                Size = new Vector(manaBar.Size.X, hpBarHeight),
+
                 ForeColor = Color.DarkRed,
             };
-            this.Add(healthBar);
 
-            buffBar = new BuffBar()
+            buffBar = new BuffBar
             {
+                ParentAnchor = AnchorMode.Left | AnchorMode.Bottom | AnchorMode.Right,
+                Location = new Vector(0, Size.Y),
+                Size = new Vector(Size.X, 0.15f),
+
                 BackColor = Color.Transparent,
-                ClickThrough = true,
+                CanHover = false,
             };
-            this.Add(buffBar);
+
+
+            Add(xpLabel);
+            Add(nameLabel);
+            Add(manaBar);
+            Add(healthBar);
+            Add(buffBar);
         }
 
-        public override void Update(int msElapsed)
+        protected override void OnUpdate(int msElapsed)
         {
-            Visible = (Target != null);
+            var unitTarget = Target?.Unit;
 
-            healthBar.Location = new Vector(SpriteBoxSize, Size.Y - Padding - barHeight);
-            healthBar.Size = new Vector(Size.X - SpriteBoxSize - Padding, barHeight);
-            if(Target != null)
-            {
-                healthBar.Visible = !Target.Unit.IsDead;
-                healthBar.Value = Target.Unit.Life;
-                healthBar.MaxValue = Target.Unit.MaxLife;
-            }
+            Visible = (unitTarget != null);
 
-            buffBar.Location = new Vector(0, Size.Y);
-            buffBar.Size = new Vector(Size.X, 0.4f);
-            buffBar.Target = Target?.Unit;
+            healthBar.Target = unitTarget;
+            manaBar.Target = unitTarget;
+            buffBar.Target = unitTarget;
+
+            nameLabel.Text = unitTarget?.Name;
+            xpLabel.Text = "Level {0}".F(unitTarget?.Level ?? 0);
+
+            var heroTarget = unitTarget as IO.Objects.IHero;
+            if (heroTarget != null)
+                xpLabel.ToolTip = "{0}/{1} XP".F(heroTarget.Experience, heroTarget.ExperienceNeeded);
+            else
+                xpLabel.ToolTip = string.Empty;
+
         }
 
-        public override void Draw(Graphics g)
+        public override void OnDraw(Graphics g)
         {
-            if (Target == null)
-                return;
-
             //background
-            base.Draw(g);
+            base.OnDraw(g);
 
             //unit model
-            g.Draw(Target.Sprite,
-                new Vector(modelOffset),
-                new Vector(SpriteSize));
-
-
-            //get the total model size including the anchor box
-
-            //unit name
-            var boxCenter = SpriteBoxSize + (Size.X - SpriteBoxSize - Padding) / 2;
-            var nameFont = Content.Fonts.FancyFont;
-            var nameSz = nameFont.MeasureStringUi(Target.Unit.Name);
-            var namePos = new Vector(boxCenter, Padding);
-
-            g.DrawString(nameFont, 
-                Target.Unit.Name, Color.White,
-                namePos, 0.5f, 0);
-
-            //TextureCache.StraightFont.DrawStringScreen(sb, Target.Unit.Name, Color.White, namePos + new Point(0, 100), 0, 0);
-
-            //unit level
-            var lvlFont = Content.Fonts.SmallFont;
-            var sLevel = "Level {0}".Format(Target.Unit.Level);
-            var levelSz = lvlFont.MeasureStringUi(sLevel);
-            var levelPos = new Vector(boxCenter, namePos.Y + nameSz.Y);
-
-            g.DrawString(lvlFont,
-                sLevel, Color.White,
-                levelPos, 0.5f, 0);
-
+            if (Target != null)
+                g.Draw(Target.Sprite, new Vector(spriteOffset), new Vector(SpriteSize));
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Engine.Common;
 using Engine.Events;
 using Engine.Objects.Game;
+using Engine.Systems.Abilities;
 using Engine.Systems.Orders;
 using IO;
 using IO.Common;
@@ -52,7 +53,7 @@ namespace Engine.Objects
         /// Gets or sets the base movement speed of the units in squares per second. 
         /// TODO: add buff modifier
         /// </summary>
-        public double BaseMoveSpeed { get; protected set; }
+        public double BaseMoveSpeed { get; set; }
 
         /// <summary>
         /// Gets or sets the base minimum damage inflicted by the unit. 
@@ -105,23 +106,34 @@ namespace Engine.Objects
         /// Gets the current life regeneration rate of the unit, in life points per second.  
         /// </summary>
         public double LifeRegen { get; protected internal set; }
+
         /// <summary>
         /// Gets the current mana regeneration rate of the unit, in mana points per second.  
         /// </summary>
         public double ManaRegen { get; protected internal set; }
+
         /// <summary>
         /// Gets the base bonus magic damage of the unit. 
         /// </summary>
         public double MagicDamage { get; protected internal set; }
 
-        public bool RangedAttack { get; internal set; }
+        public bool HasRangedAttack { get; internal set; }
 
+        /// <summary>
+        /// The attack range of the unit. 
+        /// </summary>
         public double AttackRange { get; internal set; }
 
-        public double ActionDelay { get; set; }
-
+        /// <summary>
+        /// Gets or sets the rato of the current life of the unit to its max life 
+        /// as a number between 0 and 1. 
+        /// </summary>
         public double LifePercentage { get; set; }
 
+        /// <summary>
+        /// Gets or sets the rato of the current mana of the unit to its max mana 
+        /// as a number between 0 and 1. 
+        /// </summary>
         public double ManaPercentage { get; set; }
         #endregion
 
@@ -131,18 +143,32 @@ namespace Engine.Objects
         /// </summary>
         public bool Invulnerable { get; set; }
 
-        public Unit Target { get; set; }
-
 
         /// <summary>
         /// Gets the level of the unit. 
         /// </summary>
         public int Level { get; protected set; }
 
-
+        /// <summary>
+        /// Gets the owner also the caster of the ability. 
+        /// </summary>
         public Player Owner { get; private set; }
 
-        public BuffSystem Buffs { get; private set; }
+
+        #region Subsystems
+
+        /// <summary>
+        /// Gets a collection of all buffs currently affecting this unit. 
+        /// </summary>
+        public BuffSystem Buffs { get; }
+
+        /// <summary>
+        /// Gets a collection of all abilities owned by unit. 
+        /// </summary>
+        public AbilitySystem Abilities { get; }
+
+        #endregion
+
 
         /// <summary>
         /// Gets whether the unit is dead. 
@@ -181,9 +207,15 @@ namespace Engine.Objects
             }
             set
             {
-                ManaPercentage = value / MaxMana;
+                if (MaxMana > 0)
+                    ManaPercentage = value / MaxMana;
+                else
+                    ManaPercentage = 1;
             }
         }
+
+
+        #region IUnit implementation
 
         IEnumerable<IBuffInstance> IUnit.Buffs
         {
@@ -195,6 +227,14 @@ namespace Engine.Objects
             get { return Owner; }
         }
 
+        IEnumerable<IAbility> IUnit.Abilities { get { return Abilities; } }
+
+        public int CastingProgress { get { return (Order as CastOrder?)?.Progress ?? -1; } }
+
+        public IAbility CastingAbility { get { return (Order as CastOrder?)?.Ability; } }
+
+        #endregion
+
         protected Unit()
         {
             BaseLife = 5;
@@ -203,40 +243,36 @@ namespace Engine.Objects
             Owner = Player.NeutralAggressive;
         }
 
-        public Unit(string model, Player owner, Vector location, int level = 1)
-            : base(model, location)
+        public Unit(Player owner, Vector location, int level = 1)
+            : base(location)
         {
-            this.Owner = owner;
+            Owner = owner;
+            Level = level;
 
-            this.Level = level;
-            this.Size = 0.4;
+            Owner?.AddControlledUnit(this);
 
-            this.Buffs = new BuffSystem(this);
+            Buffs = new BuffSystem(this);
+            Abilities = new AbilitySystem(this);
 
-            this.BaseAttacksPerSecond = 0.6;
-            this.BaseMinDamage = 0;
-            this.BaseMaxDamage = 2;
-            this.BaseMoveSpeed = 5;
-            this.BaseDefense = 0;
-            this.BaseDodge = 5;
-
+            Scale = 0.4;
+            BaseAttacksPerSecond = 0.6;
+            BaseMinDamage = 0;
+            BaseMaxDamage = 2;
+            BaseMoveSpeed = 5;
+            BaseDefense = 0;
+            BaseDodge = 5;
             BaseLife = 5;
             LifePercentage = 1;
             ManaPercentage = 1;
 
-            //loaded from editor
-            if (Game == null)
-                return;
-
-            Owner?.AddControlledUnit(this);
-            this.VisionRange = 5;
+            VisionRange = 5;
         }
 
         /// <summary>
         /// Updates the unit state based on the current buffs. 
         /// </summary>
         /// <param name="secondsElapsed">the time elapsed since the last update, in seconds</param>
-        internal virtual void UpdateBuffs(int msElapsed)
+        internal virtual void UpdateBuffEffects(int msElapsed)
         {
             // current stat is the base value plus the sum of all effects on it from buffs. 
             // for some stats 'plus' means different things
@@ -253,9 +289,9 @@ namespace Engine.Objects
                     (p, b) => p * (100.0 + b.MoveSpeedPercentage) / 100);
             AttacksPerSecond = BaseAttacksPerSecond * (100 + Buffs.Sum(b => b.AttackSpeed)) / 100;
 
-            LifeRegen = Constants.BaseLifeRegen;
-            ManaRegen = Constants.BaseManaRegen;
-            MagicDamage = Constants.BaseMagicDamage;
+            LifeRegen = Constants.Units.BaseLifeRegen;
+            ManaRegen = Constants.Units.BaseManaRegen;
+            MagicDamage = Constants.Units.BaseMagicDamage;
         }
 
         /// <summary>
@@ -265,25 +301,22 @@ namespace Engine.Objects
         /// <param name="msElapsed"></param>
         internal override void Update(int msElapsed)
         {
-            if (IsDestroyed)
-                throw new Exception("Unit is destroyed!");
-
-            if (IsDead)
-                return;
-
-            UpdateBuffs(msElapsed);
-            updateVision(msElapsed);
-            regenerate(msElapsed);
-
-            //update abilities
-            foreach (var a in abilities.Values)
-                a.Update(msElapsed);
-
-            //update buffs
+            //update subsystems
+            Abilities.Update(msElapsed);
             Buffs.Update(msElapsed);
 
-            //update orders
+            //update built-in systems
             UpdateBehaviour(msElapsed);
+            updateVision(msElapsed);
+
+            //update stats
+            if (!IsDead)
+            {
+                UpdateBuffEffects(msElapsed);
+                regenerate(msElapsed);
+            }
+
+            base.Update(msElapsed);
         }
 
         /// <summary>

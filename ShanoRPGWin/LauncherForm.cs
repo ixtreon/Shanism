@@ -67,7 +67,7 @@ namespace ShanoRPGWin
             var netClient = new Network.LClient(ipAddress, playerName);
             var client = ShanoGame.Create(playerName);
 
-            client.SetReceptor(netClient);
+            client.SetServer(netClient);
             netClient.SetClient(client);
 
             client.Run();

@@ -55,10 +55,10 @@ namespace Client.UI
         {
             this.MaxBuffs = 40;
             this.BuffSize = 0.05f;
-            this.BackColor = Microsoft.Xna.Framework.Color.Pink.SetAlpha(100);
+            this.BackColor = Color.Black.SetAlpha(100);
         }
 
-        public override void Update(int msElapsed)
+        protected override void OnUpdate(int msElapsed)
         {
             this.Visible = (Target != null);
 
@@ -99,9 +99,9 @@ namespace Client.UI
         }
 
 
-        public override void Draw(Graphics g)
+        public override void OnDraw(Graphics g)
         {
-            base.Draw(g);
+            base.OnDraw(g);
         }
 
     }

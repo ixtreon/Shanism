@@ -13,7 +13,13 @@ namespace Client.Assets
     /// </summary>
     class ContentList
     {
+        /// <summary>
+        /// Gets the dictionary that contains all textures keyed by their name. 
+        /// </summary>
         public Dictionary<string, TextureDef> TextureDict { get; } = new Dictionary<string, TextureDef>();
+        /// <summary>
+        /// Gets the dictionary that contains all models keyed by their name. 
+        /// </summary>
         public Dictionary<string, ModelDef> ModelDict { get; } = new Dictionary<string, ModelDef>();
 
         /// <summary>

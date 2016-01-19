@@ -1,4 +1,5 @@
 ﻿using Engine.Objects.Game;
+using Engine.Systems.Abilities;
 using Engine.Systems.Behaviours;
 using Engine.Systems.Orders;
 using IO;
@@ -82,7 +83,7 @@ namespace Engine.Objects
             if (StateFlags.HasFlag(UnitState.Stunned))
                 return;
 
-            //update the behaviour
+            //update the current behaviour
             if (Behaviour != null)
             {
                 Behaviour.Update(msElapsed);
@@ -108,14 +109,23 @@ namespace Engine.Objects
             }
         }
 
+        internal void SetOrder(IOrder ord, bool isCustom)
+        {
+            Order = ord;
+            CustomOrder = isCustom;
+
+            //raise the order changed event
+            OrderChanged?.Invoke(Order);
+            AnyOrderChanged?.Invoke(this, Order);
+        }
+
         /// <summary>
-        /// Issues an order to the unit. 
+        /// Issues an order to this unit. 
         /// </summary>
         /// <param name="ord"></param>
-        public void SetOrder(IOrder ord)
+        internal void SetOrder(IOrder ord)
         {
-            this.Order = ord;
-            this.CustomOrder = true;
+            SetOrder(ord, true);
         }
 
         /// <summary>
@@ -134,7 +144,7 @@ namespace Engine.Objects
         internal void TryCastAbility(ActionMessage msg)
         {
             //check if we got the ability
-            var ability = abilities.TryGet(msg.AbilityId);
+            var ability = Abilities.TryGet(msg.AbilityId);
             if (ability == null)
                 return;
 
@@ -165,21 +175,41 @@ namespace Engine.Objects
 
         //TODO: implement these
         #region Custom Orders
+
+        /// <summary>
+        /// Orders the unit to stop moving and stand in one place. 
+        /// </summary>
+        public void OrderStand()
+        {
+            SetOrder(new Stand(), false);
+        }
+
+        /// <summary>
+        /// Clears the current order of the unit. 
+        /// Does the same job as <see cref="OrderStand"/>. 
+        /// </summary>
+        public void ClearOrder()
+        {
+            OrderStand();
+        }
+
+        /// <summary>
+        /// Orders the unit to stop doing whatever. 
+        /// Does the same job as <see cref="OrderStand"/>. 
+        /// </summary>
+        public void Stop()
+        {
+            ClearOrder();
+        }
+
         public void OrderMove(Vector target)
         {
-            this.Order = new MoveLocation(target);
+            SetOrder(new MoveLocation(target));
         }
 
         public void OrderMove(Unit target, bool follow = true)
         {
-            this.Order = new MoveUnit(target, keepFollowing: follow);
-        }
-
-
-        public void OrderHoldPosition()
-        {
-            this.Order = new Stand();
-            this.CustomOrder = true;
+            SetOrder(new MoveUnit(target, keepFollowing: follow));
         }
 
         public void OrderAttack(Unit target)
@@ -195,15 +225,6 @@ namespace Engine.Objects
         public void OrderMoveAttack(Vector target)
         {
             throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Clears the current order of the unit. 
-        /// </summary>
-        public void ClearOrder()
-        {
-            this.Order = new Stand();
-            this.CustomOrder = false;
         }
         #endregion
     }

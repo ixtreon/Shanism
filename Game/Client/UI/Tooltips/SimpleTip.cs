@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Client.Textures;
 using IO.Common;
 using Color = Microsoft.Xna.Framework.Color;
-using Client.Assets.Fonts;
+using Client.Assets;
 
 namespace Client.UI.Tooltips
 {
@@ -24,12 +24,12 @@ namespace Client.UI.Tooltips
 
         public SimpleTip()
         {
-            Font = Content.Fonts.MediumFont;
+            Font = Content.Fonts.NormalFont;
             BackColor = Color.Black.SetAlpha(25);
         }
         
 
-        public override void Update(int msElapsed)
+        protected override void OnUpdate(int msElapsed)
         {
             var tipAsString = (HoverControl?.ToolTip as string);
 
@@ -50,7 +50,7 @@ namespace Client.UI.Tooltips
         }
         
 
-        public override void Draw(Graphics g)
+        public override void OnDraw(Graphics g)
         {
             if (Visible)
             {

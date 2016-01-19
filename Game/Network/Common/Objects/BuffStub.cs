@@ -46,7 +46,7 @@ namespace Network.Objects
 
         public double Strength { get; private set; }
 
-        public BuffType Type { get; private set; }
+        public BuffType StackingType { get; private set; }
 
         public bool Visible { get; private set; }
 

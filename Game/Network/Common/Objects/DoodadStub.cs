@@ -12,9 +12,9 @@ namespace Network.Objects
     /// </summary>
     class DoodadStub : ObjectStub, IDoodad
     {
-        public DoodadStub() : base(-1) { }
+        public DoodadStub() : base(0) { }
 
-        public DoodadStub(int guid)
+        public DoodadStub(uint guid)
             : base(guid)
         {
 

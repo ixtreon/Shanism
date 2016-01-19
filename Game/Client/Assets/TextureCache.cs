@@ -10,6 +10,7 @@ using IO;
 using IO.Content;
 using IO.Common;
 using ScenarioLib;
+using System.Text.RegularExpressions;
 
 namespace Client.Textures
 {
@@ -19,10 +20,9 @@ namespace Client.Textures
 
         public Texture2D Blank { get; private set; }
 
+        public Texture2D DefaultIcon { get; private set; }
 
-        public TextureCache()
-        {
-        }
+
 
         public void LoadContent(ContentManager content, string contentDir, IEnumerable<TextureDef> texList)
         {
@@ -41,21 +41,14 @@ namespace Client.Textures
             }
 
             Blank = TryGetRaw("1");
+            DefaultIcon = TryGetIcon("default");
         }
-
-
-        string getName(TextureDef tex)
-        {
-            return new string(tex.Name
-                    .Take(tex.Name.LastIndexOf("."))   // remove extension
-                    .Skip(tex.Name.IndexOf("\\") + 1)
-                    .Select(c => char.ToLowerInvariant(c))
-                    .ToArray());
-        }
+        
 
         void loadTexture(ContentManager content, TextureDef texDef)
         {
-            var name = getName(texDef);
+            var name = texDef.Name.RemoveFileExtension().ToLowerInvariant();
+
             var tex = content.Load<Texture2D>(name);
             textures[name] = tex;
         }
@@ -64,26 +57,46 @@ namespace Client.Textures
         {
             get
             {
-                return textures[getName(file)];
+                return textures[file.Name.RemoveFileExtension().ToLowerInvariant()];
             }
         }
 
-        internal Texture2D TryGetRaw(string name)
+        /// <summary>
+        /// Tries to get the texture with the given full (raw) name. 
+        /// </summary>
+        /// <param name="name">The full name of the texture. </param>
+        /// <returns>The texture with that name, or null if no such texture was found. </returns>
+        public Texture2D TryGetRaw(string name)
         {
             return textures.TryGet(name.ToLowerInvariant());
         }
 
-        internal Texture2D TryGetIcon(string iconName)
+        /// <summary>
+        /// Tries to get the texture with the given name relative to the Icons folder. See <see cref="TextureType"/>. 
+        /// </summary>
+        /// <param name="iconName">The name of the texture relative to the Icons folder. </param>
+        /// <returns>The texture with that name, or null if no such texture was found. </returns>
+        public Texture2D TryGetIcon(string iconName)
         {
             return TryGetRaw(TextureType.Icon.GetDirectory(iconName));
         }
 
-        internal Texture2D TryGetObject(string objName)
+        /// <summary>
+        /// Tries to get the texture with the given name relative to the Objects folder. See <see cref="TextureType"/>. 
+        /// </summary>
+        /// <param name="objName">The name of the texture relative to the Objects folder. </param>
+        /// <returns>The texture with that name, or null if no such texture was found. </returns>
+        public Texture2D TryGetObject(string objName)
         {
             return TryGetRaw(TextureType.Model.GetDirectory(objName));
         }
 
-        internal Texture2D TryGetUI(string name)
+        /// <summary>
+        /// Tries to get the texture with the given name relative to the UI folder. See <see cref="TextureType"/>. 
+        /// </summary>
+        /// <param name="name">The name of the texture relative to the UI folder. </param>
+        /// <returns>The texture with that name, or null if no such texture was found. </returns>
+        public Texture2D TryGetUI(string name)
         {
             return TryGetRaw(TextureType.Ui.GetDirectory(name));
         }

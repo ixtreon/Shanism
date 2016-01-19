@@ -4,7 +4,7 @@ using Engine.Objects;
 using IO.Common;
 using System.Collections.Generic;
 using Engine._DefaultScenario.Units;
-using Engine.Objects.Game;
+using Engine.Systems.Abilities;
 
 public class DeathWardSpell : Ability
 {
@@ -17,18 +17,13 @@ public class DeathWardSpell : Ability
         Name = "Death Ward";
         Description = "Places a death ward which shoots nearby enemies on the specified point. ";
         ManaCost = 1;
-        Cooldown = 3;
+        Cooldown = 3000;
         CastRange = 5;
     }
 
-    public override void OnCast(Engine.Events.AbilityCastArgs e)
+    protected override void OnCast(Engine.Events.AbilityCastArgs e)
     {
-        var ward = new DeathWard(Owner.Owner, e.TargetLocation);
+        var ward = new DeathWard(e.CastingUnit.Owner, e.TargetLocation);
         Map.Add(ward);
-    }
-   
-    public override void OnUpdate(int msElapsed)
-    {
-        this.Cooldown = Owner.AttackCooldown;
     }
 }

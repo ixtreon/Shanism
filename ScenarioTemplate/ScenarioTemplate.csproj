@@ -40,14 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abilities\ShanoAbility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="app.config" />
-    <None Include="models.json" />
-    <None Include="map.json" />
     <None Include="scenario.json" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Abilities\" />
     <Folder Include="Buffs\" />
     <Folder Include="Doodads\" />
     <Folder Include="Effects\" />

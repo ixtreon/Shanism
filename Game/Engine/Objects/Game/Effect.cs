@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using IO.Common;
+using IO.Objects;
 
 namespace Engine.Objects.Game
 {
@@ -11,44 +12,45 @@ namespace Engine.Objects.Game
     /// 
     /// NYI
     /// </summary>
-    public class Effect : GameObject
+    public class Effect : GameObject, IEffect
     {
 
         public override ObjectType ObjectType
         {
             get { return ObjectType.Effect; }
         }
-
-        /// <summary>
-        /// Gets the texture file name for this effect. 
-        /// </summary>
-        public string FileName;
-
-        /// <summary>
-        /// Gets or sets the speed at which this effect plays. 
-        /// </summary>
-        public double Speed;
-
+        
         /// <summary>
         /// Gets or sets whether this effect is attached to a particular GameObject. 
         /// </summary>
-        public bool IsAttached { get; set; }
+        public bool IsAttached { get { return AttachedTo != null; } }
 
-        public GameObject AttachedTo { get; set; }
+        /// <summary>
+        /// Gets the object this effect is attached to, if <see cref="IsAttached"/> is true. 
+        /// </summary>
+        public GameObject AttachedTo { get; }
 
-        public Vector Offset { get; set; }
+        /// <summary>
+        /// Gets the attachment offset of this effect relative to the object it is attached to. 
+        /// </summary>
+        public Vector AttachOffset { get; set; }
 
         public Effect(GameObject anchor)
         {
-            this.AttachedTo = anchor;
-            this.IsAttached = true;
+            AttachedTo = anchor;
         }
 
         public Effect(Vector loc)
         {
-            this.Position = loc;
+            Position = loc;
         }
 
-        
+        internal override void Update(int msElapsed)
+        {
+            if (IsAttached)
+                Position = AttachedTo.Position + AttachOffset;
+
+            base.Update(msElapsed);
+        }
     }
 }

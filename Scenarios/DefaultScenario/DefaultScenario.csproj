@@ -80,16 +80,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abilities\DeathWardSpell.cs" />
+    <Compile Include="Abilities\Flameshit.cs" />
+    <Compile Include="Abilities\ForkedSpark.cs" />
+    <Compile Include="Abilities\LudHook.cs" />
+    <Compile Include="Abilities\Hook.cs" />
     <Compile Include="Abilities\Spark.cs" />
     <Compile Include="Abilities\Haste.cs" />
     <Compile Include="Abilities\Teleport.cs" />
     <Compile Include="Abilities\Vacuum.cs" />
+    <Compile Include="Abilities\SpawnTree.cs" />
     <Compile Include="Buffs\Haste.cs" />
     <Compile Include="Buffs\Chilled.cs" />
     <Compile Include="Buffs\Stunned.cs" />
     <Compile Include="Doodads\Tree.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scripts\Content.cs" />
     <Compile Include="Scripts\SpawnHero.cs" />
     <Compile Include="Scripts\SpawnMonsters.cs" />
     <Compile Include="Units\Albimon.cs" />

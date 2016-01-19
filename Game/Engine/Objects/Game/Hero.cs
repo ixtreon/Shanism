@@ -12,9 +12,14 @@ using Engine.Objects.Game;
 using Engine.Systems.Orders;
 using IO.Message.Client;
 using IO.Objects;
+using Engine.Systems.Abilities;
 
 namespace Engine.Objects.Game
 {
+    /// <summary>
+    /// A type of unit that can gather experience points and has a number of attributes 
+    /// that affect its main statistics (life, mana etc). 
+    /// </summary>
     public class Hero : Unit, IHero
     {
         //multiplied by _level to obtain the Xp needed to level up. 
@@ -116,10 +121,13 @@ namespace Engine.Objects.Game
 
 
         public Hero(Player owner, Vector location)
-            : base("Hero", owner, location)
+            : base(owner, location)
         {
+            ModelName = "hero";
+
+            Scale = 0.6;
+
             BaseMoveSpeed = 5;
-            Size = 0.6;
 
             BaseStrength  = 10;
             BaseVitality  = 10;
@@ -129,41 +137,44 @@ namespace Engine.Objects.Game
 
 
         /// <summary>
-        /// Fired whenever the hero requests the activation of some action. 
+        /// Fired whenever the player requests the activation of some action. 
         /// </summary>
-        /// <param name="args"></param>
         internal virtual void OnAction(ActionMessage args)
         {
-            Ability ability;
-            if(!abilities.TryGetValue(args.AbilityId, out ability))
+            var ability = Abilities.TryGet(args.AbilityId);
+            if(ability == null)
                 return;
 
             CastAbility(ability, args.TargetLocation);
         }
 
-        internal override void UpdateBuffs(int msElapsed)
+        /// <summary>
+        /// Updates the unit state based on the current buffs.
+        /// </summary>
+        internal override void UpdateBuffEffects(int msElapsed)
         {
-            base.UpdateBuffs(msElapsed);
+            base.UpdateBuffEffects(msElapsed);
 
             Strength  = BaseStrength + Buffs.Sum(b => b.Strength);
             Vitality  = BaseVitality + Buffs.Sum(b => b.Vitality);
             Intellect = BaseIntellect + Buffs.Sum(b => b.Intellect);
             Agility   = BaseAgility + Buffs.Sum(b => b.Agility);
 
-            MinDamage += Strength * Constants.Attributes.DamagePerStrength;
-            MaxDamage += Strength * Constants.Attributes.DamagePerStrength;
-            Defense   += Strength * Constants.Attributes.DefensePerStrength;
+            MinDamage += Strength * Constants.Units.Attributes.DamagePerStrength;
+            MaxDamage += Strength * Constants.Units.Attributes.DamagePerStrength;
+            Defense   += Strength * Constants.Units.Attributes.DefensePerStrength;
 
-            Defense += Agility * Constants.Attributes.AtkSpeedPerAgility;
-            Defense += Agility * Constants.Attributes.DodgePerAgility;
+            Defense += Agility * Constants.Units.Attributes.AtkSpeedPerAgility;
+            Defense += Agility * Constants.Units.Attributes.DodgePerAgility;
 
-            MaxLife   += Vitality * Constants.Attributes.LifePerVitality;
-            LifeRegen += Vitality * Constants.Attributes.LifeRegPerVitality;
-            MaxMana   += Vitality * Constants.Attributes.ManaPerVitality;
-            ManaRegen += Vitality * Constants.Attributes.ManaRegPerVitality;
+            MaxLife   += Vitality * Constants.Units.Attributes.LifePerVitality;
+            MaxMana   += Vitality * Constants.Units.Attributes.ManaPerVitality;
 
-            MagicDamage += Intellect * Constants.Attributes.MagicDamagePerInt;
-            ManaRegen   += Intellect * Constants.Attributes.ManaRegPerInt;
+            LifeRegen += Intellect * Constants.Units.Attributes.LifeRegPerInt;
+            ManaRegen += Intellect * Constants.Units.Attributes.ManaRegPerInt;
+
+            MagicDamage += Intellect * Constants.Units.Attributes.MagicDamagePerInt;
+            ManaRegen   += Intellect * Constants.Units.Attributes.ManaRegPerInt;
         }
     }
 

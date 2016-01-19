@@ -20,7 +20,7 @@ namespace IO.Message.Server
         /// The ID of the unit that was damaged. 
         /// </summary>
         [SerialMember]
-        public readonly int UnitId;
+        public readonly uint UnitId;
 
         /// <summary>
         /// The change in zzz.

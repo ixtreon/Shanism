@@ -12,12 +12,13 @@ using System.Threading.Tasks;
 namespace Engine.Objects.Game
 {
     /// <summary>
-    /// A simple type of unit. 
+    /// A simple type of unit that has prepopulated values for all attributes 
+    /// and can be instantiated by providing values for its level and rarity. 
     /// </summary>
     public class Monster : Unit
     {
-        public Monster(string model, Vector location)
-            : this(model, location, 1, false)
+        public Monster(Vector location)
+            : this(location, 1, false)
         {
 
         }
@@ -29,38 +30,34 @@ namespace Engine.Objects.Game
         /// <param name="location">The position of the monster. </param>
         /// <param name="level">The level of the monster. </param>
         /// <param name="isElite">Whether the monster gets bonus life n damage and is considered elite. </param>
-        public Monster(string model, Vector location, int level = 1, bool isElite = false)
-            : base(model, Player.NeutralAggressive, location, level)
+        public Monster(Vector location, int level = 1, bool isElite = false)
+            : base(Player.NeutralAggressive, location, level)
         {
             if(isElite)
             {
-                BaseLife = 210 + 90 * level;
+                BaseLife = 160 + 90 * level;
                 BaseMinDamage = 5 + 5 * level;
                 BaseMaxDamage = BaseMinDamage + 7;
 
-                BaseDefense = 3 + 0.3 * level;
+                BaseDefense = 2 + 0.3 * level;
             }
             else
             {
-                BaseLife = 90 + 30 * level;
+                BaseLife = 60 + 30 * level;
                 BaseMinDamage = 2 + 3 * level;
-                BaseMaxDamage = BaseMinDamage + 5;
+                BaseMaxDamage = BaseMinDamage + 2 + level / 10;
 
-                BaseDefense = 2 + 0.2 * level;
+                BaseDefense = 1 + 0.2 * level;
             }
 
-            BaseAttacksPerSecond = 2.5;
-            BaseMoveSpeed = 5;
+            BaseAttacksPerSecond = 1.75;
+            BaseMoveSpeed = 3;
             BaseDodge = 10;
 
-            BaseMoveSpeed = 3;
-            
             AttackRange = 1;
-            RangedAttack = false;
+            HasRangedAttack = false;
 
-            var ab = new Attack();
-            AddAbility(ab);
-
+            Abilities.Add(new Attack());
             Behaviour = new AggroBehaviour(this);
         }
 
@@ -69,9 +66,9 @@ namespace Engine.Objects.Game
         /// </summary>
         /// <param name="prototype"></param>
         public Monster(Monster prototype)
-            : this(prototype.Model, prototype.Position, prototype.Level)
+            : this(prototype.Position, prototype.Level)
         {
-
+            ModelName = prototype.ModelName;
         }
     }
 }

@@ -14,79 +14,102 @@ namespace Engine.Systems.Buffs
     /// </summary>
     public class BuffInstance : IBuffInstance
     {
-        public Buff Buff { get; private set; }
+        /// <summary>
+        /// Gets the buff prototype of this instance. 
+        /// </summary>
+        public Buff Prototype { get; }
 
-        public Unit Target;
+        /// <summary>
+        /// Gets the target unit this buff instance is applied to. 
+        /// </summary>
+        public Unit Target { get; }
 
+        /// <summary>
+        /// Gets the duration left, in milliseconds, before this buff instance expires. 
+        /// </summary>
         public int DurationLeft { get; private set; }
 
+        /// <summary>
+        /// Gets whether this buff should be removed from its target unit. 
+        /// </summary>
         public bool ShouldDestroy 
         {
-            get { return Buff.IsTimed && DurationLeft <= 0; }
-        }
-
-        public BuffInstance(Buff buff, Unit target)
-        {
-            Buff = buff;
-            Target = target;
-            DurationLeft = buff.FullDuration;
-
-            Buff.OnApplied(this);
+            get { return Prototype.IsTimed && DurationLeft <= 0; }
         }
 
         #region IBuff implementation
-        public string Icon { get { return Buff.Icon; } }
+        public string Icon { get { return Prototype.Icon; } }
 
+        public double Life { get { return Prototype.Life; } }
 
+        public double Mana { get { return Prototype.Mana; } }
 
-        public double Life { get { return Buff.Life; } }
+        public double Defense { get { return Prototype.Defense; } }
 
-        public double Mana { get { return Buff.Mana; } }
+        public double Dodge { get { return Prototype.Dodge; } }
 
-        public double Defense { get { return Buff.Defense; } }
-        public double Dodge { get { return Buff.Dodge; } }
+        public double MinDamage { get { return Prototype.MinDamage; } }
 
-        public double MinDamage { get { return Buff.MinDamage; } }
+        public double MaxDamage { get { return Prototype.MaxDamage; } }
 
-        public double MaxDamage { get { return Buff.MaxDamage; } }
+        public double MoveSpeed { get { return Prototype.MoveSpeed; } }
 
+        public int MoveSpeedPercentage { get { return Prototype.MoveSpeedPercentage; } }
 
-        public double MoveSpeed { get { return Buff.MoveSpeed; } }
-        public int MoveSpeedPercentage { get { return Buff.MoveSpeedPercentage; } }
-        public int AttackSpeed { get { return Buff.AttackSpeed; } }
+        public int AttackSpeed { get { return Prototype.AttackSpeed; } }
 
-        public double Strength { get { return Buff.Strength; } }
+        public double Strength { get { return Prototype.Strength; } }
 
-        public double Vitality { get { return Buff.Vitality; } }
+        public double Vitality { get { return Prototype.Vitality; } }
 
-        public double Agility { get { return Buff.Agility; } }
+        public double Agility { get { return Prototype.Agility; } }
 
-        public double Intellect { get { return Buff.Intellect; } }
+        public double Intellect { get { return Prototype.Intellect; } }
 
-        public int FullDuration { get { return Buff.FullDuration; } }
+        public int FullDuration { get { return Prototype.FullDuration; } }
 
-        public BuffType Type { get { return Buff.Type; } }
+        public BuffType StackingType { get { return Prototype.StackingType; } }
 
-        public bool Visible { get { return Buff.Visible; } }
+        public bool Visible { get { return Prototype.Visible; } }
 
-        public string Name { get { return Buff.Name; } }
+        public string Name { get { return Prototype.Name; } }
 
-        public string Description { get { return Buff.Description; } }
+        public string Description { get { return Prototype.Description; } }
         #endregion
+
+
+        public BuffInstance(Buff buff, Unit target)
+        {
+            Prototype = buff;
+            Target = target;
+            DurationLeft = buff.FullDuration;
+
+            Prototype.OnApplied(this);
+        }
+
 
         internal void Update(int msElapsed)
         {
-            if (Buff.IsTimed)
+            if (Prototype.IsTimed)
             {
                 DurationLeft -= msElapsed;
                 if (ShouldDestroy)
                 {
-                    Buff.OnExpired(this);
+                    Prototype.OnExpired(this);
                     return;
                 }
             }
 
-            Buff.OnUpdate(this);
+            Prototype.OnUpdate(this);
+        }
+
+        /// <summary>
+        /// Refreshes the duration of this buff instance. 
+        /// </summary>
+        public void RefreshDuration()
+        {
+            DurationLeft = FullDuration;
+            Prototype.OnRefresh(this);
         }
     }
 }

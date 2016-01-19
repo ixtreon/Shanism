@@ -16,15 +16,15 @@ namespace Network.Objects
     /// </summary>
     class ObjectFactory
     {
-        private static Dictionary<int, IGameObject> objects = new Dictionary<int, IGameObject>();
-        private static Dictionary<int, ObjectType> objectTypes = new Dictionary<int, ObjectType>();
+        static readonly Dictionary<uint, IGameObject> objects = new Dictionary<uint, IGameObject>();
+        static readonly Dictionary<uint, ObjectType> objectTypes = new Dictionary<uint, ObjectType>();
 
         public static IEnumerable<IGameObject> AllObjects
         {
             get { return objects.Values; } 
         }
 
-        public static IGameObject GetOrCreate(ObjectType ty, int guid)
+        public static IGameObject GetOrCreate(ObjectType ty, uint guid)
         {
             IGameObject obj;
 
@@ -36,15 +36,15 @@ namespace Network.Objects
             }
 
             if (!ty.UnderlyingInterface.IsAssignableFrom(obj.GetType()))    // make sure types match
-                throw new Exception("Object {0} was expected to be of type {1} but was {2} instead. ".Format(guid, ty.UnderlyingInterface.Name, obj.GetType().Name));
+                throw new Exception("Object {0} was expected to be of type {1} but was {2} instead. ".F(guid, ty.UnderlyingInterface.Name, obj.GetType().Name));
 
             return obj;
         }
 
-        public static void AddOrUpdate(ObjectType objType, int guid, IGameObject obj)
+        public static void AddOrUpdate(ObjectType objType, uint guid, IGameObject obj)
         {
             if (objectTypes.ContainsKey(guid) && objectTypes[guid] != objType)
-                throw new Exception("Inconsistent ObjectTypes: object #{0} was {1} but is now {2}!".Format(guid, objectTypes[guid], objType));
+                throw new Exception("Inconsistent ObjectTypes: object #{0} was {1} but is now {2}!".F(guid, objectTypes[guid], objType));
 
             objects[guid] = obj;
             objectTypes[guid] = objType;
@@ -56,7 +56,7 @@ namespace Network.Objects
                 .Where(o => o.Position.Inside(pos, size));
         }
 
-        private static IGameObject createNew(ObjectType ty, int guid)
+        static IGameObject createNew(ObjectType ty, uint guid)
         {
             if (ty == ObjectType.Doodad)
                 return new DoodadStub(guid);

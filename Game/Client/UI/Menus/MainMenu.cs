@@ -1,8 +1,11 @@
-﻿using Client.Controls;
+﻿using Client.Input;
+using Client.Input;
 using Client.UI.Common;
+using Client.UI.Menus;
 using IO.Common;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,71 +13,83 @@ using Color = Microsoft.Xna.Framework.Color;
 
 namespace Client.UI
 {
-    class MainMenu : Control
+    class MainMenu : Window
     {
+        Button btnKeys, btnOptions, btnExit;
 
-        Button 
-            btnKeys = new Button("Keybinds"),
-            btnOptions = new Button("Options"),
-            btnExit = new Button("Quit");
-
-        Button[] buttons;
 
         public MainMenu()
         {
-            this.BackColor = Color.Black.SetAlpha(150);
-            this.Visible = false;
+            HasTitleBar = false;
+            Location = new Vector(0.75, 0.6);
+            Size = new Vector(0.5, 0.6);
+            ParentAnchor = AnchorMode.None;
 
-            var menuAnchor = 3 * Padding;
+            BackColor = Color.Black.SetAlpha(150);
+            Action = GameAction.ToggleMainMenu;
 
-            buttons = new[]
+            var distFromEdge = Padding * 3;
+
+            btnKeys = new Button("Keybinds")
             {
-                btnKeys,
-                btnOptions,
-                btnExit,
+                ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
+                Location = new Vector(distFromEdge, distFromEdge),
+                Size = new Vector(this.Size.X - 2 * distFromEdge, 0.12),
             };
 
-            var btnSize = new Vector(Size.X - 2 * menuAnchor, (Size.Y - menuAnchor) / buttons.Length - menuAnchor);
-            var y = menuAnchor;
-            foreach(var btn in buttons)
+            btnOptions = new Button("Options")
             {
-                this.Add(btn);
-                btn.Location = new Vector(menuAnchor, y);
-                btn.Size = btnSize;
-                y += menuAnchor + btnSize.Y;
-            }
+                ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
+                Location = new Vector(distFromEdge, Padding + btnKeys.Bottom),
+                Size = new Vector(this.Size.X - 2 * distFromEdge, 0.12),
+            };
 
+            btnExit = new Button("Exit")
+            {
+                ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
+                Location = new Vector(distFromEdge, Padding + btnOptions.Bottom),
+                Size = new Vector(this.Size.X - 2 * distFromEdge, 0.12),
+            };
+
+
+            Add(btnKeys);
+            Add(btnOptions);
+            Add(btnExit);
+
+            btnKeys.MouseUp += btnKeys_MouseUp;
+            btnOptions.MouseUp += btnOptions_MouseUp;
             btnExit.MouseUp += btnExit_MouseUp;
         }
 
-        void btnExit_MouseUp(Control arg1, Vector arg2)
+        void btnOptions_MouseUp(MouseButtonEvent obj)
         {
-            
+
         }
 
-        public override void Update(int msElapsed)
+        void btnKeys_MouseUp(MouseButtonEvent e)
         {
-            if (KeyManager.IsActivated(Keybind.MainMenu))
-            {
-                //close all windows
-                var visibleWindows = Parent.Controls
-                    .Where(c => typeof(Window).IsAssignableFrom(c.GetType()) && c.Visible);
-                if (visibleWindows.Any())
-                {
-                    foreach (var w in visibleWindows)
-                        w.Visible = false;
-                    this.Visible = false;
-                }
-                else    // otherwise toggle visible. 
-                {
-                    this.Visible = !this.Visible;
-                }
-            }
+            Hide();
+
+            if (Parent.Controls.OfType<KeybindMenu>().Any()) return;
+
+            var kbMenu = new KeybindMenu { Visible = true };
+            Parent.Add(kbMenu);
         }
 
-        public override void Draw(Graphics g)
+        void btnExit_MouseUp(MouseButtonEvent e)
         {
-            base.Draw(g);
+            //lol hacky exit
+            Process.GetCurrentProcess().Close();
+        }
+
+        protected override void OnUpdate(int msElapsed)
+        {
+            base.OnUpdate(msElapsed);
+        }
+
+        public override void OnDraw(Graphics g)
+        {
+            base.OnDraw(g);
         }
     }
 }

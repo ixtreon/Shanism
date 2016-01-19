@@ -21,20 +21,23 @@ namespace Network.Objects
         
         public string Name { get; internal set; }
 
-        public double Size { get; internal set; }
+        public double Scale { get; internal set; }
 
-        public int Guid { get; internal set; }
+        public uint Guid { get; internal set; }
 
         public ObjectType ObjectType { get; internal set; }
 
         public IEnumerable<IUnit> SeenBy { get; internal set; }
 
-        public string Model { get; internal set; }
+        public string ModelName { get; internal set; }
 
-        public string Animation { get; internal set; }
+        public string AnimationName { get; internal set; }
 
+        public RectangleF Bounds { get; internal set; }
 
-        public ObjectStub(int guid)
+        public RectangleF TextureBounds { get; internal set; }
+
+        public ObjectStub(uint guid)
         {
             this.Guid = guid;
         }
