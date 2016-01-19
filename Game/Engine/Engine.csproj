@@ -148,6 +148,10 @@
     <Compile Include="Maps\GameObjectMapper.cs" />
     <Compile Include="Maps\HashMap.cs" />
     <Compile Include="Maps\ObjectMap.cs" />
+    <Compile Include="Maps\Terrain\FixedMap.cs" />
+    <Compile Include="Maps\Terrain\ITerrainMap.cs" />
+    <Compile Include="Maps\Terrain\MapGod.cs" />
+    <Compile Include="Maps\Terrain\RandomMap.cs" />
     <Compile Include="Objects\Units\Abilities.cs" />
     <Compile Include="Systems\Abilities\AbilitySystem.cs" />
     <Compile Include="Systems\Collision\CollisionSystem.cs" />
