@@ -3,42 +3,42 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Objects.Game;
+using Engine.Entities.Objects;
 using IO.Common;
 
 namespace Engine.Maps
 {
+    /// <summary>
+    /// A map of a fixed size and terrain. 
+    /// </summary>
     class FixedMap : ITerrainMap
     {
-        readonly Rectangle bounds;
-
         readonly TerrainType[,] map;
 
-        public Rectangle Bounds { get { return bounds; } }
+        public Rectangle Bounds { get; private set; }
 
         public FixedMap(TerrainType[,] map)
         {
             var w = map.GetLength(0);
             var h = map.GetLength(1);
 
-            this.bounds = new Rectangle(0, 0, w, h);
+            Bounds = new Rectangle(0, 0, w, h);
             this.map = map;
         }
 
-        public void GetMap(Rectangle rect, ref TerrainType[,] outMap)
+        public void GetMap(Rectangle rect, ref TerrainType[] outMap)
         {
-            outMap = new TerrainType[rect.Width, rect.Height];
+            outMap = new TerrainType[rect.Width * rect.Height];
 
             foreach (var ix in Enumerable.Range(0, rect.Width))
                 foreach (var iy in Enumerable.Range(0, rect.Height))
                 {
                     var mx = rect.X + ix;
                     var my = rect.Y + iy;
-                    if (mx >= 0 && mx < bounds.Width && my >= 0 && my < bounds.Height)
-                        outMap[ix, iy] = map[mx, my];
+                    if (mx >= 0 && mx < Bounds.Width && my >= 0 && my < Bounds.Height)
+                        outMap[ix + IO.Constants.Terrain.ChunkSize * iy] = map[mx, my];
                     else
-                        outMap[ix, iy] = TerrainType.None;
-
+                        outMap[ix + IO.Constants.Terrain.ChunkSize * iy] = TerrainType.None;
                 }
         }
 
@@ -47,10 +47,10 @@ namespace Engine.Maps
             return Enumerable.Empty<Doodad>();
         }
 
-        public TerrainType GetTerrainAt(Vector loc)
+        public TerrainType GetTerrain(Vector loc)
         {
             var pt = loc.Floor();
-            if (!bounds.Contains(pt))
+            if (!Bounds.Contains(pt))
                 return TerrainType.None;
             return map[pt.X, pt.Y];
         }

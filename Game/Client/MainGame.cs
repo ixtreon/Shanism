@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ScenarioLib;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using MovementState = IO.Common.MovementState;
@@ -18,7 +19,7 @@ using MovementState = IO.Common.MovementState;
 namespace Client
 {
     /// <summary>
-    /// This is the main type for our game
+    /// This is the main class that draws and updates the ShanoRPG game. 
     /// </summary>
     class MainGame : Game, IShanoClient
     {
@@ -96,6 +97,8 @@ namespace Client
 
             Content.RootDirectory = "Content";
             Window.Title = "ShanoRPG";
+
+            ExitHelper.SetGame(this);
         }
 
 
@@ -103,14 +106,19 @@ namespace Client
         {
             Server = server;
 
-            Server.ObjectSeen += server_ObjectSeen;
-            Server.ObjectUnseen += server_ObjectUnseen;
-            server.MessageSent += Server_MessageSent;
+            server.MessageSent += (m) =>
+            {
+
+                var life = 42;
+                pendingMessages.Enqueue(m);
+            };
         }
 
-        void Server_MessageSent(IOMessage msg)
+        readonly ConcurrentQueue<IOMessage> pendingMessages = new ConcurrentQueue<IOMessage>();
+
+        void ParseMessage(IOMessage msg)
         {
-            switch(msg.Type)
+            switch (msg.Type)
             {
                 case MessageType.HandshakeReply:
                     onHandshakeReply((HandshakeReplyMessage)msg);
@@ -123,7 +131,30 @@ namespace Client
                 case MessageType.PlayerStatusUpdate:
                     onStatusChanged((PlayerStatusMessage)msg);
                     break;
+                case MessageType.ObjectSeen:
+                    onObjectSeen((ObjectSeenMessage)msg);
+                    break;
+                case MessageType.ObjectUnseen:
+                    onObjectUnseen((ObjectUnseenMessage)msg);
+                    break;
+
+                case MessageType.DamageEvent:
+                    var dmgEv = (DamageEventMessage)msg;
+                    Game.DamageText.AddDamageLabel(dmgEv);
+                    break;
             }
+        }
+
+
+        void onObjectUnseen(ObjectUnseenMessage msg)
+        {
+            Game.Objects.RemoveObject(msg.Guid);
+        }
+
+        void onObjectSeen(ObjectSeenMessage msg)
+        {
+            var obj = msg.Object;
+            Game.Objects.AddObject(obj);
         }
 
         void onStatusChanged(PlayerStatusMessage msg)
@@ -152,15 +183,13 @@ namespace Client
             IsConnected = true;
         }
 
-
-        void server_ObjectUnseen(IGameObject obj)
+        /// <summary>
+        /// Listens to the interface sending actions and relays them to the server. 
+        /// </summary>
+        /// <param name="msg"></param>
+        void onActionPerformed(ActionMessage msg)
         {
-            Game.Objects.RemoveObject(obj.Guid);
-        }
-
-        void server_ObjectSeen(IGameObject obj)
-        {
-            Game.Objects.AddObject(obj);
+            ActionActivated(msg);
         }
 
         /// <summary>
@@ -210,18 +239,9 @@ namespace Client
         /// <summary>
         /// Listens to the MapManager requesting chunks and relays them to the server. 
         /// </summary>
-        private void MapManager_ChunkRequested(IO.Common.MapChunkId obj)
+        void MapManager_ChunkRequested(IO.Common.MapChunkId obj)
         {
             MapRequested(new MapRequestMessage(obj));
-        }
-
-        /// <summary>
-        /// Listens to the interface sending actions and relays them to the server. 
-        /// </summary>
-        /// <param name="msg"></param>
-        private void onActionPerformed(ActionMessage msg)
-        {
-            ActionActivated(msg);
         }
 
 
@@ -284,8 +304,14 @@ namespace Client
             //update the local server
             Server.UpdateServer(msElapsed);
 
+            //Parse its messages
+            IOMessage msg;
+            while (pendingMessages.TryDequeue(out msg))
+                ParseMessage(msg);
+
             if (!IsConnected)
                 return;
+
 
             //keyboard
             KeyboardInfo.Update(msElapsed);
@@ -363,8 +389,8 @@ namespace Client
 
 
                 // 2. draw gameobjects
-                StartDrawing(spriteBatch, objectsTexture, 
-                    clearColor: Color.Transparent, 
+                StartDrawing(spriteBatch, objectsTexture,
+                    clearColor: Color.Transparent,
                     drawCode: () =>
                     {
                         Game.Objects.Draw(spriteBatch);
@@ -374,8 +400,8 @@ namespace Client
                 //todo
 
                 // 4. draw interface + debug
-                StartDrawing(spriteBatch, interfaceTexture, 
-                    clearColor: Color.Transparent, 
+                StartDrawing(spriteBatch, interfaceTexture,
+                    clearColor: Color.Transparent,
                     blend: BlendState.AlphaBlend,
                     drawCode: () =>
                     {
@@ -386,8 +412,8 @@ namespace Client
 
 
                 // 5. reset surface, put all textures on
-                StartDrawing(spriteBatch, null, 
-                    clearColor: Color.LightBlue, 
+                StartDrawing(spriteBatch, null,
+                    clearColor: Color.LightBlue,
                     blend: BlendState.NonPremultiplied,
                     drawCode: () =>
                     {
@@ -427,7 +453,7 @@ namespace Client
         {
             var txt = "Connecting...";
             var font = Client.Content.Fonts.LargeFont;
-            var pos = new IO.Common.Point(Screen.Size.X / 10);
+            var pos = new IO.Common.Point(Screen.PixelSize.X / 10);
 
             spriteBatch.Begin();
 
@@ -448,15 +474,20 @@ namespace Client
             var mpUi = Screen.ScreenToUi(Mouse.GetState().Position.ToPoint());
             var mpGame = Screen.ScreenToGame(Mouse.GetState().Position.ToPoint());
 
-            var debugString =
-                "FPS: {0:00}".F(1000 / smoothFrameDelay) + "\n" +
-                "UI X/Y: {0:0.00}".F(mpUi) + "\n" +
-                "Hero X/Y: {0:0.00}".F(Game.Objects.MainHero?.Position) + "\n" +
-                "Game X/Y: {0:0.00}".F(mpGame) + "\n" + 
-                "{0} objects".F(Game.Objects.Controls.Count()) + "\n" +
-                "Hover: " + Control.HoverControl.GetType().Name;
 
-            Client.Content.Fonts.FancyFont.DrawStringScreen(sb, debugString, Color.Black, 
+            var debugString = new[] 
+            {
+                "FPS: {0:00}".F(1000 / smoothFrameDelay),
+                "UI X/Y: {0:0.00}".F(mpUi),
+                "Hero X/Y: {0:0.00}".F(Game.Objects.MainHero?.Position),
+                "Game X/Y: {0:0.00}".F(mpGame),
+                "{0} objects".F(Game.Objects.Controls.Count()),
+                "Hover: " + Control.HoverControl.GetType().Name,
+                Server.GetPerfData(),
+
+            }.Aggregate((a, b) => a + '\n' + b);
+
+            Client.Content.Fonts.FancyFont.DrawStringScreen(sb, debugString, Color.Black,
                 new IO.Common.Point(24, 18), 0, 0);
 
         }

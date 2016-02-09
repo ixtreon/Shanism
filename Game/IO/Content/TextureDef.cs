@@ -1,5 +1,5 @@
 ﻿using IO.Common;
-using IxSerializer.Attributes;
+using ProtoBuf;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,26 +12,23 @@ namespace IO.Content
     /// Represents a texture content file used by the game. 
     /// Contains the name of the texture along with the logical splits that divide it into chunks. 
     /// </summary>
-    [SerialKiller]
     [JsonObject(IsReference = true, MemberSerialization = MemberSerialization.OptIn)]
     public class TextureDef
     {
         /// <summary>
         /// A placeholder texture that is present in all games. 
         /// </summary>
-        public static readonly TextureDef Default = new TextureDef(Constants.Content.DefaultModelTexture);
+        public static readonly TextureDef Default = new TextureDef(Constants.Content.DefaultValues.ModelTexture);
 
         /// <summary>
         /// The number of logical divisions in the file, if there is more than one such segment.  
         /// </summary>
-        [SerialMember]
         [JsonProperty]
         public Point Splits;
 
         /// <summary>
         /// The name, also the path, to the file behind this texture. 
         /// </summary>
-        [SerialMember]
         [JsonProperty]
         public string Name;
 

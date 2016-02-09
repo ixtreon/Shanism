@@ -15,21 +15,12 @@ namespace Client
     public static class SpriteBatchExt
     {
         public static void ShanoDraw(this SpriteBatch sb, Texture2D tex,
-            Rectangle sourceRect, Vector destPos, Vector destSz, Color c)
+            Rectangle sourceRect, Vector destPos, Vector destSz, Color c, float depth = 0)
         {
             sb.Draw(tex,
                 sourceRectangle: sourceRect.ToXnaRect(),
                 position: destPos.ToXnaVector(),
                 scale: (destSz / sourceRect.Size).ToXnaVector(),
-                color: c);
-        }
-
-        public static void ShanoDraw(this SpriteBatch sb, Texture2D tex,
-            Vector destPos, Vector destSz, Color c)
-        {
-            sb.Draw(tex,
-                position: destPos.ToXnaVector(),
-                scale: (destSz / new Vector(tex.Width, tex.Height)).ToXnaVector(),
                 color: c);
         }
     }

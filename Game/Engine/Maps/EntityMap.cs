@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Objects;
+using Engine.Entities;
 using IO.Common;
-using Engine.Objects.Game;
+using Engine.Entities.Objects;
 using System.Diagnostics;
 using System.Collections;
 using Engine.Systems;
-using Engine.Systems.RangeEvents;
+using Engine.Systems.Range;
 using System.Collections.Concurrent;
 using IO;
 
@@ -21,12 +21,11 @@ namespace Engine.Maps
     public class EntityMap
     {
         //contains objects keyed by their location
-        internal ObjectMap Map { get; }  = new ObjectMap();
+        internal readonly ObjectMap Map = new ObjectMap();
 
 
-        //contains objects keyed by their guid
+        //all objects keyed by their guid
         readonly ConcurrentDictionary<uint, GameObject> objectsGuidTable = new ConcurrentDictionary<uint, GameObject>();
-
 
 
         internal event Action<GameObject> ObjectAdded;

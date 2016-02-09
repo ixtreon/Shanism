@@ -1,6 +1,7 @@
 ﻿using Client.Input;
 using Client.Objects;
 using Client.UI;
+using Client.UI.CombatText;
 using IO.Common;
 using IO.Message.Client;
 using System;
@@ -24,8 +25,10 @@ namespace Client
         /// <summary>
         /// The guy that handles objects. 
         /// </summary>
-        public ObjectGod Objects { get; }
+        public ObjectGod Objects { get { return ObjectGod.Default; } }
 
+
+        public CombatText DamageText { get; } = new CombatText();
 
         public event Action<ActionMessage> ActionPerformed;
 
@@ -36,13 +39,14 @@ namespace Client
 
             Interface = new UiManager();
 
-            Objects = new ObjectGod();
             Objects.ObjectClicked += onObjectClicked;
             Objects.TerrainClicked += onGroundClicked;
 
             Add(Interface);
             Add(Objects);
-            Objects.SendToBack();
+            Objects.Add(DamageText);
+
+            Interface.BringToFront();
         }
 
         void onGroundClicked(MouseButtonEvent e)

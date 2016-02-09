@@ -138,6 +138,7 @@
     <Compile Include="Assets\Sprite.cs" />
     <Compile Include="Common\PointsInfo.cs" />
     <Compile Include="Assets\TerrainCache.cs" />
+    <Compile Include="ExitHelper.cs" />
     <Compile Include="Input\Keybind.cs" />
     <Compile Include="Input\KeyMap.cs" />
     <Compile Include="Input\MouseButtonEvent.cs" />

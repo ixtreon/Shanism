@@ -17,7 +17,7 @@ namespace Client.Objects
 
         public override void OnDraw(Graphics g)
         {
-            g.Draw(Sprite, Vector.Zero, Size);
+            g.Draw(Sprite, Vector.Zero, Size, null, (float)ZOrder);
         }
     }
 }

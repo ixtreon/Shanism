@@ -1,4 +1,4 @@
-﻿using Engine.Objects;
+﻿using Engine.Entities;
 using Engine.Systems.Buffs;
 using IO.Common;
 using System;
@@ -13,7 +13,7 @@ namespace DefaultScenario.Buffs
     {
         public ChilledBuff(int duration = 5000)
         {
-            StackingType = BuffType.NonStacking;
+            Type = BuffType.NonStacking;
             FullDuration = duration;
 
             Name = "Chilled";

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Engine;
 using Engine.Systems;
-using Engine.Objects.Game;
+using Engine.Entities.Objects;
 using IO.Common;
 using DefaultScenario.Abilities;
 using Engine.Systems.Abilities;
@@ -38,9 +38,13 @@ namespace DefaultScenario
         {
             if (!p.HasHero)
             {
-                var h = new Hero(p, Terrain.Bounds.Center) { Name = p.Name ?? "?!" };
-                Map.Add(h);
+                var h = new Hero(p)
+                {
+                    Position = Terrain.Bounds.Center,
+                    Name = p.Name ?? "?!"
+                };
 
+                Map.Add(h);
                 p.SetMainHero(h);
             }
 

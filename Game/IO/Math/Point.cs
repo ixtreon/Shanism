@@ -1,4 +1,4 @@
-﻿using IxSerializer.Attributes;
+﻿using ProtoBuf;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace IO.Common
 {
-    [SerialKiller]
+    [ProtoContract]
     public struct Point
     {
         public static readonly Point Zero = new Point();
@@ -16,13 +16,13 @@ namespace IO.Common
         /// <summary>
         /// The X coordinate of the point. 
         /// </summary>
-        [SerialMember]
+        [ProtoMember(1)]
         public int X;
 
         /// <summary>
         /// The Y coordinate of the point. 
         /// </summary>
-        [SerialMember]
+        [ProtoMember(2)]
         public int Y;
 
 

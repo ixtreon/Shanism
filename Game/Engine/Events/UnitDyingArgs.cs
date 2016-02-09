@@ -1,5 +1,5 @@
-﻿using Engine.Objects;
-using Engine.Objects.Game;
+﻿using Engine.Entities;
+using Engine.Entities.Objects;
 using System;
 using System.Linq;
 

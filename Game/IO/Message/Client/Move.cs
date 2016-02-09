@@ -1,5 +1,5 @@
 ﻿using IO.Common;
-using IxSerializer.Attributes;
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,20 +8,18 @@ using System.Threading.Tasks;
 
 namespace IO.Message.Client
 {
-    [SerialKiller]
+    [ProtoContract]
     public class MoveMessage : IOMessage
     {
-        public override MessageType Type
-        {
-            get { return MessageType.MoveUpdate; }
-        }
+        
 
-        [SerialMember]
+        [ProtoMember(1)]
         public readonly MovementState Direction;
 
-        private MoveMessage() { }
+        MoveMessage() { Type = MessageType.MoveUpdate; }
 
         public MoveMessage(MovementState st)
+            : this()
         {
             Direction = st;
         }

@@ -1,4 +1,4 @@
-﻿using IxSerializer.Attributes;
+﻿using ProtoBuf;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ namespace IO.Common
     /// <summary>
     /// Represents a rectangle in the 2D plane. 
     /// </summary>
-    [SerialKiller]
+    [ProtoContract]
     [JsonObject(MemberSerialization.OptIn)]
     public struct Rectangle
     {
@@ -19,14 +19,14 @@ namespace IO.Common
         /// <summary>
         /// Gets or sets the position of the bottom-left (low) corner of the rectangle. 
         /// </summary>
-        [SerialMember]
+        [ProtoMember(1)]
         public Point Position;
 
 
         /// <summary>
         /// Gets or sets the size of the rectangle. 
         /// </summary>
-        [SerialMember]
+        [ProtoMember(2)]
         public Point Size;
 
         [JsonProperty]

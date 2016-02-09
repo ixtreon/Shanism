@@ -50,14 +50,16 @@ namespace Client.Objects
             Sprite.Update(msElapsed);
 
             //update object bounds, z-order
-            var posLo = Screen.GameToUi(Object.Bounds.BottomLeft);
-            var posHi = Screen.GameToUi(Object.Bounds.TopRight);
-
+            var posLo = Screen.GameToUi(Object.Position - Object.Scale / 2);
+            var posHi = Screen.GameToUi(Object.Position + Object.Scale / 2);
+            
             this.AbsolutePosition = posLo;
             this.Size = posHi - posLo;
-            this.ZOrder = (int)((posHi.Y) * (Constants.Client.WindowHeight / 2) * 10);
+            ZOrder = (posHi.Y) / Screen.UiSize.Y + 0.5;
 
-            base.OnUpdate(msElapsed);
+            //TODO: thiis should not be here
+            ZOrder = Math.Min(1, Math.Max(0, ZOrder));
+
         }
 
     }

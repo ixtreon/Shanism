@@ -109,30 +109,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Log.cs" />
-    <Compile Include="Common\Objects\AbilityStub.cs" />
-    <Compile Include="Common\Objects\BuffStub.cs" />
-    <Compile Include="Common\Objects\DoodadStub.cs" />
-    <Compile Include="Common\Objects\HeroStub.cs" />
-    <Compile Include="Common\Serializers\GameObject.cs" />
+    <Compile Include="Objects\AbilityStub.cs" />
+    <Compile Include="Objects\BuffStub.cs" />
+    <Compile Include="Objects\DoodadStub.cs" />
+    <Compile Include="Objects\HeroStub.cs" />
     <Compile Include="NetworkExt.cs" />
-    <Compile Include="Common\Objects\ObjectFactory.cs" />
-    <Compile Include="Common\Objects\ObjectStub.cs" />
-    <Compile Include="Common\Serializers\SerializerInit.cs" />
-    <Compile Include="Common\Objects\UnitStub.cs" />
+    <Compile Include="Client\ObjectFactory.cs" />
+    <Compile Include="Objects\ObjectStub.cs" />
+    <Compile Include="Objects\UnitStub.cs" />
     <Compile Include="Client\LClient.cs" />
     <Compile Include="Server\LServer.cs" />
     <Compile Include="Common\LPeer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\NetGameClient.cs" />
+    <Compile Include="Server\ObjectTracker.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\!lib\IxLog\IxLog\IxLog.csproj">
       <Project>{b1fc6d51-2a33-4ef8-bbad-d8207f2dcb02}</Project>
       <Name>IxLog</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\!lib\IxSerializer\IxSerializer.csproj">
-      <Project>{41be9dd9-644c-4a90-8d47-667b4323df7a}</Project>
-      <Name>IxSerializer</Name>
     </ProjectReference>
     <ProjectReference Include="..\IO\IO.csproj">
       <Project>{dc89987d-5817-4f1d-95ca-80c024c8d6bb}</Project>

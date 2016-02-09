@@ -1,6 +1,7 @@
 ﻿using Client.Input;
 using Client.Objects;
 using Client.UI;
+using Client.UI.CombatText;
 using IO;
 using IO.Common;
 using IO.Objects;
@@ -15,6 +16,8 @@ namespace Client
 {
     class ObjectGod : Control
     {
+        public static readonly ObjectGod Default = new ObjectGod();
+
         const uint NoHeroGuid = 0;
 
 
@@ -47,7 +50,6 @@ namespace Client
         /// The event raised whenever the terrain is clicked. 
         /// </summary>
         public event Action<MouseButtonEvent> TerrainClicked;
-
 
         #region Main Hero Properties
         /// <summary>
@@ -85,7 +87,7 @@ namespace Client
 
         #endregion
 
-        public ObjectGod()
+        protected ObjectGod()
         {
             MouseDown += ObjectGod_MouseDown;
         }
@@ -96,6 +98,10 @@ namespace Client
             TerrainClicked?.Invoke(e);
         }
 
+        protected override void OnUpdate(int msElapsed)
+        {
+
+        }
 
         /// <summary>
         /// Adds the given game object to the index. 
@@ -127,6 +133,11 @@ namespace Client
 
             //add the UI control
             Add(gameObject);
+        }
+
+        public IGameObject TryGet(uint guid)
+        {
+            return objects.TryGet(guid).Object;
         }
 
         /// <summary>

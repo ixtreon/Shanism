@@ -1,5 +1,5 @@
 ﻿using IO.Content;
-using IxSerializer.Attributes;
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,29 +7,27 @@ using System.Text;
 
 namespace IO.Message.Server
 {
-    [SerialKiller]
+    [ProtoContract]
     public class HandshakeReplyMessage : IOMessage
     {
-        public override MessageType Type
-        {
-            get { return MessageType.HandshakeReply; }
-        }
+        
 
         /// <summary>
         /// Gets whether the handshake was successful. 
         /// </summary>
-        [SerialMember]
+        [ProtoMember(1)]
         public readonly bool Success;
 
-        [SerialMember]
+        [ProtoMember(2)]
         public readonly byte[] ScenarioData;
 
-        [SerialMember]
+        [ProtoMember(3)]
         public readonly byte[] ContentData;
 
-        public HandshakeReplyMessage() { }
+        HandshakeReplyMessage() { Type = MessageType.HandshakeReply; }
 
         public HandshakeReplyMessage(bool isSuccessful, byte[] scenarioData, byte[] contentData)
+            :this()
         {
             Success = isSuccessful;
             ScenarioData = scenarioData;

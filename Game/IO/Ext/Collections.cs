@@ -19,15 +19,30 @@ namespace IO
         /// <typeparam name="TVal"></typeparam>
         /// <param name="key">The key whose value should be returned. </param>
         public static TVal TryGet<TKey, TVal>(this IDictionary<TKey, TVal> dict, TKey key)
+            where TVal : class
         {
-            if (key == null)
-                return default(TVal);
-
             TVal result;
-            dict.TryGetValue(key, out result);
-
+            if (key == null || !dict.TryGetValue(key, out result))
+                return null;
             return result;
         }
+
+        /// <summary>
+        /// Tries to get the value of the given key from the dictionary. 
+        /// Returns default(T) if the key is not found. 
+        /// </summary>
+        /// <typeparam name="TVal"></typeparam>
+        /// <param name="key">The key whose value should be returned. </param>
+        public static TVal? TryGetVal<TKey, TVal>(this IDictionary<TKey, TVal> dict, TKey key)
+            where TVal : struct
+        {
+            TVal result;
+            if (key == null || !dict.TryGetValue(key, out result))
+                return null;
+            return result;
+        }
+
+
 
         /// <summary>
         /// Tries to get the value of the given key from this table. 
@@ -48,13 +63,6 @@ namespace IO
 
 
         #region IEnumerable Extensions
-        public static IEnumerable<T> SelectRaw<T>(this IEnumerable e, Func<object, T> func)
-        {
-            foreach (var o in e)
-                yield return func(o);
-        }
-
-
         public static int Count(this IEnumerable e)
         {
             var i = 0;
@@ -109,6 +117,18 @@ namespace IO
         }
 
         #endregion
+
+        public static IEnumerable<T> ArgMaxList<T>(this IEnumerable<T> e, Func<T, double> func)
+        {
+            if (!e.Any())
+                return Enumerable.Empty<T>();
+
+            return e
+                .Select(i => new { Key = func(i), Val = i })
+                .GroupBy(z => z.Key)
+                .Aggregate((ga, gb) => (ga.Key > gb.Key) ? ga : gb)
+                .Select(z => z.Val);
+        }
 
     }
 }

@@ -21,12 +21,12 @@ namespace Client.Assets
         /// <summary>
         /// Gets or updates the current frame. 
         /// </summary>
-        Counter frameCounter = new Counter(1);
+        readonly Counter frameCounter = new Counter(1);
 
         /// <summary>
         /// Gets or updates the milliseconds passed since the last frame change. 
         /// </summary>
-        Counter elapsedCounter = new Counter(1);
+        readonly Counter elapsedCounter = new Counter(1);
 
         ContentList ContentList { get; }
 

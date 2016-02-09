@@ -28,7 +28,7 @@ namespace ScenarioLib
 
 
         //TODO: gotta sign the exe...
-        private static readonly SecurityPermissionFlag[] scenarioPermissions = new[]
+        static readonly SecurityPermissionFlag[] scenarioPermissions = 
         {
             SecurityPermissionFlag.Execution,
         };
@@ -36,7 +36,7 @@ namespace ScenarioLib
         /// <summary>
         /// The system assemblies used to compile scenarios. 
         /// </summary>
-        private static readonly string[] systemAssemblies = new[]
+        static readonly string[] systemAssemblies = 
         {
             "System.dll",
             "System.Core.dll",

@@ -11,9 +11,8 @@ using IO.Message.Client;
 using IO.Message;
 using IO.Message.Server;
 using Network.Objects;
-using Network.Objects.Serializers;
 using System.IO;
-using IxSerializer;
+using ProtoBuf;
 using IO.Objects;
 using IxLog;
 
@@ -33,11 +32,6 @@ namespace Network
         bool isConnected = false;
 
         #region GameReceptor fields and properties
-        //public event Action<HandshakeReplyMessage> HandshakeReplied;
-        //public event Action<PlayerStatusMessage> MainHeroChanged;
-        //public event Action<MapReplyMessage> MapChunkReceived;
-        public event Action<IGameObject> ObjectUnseen;
-        public event Action<IGameObject> ObjectSeen;
         public event Action<IUnit, string> AnyUnitAction;
         public event Action<IOMessage> MessageSent;
 
@@ -51,9 +45,7 @@ namespace Network
         static LClient()
         {
             Log.Init("client");
-            SerializerModules.Init();
         }
-
 
 
         public LClient(string hostAddress, string name)
@@ -100,14 +92,17 @@ namespace Network
 
             switch(ioMsg.Type)
             {
+                //relay most messages to the IClient
                 case MessageType.HandshakeReply:
                 case MessageType.PlayerStatusUpdate:
                 case MessageType.MapReply:
+                case MessageType.ObjectSeen:
+                case MessageType.ObjectUnseen:
                     MessageSent(ioMsg);
                     break;
 
-                case MessageType.ObjectSeen:
-                    handleObjectSeen((ObjectSeenMessage)ioMsg);
+                case MessageType.ObjectData:
+                    //TODO: decode and do 'objectseen'
                     break;
 
                 default:
@@ -115,29 +110,6 @@ namespace Network
                     break;
             }
         }
-
-        void handleObjectSeen(ObjectSeenMessage ioMsg)
-        {
-            IGameObject obj = null;
-            Serializer.GetReader(ioMsg.Data, r =>
-            {
-                var objType = ioMsg.ObjectType;
-                if (objType == ObjectType.Hero)
-                    obj = InterfaceSerializer.ReadInterfaceData<IHero, HeroStub>(r, skipUnknownFields: true);
-
-                else if (objType == ObjectType.Unit)
-                    obj = InterfaceSerializer.ReadInterfaceData<IUnit, UnitStub>(r, skipUnknownFields: true);
-
-                else if (objType == ObjectType.Doodad)
-                    obj = InterfaceSerializer.ReadInterfaceData<IDoodad, DoodadStub>(r, skipUnknownFields: true);
-
-                else
-                    Log.Default.Warning("Unrecognized object type: {0}", objType.ToString());
-            });
-
-            ObjectSeen(obj);
-        }
-
 
         void SendMessage(IOMessage ioMsg)
         {
@@ -154,6 +126,11 @@ namespace Network
         public void UpdateServer(int msElapsed)
         {
             Update(msElapsed);
+        }
+
+        public string GetPerfData()
+        {
+            return string.Empty;
         }
     }
 }

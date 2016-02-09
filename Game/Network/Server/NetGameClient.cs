@@ -6,15 +6,15 @@ using IO.Message.Client;
 using IO.Message.Server;
 using IO.Objects;
 using IxLog;
-using IxSerializer;
 using Lidgren.Network;
-using Network.Objects.Serializers;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ProtoBuf;
+using IO.Message.Network;
 
 namespace Network.Server
 {
@@ -30,22 +30,19 @@ namespace Network.Server
         /// <summary>
         /// Gets the underlying NetConnection. 
         /// </summary>
-        public readonly NetConnection ConnectionHandle;
+        public NetConnection ConnectionHandle { get; }
 
         /// <summary>
         /// Gets the name of the client. 
         /// </summary>
-        public readonly string ClientName;
+        public string Name { get; }
 
         /// <summary>
         /// Gets the underlying network server. 
         /// </summary>
-        public readonly NetServer Server;
+        public NetServer Server { get; }
 
-        /// <summary>
-        /// Gets whether the client is currently connected to a game server instance. 
-        /// </summary>
-        public bool IsPlaying { get { return GameReceptor != null; } }
+
 
         /// <summary>
         /// Gets the GameServer instance serving this connection
@@ -53,13 +50,7 @@ namespace Network.Server
         public IReceptor GameReceptor { get; private set; }
 
 
-        string IClient.Name
-        {
-            get { return ClientName; }
-        }
-        
-
-        #region Receptor events
+        #region Events that inform our GameReceptor
         public event Action<MoveMessage> MovementStateChanged;
         public event Action<ActionMessage> ActionActivated;
         public event Action<ChatMessage> ChatMessageSent;
@@ -67,11 +58,19 @@ namespace Network.Server
         public event Action HandshakeInit;
         #endregion
 
+
+        /// <summary>
+        /// Gets whether the client is currently connected to a game server instance. 
+        /// </summary>
+        public bool IsPlaying { get { return GameReceptor != null; } }
+
+
+
         public NetGameClient(NetServer serv, NetConnection conn, string name)
         {
             Server = serv;
             ConnectionHandle = conn;
-            ClientName = name;
+            Name = name;
         }
 
         public void Update(int msElapsed)
@@ -89,30 +88,41 @@ namespace Network.Server
             //attach to the game receptor events
             GameReceptor.MessageSent += GameReceptor_MessageSent;
 
-            GameReceptor.AnyUnitAction += GameReceptor_AnyUnitAction;
-
-            GameReceptor.ObjectSeen += GameReceptor_ObjectSeen;
-            GameReceptor.ObjectUnseen += GameReceptor_ObjectUnseen;
-        }
-
-        void GameReceptor_MessageSent(IOMessage msg)
-        {
-            sendMessage(msg);
+            //GameReceptor.AnyUnitAction += GameReceptor_AnyUnitAction;
         }
 
 
         #region Outgoing message handlers
 
-        private void GameReceptor_ObjectSeen(IGameObject obj)
+        void GameReceptor_MessageSent(IOMessage msg)
         {
-            sendObjectSeenMessage(obj);
+            switch(msg.Type)
+            {
+                //send most receptor messages directly via the network interface. 
+                case MessageType.HandshakeReply:
+                case MessageType.PlayerStatusUpdate:
+                case MessageType.MapReply:
+                case MessageType.ObjectUnseen:
+                    sendMessage(msg);
+                    break;
+
+                // special handling for objectseen which contains 
+                // a direct reference to a gameobject
+                case MessageType.ObjectSeen:
+                    //TODO: send both objectdata and objectseen
+                    var seenMsg = (ObjectSeenMessage)msg;
+
+                    var objDatas = ObjectTracker.Default.GetBytes(seenMsg.Object);
+                    var dataMsg = new ObjectDataMessage(seenMsg.Guid, seenMsg.Object.Type, objDatas);
+
+                    sendMessage(seenMsg);
+                    sendMessage(dataMsg);
+                    break;
+            }
+            sendMessage(msg);
         }
 
-        private void GameReceptor_AnyUnitAction(IUnit obj, string actionId)
-        {
-            throw new NotImplementedException();
-        }
-        private void GameReceptor_ObjectUnseen(IGameObject obj)
+        void GameReceptor_AnyUnitAction(IUnit obj, string actionId)
         {
             throw new NotImplementedException();
         }
@@ -142,20 +152,10 @@ namespace Network.Server
         /// <summary>
         /// Sends the given message to the game client. 
         /// </summary>
-        private void sendMessage(IOMessage msg, NetDeliveryMethod deliveryMethod = NetDeliveryMethod.ReliableUnordered)
+        void sendMessage(IOMessage msg, NetDeliveryMethod deliveryMethod = NetDeliveryMethod.ReliableUnordered)
         {
             Server.SendMessage(msg.ToNetMessage(Server), ConnectionHandle, deliveryMethod);
-            Log.Default.Info("Sent a {0} to {1}", msg.Type, ConnectionHandle.RemoteEndPoint.Address);
-        }
-
-        private void sendObjectSeenMessage(IGameObject obj)
-        {
-            var sendAsType = obj.ObjectType;
-            var objData = Serializer.GetWriter(w =>
-                InterfaceSerializer.WriteInterfaceData(w, sendAsType.UnderlyingInterface, obj, skipUnknownFields: true));
-            var msg = new ObjectSeenMessage(sendAsType, obj.Guid, objData);
-
-            sendMessage(msg);
+            Log.Default.Info("Sent a '{0}' message to client {1}", msg.Type, ConnectionHandle.RemoteEndPoint.Address);
         }
     }
 }

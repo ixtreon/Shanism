@@ -1,4 +1,4 @@
-﻿using Engine.Objects.Game;
+﻿using Engine.Entities.Objects;
 using IO.Common;
 using System;
 using System.Collections.Generic;
@@ -14,8 +14,8 @@ namespace Engine.Maps
         /// Gets the area this map is defined in.         
         /// </summary>
         Rectangle Bounds { get; }
-
-        void GetMap(Rectangle rect, ref TerrainType[,] outMap);
+         
+        void GetMap(Rectangle rect, ref TerrainType[] outMap);
 
         IEnumerable<Doodad> GetNativeDoodads(Rectangle rect);
 
@@ -23,6 +23,6 @@ namespace Engine.Maps
         /// Gets the terrain type at the given location. 
         /// </summary>
         /// <param name="loc">The in-game location to retrieve the terrain at. </param>
-        TerrainType GetTerrainAt(Vector loc);
+        TerrainType GetTerrain(Vector loc);
     }
 }

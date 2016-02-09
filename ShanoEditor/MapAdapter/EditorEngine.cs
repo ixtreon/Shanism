@@ -17,6 +17,11 @@ namespace ShanoEditor.MapAdapter
             throw new NotImplementedException();
         }
 
+        public void OpenToNetwork()
+        {
+            throw new NotImplementedException();
+        }
+
         public void StartPlaying(INetReceptor rec)
         {
             throw new NotImplementedException();

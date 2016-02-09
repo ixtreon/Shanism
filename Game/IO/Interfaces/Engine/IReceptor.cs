@@ -25,10 +25,6 @@ namespace IO
 
         //TODO: move these to MessageSent
 
-        event Action<IGameObject> ObjectUnseen;
-
-        event Action<IGameObject> ObjectSeen;
-
         /// <summary>
         /// The event raised whenever a visible unit performs an action. 
         /// </summary>
@@ -40,6 +36,6 @@ namespace IO
         /// <param name="msElapsed">The time elapsed since the last invocation of this method. </param>
         void UpdateServer(int msElapsed);
 
-
+        string GetPerfData();
     }
 }

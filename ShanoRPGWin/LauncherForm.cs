@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Engine.Objects;
+using Engine.Entities;
 using ShanoRPGWin.Properties;
 using ShanoRPGWin.UI;
 using IO;
@@ -73,7 +73,7 @@ namespace ShanoRPGWin
             client.Run();
         }
 
-        private void StartLocalGame(string playerName)
+        void StartLocalGame(string playerName)
         {
             // get the selected map seed, scenario
             int mapSeed = (int)nbMapSeed.Value;

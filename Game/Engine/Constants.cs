@@ -10,13 +10,20 @@ namespace Engine
         //most of these are self-explanatory
 
 
+        public static class GameMap
+        {
+            /// <summary>
+            /// The size of a map chunk in in-game units. 
+            /// </summary>
+            public const int ChunkSize = 4;
+        }
 
         public static class RangeEvents
         {
             /// <summary>
             /// The maximum range of a RangeEvent measured in chunks. 
             /// </summary>
-            public const int MaxRangeChunks = 2;
+            public const int MaxRangeChunks = 4;
 
             /// <summary>
             /// The maximum range of a RangeEvent measured in in-game units. 
@@ -69,12 +76,5 @@ namespace Engine
         }
 
 
-        public static class GameMap
-        {
-            /// <summary>
-            /// The size of a map chunk in in-game units. 
-            /// </summary>
-            public const int ChunkSize = 8;
-        }
     }
 }

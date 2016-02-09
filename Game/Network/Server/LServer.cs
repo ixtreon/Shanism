@@ -3,9 +3,9 @@ using IO.Message;
 using IO.Message.Client;
 using IO.Message.Server;
 using IO.Objects;
+using IO.Serialization;
 using IxLog;
 using Lidgren.Network;
-using Network.Objects.Serializers;
 using Network.Server;
 using System;
 using System.Collections.Generic;
@@ -24,20 +24,16 @@ namespace Network
         static LServer()
         {
             Log.Init("server");
-            SerializerModules.Init();
         }
-
-
-        public event Action<NetGameClient> ClientConnected;
-
-        public event Action<NetGameClient> ClientDisconnected;
 
 
         readonly IEngine engine;
 
-        internal NetServer Server {  get { return (NetServer)peer; } }
-
         readonly Dictionary<NetConnection, NetGameClient> clients = new Dictionary<NetConnection, NetGameClient>();
+
+        internal NetServer NetServer { get { return (NetServer)peer; } }
+
+        internal ObjectTracker ObjectTracker { get; } = new ObjectTracker();
 
 
 
@@ -45,8 +41,6 @@ namespace Network
             : base(new NetServer(new NetPeerConfiguration(AppIdentifier) { Port = NetworkPort }))
         {
             this.engine = engine;
-            //engine.AnyUnitOrderChanged += Engine_AnyUnitOrderChanged;
-
             Log.Default.Info("Server started!");
         }
 
@@ -55,9 +49,13 @@ namespace Network
         {
             base.Update(msElapsed);
 
-            //update netclients
+            //mark all objects' serialized state as outdated
+            ObjectTracker.Default.Update(msElapsed);
+
+            //update all netclients
             foreach (var client in clients.Values)
                 client.Update(msElapsed);
+
         }
 
 
@@ -74,59 +72,49 @@ namespace Network
                 return;
 
             //TODO: do some proper disconnect?
-            ClientDisconnected?.Invoke(client);
         }
 
 
-        internal override void HandleDataMessage(NetIncomingMessage incomingMessage)
+        internal override void HandleDataMessage(NetIncomingMessage msg)
         {
             //try
-            {
-                var msg = incomingMessage.ToIOMessage();
-
+            //{
+                var ioMsg = msg.ToIOMessage();
 
                 //check if it's a handshake and if so, ask the server whether to accept it
-                if (msg.Type == MessageType.HandshakeInit)
+                if (ioMsg.Type == MessageType.HandshakeInit)
                 {
-                    handleHandshake(incomingMessage.SenderConnection, (HandshakeInitMessage)msg);
+                    handleHandshake(msg.SenderConnection, (HandshakeInitMessage)ioMsg);
                     return;
                 }
 
                 //for all other message types, the client must already have an identity. 
-                var client = clients.TryGet(incomingMessage.SenderConnection);
+                var client = clients.TryGet(msg.SenderConnection);
                 if (client == null)
                 {
                     Log.Default.Warning("Received a request from an unknown client. Ignoring it. ");
                     return;
                 }
 
-                client.HandleMessage(msg);
-            }
+                client.HandleMessage(ioMsg);
+            //}
             //catch (Exception e)
             //{
             //    Log.Default.Error("Unhandled exception while handling a data packet: {0}", e.Message);
             //}
         }
 
-        void Engine_AnyUnitOrderChanged(IEnumerable<IPlayer> seenByPlayers, IO.Common.OrderType orderType)
-        {
-
-            //send a message to each of them
-        }
 
         /// <summary>
-        /// Parses an incoming <see cref="HandshakeInitMessage"></see>
-        /// by handing it over to the server. 
-        /// 
+        /// Parses an incoming <see cref="HandshakeInitMessage"></see> by handing it over to the server. 
+        /// <para/>
         /// If the server successfully accepts the user it returns a <see cref="IGameReceptor"/> object
         /// which is added to the server's list of connected peers. Otherwise the connection is dropped.  
         /// </summary>
-        /// <param name="peerConnection"></param>
-        /// <param name="msg"></param>
         void handleHandshake(NetConnection peerConnection, HandshakeInitMessage msg)
         {
             //get the peer data
-            var client = new NetGameClient(Server, peerConnection, msg.PlayerName);
+            var client = new NetGameClient(NetServer, peerConnection, msg.PlayerName);
 
 
             //check if the server accepts it
@@ -144,8 +132,6 @@ namespace Network
                 // (this step is necessary for single-player, check out LocalShano implementation)
                 engine.StartPlaying(receptor);
 
-                //and raise the client event
-                ClientConnected?.Invoke(client);
             }
 
             Log.Default.Info("Got a handshake from {0}! Do we accept it? {1}", peerConnection.RemoteEndPoint.Address, accepted ? "yep" : "nope");
@@ -160,9 +146,5 @@ namespace Network
         }
 
 
-        NetGameClient fromPlayer(IPlayer pl)
-        {
-            return clients.Values.FirstOrDefault(cl => cl.GameReceptor == pl);
-        }
     }
 }

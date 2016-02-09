@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Engine;
-using Engine.Objects;
+using Engine.Entities;
 using IO;
 using IO.Common;
 using Client;
-using Engine.Objects.Game;
+using Engine.Entities.Objects;
 using IO.Message;
 using IO.Message.Client;
 using System.IO;
@@ -25,7 +25,7 @@ namespace Local
         /// <summary>
         /// Gets the game engine. 
         /// </summary>
-        public readonly ShanoEngine ShanoEngine;
+        public readonly IEngine ShanoEngine;
 
         /// <summary>
         /// Gets the game client. 

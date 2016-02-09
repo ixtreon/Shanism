@@ -35,12 +35,12 @@ namespace Client.UI
 
         protected override void OnUpdate(int msElapsed)
         {
-            this.Visible = (Target != null && Target.OrderType == OrderType.Casting && Target.CastingAbility.CastTime > 0);
+            this.Visible = (Target != null && Target.OrderType == OrderType.Casting && Target.TotalCastingTime > 0);
 
             if (this.Visible)
             {
                 Bar.Value = Target.CastingProgress;
-                Bar.MaxValue = Target.CastingAbility.CastTime;
+                Bar.MaxValue = Target.TotalCastingTime;
                 Bar.Size = this.Size;
             }
             base.OnUpdate(msElapsed);
@@ -50,7 +50,7 @@ namespace Client.UI
         {
             get
             {
-                var timeLeft = (Target?.CastingAbility.CastTime - Target?.CastingProgress) ?? 0;
+                var timeLeft = (Target?.TotalCastingTime - Target?.CastingProgress) ?? 0;
                 return timeLeft / 1000.0;
             }
         }

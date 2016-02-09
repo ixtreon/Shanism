@@ -26,6 +26,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -40,7 +41,13 @@
       <HintPath>..\packages\Lidgren.Network.1.0.0-CI00005\lib\net451\Lidgren.Network.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="protobuf-net, Version=2.0.0.668, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\protobuf-net.2.1.0-alpha-1\lib\net45\protobuf-net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -55,14 +62,13 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="SerializerExtTest.cs" />
+    <Compile Include="IxShim.cs" />
+    <Compile Include="protobuftest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProtoShim.cs" />
+    <Compile Include="XorTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\!lib\IxSerializer\IxSerializer.csproj">
-      <Project>{41be9dd9-644c-4a90-8d47-667b4323df7a}</Project>
-      <Name>IxSerializer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Game\Engine\Engine.csproj">
       <Project>{0b2e9f70-7046-470a-8e5d-ebd47f030ddc}</Project>
       <Name>Engine</Name>

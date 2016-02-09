@@ -42,30 +42,8 @@ float4 PixelShaderFunction(float2 TextureCoordinate : TEXCOORD0) : COLOR0
 	if (dist > SightRange)
 		return SHADOW;
 
-	float stepSz = min(1.0 / TexSize.x, 1.0 / TexSize.y) * 2;
-	float nSteps = length(cp) / stepSz;
-	float2 step = cp / nSteps;
 
-	float alpha = c.a;
-
-	float2 curPt = cp;
-	float4 nc;
-
-	for (int i = 0; i < nSteps; i++)
-	{
-		curPt -= step;
-		nc = tex2Dlod(TextureSampler, float4(curPt + CENTER, 0, 0));
-		if (nc.a > 0.1)
-			alpha = max(alpha, nc.a);
-	}
-
-	if (alpha > 0.1 && c.a < 0.1)
-		return SHADOW;
-
-	float ratio = (dist / SightRange);
-	//ratio = ratio * ratio;
-
-	return SHADOW * ratio + NONE * (1 - ratio);
+	return NONE;
 }
 //
 //////////////////////////////////////////////////////////////////////////////////

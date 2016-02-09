@@ -1,4 +1,4 @@
-﻿using Engine.Objects;
+﻿using Engine.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using IO;
 
 namespace Engine.Systems.Abilities
 {
-    public class AbilitySystem : IEnumerable<Ability>
+    class AbilitySystem : UnitSystem, IUnitAbilities
     {
         /// <summary>
         /// Contains mapping between ability ids (strings) and the spells. 
@@ -32,7 +32,10 @@ namespace Engine.Systems.Abilities
         public event Action<Ability> OnAbilityLost;
 
 
-        Unit Owner { get; }
+        /// <summary>
+        /// The unit who owns these abilities. 
+        /// </summary>
+        public Unit Owner { get; }
 
 
         public AbilitySystem(Unit u)
@@ -41,10 +44,18 @@ namespace Engine.Systems.Abilities
         }
 
 
+
+        internal override void Update(int msElapsed)
+        {
+            foreach (var ab in abilities.Values)
+                ab.Update(msElapsed);
+        }
+
+
         /// <summary>
         /// Adds the given ability to the spellbook of this hero. 
         /// </summary>
-        /// <param name="a"></param>
+        /// <param name="a">The ability that is to be added. </param>
         public void Add(Ability a)
         {
             if (a.Owner != null)
@@ -62,13 +73,16 @@ namespace Engine.Systems.Abilities
         /// <summary>
         /// Removes the given ability from the spellbook of this hero. 
         /// </summary>
-        public void Remove(Ability a)
+        /// <returns>Whether the ability was successfully found and removed. </returns>
+        public bool Remove(Ability a)
         {
             if (a.Owner != Owner)
                 throw new InvalidOperationException("The given ability does not belong to this unit!");
 
-            abilities.Remove(a.Name);
-            OnAbilityLost?.Invoke(a);
+            var result = abilities.Remove(a.Name);
+            if(result)
+                OnAbilityLost?.Invoke(a);
+            return result;
         }
 
         /// <summary>
@@ -98,12 +112,6 @@ namespace Engine.Systems.Abilities
 
             OnAbilityCast?.Invoke();
             return true;
-        }
-
-        internal void Update(int msElapsed)
-        {
-            foreach (var ab in abilities.Values)
-                ab.Update(msElapsed);
         }
 
         /// <summary>

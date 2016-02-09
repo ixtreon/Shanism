@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IO;
-using IxSerializer.Attributes;
+using ProtoBuf;
 
 namespace IO.Common
 {
-    [SerialKiller]
+    [ProtoContract]
     public struct Vector
     {
         /// <summary>
@@ -31,9 +31,10 @@ namespace IO.Common
         /// </summary>
         public static readonly Vector MinValue = new Vector(double.MinValue);
 
-        [SerialMember]
+        [ProtoMember(1)]
         double x;
-        [SerialMember]
+
+        [ProtoMember(2)]
         double y;
 
         /// <summary>

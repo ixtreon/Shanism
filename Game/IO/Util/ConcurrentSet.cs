@@ -12,6 +12,13 @@ namespace IO.Util
     {
         ConcurrentDictionary<T, bool> dict { get; } = new ConcurrentDictionary<T, bool>();
 
+        public int Count
+        {
+            get { return dict.Count; }
+        }
+
+        public ConcurrentSet() { }
+
         /// <summary>
         /// Attempts to add the specified value to this <see cref="ConcurrentSet{T}"/>.
         /// </summary>

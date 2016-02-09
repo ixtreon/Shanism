@@ -1,6 +1,6 @@
 ﻿using IO.Common;
 using IO.Objects;
-using IxSerializer.Attributes;
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,39 +9,24 @@ using System.Threading.Tasks;
 
 namespace IO.Message.Server
 {
-    [SerialKiller]
+    [ProtoContract]
     public class PlayerStatusMessage : IOMessage
     {
-        public override MessageType Type
-        {
-            get { return MessageType.PlayerStatusUpdate; }
-        }
-
-        [SerialMember]
+        
+        [ProtoMember(1)]
         public readonly uint HeroId = 0;
 
-        [SerialMember]
-        public readonly Vector CameraPosition;
 
-        //private PlayerStatusMessage() { }
+        PlayerStatusMessage() { Type = MessageType.PlayerStatusUpdate; }
 
         /// <summary>
         /// Informs the client of the id of its hero. 
         /// </summary>
         /// <param name="hero"></param>
         public PlayerStatusMessage(IHero hero)
+            : this()
         {
             HeroId = hero.Guid;
-            CameraPosition = hero.Position;
-        }
-
-        /// <summary>
-        /// Informs the client that it is currently observing. 
-        /// </summary>
-        /// <param name="cameraPos"></param>
-        public PlayerStatusMessage()
-        {
-            CameraPosition = new Vector();
         }
     }
 }

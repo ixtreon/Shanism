@@ -1,5 +1,5 @@
 ﻿using Engine.Events;
-using Engine.Objects.Game;
+using Engine.Entities.Objects;
 using Engine.Systems;
 using Engine.Systems.Abilities;
 using System;

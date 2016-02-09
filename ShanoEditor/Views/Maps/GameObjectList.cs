@@ -92,7 +92,7 @@ namespace ShanoEditor.Views.Maps
             foreach(var o in objs)
             {
                 var mdl = o.ModelName;
-                var anim = Constants.Content.DefaultAnimation;
+                var anim = Constants.Content.DefaultValues.Animation;
 
                 var animView = Model.Content.Models.TryGet(mdl)?.Animations.TryGet(anim);
 

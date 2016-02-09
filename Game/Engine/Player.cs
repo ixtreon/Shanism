@@ -1,5 +1,5 @@
-﻿using Engine.Objects;
-using Engine.Objects.Game;
+﻿using Engine.Entities;
+using Engine.Entities.Objects;
 using Engine.Systems.Orders;
 using IO;
 using IO.Common;
@@ -14,9 +14,11 @@ using IO.Message.Server;
 using System.Threading;
 using IO.Objects;
 using Engine.Events;
-using Engine.Systems.RangeEvents;
+using Engine.Systems.Range;
 using System.Collections.Concurrent;
 using IO.Util;
+using ProtoBuf;
+using System.IO;
 
 namespace Engine
 {
@@ -78,11 +80,13 @@ namespace Engine
         #region IReceptor Implementation
         public event Action<IOMessage> MessageSent;
 
-        public event Action<IGameObject> ObjectSeen;
-
-        public event Action<IGameObject> ObjectUnseen;
 
         public event Action<IUnit, string> AnyUnitAction;
+
+        internal void SendMessage(IOMessage msg)
+        {
+            MessageSent(msg);
+        }
         #endregion
 
 
@@ -119,17 +123,9 @@ namespace Engine
             get { return objectsSeen; }
         }
 
-        /// <summary>
-        /// Gets the custom camera position. Undefined if there is a hero. 
-        /// </summary>
-        public Vector CameraPosition
-        {
-            get { return MainHero?.Position ?? Vector.Zero; }
-        }
-
 
         #region Constructors
-        Player(string name)
+        private Player(string name)
         {
             PlayerId = Interlocked.Increment(ref LastPlayerId);
             Name = name;
@@ -139,7 +135,6 @@ namespace Engine
             : this(inputDevice.Name)
         {
             Engine = engine;
-
             InputDevice = inputDevice;
 
             InputDevice.ActionActivated += inputDevice_ActionActivated;
@@ -148,6 +143,7 @@ namespace Engine
             InputDevice.HandshakeInit += inputDevice_HandshakeInit;
         }
         #endregion
+
 
         #region GameClient listeners
         void inputDevice_ActionActivated(ActionMessage obj)
@@ -175,20 +171,17 @@ namespace Engine
         async void InputDevice_MapRequested(MapRequestMessage msg)
         {
             var chunkId = msg.Chunk;
-            var chunkData = new TerrainType[MapChunkId.ChunkSize.X, MapChunkId.ChunkSize.Y];
+            var chunkData = new TerrainType[MapChunkId.ChunkSize.X * MapChunkId.ChunkSize.Y];
             await Task.Run(() =>
             {
                 Engine.GetTiles(this, ref chunkData, chunkId);
             });
 
-            MessageSent(new MapReplyMessage(chunkId, chunkData));
+            SendMessage(new MapReplyMessage(chunkId, chunkData));
         }
 
         #endregion
 
-        /// <summary>
-        /// Listens to the input device for any updates. 
-        /// </summary>
         public void Update(int msElapsed)
         {
             
@@ -202,17 +195,12 @@ namespace Engine
 
             MainHero = h;
 
-            MessageSent(new PlayerStatusMessage(h));
+            SendMessage(new PlayerStatusMessage(h));
 
             //fire custom scripts
             Engine.Scenario.RunScripts(s => s.OnHeroSpawned(h));    //should remove or change to 'OnPlayerMainHeroChanged' ...
         }
-
-        public void RegisterAction(ActionMessage msg)
-        {
-            if (MainHero != null)
-                MainHero.OnAction(msg);
-        }
+        
 
         /// <summary>
         /// Gets whether the given player is an enemy of this player. 
@@ -222,7 +210,7 @@ namespace Engine
         {
             var oneIsPlayer = (p.IsHuman || this.IsHuman);
             var oneIsAggressive = (p.IsNeutralAggressive || this.IsNeutralAggressive);
-            return oneIsPlayer && oneIsAggressive;
+            return (oneIsPlayer && oneIsAggressive) || (p.IsNeutralAggressive && this.IsNeutralAggressive);
         }
 
         /// <summary>
@@ -239,7 +227,7 @@ namespace Engine
         {
             var sc = Engine.Scenario;
 
-            MessageSent(new HandshakeReplyMessage(isSuccessful, sc.GetBytes(), sc.ZipContent()));
+            SendMessage(new HandshakeReplyMessage(isSuccessful, sc.GetBytes(), sc.ZipContent()));
         }
 
         /// <summary>
@@ -248,24 +236,22 @@ namespace Engine
         /// <param name="unit"></param>
         internal void AddControlledUnit(Unit unit)
         {
-            //update the current player
+            //update the current player, call ObjectSeen
             controlledUnits.TryAdd(unit);
-            if(objectsSeen.TryAdd(unit))
-                ObjectSeen?.Invoke(unit);
+            if(objectsSeen.TryAdd(unit))        //should always be true, but hey..
+                sendObjectSeenMessage(unit);
 
             //register events
             unit.ObjectSeen += ownedUnit_ObjectSeen;
             unit.ObjectUnseen += ownedUnit_ObjectUnseen;
-
-            
         }
 
         void ownedUnit_ObjectUnseen(GameObject obj)
         {
             if (!obj.SeenBy.Any(u => u.Owner == this))
             {
-                if(objectsSeen.TryRemove(obj))
-                    ObjectUnseen?.Invoke(obj);
+                if (objectsSeen.TryRemove(obj))
+                    sendObjectUnseenMessage(obj);
             }
         }
 
@@ -273,12 +259,30 @@ namespace Engine
         void ownedUnit_ObjectSeen(GameObject obj)
         {
             if (objectsSeen.TryAdd(obj))
-                ObjectSeen?.Invoke(obj);
+                sendObjectSeenMessage(obj);
+        }
+
+
+        void sendObjectSeenMessage(GameObject obj)
+        {
+            if (!IsHuman) return;
+            SendMessage(new ObjectSeenMessage(obj));
+        }
+
+        void sendObjectUnseenMessage(GameObject obj)
+        {
+            if (!IsHuman) return;
+            SendMessage(new ObjectUnseenMessage(obj.Guid));
         }
 
         public void UpdateServer(int msElapsed)
         {
             Engine.Update(msElapsed);
+        }
+
+        public string GetPerfData()
+        {
+            return Engine.GetPerfData();
         }
     }
 }

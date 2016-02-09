@@ -28,11 +28,14 @@ namespace DefaultScenario.Abilities
         protected override void OnCast(AbilityCastArgs e)
         {
 
-            var b = new Buff(BuffType.NonStacking, 5000)
+            var b = new Buff
             {
                 Icon = "enchant-orange-3",
                 Name = "Haste",
                 RawDescription = "Increases the unit's movement speed by {MoveSpeedPercentage:0;0}% and its attack speed by {AttackSpeed:0;0}%. ",
+
+                Type = BuffType.NonStacking,
+                FullDuration = 5000,
 
                 MoveSpeedPercentage = 400,
                 AttackSpeed = 25,

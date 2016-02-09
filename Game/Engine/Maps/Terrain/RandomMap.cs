@@ -6,7 +6,7 @@ using System.Text;
 using IO.Common;
 using SharpNoise.Modules;
 using System.Diagnostics;
-using Engine.Objects.Game;
+using Engine.Entities.Objects;
 
 namespace Engine.Maps
 {
@@ -53,7 +53,7 @@ namespace Engine.Maps
 
         public readonly int Seed;
 
-        public Rectangle Bounds { get; } 
+        public Rectangle Bounds { get; }
             = new Rectangle(-int.MaxValue / 2, -int.MaxValue / 2, int.MaxValue, int.MaxValue);
 
         internal RandomMap(int seed)
@@ -62,16 +62,16 @@ namespace Engine.Maps
             initTerrain();
             innitHumidity();
         }
-        
+
         /// <summary>
         /// Gets the terrain map for the given in-game rectangle and writes it to the second parameter. 
         /// </summary>
         /// <param name="rect"></param>
         /// <param name="outMap"></param>
-        public void GetMap(Rectangle rect, ref TerrainType[,] outMap)
+        public void GetMap(Rectangle rect, ref TerrainType[] outMap)
         {
             foreach (var p in rect.Iterate())
-                outMap[p.X - rect.X, p.Y - rect.Y] = GetTerrainAt(p);
+                outMap[(p.X - rect.X) + IO.Constants.Terrain.ChunkSize * (p.Y - rect.Y)] = GetTerrainAt(p);
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace Engine.Maps
         /// <returns></returns>
         public IEnumerable<Doodad> GetNativeDoodads(Rectangle rect)
         {
-            foreach(var pt in rect.Iterate())
+            foreach (var pt in rect.Iterate())
             {
                 if (!GetTerrainAt(pt).IsWater())
                 {
@@ -96,7 +96,7 @@ namespace Engine.Maps
                         var dy = Hash.GetDouble(pt.X, pt.Y, 2);
                         var loc = pt + new Vector(dx, dy);
 
-                        yield return new Doodad(loc) { ModelName = "tree" };
+                        yield return new Doodad(name: "tree", location: loc);
                     }
                 }
             }
@@ -105,7 +105,7 @@ namespace Engine.Maps
         /// <summary>
         /// Gets the map tile at the given point. 
         /// </summary>
-        public TerrainType GetTerrainAt(Vector loc)
+        public TerrainType GetTerrain(Vector loc)
         {
             return GetTerrainAt(loc.Floor());
         }
@@ -116,7 +116,7 @@ namespace Engine.Maps
         public TerrainType GetTerrainAt(Point p)
         {
             var internalPt = pointTransform(p);
-            
+
             var tileHeight = terrainModule.GetValue(internalPt.X, internalPt.Y, 0);
 
             return getMapTile(p, tileHeight);
@@ -145,13 +145,13 @@ namespace Engine.Maps
             var tiles = tileSettings.Where(s => s.Min <= height && height <= s.Max).ToArray();
             Debug.Assert(tiles.Any());
 
-            if (tiles.Length == 1) 
+            if (tiles.Length == 1)
                 return tiles[0].Tile;
-            if(tiles.Length == 2)
+            if (tiles.Length == 2)
             {
                 var heightChance = (double)(height - tiles[1].Min) / (tiles[0].Max - tiles[1].Min);
 
-                
+
                 var roll = Hash.GetDouble(p.X, p.Y);
 
                 roll = 0.5;
@@ -161,7 +161,7 @@ namespace Engine.Maps
                 else
                     return tiles[0].Tile;
             }
-            
+
             throw new Exception();
         }
 
@@ -196,12 +196,12 @@ namespace Engine.Maps
         {
             const float flat_freq = 1f;
 
-            var flatTerrain =  new ScaleBias()
+            var flatTerrain = new ScaleBias()
             {
                 //flat terrain is ~(0; 0.45)
                 Source0 = new Turbulence
                 {
-                    Source0 = new Billow()  
+                    Source0 = new Billow()
                     {
                         //billow ranges -1.42 to 2.65
                         Seed = Seed,

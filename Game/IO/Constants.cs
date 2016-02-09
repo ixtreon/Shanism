@@ -10,30 +10,35 @@ namespace IO
     {
         public static class Content
         {
-            /// <summary>
-            /// Gets the name of a default object texture that is always present. 
-            /// </summary>
-            public const string DefaultObjectTexture = "dummy";
+            public static class DefaultValues
+            {
+                public const string UnitName = "Dummy Unit";
 
-            /// <summary>
-            /// Gets the name of a default model that is always defined. 
-            /// </summary>
-            public const string DefaultModelName = "dummy";
+                /// <summary>
+                /// Gets the name of a default object texture that is always defined. 
+                /// </summary>
+                public const string ObjectTexture = "dummy";
 
-            /// <summary>
-            /// Gets the path to the default model's texture on the client. 
-            /// </summary>
-            public const string DefaultModelTexture = "objects\\dummy.png";
+                /// <summary>
+                /// Gets the name of a default model that is always defined. 
+                /// </summary>
+                public const string ModelName = "dummy";
+
+                /// <summary>
+                /// Gets the path to the default model's texture on the client. 
+                /// </summary>
+                public const string ModelTexture = "objects\\dummy.png";
 
 
-            public const string DefaultIcon = "default";
+                public const string Icon = "default";
+
+                /// <summary>
+                /// The name of the animation used by default with all models. 
+                /// </summary>
+                public const string Animation = "stand";
+            }
 
             public const string TextureExtension = ".png";
-
-            /// <summary>
-            /// The name of the animation used by default with all models. 
-            /// </summary>
-            public const string DefaultAnimation = "stand";
 
             public const string TerrainFile = "terrain";
 
@@ -44,15 +49,16 @@ namespace IO
 
         public static class Client
         {
-            public const int WindowWidth = 24;
-            public const int WindowHeight = 15;
+            //144x90
+            public const int WindowWidth = 20;
+            public const int WindowHeight = 12;
 
             public static readonly Point WindowSize = new Point(WindowWidth, WindowHeight);
         }
 
-        public static class Map
+        public static class Terrain
         {
-            public static readonly Point ChunkSize = new Point(Client.WindowHeight / 2, Client.WindowHeight / 2);
+            public static readonly int ChunkSize = Client.WindowHeight / 2;
         }
 
         public static class Engine

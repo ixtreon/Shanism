@@ -23,9 +23,8 @@ namespace Network
         }
 
         /// <summary>
-        /// Reads incoming messages. 
+        /// Reads incoming messages. To be called continuously. 
         /// </summary>
-        /// <param name="msElapsed"></param>
         public virtual void Update(int msElapsed)
         {
             NetIncomingMessage msg;

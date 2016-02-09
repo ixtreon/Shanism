@@ -1,5 +1,5 @@
 ﻿using IO.Common;
-using IxSerializer.Attributes;
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,20 +7,18 @@ using System.Text;
 
 namespace IO.Message.Client
 {
-    [SerialKiller]
+    [ProtoContract]
     public class MapRequestMessage : IOMessage
     {
-        public override MessageType Type
-        {
-            get { return MessageType.MapRequest; }
-        }
+        
 
-        [SerialMember]
+        [ProtoMember(1)]
         public MapChunkId Chunk;
 
-        private MapRequestMessage() { }
+        MapRequestMessage() { Type = MessageType.MapRequest; }
 
         public MapRequestMessage(MapChunkId chunk)
+            : this()
         {
             this.Chunk = chunk;
         }

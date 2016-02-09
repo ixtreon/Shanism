@@ -118,13 +118,13 @@ namespace Client.Assets
         /// <param name="text">The text to write. </param>
         /// <param name="col">The color of the text. </param>
         /// <param name="p">The UI location to draw the text on. </param>
-        /// <param name="xAnchor">The X anchor of the text. </param>
-        /// <param name="yAnchor">The Y anchor of the text. </param>
+        /// <param name="xAnchor">The X anchor of the text. 0 is left, 1 is right, 0.5 is middle.  </param>
+        /// <param name="yAnchor">The Y anchor of the text. 0 is top, 1 is bottom, 0.5 is middle. </param>
         /// <param name="maxWidth">The maximum width the string is allowed to be. </param>
         /// <returns>The height of the string, in pixels. </returns>
         public int DrawString(SpriteBatch sb, string text, 
             Color color, Vector pos, 
-            float xAnchor = 0.0f, float yAnchor = 0.5f,
+            float xAnchor, float yAnchor,
             double? maxValue = null)
         {
             var screenPos = Screen.UiToScreen(pos);
@@ -144,7 +144,7 @@ namespace Client.Assets
         /// <returns>The height of the string, in pixels. </returns>
         public int DrawStringScreen(SpriteBatch sb, string text, 
             Color color, Vector p, 
-            float xAnchor = 0.0f, float yAnchor = 0.5f,
+            float xAnchor, float yAnchor,
             int? maxWidth = null)
         {
             //split the string into lines, and anchor vertically

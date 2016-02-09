@@ -18,7 +18,7 @@ namespace Client.UI
     /// </summary>
     class UnitFrame : Control
     {
-        const double spriteOffset = Padding * 2;
+        const double largePadding = Padding * 2;
 
         const double hpBarHeight = Padding * 4;
         const double manaBarHeight = Padding * 3;
@@ -32,15 +32,20 @@ namespace Client.UI
         readonly Label nameLabel;
         readonly Label xpLabel;
 
-
+        /// <summary>
+        /// The size of the unit sprite that is drawn. 
+        /// </summary>
         public double SpriteSize
         {
-            get { return Size.Y - 2 * spriteOffset; }
+            get { return Size.Y - 2 * largePadding; }
         }
 
+        /// <summary>
+        /// The size of the sprite + the border around it. 
+        /// </summary>
         public double SpriteBoxSize
         {
-            get { return SpriteSize + 2 * spriteOffset; }
+            get { return SpriteSize + 2 * largePadding; }
         }
 
 
@@ -50,11 +55,13 @@ namespace Client.UI
             BackColor = Color.Black.SetAlpha(100);
 
             var nameFont = Content.Fonts.FancyFont;
+            var labelLength = Size.X - SpriteBoxSize - Padding;
+
             nameLabel = new Label
             {
                 ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
-                Location = new Vector(SpriteBoxSize, 2 * Padding),
-                Size = new Vector(Size.X - SpriteBoxSize - Padding, nameFont.UiHeight),
+                Location = new Vector(SpriteBoxSize, largePadding),
+                Size = new Vector(labelLength, nameFont.UiHeight),
                 AutoSize = false,
 
                 Font = nameFont,
@@ -67,8 +74,8 @@ namespace Client.UI
             xpLabel = new Label
             {
                 ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
-                Location = new Vector(SpriteBoxSize, nameLabel.Bottom),
-                Size = new Vector(Size.X - SpriteBoxSize - Padding, xpFont.UiHeight),
+                Location = new Vector(SpriteBoxSize, nameLabel.Bottom + Padding),
+                Size = new Vector(labelLength, xpFont.UiHeight),
                 AutoSize = false,
 
                 Font = Content.Fonts.SmallFont,
@@ -143,7 +150,7 @@ namespace Client.UI
 
             //unit model
             if (Target != null)
-                g.Draw(Target.Sprite, new Vector(spriteOffset), new Vector(SpriteSize));
+                g.Draw(Target.Sprite, new Vector(largePadding), new Vector(SpriteSize));
         }
     }
 }

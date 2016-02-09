@@ -16,7 +16,6 @@ namespace Client
         const int DefaultUiScale = 240;
 
 
-
         static Point screenSize = new Point(800, 600);
 
         /// <summary>
@@ -37,14 +36,22 @@ namespace Client
         /// <summary>
         /// Gets or sets the screen size in pixels and updates the UI scale. 
         /// </summary>
-        public static Point Size
+        public static Point PixelSize
         {
             get { return screenSize; }
             set
             {
                 screenSize = value;
-                UiScale = Math.Min(ScreenHalfSize.X, ScreenHalfSize.Y);
+                UiScale = Math.Min(screenSize.X, screenSize.Y) / 2;
             }
+        }
+
+        /// <summary>
+        /// Gets the size of the screen in UI units. 
+        /// </summary>
+        public static Vector UiSize
+        {
+            get {  return (Vector)PixelSize / UiScale; }
         }
 
         /// <summary>
@@ -58,7 +65,6 @@ namespace Client
         /// <summary>
         /// Gets half the size of the sreen in pixels. 
         /// </summary>
-        /// <returns></returns>
         public static Point ScreenHalfSize
         {
             get { return screenSize / 2; }
@@ -73,7 +79,7 @@ namespace Client
 
             IsLocked = hasHero;
 
-            Size = new Point(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
+            PixelSize = new Point(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
         }
 
 
@@ -82,7 +88,7 @@ namespace Client
         /// </summary>
         public static Vector GameToScreen(Vector p)
         {
-            return (p - CenterPoint) * Size / Constants.Client.WindowSize + ScreenHalfSize;
+            return (p - CenterPoint) * PixelSize / Constants.Client.WindowSize + ScreenHalfSize;
         }
 
         /// <summary>
@@ -90,7 +96,7 @@ namespace Client
         /// </summary>
         public static Vector ScreenToGame(Vector position)
         {
-            return (position - ScreenHalfSize) * Constants.Client.WindowSize / Size + CenterPoint;
+            return (position - ScreenHalfSize) * Constants.Client.WindowSize / PixelSize + CenterPoint;
         }
 
 

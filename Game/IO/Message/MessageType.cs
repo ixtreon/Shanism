@@ -8,13 +8,14 @@ namespace IO.Message
 {
     /// <summary>
     /// An enumeration of all message or command types. 
+    /// Enum integer values start from 2 onwards, to satisfy ProtoBuf requirements for the IOMessage class. 
     /// </summary>
     public enum MessageType
     {
         /// <summary>
         /// A message sent by both the client and the server to relay chat messages. 
         /// </summary>
-        SendChat = 1,
+        SendChat = 2,
 
         ///-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -69,7 +70,7 @@ namespace IO.Message
         /// <summary>
         /// A message sent by the server to inform of a nearby unit being damaged. 
         /// </summary>
-        UnitDamage,
+        DamageEvent,
 
         /// <summary>
         /// A message sent by the server when the client sees an object. 
@@ -85,5 +86,13 @@ namespace IO.Message
         /// A message sent by the server when an object changes its animation. 
         /// </summary>
         ObjectAnimation,
+
+
+        ObjectData,
+
+        /// <summary>
+        /// Sent by the engine to inform about scenario objects. 
+        /// </summary>
+        GameFrame,
     }
 }

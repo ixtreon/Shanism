@@ -1,5 +1,5 @@
 ﻿using Engine.Events;
-using Engine.Objects.Game;
+using Engine.Entities.Objects;
 using Engine.Systems.Abilities;
 using IO.Common;
 using System;
@@ -26,7 +26,7 @@ namespace DefaultScenario.Abilities
         protected override void OnCast(AbilityCastArgs e)
         {
             //This code will be executed when the spell is cast. 
-            var dood = new Doodad(e.TargetLocation) { ModelName = "tree-1" };
+            var dood = new Doodad { Position = e.TargetLocation, ModelName = "tree-1" };
             Map.Add(dood);
         }
     }

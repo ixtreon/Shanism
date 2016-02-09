@@ -42,7 +42,7 @@ namespace Client.UI.Common
             if(buffTexture != null)
                 g.Draw(buffTexture, Vector.Zero, base.Size, Color.White);
 
-            if(Buff.StackingType != BuffType.Aura)
+            if(Buff.Type != BuffType.Aura)
             {
                 var shSize = base.Size * new Vector(1, (double)Buff.DurationLeft / Buff.FullDuration);
                 var shPos = base.Size - shSize;

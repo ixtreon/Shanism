@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
 using Engine.Systems;
-using Engine.Objects;
+using Engine.Entities;
 using Engine;
 using Engine.Common;
 using IO;
 using IO.Common;
 using System.Collections.Generic;
-using Engine.Objects.Game;
+using Engine.Entities.Objects;
 using DefaultScenario.Buffs;
 using Engine.Events;
 using Engine.Systems.Abilities;

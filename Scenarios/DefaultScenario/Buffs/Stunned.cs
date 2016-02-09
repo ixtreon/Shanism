@@ -1,4 +1,4 @@
-﻿using Engine.Objects;
+﻿using Engine.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +12,9 @@ namespace DefaultScenario.Buffs
     class Stunned : Buff
     {
         
-        public Stunned(int duration) : base(BuffType.StackingNormal, duration)
+        public Stunned(int duration) 
         {
+            this.Type = BuffType.StackingNormal;
             this.FullDuration = duration;
             this.Name = "Stunned";
         }

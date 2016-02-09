@@ -51,7 +51,7 @@ namespace Client.Settingsz
         /// <returns></returns>
         public Keybind this[GameAction act]
         {
-            get { return rawKeybinds.TryGet(act); }
+            get { return rawKeybinds[act]; }
             set
             {
                 setKeybind(act, value);
@@ -60,12 +60,18 @@ namespace Client.Settingsz
 
         public Keybind this[int barId, int keyId]
         {
-            get { return rawKeybinds.TryGet(actionId(barId, keyId)); }
+            get { return rawKeybinds[actionId(barId, keyId)]; }
             set
             {
                 var act = actionId(barId, keyId);
                 setKeybind(act, value);
             }
+        }
+
+        public Keybind? TryGet(int barId, int keyId)
+        {
+            var aid = actionId(barId, keyId);
+            return rawKeybinds.TryGetVal(aid);
         }
 
         void setKeybind(GameAction act, Keybind button)

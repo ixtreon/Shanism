@@ -18,7 +18,7 @@ namespace Client.Map
     /// </summary>
     class ChunkData : IDisposable
     {
-        public readonly TerrainType[,] Tiles;
+        public readonly TerrainType[] Tiles;
 
         public readonly int Timestamp;
 
@@ -38,11 +38,11 @@ namespace Client.Map
 
         public int Width
         {
-            get { return Tiles.GetLength(0); }
+            get { return Constants.Terrain.ChunkSize; }
         }
         public int Height
         {
-            get { return Tiles.GetLength(1); }
+            get { return Constants.Terrain.ChunkSize; }
         }
         public int Area
         {
@@ -51,10 +51,10 @@ namespace Client.Map
 
         public TerrainType GetTile(int x, int y)
         {
-            return Tiles[x - Chunk.BottomLeft.X, y - Chunk.BottomLeft.Y];
+            return Tiles[(x - Chunk.BottomLeft.X) + Constants.Terrain.ChunkSize * (y - Chunk.BottomLeft.Y)];
         }
 
-        public ChunkData(MapChunkId chunk, TerrainType[,] tiles)
+        public ChunkData(MapChunkId chunk, TerrainType[] tiles)
         {
             this.Chunk = chunk;
             this.Tiles = tiles;
@@ -77,7 +77,7 @@ namespace Client.Map
                 foreach (var x in Enumerable.Range(0, Width))
                     foreach (var y in Enumerable.Range(0, Height))
                     {
-                        var pi = Content.Terrain.GetTile(Tiles[x, y]);
+                        var pi = Content.Terrain.GetTile(Tiles[x + y * Constants.Terrain.ChunkSize]);
                         var pos = Chunk.BottomLeft + new Vector(Chunk.Span.Width * x / Width, Chunk.Span.Height * y / Height);
                         var _tileFar = 1;
                         var _tileClose = 0;

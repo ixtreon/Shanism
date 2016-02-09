@@ -139,12 +139,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\AttackResult.cs" />
-    <Compile Include="Common\EquipSlot.cs" />
+    <Compile Include="Common\DamageFlags.cs" />
+    <Compile Include="Common\DamageResult.cs" />
     <Compile Include="Common\Rnd.cs" />
     <Compile Include="Events\AbilityCastArgs.cs" />
     <Compile Include="Events\LocationChangeArgs.cs" />
     <Compile Include="Events\ObjectMoveArgs.cs" />
-    <Compile Include="Maps\CollisionMapper.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Maps\GameObjectMapper.cs" />
     <Compile Include="Maps\HashMap.cs" />
     <Compile Include="Maps\ObjectMap.cs" />
@@ -152,70 +153,75 @@
     <Compile Include="Maps\Terrain\ITerrainMap.cs" />
     <Compile Include="Maps\Terrain\MapGod.cs" />
     <Compile Include="Maps\Terrain\RandomMap.cs" />
-    <Compile Include="Objects\Units\Abilities.cs" />
+    <Compile Include="Systems\Behaviours\BehaviourSystem.cs" />
     <Compile Include="Systems\Abilities\AbilitySystem.cs" />
-    <Compile Include="Systems\Collision\CollisionSystem.cs" />
-    <Compile Include="Systems\IShanoSystem.cs" />
-    <Compile Include="Systems\RangeEvents\RangeEvent.cs" />
-    <Compile Include="Systems\RangeEvents\Constraints\PointRangeEvent.cs" />
-    <Compile Include="Systems\RangeEvents\Constraints\ObjectRangeEvent.cs" />
+    <Compile Include="Systems\Buffs\IUnitBuffs.cs" />
+    <Compile Include="Systems\Movement.cs" />
+    <Compile Include="Systems\NYI\Collision\CollisionSystem.cs" />
+    <Compile Include="Systems\Abilities\IUnitAbilities.cs" />
+    <Compile Include="Systems\Combat\CombatSystem.cs" />
+    <Compile Include="Systems\NYI\Item\InventorySlot.cs" />
+    <Compile Include="Systems\NYI\Item\InventoryType.cs" />
+    <Compile Include="Systems\UnitSystem.cs" />
+    <Compile Include="Systems\Range\Events\RangeEvent.cs" />
+    <Compile Include="Systems\Range\Events\PointRangeEvent.cs" />
+    <Compile Include="Systems\Range\Events\UnitRangeEvent.cs" />
     <Compile Include="Events\UnitDamagingArgs.cs" />
     <Compile Include="Events\UnitDamagedArgs.cs" />
     <Compile Include="Events\UnitDyingArgs.cs" />
     <Compile Include="Maps\EntityMap.cs" />
     <Compile Include="Maps\Hash.cs" />
-    <Compile Include="Objects\ObjectGuid.cs" />
-    <Compile Include="Objects\Units\Combat.cs" />
-    <Compile Include="Objects\Units\Movement.cs" />
-    <Compile Include="Objects\Units\Vision.cs" />
-    <Compile Include="Systems\Abilities\Attributes\AbilityTypes.cs" />
-    <Compile Include="Systems\Abilities\Attributes\SpamAbility.cs" />
-    <Compile Include="Systems\Buffs\Buff.cs" />
-    <Compile Include="Objects\Game\Doodad.cs" />
-    <Compile Include="Objects\Game\GameItem.cs" />
-    <Compile Include="Objects\GameObject.cs" />
+    <Compile Include="Entities\ShanoGuid.cs" />
+    <Compile Include="Entities\Objects\Units\Combat.cs" />
+    <Compile Include="Entities\Objects\Units\Movement.cs" />
+    <Compile Include="Entities\Objects\Units\Vision.cs" />
+    <Compile Include="Systems\Abilities\Objects\Attributes\AbilityTypes.cs" />
+    <Compile Include="Systems\Abilities\Objects\Attributes\SpamAbility.cs" />
+    <Compile Include="Systems\Buffs\Objects\Buff.cs" />
+    <Compile Include="Entities\Objects\Base\Doodad.cs" />
+    <Compile Include="Entities\Objects\GameItem.cs" />
+    <Compile Include="Entities\GameObject.cs" />
     <Compile Include="Systems\Buffs\BuffSystem.cs" />
-    <Compile Include="Objects\Units\Orders.cs" />
-    <Compile Include="Objects\Units\States.cs" />
-    <Compile Include="Systems\Abilities\Attack.cs" />
-    <Compile Include="Systems\Behaviours\SpamBehaviour.cs" />
-    <Compile Include="Systems\Behaviours\Behaviour.cs" />
-    <Compile Include="Systems\Behaviours\AggroBehaviour.cs" />
-    <Compile Include="Systems\Behaviours\BehaviourList.cs" />
-    <Compile Include="Systems\Behaviours\FollowBehaviour.cs" />
-    <Compile Include="Systems\Behaviours\ReturnBehaviour.cs" />
-    <Compile Include="Systems\Buffs\BuffInstance.cs" />
-    <Compile Include="Systems\Chat\ChatProvider.cs" />
-    <Compile Include="Systems\CustomScript.cs" />
-    <Compile Include="Systems\Item\Inventory.cs" />
-    <Compile Include="Systems\Item\Item.cs" />
-    <Compile Include="Objects\Game\Monster.cs" />
-    <Compile Include="Objects\Game\Projectile.cs" />
-    <Compile Include="Objects\Game\Effect.cs" />
-    <Compile Include="Objects\Units\UnitHelper.cs" />
+    <Compile Include="Entities\Objects\Units\Orders.cs" />
+    <Compile Include="Entities\Objects\Units\States.cs" />
+    <Compile Include="Systems\Abilities\Objects\Attack.cs" />
+    <Compile Include="Systems\Behaviours\Objects\SpamBehaviour.cs" />
+    <Compile Include="Systems\Behaviours\Objects\Behaviour.cs" />
+    <Compile Include="Systems\Behaviours\Objects\AggroBehaviour.cs" />
+    <Compile Include="Systems\Behaviours\Objects\BehaviourList.cs" />
+    <Compile Include="Systems\Behaviours\Objects\FollowBehaviour.cs" />
+    <Compile Include="Systems\Behaviours\Objects\ReturnBehaviour.cs" />
+    <Compile Include="Systems\Buffs\Objects\BuffInstance.cs" />
+    <Compile Include="Systems\NYI\Chat\ChatProvider.cs" />
+    <Compile Include="Systems\Scripting\CustomScript.cs" />
+    <Compile Include="Systems\NYI\Item\InventorySystem.cs" />
+    <Compile Include="Systems\NYI\Item\InventoryItem.cs" />
+    <Compile Include="Entities\Objects\Monster.cs" />
+    <Compile Include="Entities\Objects\Projectile.cs" />
+    <Compile Include="Entities\Objects\Base\Effect.cs" />
+    <Compile Include="Entities\Objects\Units\UnitHelper.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Systems\Abilities\Ability.cs" />
-    <Compile Include="Systems\Orders\Cast.cs" />
-    <Compile Include="Systems\Orders\MoveLocation.cs" />
-    <Compile Include="Systems\Orders\MoveUnit.cs" />
-    <Compile Include="Systems\Orders\PlayerMove.cs" />
-    <Compile Include="Systems\Orders\Stand.cs" />
+    <Compile Include="Systems\Abilities\Objects\Ability.cs" />
+    <Compile Include="Systems\Orders\Objects\Cast.cs" />
+    <Compile Include="Systems\Orders\Objects\MoveLocation.cs" />
+    <Compile Include="Systems\Orders\Objects\MoveUnit.cs" />
+    <Compile Include="Systems\Orders\Objects\PlayerMove.cs" />
+    <Compile Include="Systems\Orders\Objects\Stand.cs" />
     <Compile Include="Scenario.cs" />
-    <Compile Include="Systems\Orders\IOrder.cs" />
+    <Compile Include="Systems\Orders\Objects\IOrder.cs" />
     <Compile Include="ShanoEngine.cs" />
-    <Compile Include="Objects\Units\Unit.cs" />
-    <Compile Include="Objects\Game\Hero.cs" />
+    <Compile Include="Entities\Objects\Base\Unit.cs" />
+    <Compile Include="Entities\Objects\Hero.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScenarioObject.cs" />
-    <Compile Include="Systems\RangeEvents\RangeEventSystem.cs" />
-    <Compile Include="Systems\RangeEvents\RangeExt.cs" />
-    <Compile Include="Systems\OrdersSystem.cs" />
+    <Compile Include="Entities\ScenarioObject.cs" />
+    <Compile Include="Systems\Orders\OrdersSystem.cs" />
+    <Compile Include="Systems\Range\UnitRangeSystem.cs" />
     <Compile Include="Systems\Vision\VisionSystem.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -234,10 +240,6 @@
     <ProjectReference Include="..\IO\IO.csproj">
       <Project>{dc89987d-5817-4f1d-95ca-80c024c8d6bb}</Project>
       <Name>IO</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Network\Network.csproj">
-      <Project>{d2fa8685-b964-498d-a34f-d191be2cba6b}</Project>
-      <Name>Network</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

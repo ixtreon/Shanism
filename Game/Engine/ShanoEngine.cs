@@ -8,7 +8,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using IO.Message;
+using IO.Performance;
+using IO.Util;
 
 namespace Engine
 {
@@ -20,7 +21,36 @@ namespace Engine
         /// <summary>
         /// The frames per second we aim to run at. 
         /// </summary>
-        const int FPS = 60;
+        const int FPS = 50;
+
+
+
+        ConcurrentSet<MapChunkId> generatedChunks { get; } = new ConcurrentSet<MapChunkId>();
+
+
+        /// <summary>
+        /// A list of all players currently in game. 
+        /// </summary>
+        internal ConcurrentBag<Player> Players { get; } = new ConcurrentBag<Player>();
+
+
+        internal PerfCounter PerfCounter { get; } = new PerfCounter();
+
+        /// <summary>
+        /// The current game map containing unit/doodad/sfx info. 
+        /// </summary>
+        internal EntityMap EntityMap { get; } = new EntityMap();
+
+        /// <summary>
+        /// Gets the scenario this engine is playing. 
+        /// </summary>
+        internal Scenario Scenario { get; }
+
+
+        /// <summary>
+        /// The current world map containing the terrain info. 
+        /// </summary>
+        internal ITerrainMap TerrainMap { get; private set; }
 
 
         /// <summary>
@@ -32,30 +62,6 @@ namespace Engine
         /// Gets the thread running the game loop. 
         /// </summary>
         public Thread GameThread { get; private set; }
-
-        private HashSet<MapChunkId> generatedChunks = new HashSet<MapChunkId>();
-
-        /// <summary>
-        /// The current world map containing the terrain info. 
-        /// </summary>
-        internal ITerrainMap TerrainMap { get; private set; }
-
-
-
-        /// <summary>
-        /// A list of all players currently in game. 
-        /// </summary>
-        internal ConcurrentBag<Player> Players { get; } = new ConcurrentBag<Player>();
-
-        /// <summary>
-        /// The current game map containing unit/doodad/sfx info. 
-        /// </summary>
-        internal EntityMap EntityMap { get; }
-
-        /// <summary>
-        /// Gets the scenario this engine is playing. 
-        /// </summary>
-        internal Scenario Scenario { get; }
 
         /// <summary>
         /// Gets the time elapsed since the game started. 
@@ -69,9 +75,6 @@ namespace Engine
 
 
 
-        internal RangeEventSystem RangeSystem { get; }
-        internal VisionSystem VisionSystem { get; }
-
         internal Network.LServer NetworkServer { get; private set; }
 
         internal ObjectMap Map
@@ -84,13 +87,12 @@ namespace Engine
 
         public ShanoEngine(int mapSeed, string scenarioDir)
         {
-
             //compile the scenario
             try
             {
                 Scenario = Scenario.Load(Path.GetFullPath(scenarioDir));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw e;
             }
@@ -100,11 +102,6 @@ namespace Engine
 
             //create the terrain, object map from the scenario. 
             TerrainMap = Maps.Terrain.MapGod.Create(Scenario.MapConfig, mapSeed);
-            EntityMap = new EntityMap();
-
-            //create systems
-            RangeSystem = new RangeEventSystem(this);
-            VisionSystem = new VisionSystem(this, RangeSystem);
 
             //run scripts
             Scenario.RunScripts(cs => cs.OnGameStart());
@@ -206,8 +203,8 @@ namespace Engine
 
                 if (!isThrottled)
                     Thread.Sleep(toSleep);
-                else
-                    Console.WriteLine("Warning: Server updating too slow!");
+                //else
+                //    Console.Write("T");
 
                 frameStartTime = Environment.TickCount;
                 this.Update(1000 / FPS);
@@ -221,22 +218,19 @@ namespace Engine
         /// <param name="msElapsed">The time elapsed since the last call of this function. </param>
         public void Update(int msElapsed)
         {
+            PerfCounter.Reset();
+
             if (IsOnline)
                 NetworkServer.Update(msElapsed);
 
             GameTime += msElapsed;
-
-            //update range system before locations 
-            //so new units get properly detected
-            RangeSystem.Update(msElapsed);
-            VisionSystem.Update(msElapsed);
-
 
             //update the map along with all units. 
             EntityMap.Update(msElapsed);
 
             foreach (var p in Players)
                 p.Update(msElapsed);
+
         }
 
 
@@ -246,21 +240,36 @@ namespace Engine
         /// <param name="h"></param>
         /// <param name="tileMap"></param>
         /// <param name="rect"></param>
-        public void GetTiles(Player pl, ref TerrainType[,] tileMap, MapChunkId chunk)
+        public void GetTiles(Player pl, ref TerrainType[] tileMap, MapChunkId chunk)
         {
-            //TODO: check if chunk is valid for player pl
+            //TODO: check if chunk is valid
             var rect = new Rectangle(chunk.BottomLeft, MapChunkId.ChunkSize);
             TerrainMap.GetMap(rect, ref tileMap);
-            if (!generatedChunks.Contains(chunk))
+            if (!generatedChunks.TryAdd(chunk))
             {
-                lock(generatedChunks)
-                    generatedChunks.Add(chunk);
-
                 foreach (var dood in TerrainMap.GetNativeDoodads(rect))
-                {
                     EntityMap.Add(dood);
-                }
             }
+        }
+
+        const int perfBarLength = 20;
+        public string GetPerfData()
+        {
+            return string.Empty;
+
+            var totalTimeTaken = PerfCounter.Stats.Sum(kvp => kvp.Value);
+
+            var text = PerfCounter.Stats
+                .OrderByDescending(kvp => kvp.Key)
+                .Select(kvp => new
+                {
+                    Pluses = (int)(kvp.Value * perfBarLength / totalTimeTaken),
+                    Name = kvp.Key,
+                })
+                .Select(n => "{0}{1}   {2}".F(new string('+', n.Pluses), new string('-', perfBarLength - n.Pluses), n.Name))
+                .Aggregate("", (a, b) => a + '\n' + b);
+
+            return text;
         }
     }
 }

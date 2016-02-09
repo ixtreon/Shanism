@@ -1,12 +1,13 @@
-﻿using Engine.Objects;
-using Engine.Objects.Game;
+﻿using Engine.Common;
+using Engine.Entities;
+using Engine.Entities.Objects;
 using IO.Common;
 using System;
 
 namespace Engine.Events
 {
     /// <summary>
-    /// Contains all information related to a damage related event. 
+    /// The arguments passeed whenever a unit was just damaged.  
     /// </summary>
     public class UnitDamagedArgs : EventArgs
     {
@@ -20,27 +21,33 @@ namespace Engine.Events
         /// </summary>
         public readonly Unit DamagedUnit;
 
+
         /// <summary>
         /// Gets the <see cref="DamageType"/> of the attack. 
         /// </summary>
         public readonly DamageType DamageType;
 
+
+        public readonly DamageFlags DamageFlags;
+
         /// <summary>
-        /// Gets the base amount of damage the attacker deals, 
-        /// before any resistance or armor checks. 
+        /// Gets the base amount of damage the attacker deals
+        /// before any resistance or armor is factored in. 
         /// </summary>
         public readonly double BaseDamage;
 
+
         /// <summary>
-        /// Gets or sets the amount of damage received. 
+        /// Gets the amount of damage ultimately received by the target. 
         /// </summary>
         public readonly double FinalDamage;
 
-        public UnitDamagedArgs(Unit attacker, Unit receiver, DamageType type, double baseAmount, double finalAmount)
+        public UnitDamagedArgs(Unit attacker, Unit receiver, DamageType type, DamageFlags flags, double baseAmount, double finalAmount)
         {
             BaseDamage = baseAmount;
             FinalDamage = finalAmount;
             DamageType = type;
+            DamageFlags = flags;
             DamagingUnit = attacker;
             DamagedUnit = receiver;
         }

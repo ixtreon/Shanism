@@ -1,5 +1,6 @@
 ﻿using Client.Input;
 using IO.Common;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,10 +63,10 @@ namespace Client.UI
         {
             base.OnDraw(g);
 
-            var bind = ShanoSettings.Current.Keybinds[BarId, ButtonId];
+            var currentKey = ShanoSettings.Current.Keybinds.TryGet(BarId, ButtonId) ?? Keys.None;
             var str = "";
-            if (bind != Microsoft.Xna.Framework.Input.Keys.None)
-                str = bind.ToShortString() ?? "?";
+            if (currentKey != Keys.None)
+                str = currentKey.ToShortString() ?? "?";
             //draw keybind
 
             g.DrawString(Font, str, Color.White, new Vector(), 0, 0);
@@ -73,8 +74,8 @@ namespace Client.UI
 
         protected override void OnUpdate(int msElapsed)
         {
-            var bind = ShanoSettings.Current.Keybinds[BarId, ButtonId];
-            if (KeyboardInfo.IsActivated(bind))
+            var currentKey = ShanoSettings.Current.Keybinds.TryGet(BarId, ButtonId);
+            if (currentKey != null && KeyboardInfo.IsActivated(currentKey.Value))
                 IsSelected = true;
         }
     }

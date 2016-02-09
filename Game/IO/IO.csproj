@@ -107,6 +107,10 @@
     <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="protobuf-net, Version=2.0.0.668, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -116,64 +120,69 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\DamageResult.cs" />
     <Compile Include="Ext\Collections.cs" />
     <Compile Include="Ext\IO.cs" />
     <Compile Include="Ext\Math.cs" />
     <Compile Include="Ext\Strings.cs" />
-    <Compile Include="Game\BuffType.cs" />
-    <Compile Include="Game\DamageType.cs" />
-    <Compile Include="Game\Faction.cs" />
+    <Compile Include="Common\BuffType.cs" />
+    <Compile Include="Common\DamageType.cs" />
+    <Compile Include="Common\Faction.cs" />
     <Compile Include="Math\RectangleF.cs" />
-    <Compile Include="Performance\PerfStats.cs" />
+    <Compile Include="Message\Network\ObjectData.cs" />
+    <Compile Include="Message\Network\GameFrame.cs" />
+    <Compile Include="Message\Server\ObjectUnseen.cs" />
+    <Compile Include="Performance\PerfCounter.cs" />
+    <Compile Include="Serialization\PropertyCaller - Copy.cs" />
+    <Compile Include="Serialization\ProtoConverter.cs" />
+    <Compile Include="Serialization\PropertyCaller.cs" />
     <Compile Include="Util\ConcurrentSet.cs" />
     <Compile Include="Util\GenericEqualityComparer.cs" />
-    <Compile Include="Game\Maps\MapChunkDef.cs" />
-    <Compile Include="Game\ObjectType.cs" />
-    <Compile Include="Game\OrderType.cs" />
+    <Compile Include="Maps\MapChunkDef.cs" />
+    <Compile Include="Common\ObjectType.cs" />
+    <Compile Include="Common\OrderType.cs" />
     <Compile Include="Content\AnimationDef.cs" />
     <Compile Include="Content\ModelDef.cs" />
     <Compile Include="Interfaces\Network\INetReceptor.cs" />
     <Compile Include="Interfaces\Engine\IReceptor.cs" />
     <Compile Include="Message\Server\ObjectAnimation.cs" />
-    <Compile Include="Interfaces\Engine\InGame\IBuff.cs" />
-    <Compile Include="Interfaces\Engine\InGame\IEffect.cs" />
+    <Compile Include="Interfaces\Engine\Game\Other\IBuff.cs" />
+    <Compile Include="Interfaces\Engine\Game\Objects\IEffect.cs" />
     <Compile Include="ShadowCalc\ShadowGuy.cs" />
-    <Compile Include="Game\TextureType.cs" />
-    <Compile Include="Game\UnitState.cs" />
+    <Compile Include="Common\TextureType.cs" />
+    <Compile Include="Common\UnitState.cs" />
     <Compile Include="Content\TextureDef.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Ext\General.cs" />
     <Compile Include="Util\GenericComparer.cs" />
-    <Compile Include="Game\AbilityType.cs" />
+    <Compile Include="Common\AbilityType.cs" />
     <Compile Include="Math\Point.cs" />
     <Compile Include="Math\Rectangle.cs" />
     <Compile Include="Math\Vector.cs" />
     <Compile Include="Message\Client\Action.cs" />
-    <Compile Include="Message\Common\Chat.cs" />
+    <Compile Include="Message\Server\Chat.cs" />
     <Compile Include="Message\Client\HandshakeInit.cs" />
     <Compile Include="Message\Client\MapRequest.cs" />
     <Compile Include="Message\Client\Move.cs" />
     <Compile Include="Message\IOMessage.cs" />
-    <Compile Include="Message\MessageTests.cs" />
     <Compile Include="Message\MessageType.cs" />
     <Compile Include="Message\Server\HandshakeReply.cs" />
     <Compile Include="Message\Server\MapReply.cs" />
-    <Compile Include="Message\Server\MoveUpdateRelay.cs" />
     <Compile Include="Message\Server\ObjectSeen.cs" />
     <Compile Include="Message\Server\PlayerStatus.cs" />
-    <Compile Include="Message\Server\UnitDamaged.cs" />
-    <Compile Include="Interfaces\Engine\InGame\IAbility.cs" />
-    <Compile Include="Interfaces\Engine\InGame\IBuffInstance.cs" />
-    <Compile Include="Interfaces\Engine\InGame\IDoodad.cs" />
+    <Compile Include="Message\Server\DamageEvent.cs" />
+    <Compile Include="Interfaces\Engine\Game\Other\IAbility.cs" />
+    <Compile Include="Interfaces\Engine\Game\Other\IBuffInstance.cs" />
+    <Compile Include="Interfaces\Engine\Game\Objects\IDoodad.cs" />
     <Compile Include="Interfaces\Engine\IEngine.cs" />
-    <Compile Include="Interfaces\Engine\InGame\IGameObject.cs" />
-    <Compile Include="Interfaces\Engine\InGame\IPlayer.cs" />
-    <Compile Include="Interfaces\Engine\InGame\IUnit.cs" />
-    <Compile Include="Interfaces\Engine\InGame\IHero.cs" />
-    <Compile Include="Game\Maps\TerrainType.cs" />
+    <Compile Include="Interfaces\Engine\Game\IGameObject.cs" />
+    <Compile Include="Interfaces\Engine\Game\Other\IPlayer.cs" />
+    <Compile Include="Interfaces\Engine\Game\Objects\IUnit.cs" />
+    <Compile Include="Interfaces\Engine\Game\Objects\IHero.cs" />
+    <Compile Include="Maps\TerrainType.cs" />
     <Compile Include="Interfaces\Client\IClient.cs" />
-    <Compile Include="Game\MovementState.cs" />
-    <Compile Include="Game\UnitType.cs" />
+    <Compile Include="Common\MovementState.cs" />
+    <Compile Include="Common\UnitType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\Counter.cs" />
   </ItemGroup>
@@ -182,12 +191,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\!lib\IxSerializer\IxSerializer.csproj">
-      <Project>{41be9dd9-644c-4a90-8d47-667b4323df7a}</Project>
-      <Name>IxSerializer</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

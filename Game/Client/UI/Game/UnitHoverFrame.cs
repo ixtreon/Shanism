@@ -40,8 +40,8 @@ namespace Client.UI
             nameLabel = new Label
             {
                 ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
-                Location = new Vector(2 * Padding),
-                Size = new Vector(Size.X - 4 * Padding, nameFont.UiHeight),
+                Location = new Vector(Padding),
+                Size = new Vector(Size.X - 2 * Padding, nameFont.UiHeight),
                 AutoSize = false,
 
                 Font = nameFont,

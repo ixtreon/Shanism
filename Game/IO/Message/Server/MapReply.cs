@@ -1,5 +1,5 @@
 ﻿using IO.Common;
-using IxSerializer.Attributes;
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,23 +10,20 @@ namespace IO.Message.Server
     /// <summary>
     /// A message containing map data reply
     /// </summary>
-    [SerialKiller]
+    [ProtoContract]
     public class MapReplyMessage : IOMessage
     {
-        public override MessageType Type
-        {
-            get { return MessageType.MapReply; }
-        }
+        
 
-        [SerialMember]
+        [ProtoMember(1)]
         public readonly MapChunkId Chunk;
 
-        [SerialMember]
-        public readonly TerrainType[,] Data;
+        [ProtoMember(2)]
+        public readonly TerrainType[] Data;
 
-        private MapReplyMessage() { }
+        MapReplyMessage() { Type = MessageType.MapReply; }
 
-        public MapReplyMessage(MapChunkId chunkId, TerrainType[,] data)
+        public MapReplyMessage(MapChunkId chunkId, TerrainType[] data)
             : this()
         {
             Chunk = chunkId;

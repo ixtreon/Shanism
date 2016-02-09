@@ -25,5 +25,8 @@ namespace IO
         INetReceptor AcceptClient(IClient c);
 
         void StartPlaying(INetReceptor rec);
+
+
+        void OpenToNetwork();
     }
 }

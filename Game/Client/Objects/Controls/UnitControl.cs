@@ -27,11 +27,10 @@ namespace Client.Objects
 
         protected override void OnUpdate(int msElapsed)
         {
-            
             base.OnUpdate(Unit.IsDead ? 0 :  msElapsed);
 
             if (Unit.IsDead)
-                this.ZOrder -= 10 * Constants.Client.WindowHeight;
+                ZOrder = 1;
         }
         
         public override void OnDraw(Graphics g)
@@ -39,7 +38,7 @@ namespace Client.Objects
             var sz = new Vector(Unit.Scale);
 
             var c = Unit.IsDead ? Color.Black : Color.White;
-            g.Draw(Sprite, Vector.Zero, Size, c);
+            g.Draw(Sprite, Vector.Zero, Size, c, (float)ZOrder);
 
             if ((MouseOver || ShanoSettings.Current.QuickButtonPress) && !Unit.IsDead)
             {

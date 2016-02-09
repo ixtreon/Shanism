@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using IO.Common;
 using IO.Message;
 using IO.Message.Client;
+using IO.Message.Server;
 
 namespace IO
 {

@@ -1,5 +1,5 @@
-﻿using Engine.Objects;
-using Engine.Objects.Game;
+﻿using Engine.Entities;
+using Engine.Entities.Objects;
 using Engine.Systems;
 using Engine.Systems.Abilities;
 using IO.Common;
@@ -21,8 +21,10 @@ namespace Engine._DefaultScenario.Units
 
 
         public DeathWard(Player owner, Vector location, int duration = 5000)
-            : base(owner, location, 1)
+            : base(owner, 1)
         {
+            Position = location;
+
             ModelName = "pruchka";
             Name = "Death Ward";
 

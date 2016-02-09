@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using IxSerializer.Attributes;
+using ProtoBuf;
 using IO.Message.Client;
 using System.Reflection;
 using IO.Message.Server;
@@ -16,26 +16,27 @@ namespace IO.Message
     /// 
     /// Implements (de)serialization using ProtoBuf on registered classes. 
     /// </summary>
-    [SerialKiller]
+    [ProtoContract(SkipConstructor = true)]
 
     //client
-    [SerialKid(typeof(ActionMessage), (short)MessageType.Action)]
-    [SerialKid(typeof(MoveMessage), (short)MessageType.MoveUpdate)]
-    [SerialKid(typeof(HandshakeInitMessage), (short)MessageType.HandshakeInit)]
-    [SerialKid(typeof(MapRequestMessage), (short)MessageType.MapRequest)]
+    [ProtoInclude((int)MessageType.Action, typeof(ActionMessage))]
+    [ProtoInclude((int)MessageType.MoveUpdate, typeof(MoveMessage))]
+    [ProtoInclude((int)MessageType.HandshakeInit, typeof(HandshakeInitMessage))]
+    [ProtoInclude((int)MessageType.MapRequest, typeof(MapRequestMessage))]
 
     //server
-    [SerialKid(typeof(HandshakeReplyMessage), (short)MessageType.HandshakeReply)]
-    [SerialKid(typeof(MapReplyMessage), (short)MessageType.MapReply)]
-    [SerialKid(typeof(ObjectSeenMessage), (short)MessageType.ObjectSeen)]
-    [SerialKid(typeof(PlayerStatusMessage), (short)MessageType.PlayerStatusUpdate)]
-    [SerialKid(typeof(UnitDamagedMessage), (short)MessageType.UnitDamage)]
+    [ProtoInclude((int)MessageType.HandshakeReply, typeof(HandshakeReplyMessage))]
+    [ProtoInclude((int)MessageType.MapReply, typeof(MapReplyMessage))]
+    [ProtoInclude((int)MessageType.ObjectSeen, typeof(ObjectSeenMessage))]
+    [ProtoInclude((int)MessageType.PlayerStatusUpdate, typeof(PlayerStatusMessage))]
+    [ProtoInclude((int)MessageType.DamageEvent, typeof(DamageEventMessage))]
 
     //common
-    [SerialKid(typeof(ChatMessage), (short)MessageType.SendChat)]
-    public abstract class IOMessage
+    [ProtoInclude((int)MessageType.SendChat, typeof(ChatMessage))]
+    public class IOMessage
     {
-        public abstract MessageType Type { get; }
+        [ProtoMember(1)]
+        public MessageType Type { get; protected set; }
     }
 
 }

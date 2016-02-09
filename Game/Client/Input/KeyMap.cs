@@ -26,8 +26,8 @@ namespace Client.Input
         public static char? GetChar(Keys k, bool isCaps)
         {
             if (isCaps)
-                return capsCharDict.TryGet(k);
-            return normalCharDict.TryGet(k);
+                return capsCharDict.TryGetVal(k);
+            return normalCharDict.TryGetVal(k);
         }
 
         static KeyMap()

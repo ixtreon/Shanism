@@ -1,11 +1,11 @@
-﻿using Engine.Objects.Game;
+﻿using Engine.Entities.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Engine.Events;
-using Engine.Objects;
+using Engine.Entities;
 using IO.Common;
 using Engine.Systems.Abilities;
 
@@ -36,7 +36,7 @@ namespace DefaultScenario.Abilities
         protected override async void OnCast(AbilityCastArgs e)
         {
             var h = this.Owner; //tva e castera na umenieto
-            var Hook = new Doodad(h.Position) { ModelName = "spark" };
+            var Hook = new Doodad { Position = h.Position, ModelName = "spark" };
             Map.Add(Hook);
 
             var nSteps = (CastRange / hookspeed * 1000) / delay;

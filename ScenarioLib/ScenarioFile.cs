@@ -136,7 +136,7 @@ namespace ScenarioLib
 
                 return sc;
             }
-            catch (Exception e)
+            catch //(Exception e)
             {
                 return null;
             }

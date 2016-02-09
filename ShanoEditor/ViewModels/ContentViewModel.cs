@@ -102,7 +102,7 @@ namespace ShanoEditor.ViewModels
                 .Select(m => new
                 {
                     Name = m.Key,
-                    Anim = m.Value.Animations.TryGet(Constants.Content.DefaultAnimation),
+                    Anim = m.Value.Animations.TryGet(Constants.Content.DefaultValues.Animation),
                 })
                 .Where(o => o.Anim != null)
                 .ToDictionary(

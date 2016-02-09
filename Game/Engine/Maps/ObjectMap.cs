@@ -1,4 +1,4 @@
-﻿using Engine.Objects;
+﻿using Engine.Entities;
 using IO.Common;
 using IO.Objects;
 using System;
@@ -26,6 +26,7 @@ namespace Engine.Maps
         }
 
 
+
         /// <summary>
         /// Executes a range query for the objects within the given rectangle. 
         /// </summary>
@@ -41,6 +42,9 @@ namespace Engine.Maps
 
         public IEnumerable<GameObject> RawQuery(RectangleF rect)
         {
+            if (rect.Width <= 0 || rect.Height <= 0)
+                return Enumerable.Empty<GameObject>();
+
             var start = mapper.GetBinId(rect.Position);
             var end = mapper.GetBinId(rect.FarPosition);
 

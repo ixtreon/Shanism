@@ -15,40 +15,46 @@ namespace Client.UI
 {
     class MainMenu : Window
     {
-        Button btnKeys, btnOptions, btnExit;
+        const int NButtons = 3;
+
+        Button btnKeys;
+        Button btnOptions;
+        Button btnExit;
 
 
         public MainMenu()
         {
+            const double edgeAnchor = Padding * 3;
+            var btnSize = new Vector(0.45, 0.14);
+
             HasTitleBar = false;
             Location = new Vector(0.75, 0.6);
-            Size = new Vector(0.5, 0.6);
+            Size = new Vector(btnSize.X, NButtons * (btnSize.Y + Padding) - Padding) + 2 * edgeAnchor;
             ParentAnchor = AnchorMode.None;
 
             BackColor = Color.Black.SetAlpha(150);
             Action = GameAction.ToggleMainMenu;
 
-            var distFromEdge = Padding * 3;
 
             btnKeys = new Button("Keybinds")
             {
                 ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
-                Location = new Vector(distFromEdge, distFromEdge),
-                Size = new Vector(this.Size.X - 2 * distFromEdge, 0.12),
+                Location = new Vector(edgeAnchor, edgeAnchor),
+                Size = btnSize,
             };
 
             btnOptions = new Button("Options")
             {
                 ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
-                Location = new Vector(distFromEdge, Padding + btnKeys.Bottom),
-                Size = new Vector(this.Size.X - 2 * distFromEdge, 0.12),
+                Location = new Vector(edgeAnchor, Padding + btnKeys.Bottom),
+                Size = btnSize,
             };
 
             btnExit = new Button("Exit")
             {
                 ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
-                Location = new Vector(distFromEdge, Padding + btnOptions.Bottom),
-                Size = new Vector(this.Size.X - 2 * distFromEdge, 0.12),
+                Location = new Vector(edgeAnchor, Padding + btnOptions.Bottom),
+                Size = btnSize,
             };
 
 
@@ -78,8 +84,7 @@ namespace Client.UI
 
         void btnExit_MouseUp(MouseButtonEvent e)
         {
-            //lol hacky exit
-            Process.GetCurrentProcess().Close();
+            ExitHelper.Exit();
         }
 
         protected override void OnUpdate(int msElapsed)

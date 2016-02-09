@@ -21,12 +21,12 @@ namespace Client.Assets
     /// </summary>
     class SpriteCache
     {
-        public static ModelDef DefaultModel { get; } = new ModelDef(Constants.Content.DefaultModelName);
+        public static ModelDef DefaultModel { get; } = new ModelDef(Constants.Content.DefaultValues.ModelName);
 
         static SpriteCache()
         {
-            DefaultModel.Animations.Add(Constants.Content.DefaultAnimation,
-                new AnimationDef(new TextureDef(Constants.Content.DefaultModelTexture)));
+            DefaultModel.Animations.Add(Constants.Content.DefaultValues.Animation,
+                new AnimationDef(new TextureDef(Constants.Content.DefaultValues.ModelTexture)));
         }
 
         ContentList content { get; }

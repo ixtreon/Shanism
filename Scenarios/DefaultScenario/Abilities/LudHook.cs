@@ -1,12 +1,12 @@
 ﻿
-using Engine.Objects.Game;
+using Engine.Entities.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Engine.Events;
-using Engine.Objects;
+using Engine.Entities;
 using IO.Common;
 using IO;
 using Engine.Systems.Abilities;
@@ -16,13 +16,13 @@ namespace DefaultScenario.Abilities
     class LudHook : Ability
     {
 
-        static Doodad headProto = new Doodad(Vector.Zero)
+        static Doodad headProto = new Doodad
         {
             ModelName = "spark",
             Scale = 0.6,
         };
 
-        static Doodad bodyProto = new Doodad(Vector.Zero)
+        static Doodad bodyProto = new Doodad
         {
             ModelName = "spark",
             Scale = 0.3,
@@ -74,7 +74,6 @@ namespace DefaultScenario.Abilities
                 Owner.DamageUnit(u, DamageType.Physical, Damage);
 
             retractHook();
-            hookHead.Destroy();
         }
 
         async Task<Unit> extendHook(Vector targetLoc)
@@ -162,6 +161,7 @@ namespace DefaultScenario.Abilities
             }
 
             //retract hook head
+            hookHead.Destroy();
         }
 
         static void dragHook(Vector anchor, IEnumerable<GameObject> objs, double dist)

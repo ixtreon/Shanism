@@ -50,7 +50,7 @@ namespace ShanoEditor.Views.Maps.Layers
                     var anim = Model.Content.ModelDefaultAnimations.TryGet(go?.ModelName);
 
                     if(go != null && anim != null)
-                        anim.Paint(g, go.TextureBounds);
+                        anim.Paint(g, new RectangleF(go.Position - go.Scale / 2, new Vector(go.Scale)));
                 }
         }
 

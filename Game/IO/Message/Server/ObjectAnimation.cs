@@ -1,6 +1,6 @@
 ﻿using IO.Content;
 using IO.Objects;
-using IxSerializer.Attributes;
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,27 +9,23 @@ using System.Threading.Tasks;
 
 namespace IO.Message.Server
 {
-    [SerialKiller]
+    [ProtoContract]
     class ObjectAnimationMessage : IOMessage
     {
-        public override MessageType Type
-        {
-            get { return MessageType.ObjectAnimation; }
-        }
-
-        [SerialMember]
+        [ProtoMember(1)]
         public readonly int UnitId;
 
-        [SerialMember]
+        [ProtoMember(2)]
         public readonly string AnimationId;
 
-        [SerialMember]
+        [ProtoMember(3)]
         public readonly bool IsLooping;
 
 
-        private ObjectAnimationMessage() { }
+        ObjectAnimationMessage() { Type = MessageType.ObjectAnimation; }
 
         public ObjectAnimationMessage(IUnit u, AnimationDef anim)
+            : this()
         {
 
         }

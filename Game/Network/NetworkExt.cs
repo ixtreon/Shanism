@@ -1,6 +1,6 @@
 ﻿using IO.Message;
-using IxSerializer;
 using Lidgren.Network;
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,13 +15,18 @@ namespace Network
 {
     static class NetworkExt
     {
+        /// <summary>
+        /// Converts a shano message of type <see cref="IOMessage"/> to one suitable for use by the network library. 
+        /// </summary>
+        /// <param name="ioMsg">The IOMessage.</param>
+        /// <param name="peer">The peer.</param>
+        /// <returns></returns>
         public static NetOutgoingMessage ToNetMessage(this IOMessage ioMsg, NetPeer peer)
         {
             byte[] bytes;
             using (var ms = new MemoryStream())
             {
-                using (var buf = new BinaryWriter(ms))
-                    Serializer.TryWrite(buf, ioMsg);
+                Serializer.Serialize(ms, ioMsg);
                 bytes = ms.ToArray();
             }
 
@@ -32,14 +37,22 @@ namespace Network
             return netMsg;
         }
 
+        /// <summary>
+        /// Converts a message coming from the network library to a shano message of type <see cref="IOMessage"/>. 
+        /// </summary>
+        /// <param name="msg">The network message.</param>
+        /// <returns></returns>
         public static IOMessage ToIOMessage(this NetIncomingMessage msg)
         {
+            msg.Position = 0;
             var len = msg.ReadInt32();
             var bytes = msg.ReadBytes(len);
 
+            IOMessage ioMsg = null;
             using (var ms = new MemoryStream(bytes))
-            using (var buf = new BinaryReader(ms))
-                return Serializer.Read<IOMessage>(buf);
+                ioMsg = Serializer.Deserialize<IOMessage>(ms);
+
+            return ioMsg;
         }
     }
 }

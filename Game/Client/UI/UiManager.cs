@@ -98,13 +98,13 @@ namespace Client.UI
                 Location = new Vector(0.6, 0.8),
             };
             chatBox = new ChatBox();
-            castBar = new CastBar()
+            castBar = new CastBar
             {
                 BackColor = Color.Pink,
                 Size = castBarSize,
                 Location = new Vector(-castBarSize.X / 2, 0.7),
             };
-            heroBuffBar = new BuffBar()
+            heroBuffBar = new BuffBar
             {
                 AbsolutePosition = new Vector(0, 0),
             };

@@ -41,12 +41,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abilities\ShanoAbility.cs" />
+    <Compile Include="Buffs\ShanoBuff.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="app.config" />
     <None Include="scenario.json" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Buffs\" />
     <Folder Include="Doodads\" />
     <Folder Include="Effects\" />
     <Folder Include="Items\" />

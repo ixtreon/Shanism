@@ -1,6 +1,6 @@
 ﻿using DefaultScenario.Abilities;
 using Engine;
-using Engine.Objects.Game;
+using Engine.Entities.Objects;
 using IO.Common;
 using System;
 using System.Collections.Generic;
@@ -12,8 +12,8 @@ namespace DefaultScenario.Units
 {
     class Albimon : Hero
     {
-        public Albimon(Player owner, Vector loc)
-            : base(owner, loc)
+        public Albimon(Player owner)
+            : base(owner)
         {
             Name = "Albimon";
 

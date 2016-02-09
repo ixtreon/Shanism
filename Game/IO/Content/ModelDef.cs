@@ -15,7 +15,7 @@ namespace IO.Content
         /// <summary>
         /// A placeholder model that is present in all games. 
         /// </summary>
-        public static readonly ModelDef Default = new ModelDef(DefaultModelName, AnimationDef.Default);
+        public static readonly ModelDef Default = new ModelDef(DefaultValues.ModelName, AnimationDef.Default);
 
         /// <summary>
         /// Gets or sets the name of this model. 
@@ -39,8 +39,8 @@ namespace IO.Content
         [JsonIgnore]
         public AnimationDef Stand
         {
-            get { return Animations.TryGet(DefaultAnimation); }
-            set { Animations[DefaultAnimation] = value; }
+            get { return Animations.TryGet(DefaultValues.Animation); }
+            set { Animations[DefaultValues.Animation] = value; }
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace IO.Content
         public ModelDef(string name, AnimationDef standAnim)
         {
             Name = name;
-            Animations[DefaultAnimation] = standAnim;
+            Animations[DefaultValues.Animation] = standAnim;
         }
     }
 }

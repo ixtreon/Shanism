@@ -17,10 +17,6 @@ namespace Client.Assets
     {
         public Texture2D Texture { get; private set; }
 
-        public TerrainCache()
-        {
-
-        }
 
         public void Reload()
         {

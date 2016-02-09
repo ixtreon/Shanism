@@ -1,4 +1,4 @@
-﻿using Engine.Objects.Game;
+﻿using Engine.Entities.Objects;
 using IO;
 using System;
 using System.Collections.Concurrent;
@@ -129,12 +129,19 @@ namespace Engine.Maps
             return bin?.Objects ?? Enumerable.Empty<TVal>();
         }
 
+        int msElapsed;
         /// <summary>
         /// Updates all bins (and all objects in them) in parallel.  
         /// </summary>
         public void Update(int msElapsed)
         {
-            Parallel.ForEach(binDict, (kvp) => kvp.Value.Update(msElapsed));
+            this.msElapsed = msElapsed;
+            Parallel.ForEach(binDict, loopBinItem);
+        }
+
+        void loopBinItem(KeyValuePair<TKey, HashBin> item)
+        {
+            item.Value.Update(msElapsed);
         }
 
         public IEnumerator<TVal> GetEnumerator()

@@ -96,7 +96,7 @@ namespace Client.UI
         /// <summary>
         /// Gets the Z-order of the control. 
         /// </summary>
-        public int ZOrder { get; set; }
+        public double ZOrder { get; set; }
 
         /// <summary>
         /// Gets or sets whether this control responds to mouse events. 
@@ -438,7 +438,7 @@ namespace Client.UI
 
                 // draw controls
                 // sort by z order - lower is first
-                foreach (var c in controls.OrderBy(c => c.ZOrder))
+                foreach (var c in controls)
                     c.Draw(g);
             }
         }
@@ -450,10 +450,10 @@ namespace Client.UI
         public void Update(int msElapsed)
         {
             //update self
-            this.OnUpdate(msElapsed);
+            OnUpdate(msElapsed);
 
             //update controls
-            foreach (var c in this.controls)
+            foreach (var c in controls)
                 c.Update(msElapsed);
 
             checkDragMove();
@@ -476,20 +476,6 @@ namespace Client.UI
         public bool Remove(Control c)
         {
             return controls.Remove(c);
-        }
-
-        /// <summary>
-        /// Sends this control to the back of the z-order. 
-        /// </summary>
-        public void SendToBack()
-        {
-            if (Parent != null && Parent.controls.Count > 1)
-            {
-                var minZ = Parent.controls.Min(c => c.ZOrder);
-                this.ZOrder = minZ - 1;
-            }
-            else
-                this.ZOrder = 0;
         }
 
         /// <summary>
@@ -599,7 +585,7 @@ namespace Client.UI
         {
             //span the whole window
             var min = Screen.ScreenToUi(Point.Zero);
-            var max = Screen.ScreenToUi(new Point(Screen.Size.X, Screen.Size.Y));
+            var max = Screen.ScreenToUi(new Point(Screen.PixelSize.X, Screen.PixelSize.Y));
 
             Location = min;   //use the lowercase field so we don't move children..
             Size = max - min;

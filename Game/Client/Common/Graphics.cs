@@ -59,24 +59,28 @@ namespace Client
         }
 
 
-        public void Draw(Texture2D tex, Vector texPos, Vector texSize, Color? color = null)
+        public void Draw(Texture2D tex, Vector texPos, Vector texSize, Color? color = null, float depth = 0)
         {
             if (tex == null) throw new ArgumentNullException(nameof(tex), "The texture cannot be null!");
 
             var screenPos = getClampedScreenPos(texPos);
             var screenSz = getClampedScreenSize(texPos, texSize);
 
-            SpriteBatch.ShanoDraw(tex, screenPos, screenSz, color ?? Color.White);
+            SpriteBatch.Draw(tex,
+                position: screenPos.ToXnaVector(),
+                scale: (screenSz / new Vector(tex.Width, tex.Height)).ToXnaVector(),
+                color: color ?? Color.White,
+                layerDepth: depth);
         }
 
-        public void Draw(Sprite s, Vector sPos, Vector sSize, Color? color = null)
+        public void Draw(Sprite s, Vector sPos, Vector sSize, Color? color = null, float depth = 0)
         {
             if (s.Texture == null) throw new ArgumentException("The sprite has a null texture!");
 
             var screenPos = getClampedScreenPos(sPos);
             var screenSz = getClampedScreenSize(sPos, sSize);
 
-            SpriteBatch.ShanoDraw(s.Texture, s.SourceRectangle, screenPos, screenSz, color ?? Color.White);
+            SpriteBatch.ShanoDraw(s.Texture, s.SourceRectangle, screenPos, screenSz, color ?? Color.White, depth);
         }
 
         Vector getClampedScreenPos(Vector pos)
@@ -107,7 +111,7 @@ namespace Client
 
         public int DrawString(TextureFont f, string text,
             Color color, Vector txtPos,
-            float xAnchor = 0.0f, float yAnchor = 0.5f,
+            float xAnchor, float yAnchor,
             double? txtMaxWidth = null)
         {
             txtPos = txtPos.Clamp(Vector.Zero, Size);

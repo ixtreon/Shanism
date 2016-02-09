@@ -72,7 +72,7 @@ namespace Client.UI.Tooltips
             Size = new Vector(Math.Max(BaseSize.X, desc.X), BaseSize.Y + 4 * Padding + desc.Y);
             var screenPos =
                 (mouseState.Position.ToPoint() + new Point(14, 26))
-                .Clamp(Point.Zero, Screen.Size - this.ScreenSize);
+                .Clamp(Point.Zero, Screen.PixelSize - this.ScreenSize);
             AbsolutePosition = Screen.ScreenToUi(screenPos);
         }
 

@@ -46,9 +46,11 @@ namespace Client.UI.Common
 
         public override void OnDraw(Graphics g)
         {
-            var textPos = new Vector(Padding) + new Vector(Size.X - Padding * 2, 0) * TextXAlign;
+            var maxTextLen = Size.X - Padding * 2;
+            var textPos = new Vector(Padding, Size.Y / 2) + new Vector(maxTextLen, 0) * TextXAlign;
+
             g.Draw(Content.Textures.Blank, Vector.Zero, Size, BackColor);
-            g.DrawString(Font, Text, TextColor, textPos, TextXAlign, 0.5f);
+            g.DrawString(Font, Text, TextColor, textPos, TextXAlign, 0.5f, maxTextLen);
         }
     }
 }

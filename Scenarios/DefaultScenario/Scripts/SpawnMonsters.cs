@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Objects;
+using Engine.Entities;
 using Engine.Systems;
 using IO.Common;
-using Engine.Objects.Game;
+using Engine.Entities.Objects;
 using Engine;
 
 class SpawnMonsters : CustomScript
@@ -21,7 +21,17 @@ class SpawnMonsters : CustomScript
     {
         spawnMonsterCamps();
         spawnDoodadCircle();
-        spawnNRandomMonsters(500);
+        spawnNRandomMonsters(100);
+        spawnNTrees(10000);
+    }
+
+    void spawnNTrees(int n)
+    {
+        foreach (var i in Enumerable.Range(0, n))
+        {
+            var uPos = Rnd.PointInside(Terrain.Bounds);
+            Map.Add(new Tree { Position = uPos });
+        }
     }
 
     void spawnNRandomMonsters(int n)
@@ -38,7 +48,7 @@ class SpawnMonsters : CustomScript
         }
     }
 
-    private void spawnDoodadCircle()
+    void spawnDoodadCircle()
     {
         var c = Terrain.Bounds.Center;
 
@@ -48,13 +58,13 @@ class SpawnMonsters : CustomScript
         {
             var dist = 2 * Math.PI * i / DoodadCount;
             var pos = c.PolarProjection(dist, DoodadDist);
-            var m = new Effect(pos) { ModelName = "tree-1" };
+            var m = new Effect { Position = pos, ModelName = "tree-1" };
 
             Map.Add(m);
         }
     }
 
-    private void spawnMonsterCamps()
+    void spawnMonsterCamps()
     {
         //restrain the camp spawn area to the terrain bounds
         var campSpawnRect =

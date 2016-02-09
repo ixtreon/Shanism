@@ -1,5 +1,6 @@
 ﻿using IO.Common;
-using IxSerializer.Attributes;
+using IO.Objects;
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,31 +9,32 @@ using System.Threading.Tasks;
 
 namespace IO.Message.Server
 {
-    //Currently used to send game object data since serializer is coupled with stub objects implemented in network. 
-    [SerialKiller]
+    /// <summary>
+    /// The message sent by the server when a client sees an object. 
+    /// 
+    /// </summary>
+    [ProtoContract]
     public class ObjectSeenMessage : IOMessage
     {
-        public override MessageType Type
-        {
-            get { return MessageType.ObjectSeen; }
-        }
 
-        [SerialMember]
-        public readonly ObjectType ObjectType;
-
-        [SerialMember]
+        /// <summary>
+        /// The unique identifier of the object that came into range. 
+        /// </summary>
+        [ProtoMember(1)]
         public readonly uint Guid;
 
-        [SerialMember]
-        public readonly byte[] Data;
+        /// <summary>
+        /// The object that came in range. 
+        /// </summary>
+        public readonly IGameObject Object;
 
-        public ObjectSeenMessage() { }
+        ObjectSeenMessage() { Type = MessageType.ObjectSeen; }
 
-        public ObjectSeenMessage(ObjectType objectType, uint guid, byte[] data)
+        public ObjectSeenMessage(IGameObject obj)
+            : this()
         {
-            ObjectType = objectType;
-            Guid = guid;
-            Data = data;
+            Object = obj;
+            Guid = obj.Guid;
         }
     }
 }
