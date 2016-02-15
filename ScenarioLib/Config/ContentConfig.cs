@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace ScenarioLib
 {
     /// <summary>
-    /// Contains the configuration for all the content files. 
+    /// Contains the models and textures declared in a scenario. 
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class ContentConfig

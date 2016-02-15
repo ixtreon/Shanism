@@ -98,10 +98,6 @@
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AutoMapper, Version=4.0.4.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AutoMapper.4.0.4\lib\net45\AutoMapper.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Common.Logging">
       <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
     </Reference>
@@ -145,6 +141,7 @@
     <Compile Include="Events\AbilityCastArgs.cs" />
     <Compile Include="Events\LocationChangeArgs.cs" />
     <Compile Include="Events\ObjectMoveArgs.cs" />
+    <Compile Include="GameSystem.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Maps\GameObjectMapper.cs" />
     <Compile Include="Maps\HashMap.cs" />
@@ -153,6 +150,7 @@
     <Compile Include="Maps\Terrain\ITerrainMap.cs" />
     <Compile Include="Maps\Terrain\MapGod.cs" />
     <Compile Include="Maps\Terrain\RandomMap.cs" />
+    <Compile Include="Network\NetSystem.cs" />
     <Compile Include="Systems\Behaviours\BehaviourSystem.cs" />
     <Compile Include="Systems\Abilities\AbilitySystem.cs" />
     <Compile Include="Systems\Buffs\IUnitBuffs.cs" />
@@ -169,9 +167,8 @@
     <Compile Include="Events\UnitDamagingArgs.cs" />
     <Compile Include="Events\UnitDamagedArgs.cs" />
     <Compile Include="Events\UnitDyingArgs.cs" />
-    <Compile Include="Maps\EntityMap.cs" />
+    <Compile Include="Maps\MapSystem.cs" />
     <Compile Include="Maps\Hash.cs" />
-    <Compile Include="Entities\ShanoGuid.cs" />
     <Compile Include="Entities\Objects\Units\Combat.cs" />
     <Compile Include="Entities\Objects\Units\Movement.cs" />
     <Compile Include="Entities\Objects\Units\Vision.cs" />
@@ -240,6 +237,10 @@
     <ProjectReference Include="..\IO\IO.csproj">
       <Project>{dc89987d-5817-4f1d-95ca-80c024c8d6bb}</Project>
       <Name>IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Network\Network.csproj">
+      <Project>{d2fa8685-b964-498d-a34f-d191be2cba6b}</Project>
+      <Name>Network</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

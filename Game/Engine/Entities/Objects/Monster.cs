@@ -53,7 +53,7 @@ namespace Engine.Entities.Objects
             }
 
             BaseAttacksPerSecond = 1.75;
-            BaseMoveSpeed = 3;
+            BaseMoveSpeed = 20;
             BaseDodgeChance = 10;
 
             AttackRange = 1;

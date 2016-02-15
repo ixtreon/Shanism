@@ -81,9 +81,8 @@ namespace Engine.Systems.Buffs
                 //magicDamage += b.MagicDamage;     //NYI
 
                 moveSpeed += b.MoveSpeed;
-                bonusMoveSpeed += b.MoveSpeedPercentage;
-                ////
-                bonusAtkSpeed += b.AttackSpeed;
+                bonusMoveSpeed += (b.MoveSpeedPercentage / 100.0);
+                bonusAtkSpeed += (b.AttackSpeedPercentage / 100.0);
 
                 negativeDodgeChance = negativeDodgeChance * (100 - b.Dodge) / 100;
                 //negativeCritChance = negativeCritChance * (100 - b.Crit) / 100;       //NYI

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ScenarioLib;
+using ShanoEditor.MapAdapter;
 
 namespace ShanoEditor.Views
 {
@@ -17,19 +18,21 @@ namespace ShanoEditor.Views
 
         public MapConfig Map { get { return Model.Scenario.MapConfig; } }
 
+
+        EditorClient Client { get; }
+        EditorEngine Engine { get; set; }
+
         protected override async Task LoadModel()
         {
             if (Map == null) return;
 
-            shanoMap1.SetModel(Model);
+            //shanoMap1.SetModel(Model);
 
             chkInfinite.Checked = Map.Infinite;
             chkInfinite_CheckedChanged(null, null);
 
             nWidth.Value = Map.Width;
             nHeight.Value = Map.Height;
-            
-            shanoMap1.SetMap(Model.Scenario.MapConfig);
         }
 
 
@@ -49,7 +52,17 @@ namespace ShanoEditor.Views
             pInfiniteSettings.Top =
                 Math.Min(pFiniteSettings.Top, pInfiniteSettings.Top);
 
-            shanoMap1.MapModified += ShanoMap1_MapRedrawn;
+            //shanoMap1.MapModified += ShanoMap1_MapRedrawn;
+
+            Client = new EditorClient { Dock = DockStyle.Fill };
+
+
+            Client.GameLoaded += () =>
+            {
+                Engine = new EditorEngine(Client, Model);
+            };
+
+            mapSplitter.Panel2.Controls.Add(Client);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -84,17 +97,17 @@ namespace ShanoEditor.Views
 
         private void WidthHeight_ValueChanged(object sender, EventArgs e)
         {
-            btnResizeMap.Enabled = 
+            btnResizeMap.Enabled =
             btnCancelMapResize.Enabled =
                 (nWidth.Value != Map.Width || nHeight.Value != Map.Height);
         }
-        
+
         private void btnResizeMap_Click(object sender, EventArgs e)
         {
             //resize the map
             Map.ResizeMap((int)nWidth.Value, (int)nHeight.Value);
-            shanoMap1.SetMap(Map);
-            shanoMap1.Invalidate();
+            //shanoMap1.SetMap(Map);
+            //shanoMap1.Invalidate();
 
             //mark the scenario as changed
             MarkAsChanged();
@@ -103,11 +116,11 @@ namespace ShanoEditor.Views
             btnResizeMap.Enabled = false;
             btnCancelMapResize.Enabled = false;
         }
-        
+
 
         private void btnMaxTools_Click(object sender, EventArgs e)
         {
-            if(mapSplitter.Panel1Collapsed)
+            if (mapSplitter.Panel1Collapsed)
             {
                 mapSplitter.Panel1Collapsed = false;
                 btnMaxTools.Text = "◀";
@@ -133,19 +146,19 @@ namespace ShanoEditor.Views
 
         private void pTerrain_BrushTypeSelected(IO.Common.TerrainType val)
         {
-            shanoMap1.ObjectBrush = null;
-            shanoMap1.TerrainBrush = val;
+            //shanoMap1.ObjectBrush = null;
+            //shanoMap1.TerrainBrush = val;
         }
 
         private void pTerrain_BrushSizeSelected(int val)
         {
-            shanoMap1.TerrainBrushSize = val;
+            //shanoMap1.TerrainBrushSize = val;
         }
 
         private void pObjects_ObjectSelected(IO.Objects.IGameObject obj)
         {
-            shanoMap1.TerrainBrush = null;
-            shanoMap1.ObjectBrush = obj;
+            //shanoMap1.TerrainBrush = null;
+            //shanoMap1.ObjectBrush = obj;
         }
 
         private void pTerrain_VisibleChanged(object sender, EventArgs e)

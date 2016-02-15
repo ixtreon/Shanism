@@ -46,6 +46,7 @@ namespace Client.UI.Common
 
         public override void OnDraw(Graphics g)
         {
+
             var maxTextLen = Size.X - Padding * 2;
             var textPos = new Vector(Padding, Size.Y / 2) + new Vector(maxTextLen, 0) * TextXAlign;
 

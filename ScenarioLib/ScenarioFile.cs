@@ -159,7 +159,7 @@ namespace ScenarioLib
         }
 
         /// <summary>
-        /// object -> json -> utf8 bytes. 
+        /// Gets a serialized json version of the scenario. 
         /// </summary>
         public byte[] GetBytes()
         {
@@ -169,7 +169,7 @@ namespace ScenarioLib
         byte[] zippedContent;
 
         /// <summary>
-        /// Compresses the file to a byte array. 
+        /// Compresses all textures in the content to a byte array. 
         /// </summary>
         public byte[] ZipContent()
         {

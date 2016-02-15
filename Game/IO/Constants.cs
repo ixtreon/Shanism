@@ -42,6 +42,7 @@ namespace IO
 
             public const string TerrainFile = "terrain";
 
+            /* describe the size of the terrain file */
             public const int TerrainFileSplitsX = 8;
             public const int TerrainFileSplitsY = 8;
 
@@ -50,8 +51,8 @@ namespace IO
         public static class Client
         {
             //144x90
-            public const int WindowWidth = 20;
-            public const int WindowHeight = 12;
+            public const int WindowWidth = 120;
+            public const int WindowHeight = 72;
 
             public static readonly Point WindowSize = new Point(WindowWidth, WindowHeight);
         }
@@ -65,7 +66,7 @@ namespace IO
         {
             public const double DamageReductionPerDefense = 0.05;
 
-            public static readonly double MaximumObjectSize = 3;
+            public static readonly double MaximumObjectSize = 20;
         }
     }
 }

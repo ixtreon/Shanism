@@ -16,6 +16,8 @@ namespace Engine.Entities.Objects
     {
         public override ObjectType Type {  get { return ObjectType.Doodad; } }
 
+        public override bool HasCollision { get { return true; } }
+
 
         public bool Destructible = true;
 

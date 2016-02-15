@@ -30,7 +30,7 @@ namespace IO.Content
         /// The name, also the path, to the file behind this texture. 
         /// </summary>
         [JsonProperty]
-        public string Name;
+        public readonly string Name;
 
         /// <summary>
         /// Gets the total number of segments in this texture. 

@@ -40,7 +40,9 @@ namespace ShanoEditor.Views.Content
 
         private void ElapsedCounter_Tick(object sender, EventArgs e)
         {
-            if (frameTicker.Tick() && !AnimationModel.Animation.IsLooping)
+            var toContinue = !frameTicker.Tick() || AnimationModel.Animation.IsLooping;
+
+            if(!toContinue)
                 elapsedCounter.Enabled = false;
 
             Invalidate();

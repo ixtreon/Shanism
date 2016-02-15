@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Client.Assets
 {
     /// <summary>
-    /// Lists all models and textures found in one or more <see cref="ContentConfig"/> files. 
+    /// Lists all models and textures used in a game. 
     /// </summary>
     class ContentList
     {
@@ -23,8 +23,7 @@ namespace Client.Assets
         public Dictionary<string, ModelDef> ModelDict { get; } = new Dictionary<string, ModelDef>();
 
         /// <summary>
-        /// Loads the models and textures from the lists to the dictionaries,
-        /// to allow for easier look-up of objects. 
+        /// Adds the models and textures from the given scenario configuration to this list. 
         /// </summary>
         public void Parse(ContentConfig content)
         {
@@ -32,12 +31,18 @@ namespace Client.Assets
             Parse(content.Models);
         }
 
+        /// <summary>
+        /// Adds the given textures to this list. 
+        /// </summary>
         public void Parse(IEnumerable<TextureDef> textures)
         {
             foreach (var tex in textures)
                 TextureDict[tex.Name.ToLower()] = tex;
         }
 
+        /// <summary>
+        /// Adds the given models to this list. 
+        /// </summary>
         public void Parse(IEnumerable<ModelDef> models)
         {
             foreach (var m in models)

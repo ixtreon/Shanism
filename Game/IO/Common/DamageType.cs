@@ -10,7 +10,7 @@ namespace IO.Common
     public enum DamageType
     {
         Physical,
-        Light, Dark, Shadow   // unused
+        Magical,
     }
 
     public static class DamageTypeExt
@@ -21,11 +21,8 @@ namespace IO.Common
             {
                 case DamageType.Physical:
                     return 1 / (Constants.Engine.DamageReductionPerDefense * u.Defense + 1);
-                case DamageType.Light:
-                    return 0;
-                case DamageType.Dark:
-                    return 0;
-                case DamageType.Shadow:
+
+                case DamageType.Magical:
                     return 0;
                 default:
                     throw new NotImplementedException();

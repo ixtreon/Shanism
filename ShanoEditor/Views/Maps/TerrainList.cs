@@ -97,7 +97,7 @@ namespace ShanoEditor.Views.Maps
             const int ButtonSize = 34;
             const int SquareSize = 3;
 
-            public int BrushSize { get { return base.Object; } }
+            public int BrushSize { get { return Object; } }
 
             public TerrainSizeButton(int brushSz)
                 : base(brushSz, ButtonSize)

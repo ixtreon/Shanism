@@ -26,7 +26,7 @@ namespace DefaultScenario.Buffs
         public override void OnApplied(BuffInstance buff)
         {
             Console.WriteLine("Stunned");
-            buff.Target.ApplyState(UnitState.Stunned);
+            buff.Target.ApplyState(UnitFlags.Stunned);
             base.OnApplied(buff);
         }
 
@@ -46,7 +46,7 @@ namespace DefaultScenario.Buffs
         public override void OnExpired(BuffInstance buff)
         {
             Console.WriteLine("Unstunned");
-            buff.Target.RemoveState(UnitState.Stunned);
+            buff.Target.RemoveState(UnitFlags.Stunned);
         }
     }
 }

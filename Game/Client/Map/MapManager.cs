@@ -1,6 +1,7 @@
 ﻿using Client;
 using IO;
 using IO.Common;
+using IO.Message;
 using IO.Message.Server;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -16,7 +17,8 @@ namespace Client.Map
     /// <summary>
     /// Handles map communication with the server. 
     /// </summary>
-    class MapManager
+    [Obsolete]
+    class MapManager : IClientSystem
     {
         /// <summary>
         /// The time before an uncompleted chunk request is re-sent. 
@@ -29,25 +31,20 @@ namespace Client.Map
         const int MaxChunks = 100;
 
         /// <summary>
-        /// The size of each chunk in game units. 
-        /// </summary>
-        public const int ChunkSize = Constants.Client.WindowHeight / 2;
-
-
-        /// <summary>
         /// Contains a map of all available chunks. 
         /// </summary>
-        ConcurrentDictionary<MapChunkId, ChunkData> ChunksAvailable = new ConcurrentDictionary<MapChunkId, ChunkData>();
+        readonly ConcurrentDictionary<MapChunkId, ChunkData> ChunksAvailable = new ConcurrentDictionary<MapChunkId, ChunkData>();
 
         /// <summary>
         /// Contains a map of all chunk requests made so far. 
         /// </summary>
-        Dictionary<MapChunkId, long> chunkRequests = new Dictionary<MapChunkId, long>();
+        readonly Dictionary<MapChunkId, long> chunkRequests = new Dictionary<MapChunkId, long>();
 
+        readonly BasicEffect effect;
 
         public event Action<MapChunkId> ChunkRequested;
 
-
+        public Vector CameraPosition { get; set; }
 
         public MapManager(GraphicsDevice device)
         {
@@ -57,31 +54,29 @@ namespace Client.Map
             };
         }
 
-        public void Update(Vector cameraPos)
+        public void Update(int msElapsed)
         {
             //request nearby chunks
-            foreach (var c in EnumerateNearbyChunks(cameraPos).Except(ChunksAvailable.Keys))
+            foreach (var c in EnumerateNearbyChunks())
                 requestChunk(c);
 
-            RemoveOldChunks(cameraPos);
+            cleanupChunks();
         }
 
-        public void HandleMapReply(MapReplyMessage msg)
+        public void HandleMessage(IOMessage ioMsg)
         {
-            var rect = msg.Chunk.Span;
+            //only handle MapReply
+            var msg = ioMsg as MapDataMessage;
+            if (msg == null)
+                return;
 
+            var rect = msg.Chunk.Span;
             var chunkData = new ChunkData(msg.Chunk, msg.Data);
 
             ChunksAvailable[chunkData.Chunk] = chunkData;
-            chunkData.BuildBuffer(effect.GraphicsDevice, GetTile);
+            chunkData.BuildBuffer(effect.GraphicsDevice);
         }
 
-        public TerrainType GetTile(int x, int y)
-        {
-            var id = MapChunkId.ChunkOf(new Vector(x, y) + new Vector(0.5));
-            var chunk = GetChunk(id);
-            return chunk?.GetTile(x, y) ?? TerrainType.None;
-        }
 
         /// <summary>
         /// Sends a request to the server for the given chunk. 
@@ -93,12 +88,10 @@ namespace Client.Map
                 return;
 
             //get last request timestamp
-            long lastRequest;
-            if (!chunkRequests.TryGetValue(chunk, out lastRequest))
-                lastRequest = long.MinValue;
+            var lastRequest = chunkRequests.TryGetVal(chunk) ?? long.MinValue;
 
             //make sure we don't spam the server
-            long timeNow = Environment.TickCount;
+            var timeNow = Environment.TickCount;
             if (timeNow - SpamInterval < lastRequest)
                 return;
 
@@ -121,40 +114,33 @@ namespace Client.Map
             return chunkTiles;
         }
 
-        int chunkRemoveLock = 0;
-
-        public void RemoveOldChunks(Vector cameraPos)
+        void cleanupChunks()
         {
-            var isLocked = Interlocked.Exchange(ref chunkRemoveLock, 1);
-            if (isLocked == 0)
+            if (ChunksAvailable.Count > MaxChunks)
             {
-                if (ChunksAvailable.Count > MaxChunks)
+                var toRemove = ChunksAvailable.Keys
+                    .OrderBy(chunk => ((Vector)chunk.Center).DistanceTo(CameraPosition))
+                    .Skip(MaxChunks * 3 / 4);
+                foreach (var id in toRemove)
                 {
-                    var toRemove = ChunksAvailable.Keys
-                        .OrderBy(chunk => ((Vector)chunk.Center).DistanceTo(cameraPos))
-                        .Skip(MaxChunks * 3 / 4);
-                    foreach (var id in toRemove)
-                    {
-                        var chunk = ChunksAvailable[id];
-                        ChunksAvailable.TryRemove(id, out chunk);
-                        chunkRequests.Remove(id);
-                        //chunk.Dispose();
-                    }
-                    Console.WriteLine("Remove chunks!");
+                    var chunk = ChunksAvailable[id];
+                    ChunksAvailable.TryRemove(id, out chunk);
+                    chunkRequests.Remove(id);
+                    //chunk.Dispose();
                 }
-                chunkRemoveLock = 0;
+                Console.WriteLine("Remove chunks!");
             }
         }
 
-        BasicEffect effect;
 
-        public void DrawTerrain(Vector cameraPos)
+        public void DrawTerrain()
         {
             var device = effect.GraphicsDevice;
 
             //setup texturestuff
             effect.Set2DMatrices();
-            effect.World = Microsoft.Xna.Framework.Matrix.CreateTranslation((float)-cameraPos.X, (float)-cameraPos.Y, 0);
+            effect.World = Microsoft.Xna.Framework.Matrix.CreateTranslation((float)-CameraPosition.X, (float)-CameraPosition.Y, 0);
+            effect.Projection = Microsoft.Xna.Framework.Matrix.CreateOrthographic((float)Screen.InGameSize.X, (float)Screen.InGameSize.Y, -5, 5);
             effect.VertexColorEnabled = false;
             effect.TextureEnabled = true;
             effect.Texture = Content.Terrain.Texture;
@@ -164,7 +150,7 @@ namespace Client.Map
             {
                 pass.Apply();
 
-                foreach (var chunkId in EnumerateNearbyChunks(cameraPos))
+                foreach (var chunkId in EnumerateNearbyChunks())
                 {
                     var chunk = GetChunk(chunkId);
                     if (chunk != null && chunk.HasBuffer)
@@ -177,10 +163,10 @@ namespace Client.Map
 
         }
 
-        public static IEnumerable<MapChunkId> EnumerateNearbyChunks(Vector cameraPos)
+        IEnumerable<MapChunkId> EnumerateNearbyChunks()
         {
-            var lowLeft = cameraPos - (Vector)Constants.Client.WindowSize / 2;
-            var upRight = cameraPos + (Vector)Constants.Client.WindowSize / 2;
+            var lowLeft = CameraPosition - Screen.InGameSize / 2;
+            var upRight = CameraPosition + Screen.InGameSize / 2;
 
             var chunks = MapChunkId.ChunksBetween(lowLeft, upRight).ToArray();
             return chunks;

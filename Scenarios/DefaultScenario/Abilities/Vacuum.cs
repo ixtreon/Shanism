@@ -45,7 +45,7 @@ class Vacuum : Ability
         var t = 0;
         var distPerFrame = (double)SuckInSpeed * vacuumInterval / 1000;
         foreach (var u in badUnits)
-            u.ApplyState(IO.Common.UnitState.Stunned);
+            u.ApplyState(IO.Common.UnitFlags.Stunned);
         while(t < vacuumDuration)
         {
             foreach(var u in badUnits)
@@ -59,7 +59,7 @@ class Vacuum : Ability
             t += vacuumInterval;
         }
         foreach (var u in badUnits)
-            u.RemoveState(IO.Common.UnitState.Stunned);
+            u.RemoveState(IO.Common.UnitFlags.Stunned);
 
 
     }

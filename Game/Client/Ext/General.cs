@@ -61,6 +61,11 @@ namespace Client
         {
             return new Rectangle(r.X, r.Y, r.Width, r.Height);
         }
+
+        public static IO.Common.Rectangle ToRect(this Rectangle r)
+        {
+            return new IO.Common.Rectangle(r.X, r.Y, r.Width, r.Height);
+        }
         #endregion
 
 

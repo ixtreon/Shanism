@@ -16,13 +16,13 @@ namespace DefaultScenario.Abilities
     class LudHook : Ability
     {
 
-        static Doodad headProto = new Doodad
+        static Effect headProto = new Effect
         {
             ModelName = "spark",
             Scale = 0.6,
         };
 
-        static Doodad bodyProto = new Doodad
+        static Effect bodyProto = new Effect
         {
             ModelName = "spark",
             Scale = 0.3,
@@ -52,20 +52,18 @@ namespace DefaultScenario.Abilities
         }
 
 
-        LinkedList<Doodad> hookSegments = new LinkedList<Doodad>();
+        Effect hookHead;
+        LinkedList<Effect> hookSegments = new LinkedList<Effect>();
 
-        Unit targetUnit;
-        Doodad hookHead;
-        
-
+        Unit hookedUnit;
 
         protected override async void OnCast(AbilityCastArgs e)
         {
             //init vars
             hookSegments.Clear();
-            targetUnit = null;
+            hookedUnit = null;
 
-            hookHead = new Doodad(headProto) { Position = Owner.Position };
+            hookHead = new Effect(headProto) { Position = Owner.Position };
             Map.Add(hookHead);
             
             var u = await extendHook(e.TargetLocation);
@@ -93,7 +91,7 @@ namespace DefaultScenario.Abilities
                 distTravelled += DistancePerFrame;
 
                 //drag hook behind head
-                dragHook(hookHead.Position, hookSegments.Reverse(), DistancePerSegment);
+                dragChain(hookHead.Position, hookSegments.Reverse(), DistancePerSegment);
 
                 //create new segment
                 do
@@ -108,20 +106,19 @@ namespace DefaultScenario.Abilities
                     var ang = firstPart.Position.AngleTo(Owner.Position);
                     var newPos = firstPart.Position.PolarProjection(ang, DistancePerSegment);
 
-                    var hookPart = new Doodad(bodyProto) { Position = newPos };
+                    var hookPart = new Effect(bodyProto) { Position = newPos };
                     Map.Add(hookPart);
                     hookSegments.AddFirst(hookPart);
                 }
                 while (true);
 
                 //check if a unit was caught
-                targetUnit = Map.GetUnitsInRange(hookHead.Position, AoE)
-                    .Where(uu => uu != Owner && uu.Owner.IsEnemyOf(Owner))
-                    .FirstOrDefault();
-                if (targetUnit != null)
+                hookedUnit = Map.GetUnitsInRange(hookHead.Position, AoE)
+                    .FirstOrDefault(uu => uu != Owner && uu.Owner.IsEnemyOf(Owner));
+                if (hookedUnit != null)
                 {
-                    hookHead.Position = targetUnit.Position;
-                    return targetUnit;
+                    hookHead.Position = hookedUnit.Position;
+                    return hookedUnit;
                 }
 
                 await Task.Delay(sleepDuration);
@@ -147,15 +144,15 @@ namespace DefaultScenario.Abilities
                 }
 
                 //drag remaining segments behind hero
-                dragHook(Owner.Position, hookSegments, DistancePerSegment);
+                dragChain(Owner.Position, hookSegments, DistancePerSegment);
 
                 //drag head
                 if(hookSegments.Any())
-                    retract(hookSegments.Last.Value.Position, hookHead, DistancePerSegment);
+                    dragTowards(hookSegments.Last.Value.Position, hookHead, DistancePerSegment);
 
                 //drag target
-                if (targetUnit != null)
-                    targetUnit.Position = hookHead.Position;
+                if (hookedUnit != null)
+                    hookedUnit.Position = hookHead.Position;
 
                 await Task.Delay(TimeSpan.FromSeconds(FrameDelay));
             }
@@ -164,13 +161,13 @@ namespace DefaultScenario.Abilities
             hookHead.Destroy();
         }
 
-        static void dragHook(Vector anchor, IEnumerable<GameObject> objs, double dist)
+        static void dragChain(Vector anchor, IEnumerable<GameObject> objs, double dist)
         {
             //segments
             var originPos = anchor;
             foreach(var hookPart in objs)
             {
-                retract(originPos, hookPart, dist);
+                dragTowards(originPos, hookPart, dist);
 
                 originPos = hookPart.Position;
             }
@@ -178,15 +175,15 @@ namespace DefaultScenario.Abilities
         }
 
         /// <summary>
-        /// Makes sure the target object is at most X range away from the anchor.  
+        /// Makes sure the object is no less than X range away from the target.  
         /// </summary>
-        static void retract(Vector anchorPos, GameObject dragged, double maxDist)
+        static void dragTowards(Vector targetPos, GameObject obj, double maxDist)
         {
-            var ang = anchorPos.AngleTo(dragged.Position);
-            var objDist = anchorPos.DistanceTo(dragged.Position);
+            var ang = targetPos.AngleTo(obj.Position);
+            var objDist = targetPos.DistanceTo(obj.Position);
             var finalDist = Math.Min(objDist, maxDist);
 
-            dragged.Position = anchorPos.PolarProjection(ang, finalDist);
+            obj.Position = targetPos.PolarProjection(ang, finalDist);
         }
 
         /// <summary>

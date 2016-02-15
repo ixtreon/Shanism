@@ -43,6 +43,10 @@ namespace Engine
         public static Player NeutralFriendly { get; } = new Player("Neutral Friendly");
 
 
+        /// <summary>
+        /// Gets the identifier of this player. 
+        /// </summary>
+        public uint Id { get; }
 
         /// <summary>
         /// The engine this player is part of. 
@@ -52,7 +56,7 @@ namespace Engine
         /// <summary>
         /// Gets the client handle of this player. 
         /// </summary>
-        IClient InputDevice { get; }
+        IShanoClient InputDevice { get; }
 
         /// <summary>
         /// Gets the id of this player. 
@@ -118,7 +122,7 @@ namespace Engine
         /// <summary>
         /// Gets all objects visible by this player. 
         /// </summary>
-        public IEnumerable<IGameObject> VisibleObjects
+        public IEnumerable<GameObject> VisibleObjects
         {
             get { return objectsSeen; }
         }
@@ -131,7 +135,7 @@ namespace Engine
             Name = name;
         }
 
-        public Player(ShanoEngine engine, IClient inputDevice)
+        public Player(ShanoEngine engine, IShanoClient inputDevice)
             : this(inputDevice.Name)
         {
             Engine = engine;
@@ -177,7 +181,7 @@ namespace Engine
                 Engine.GetTiles(this, ref chunkData, chunkId);
             });
 
-            SendMessage(new MapReplyMessage(chunkId, chunkData));
+            SendMessage(new MapDataMessage(chunkId, chunkData));
         }
 
         #endregion
@@ -195,7 +199,7 @@ namespace Engine
 
             MainHero = h;
 
-            SendMessage(new PlayerStatusMessage(h));
+            SendMessage(new PlayerStatusMessage(h.Id));
 
             //fire custom scripts
             Engine.Scenario.RunScripts(s => s.OnHeroSpawned(h));    //should remove or change to 'OnPlayerMainHeroChanged' ...
@@ -272,7 +276,7 @@ namespace Engine
         void sendObjectUnseenMessage(GameObject obj)
         {
             if (!IsHuman) return;
-            SendMessage(new ObjectUnseenMessage(obj.Guid));
+            SendMessage(new ObjectUnseenMessage(obj.Id));
         }
 
         public void UpdateServer(int msElapsed)

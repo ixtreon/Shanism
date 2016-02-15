@@ -15,7 +15,7 @@ namespace Engine
             /// <summary>
             /// The size of a map chunk in in-game units. 
             /// </summary>
-            public const int ChunkSize = 4;
+            public const int ChunkSize = 8;
         }
 
         public static class RangeEvents
@@ -35,6 +35,8 @@ namespace Engine
         {
             public const double MaxVisionRange = 10;
 
+            public static double MaxCollisionSize = 3;
+
 
             /// <summary>
             /// The damage reduction per point of defense. 
@@ -44,6 +46,7 @@ namespace Engine
             public const double BaseLifeRegen = 0.5;
             public const double BaseManaRegen = 2;
             public const double BaseMagicDamage = 0;
+
 
             public static class Attributes
             {

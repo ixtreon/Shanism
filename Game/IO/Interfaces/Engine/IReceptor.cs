@@ -22,16 +22,9 @@ namespace IO
         event Action<IOMessage> MessageSent;
 
 
-
-        //TODO: move these to MessageSent
-
-        /// <summary>
-        /// The event raised whenever a visible unit performs an action. 
-        /// </summary>
-        event Action<IUnit, string> AnyUnitAction;
-
         /// <summary>
         /// Causes the underlying game server to update. 
+        /// Called by the client to update the local or network server instance, respectively. 
         /// </summary>
         /// <param name="msElapsed">The time elapsed since the last invocation of this method. </param>
         void UpdateServer(int msElapsed);

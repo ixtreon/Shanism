@@ -46,7 +46,7 @@ namespace IO.Message.Server
         public DamageEventMessage(IUnit target, DamageType dmgType, double change, bool isHealth)
             : this()
         {
-            UnitId = target.Guid;
+            UnitId = target.Id;
             DamageType = dmgType;
             IsHealth = isHealth;
             ValueChange = (float)change;

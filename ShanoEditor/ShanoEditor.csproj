@@ -104,16 +104,12 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MonoGame.Framework, Version=3.4.0.459, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.4.0.459\lib\net40\MonoGame.Framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.1.1.1589.5942\lib\NET40\OpenTK.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="OpenTK.GLControl, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.GLControl.1.1.1589.5942\lib\NET40\OpenTK.GLControl.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -130,8 +126,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Ext.cs" />
-    <Compile Include="MapAdapter\EditorClient.cs" />
+    <Compile Include="MapAdapter\GodBuilder.cs" />
+    <Compile Include="MapAdapter\EditorClient.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="MapAdapter\EditorEngine.cs" />
+    <Compile Include="MapAdapter\GLTestControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Keyboard.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -284,7 +287,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="ShanoEditor_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -294,9 +296,17 @@
       <Project>{418f2cbd-5db3-47d4-bee1-2c69aa6d1914}</Project>
       <Name>Client</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Game\Engine\Engine.csproj">
+      <Project>{0b2e9f70-7046-470a-8e5d-ebd47f030ddc}</Project>
+      <Name>Engine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Game\IO\IO.csproj">
       <Project>{dc89987d-5817-4f1d-95ca-80c024c8d6bb}</Project>
       <Name>IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\MGWinFormsControls\MGWinFormsControls.csproj">
+      <Project>{85bd604a-c94d-4058-94be-6977c97a1291}</Project>
+      <Name>MGWinFormsControls</Name>
     </ProjectReference>
     <ProjectReference Include="..\ScenarioLib\ScenarioLib.csproj">
       <Project>{bada50f2-93bc-4eba-949a-bf892ae4b7e5}</Project>

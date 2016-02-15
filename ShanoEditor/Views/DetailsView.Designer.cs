@@ -48,7 +48,7 @@
             this.txtName.Location = new System.Drawing.Point(12, 44);
             this.txtName.Margin = new System.Windows.Forms.Padding(12, 6, 6, 6);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(463, 26);
+            this.txtName.Size = new System.Drawing.Size(777, 26);
             this.txtName.TabIndex = 0;
             this.txtName.Text = "Shanistic Map";
             this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
@@ -64,7 +64,7 @@
             this.txtDescription.Multiline = true;
             this.txtDescription.Name = "txtDescription";
             this.txtDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtDescription.Size = new System.Drawing.Size(463, 122);
+            this.txtDescription.Size = new System.Drawing.Size(777, 297);
             this.txtDescription.TabIndex = 1;
             this.txtDescription.Text = "Shanistichen Description";
             this.txtDescription.TextChanged += new System.EventHandler(this.txtDescription_TextChanged);
@@ -102,7 +102,7 @@
             this.Controls.Add(this.txtName);
             this.MinimumSize = new System.Drawing.Size(0, 240);
             this.Name = "DetailsView";
-            this.Size = new System.Drawing.Size(487, 254);
+            this.Size = new System.Drawing.Size(801, 429);
             this.ResumeLayout(false);
             this.PerformLayout();
 

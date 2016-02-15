@@ -16,23 +16,25 @@ namespace Client.Assets
         Rectangle[] keys = new Rectangle[256];
 
         /// <summary>
-        /// The base height of the font. 
+        /// The base height of the font in pixels. 
         /// </summary>
         readonly int _baseHeight;
 
         /// <summary>
-        /// The base character spacing of this font. 
+        /// The base character spacing of this font in pixels. 
         /// </summary>
         readonly double _baseCharSpacing = 2;
 
         /// <summary>
         /// The user-defined scale of this font. 
         /// </summary>
-        readonly double _fontScale;
+        readonly double _userScale;
 
 
 
-
+        /// <summary>
+        /// Gets the current height of the font in pixels. 
+        /// </summary>
         public int ScreenHeight
         {
             get { return (int)(_baseHeight * Scale); }
@@ -69,7 +71,7 @@ namespace Client.Assets
         /// </summary>
         double Scale
         {
-            get {  return _fontScale * Screen.FontScale; }
+            get {  return _userScale * Screen.FontScale; }
         }
 
         public readonly Texture2D Texture;
@@ -77,11 +79,11 @@ namespace Client.Assets
         public TextureFont(ContentManager content, string name, double scale = 1f, double characterSpacing = 2)
         {
             this._baseCharSpacing = characterSpacing;
-            this._fontScale = scale;
+            this._userScale = scale;
             this.Texture = content.Load<Texture2D>(name);
 
             var xmlSchema = new XmlDocument();
-            xmlSchema.Load(Path.Combine(Content.DefaultTexDir, name + ".xml"));
+            xmlSchema.Load(Path.Combine(Content.DefaultContentDirectory, name + ".xml"));
 
             foreach(XmlNode node in xmlSchema.SelectNodes("font/chars/char"))
             {
@@ -104,7 +106,7 @@ namespace Client.Assets
         public TextureFont(TextureFont f, double relativeScale = 1)
         {
             this.Texture = f.Texture;
-            this._fontScale = f._fontScale * relativeScale;
+            this._userScale = f._userScale * relativeScale;
             this._baseHeight = f._baseHeight;
             this._baseCharSpacing = f._baseCharSpacing;
 
@@ -147,22 +149,28 @@ namespace Client.Assets
             float xAnchor, float yAnchor,
             int? maxWidth = null)
         {
+            if (string.IsNullOrEmpty(text))
+                return 0;
+
             //split the string into lines, and anchor vertically
             var lines = getLines(text, maxWidth ?? int.MaxValue).ToArray();
-            p.Y -= (int)(ScreenHeight * yAnchor * lines.Length);
+            var y = p.Y - (int)(ScreenHeight * yAnchor * lines.Length);
+
             foreach (var ln in lines)
             {
                 // get the line width and anchor horizontally
                 var lnWidth = getWidth(ln);
                 var x = p.X - (int)(lnWidth * xAnchor);
+
                 // draw the lines
                 foreach (var c in ln.Where(c => c > 0 && c < 256))
                 {
-                    DrawChar(sb, c, color, new Vector(x, p.Y));
+                    DrawChar(sb, c, color, new Vector(x, y));
                     x += ScreenSpacing + (int)(keys[c].Width * Scale);
                 }
+
                 // move to a new line
-                p.Y += (int)ScreenHeight;
+                y += ScreenHeight;
             }
             return 0;
         }
@@ -172,7 +180,7 @@ namespace Client.Assets
             if (string.IsNullOrEmpty(text))
                 return Point.Zero;
             var lines = getLines(text, maxWidth);
-            var w = lines.Max(l => getWidth(l));
+            var w = lines.Any() ? lines.Max(l => getWidth(l)) : 0;
             var h = ScreenHeight * lines.Count();
             return new Point(w, h);
         }
@@ -187,29 +195,13 @@ namespace Client.Assets
         /// Gets the width of the given one-line (!) string in pixels. 
         /// </summary>
         /// <param name="s"></param>
-        private int getWidth(string s)
+        int getWidth(string s)
         {
-            return (int)(s.Where(c => c > 0 && c < 256).Sum(c => keys[c].Width) * Scale + ScreenSpacing * (s.Length - 1));
+            return (int)(s
+                .Where(c => c < 256)
+                .Sum(c => keys[c].Width) * Scale + ScreenSpacing * (s.Length - 1));
         }
 
-        /// <summary>
-        /// Returns an array specifying the position of each of the given string's characters
-        /// when drawn using this font. 
-        /// </summary>
-        /// <param name="s"></param>
-        /// <returns>The position where the i'th character is drawn. </returns>
-        public int[] GetLengths(string s)
-        {
-            if(string.IsNullOrEmpty(s))
-                return new [] { 0 };
-
-            var ws = new int[s.Length + 1];
-            ws[0] = 0;
-            for (int i = 0; i < s.Length; i++)
-                ws[i + 1] = ws[i] + ScreenSpacing + (int)(Scale * keys[s[i]].Width);
-
-            return ws;
-        }
         
         public double[] GetLengthsUi(string s)
         {
@@ -224,34 +216,50 @@ namespace Client.Assets
             return ws;
         }
 
+
+
         /// <summary>
         /// Splits the given string into lines, optionally making each line shorter than the specified maximum width in pixels. 
         /// </summary>
         /// <param name="text"></param>
         /// <param name="maxWidth"></param>
-        private IEnumerable<string> getLines(string text, int maxWidth = int.MaxValue)
+        IEnumerable<string> getLines(string text, int maxWidth = int.MaxValue)
+        {
+            foreach (var ln in text.Split('\n'))
+                foreach (var ln2 in getLinesNoBreak(ln, maxWidth))
+                    yield return ln2;
+        }
+        IEnumerable<string> getLinesNoBreak(string text, int maxWidth)
         {
             if (!string.IsNullOrEmpty(text))
             {
-                var lineWidth = 0.0;
-                var lineStart = 0;
+                var currentWidth = 0.0;
+                var lastCut = 0;
+                var lastSpacebar = 0;
+
                 for (int i = 0; i < text.Length; i++)
                 {
                     //grab the char and its width
                     var c = text[i];
-                    var cWidth = getCharSize(c).X;
-                    var newWidth = lineWidth + cWidth;
+                    var charWidth = getCharSize(c).X;
+                    var newWidth = currentWidth + ScreenSpacing + charWidth;
+
+                    //save spacebars
+                    if (c == ' ')
+                        lastSpacebar = i;
+
                     //determine whether to go to a new line
-                    if (c == '\n' || (newWidth > maxWidth && c == ' '))
+                    if (newWidth > maxWidth && lastSpacebar > lastCut)
                     {
-                        yield return text.Substring(lineStart, i - lineStart);
-                        lineStart = i + 1;
-                        lineWidth = cWidth;
+                        yield return text.Substring(lastCut, lastSpacebar - lastCut);
+                        lastCut = lastSpacebar + 1;
+
+                        currentWidth = charWidth;
                     }
                     else
-                        lineWidth = newWidth;
+                        currentWidth = newWidth;
                 }
-                yield return text.Substring(lineStart, text.Length - lineStart);  //ugh
+                yield return text.Substring(lastCut, text.Length - lastCut);  //ugh
             }
         }
         
@@ -274,6 +282,7 @@ namespace Client.Assets
         {
             if (c < 0 || c > 255 || (keys[c] == Rectangle.Empty && c != '\n'))
                 return Vector.Zero;
+
             return (Vector)keys[c].Size * Scale;
         }
 

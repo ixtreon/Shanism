@@ -14,7 +14,7 @@ namespace IO
         #region Key/Value Collections Extensions
         /// <summary>
         /// Tries to get the value of the given key from the dictionary. 
-        /// Returns default(T) if the key is not found. 
+        /// Returns null if the key is not found. 
         /// </summary>
         /// <typeparam name="TVal"></typeparam>
         /// <param name="key">The key whose value should be returned. </param>
@@ -29,7 +29,7 @@ namespace IO
 
         /// <summary>
         /// Tries to get the value of the given key from the dictionary. 
-        /// Returns default(T) if the key is not found. 
+        /// Returns null if the key is not found. 
         /// </summary>
         /// <typeparam name="TVal"></typeparam>
         /// <param name="key">The key whose value should be returned. </param>

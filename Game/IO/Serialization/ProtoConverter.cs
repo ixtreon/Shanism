@@ -47,20 +47,35 @@ namespace IO.Serialization
             _classMappings.Add(typeof(TConcrete), typeof(TInt));
         }
 
-        //public void GenericSerialize<T>(MemoryStream ms, T obj)
-        //{
-        //    Serialize(ms, obj, typeof(T));
-        //}
+        Type getMappedInterface(Type objTy)
+        {
+            Type mappedInterface;
+            if (_classMappings.TryGetValue(objTy, out mappedInterface))
+                return mappedInterface;
+
+            var curTy = objTy;
+
+            do
+            {
+                curTy = curTy.BaseType;
+            }
+            while (curTy != null && (mappedInterface = _classMappings.TryGet(curTy)) == null);
+
+            if(mappedInterface != null)
+                _classMappings[objTy] = mappedInterface;
+
+            return mappedInterface;
+        }
 
         public void Serialize(MemoryStream ms, object obj)
         {
             //get mapped interface
             // walk the inheritance chain if needed to find the mapping
+            var objTy = obj.GetType();
             var ty = obj.GetType();
             Type mappedInterface;
             while ((mappedInterface = _classMappings.TryGet(ty)) == null && ty.BaseType != null)
                 ty = ty.BaseType;
-            _classMappings[obj.GetType()] = mappedInterface;
 
             if (mappedInterface == null)
                 throw new Exception("Unable to serialize the object of type `{0}` as the type is not mapped!".F(ty.FullName));

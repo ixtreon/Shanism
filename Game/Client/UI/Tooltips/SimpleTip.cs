@@ -34,7 +34,7 @@ namespace Client.UI.Tooltips
             var tipAsString = (HoverControl?.ToolTip as string);
 
             //visible if that's a string
-            Visible = HoverControl != null && !string.IsNullOrEmpty(tipAsString);
+            Visible = HoverControl != null && !string.IsNullOrWhiteSpace(tipAsString);
             if (Visible)// && Text != tipAsString)
             {
                 Text = tipAsString;

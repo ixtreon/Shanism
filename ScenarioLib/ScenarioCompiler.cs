@@ -102,7 +102,6 @@ namespace ScenarioLib
         }
 
         public ScenarioCompiler(string scenarioDir)
-            : base()
         {
             this.ScenarioDir = scenarioDir;
         }

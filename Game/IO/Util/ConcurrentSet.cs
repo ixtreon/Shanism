@@ -10,14 +10,22 @@ namespace IO.Util
 {
     public class ConcurrentSet<T> : IEnumerable<T>
     {
-        ConcurrentDictionary<T, bool> dict { get; } = new ConcurrentDictionary<T, bool>();
+        ConcurrentDictionary<T, bool> dict { get; }
 
         public int Count
         {
             get { return dict.Count; }
         }
 
-        public ConcurrentSet() { }
+        public ConcurrentSet()
+        {
+            dict = new ConcurrentDictionary<T, bool>();
+        }
+
+        public ConcurrentSet(IEnumerable<T> items)
+        {
+            dict = new ConcurrentDictionary<T, bool>(items.Select(i => new KeyValuePair<T, bool>(i, true)));
+        }
 
         /// <summary>
         /// Attempts to add the specified value to this <see cref="ConcurrentSet{T}"/>.

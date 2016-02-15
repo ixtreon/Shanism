@@ -114,7 +114,6 @@ namespace Engine.Entities.Objects
         }
 
         internal Hero()
-            : base()
         {
             BaseLife = 100;
             BaseMana = 5;
@@ -126,9 +125,9 @@ namespace Engine.Entities.Objects
         {
             ModelName = "hero";
 
-            Scale = 0.6;
+            Scale = 2;
 
-            BaseMoveSpeed = 5;
+            BaseMoveSpeed = 20;
 
             BaseStrength = 10;
             BaseVitality = 10;

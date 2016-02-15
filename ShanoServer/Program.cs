@@ -20,7 +20,7 @@ namespace ShanoServer
         static void Main(string[] args)
         {
 
-            if(args.Any(a => argRegexHelp.IsMatch(a)))
+            if(args.Any(argRegexHelp.IsMatch))
             {
                 Console.WriteLine("ShanoServer help...");
                 Console.WriteLine("Parameters:");

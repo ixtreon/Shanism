@@ -20,6 +20,7 @@ namespace IO.Common
         /// Gets or sets the position of the bottom-left (low) corner of the rectangle. 
         /// </summary>
         [ProtoMember(1)]
+        [JsonProperty]
         public Point Position;
 
 
@@ -27,31 +28,24 @@ namespace IO.Common
         /// Gets or sets the size of the rectangle. 
         /// </summary>
         [ProtoMember(2)]
+        [JsonProperty]
         public Point Size;
 
-        [JsonProperty]
         public int X
         {
             get { return Position.X; }
-            set { Position.X = value; }
         }
-        [JsonProperty]
         public int Y
         {
             get { return Position.Y; }
-            set { Position.Y = value; }
         }
-        [JsonProperty]
         public int Width
         {
             get { return Size.X; }
-            set { Size.X = value; }
         }
-        [JsonProperty]
         public int Height
         {
             get { return Size.Y; }
-            set { Size.Y = value; }
         }
 
         /// <summary>

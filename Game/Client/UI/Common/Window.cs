@@ -67,7 +67,7 @@ namespace Client.UI.Common
         /// Creates a new window, optionally specifying the side it is anchored to. 
         /// </summary>
         /// <param name="anchor"></param>
-        public Window(AnchorMode anchor = AnchorMode.None)
+        protected Window(AnchorMode anchor = AnchorMode.None)
         {
             Visible = false;
             Size = DefaultSize;

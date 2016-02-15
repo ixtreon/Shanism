@@ -24,12 +24,14 @@ namespace Engine
             Game = game;
         }
 
+        public uint Id { get; }
+
         /// <summary>
         /// Gets the map that contains the units in this scenario. 
         /// </summary>
-        public EntityMap Map
+        public MapSystem Map
         {
-            get { return Game.EntityMap; }
+            get { return Game.map; }
         }
 
         /// <summary>
@@ -53,6 +55,13 @@ namespace Engine
         {
             get { return Game.PerfCounter; }
         }
+
+
+        protected ScenarioObject()
+        {
+            Id = IO.Util.GenericId<ScenarioObject>.GetNew();
+        }
+
 
         /// <summary>
         /// Can be overridden in derived classes to implement custom update handlers. 

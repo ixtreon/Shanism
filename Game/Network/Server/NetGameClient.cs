@@ -25,7 +25,7 @@ namespace Network.Server
     /// <para/>
     /// Tightly coupled with the network server. 
     /// </summary>
-    public class NetGameClient : IClient
+    public class NetGameClient : IShanoClient
     {
         /// <summary>
         /// Gets the underlying NetConnection. 
@@ -87,8 +87,6 @@ namespace Network.Server
 
             //attach to the game receptor events
             GameReceptor.MessageSent += GameReceptor_MessageSent;
-
-            //GameReceptor.AnyUnitAction += GameReceptor_AnyUnitAction;
         }
 
 

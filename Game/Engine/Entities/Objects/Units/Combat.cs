@@ -55,11 +55,7 @@ namespace Engine.Entities
             {
                 case DamageType.Physical:
                     return 1 / (Constants.Units.DamageReductionPerDefense * Defense + 1);
-                case DamageType.Light:
-                    return 1;
-                case DamageType.Shadow:
-                    return 1;
-                case DamageType.Dark:
+                case DamageType.Magical:
                     return 1;
                 default:
                     throw new NotImplementedException();
@@ -89,24 +85,37 @@ namespace Engine.Entities
         /// <returns></returns>
         public bool DamageUnit(Unit target, DamageType dmgType, double amount, DamageFlags flags = DamageFlags.None)
         {
-            if (target.IsDead || target.Invulnerable)
+            //Check target alive
+            if (target.IsDead)
                 return false;
 
-            // Dodge
-            var wasDodged = !flags.HasFlag(DamageFlags.NoDodge) && (Rnd.Next(0, 100) < target.DodgeChance);
+
+            // Check target can take damage
+            if (dmgType == DamageType.Physical && target.StateFlags.HasFlag(UnitFlags.PhysicalImmune))
+                return false;
+
+            if (dmgType == DamageType.Magical && target.StateFlags.HasFlag(UnitFlags.MagicImmune))
+                return false;
+
+
+            // Check target dodging
+            if ((!flags.HasFlag(DamageFlags.NoDodge)) && (Rnd.Next(0, 100) < target.DodgeChance))
+                return false;
+
+            
+            // TODO: Damage amplifiers (crit, +magic)
             var wasCrit = !flags.HasFlag(DamageFlags.NoCrit) && (Rnd.Next(0, 100) < target.CritChance);
 
-            //TODO: if it is magical damage, increase it based on magic dmgg
 
-            //raise the pre-damage event
+            // raise the pre-damage event
             var dmgArgs = new UnitDamagingArgs(this, target, dmgType, flags, amount);
             DamageDealt?.Invoke(dmgArgs);
 
-            // calculate and deal the final damage using the EventArgs from the event.
+            // deal damage
             var finalDmg = target.GetFinalDamage(dmgArgs.BaseDamage, dmgArgs.DamageType);
             target.Life -= finalDmg;
 
-            //raise the post-damage event
+            // raise the post-damage event
             var receiveArgs = new UnitDamagedArgs(this, target, dmgType, flags, amount, finalDmg);
             target.DamageReceived?.Invoke(receiveArgs);
 

@@ -32,7 +32,7 @@ namespace DefaultScenario.Abilities
 
             var angle = casterPos.AngleTo(targetPos);
 
-            Projectile proj = new Projectile(casterPos, "flame", e.CastingUnit, "Ogin bace");
+            var proj = new Projectile(casterPos, "flame", e.CastingUnit, "Ogin bace");
             proj.Speed = 5;
             proj.Direction = angle;
             proj.MaxRange = 15;
@@ -52,13 +52,13 @@ namespace DefaultScenario.Abilities
                 return;
 
             var dmgAmount = randomGuy.Next(50, 75);
-            Owner.DamageUnit(target, DamageType.Light, dmgAmount);
+            Owner.DamageUnit(target, DamageType.Magical, dmgAmount);
 
-            target.ApplyState(UnitState.Stunned);
+            target.ApplyState(UnitFlags.Stunned);
 
             await Task.Delay(5000);
 
-            target.RemoveState(UnitState.Stunned);
+            target.RemoveState(UnitFlags.Stunned);
 
         }
     }

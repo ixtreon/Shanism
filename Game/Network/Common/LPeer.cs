@@ -14,7 +14,7 @@ namespace Network
 
         internal NetPeer peer;
 
-        public LPeer(NetPeer peer)
+        protected LPeer(NetPeer peer)
         {
             this.peer = peer;
 
@@ -57,7 +57,7 @@ namespace Network
 
                 // client connect / disconnect
                 case NetIncomingMessageType.StatusChanged:
-                    NetConnectionStatus status = (NetConnectionStatus)msg.ReadByte();
+                    var status = (NetConnectionStatus)msg.ReadByte();
 
                     if (status == NetConnectionStatus.Connected)
                         OnConnected(msg.SenderConnection);

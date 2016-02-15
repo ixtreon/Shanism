@@ -22,5 +22,10 @@ namespace Client.Objects
         {
             base.OnUpdate(msElapsed);
         }
+
+        public override void OnDraw(Graphics g)
+        {
+            base.OnDraw(g);
+        }
     }
 }

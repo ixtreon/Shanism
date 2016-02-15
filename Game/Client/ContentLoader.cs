@@ -2,6 +2,7 @@
 using Client.Textures;
 using IO;
 using IO.Content;
+using IO.Message.Server;
 using Microsoft.Xna.Framework.Content;
 using ScenarioLib;
 using System;
@@ -18,9 +19,9 @@ namespace Client
     /// </summary>
     static class Content
     {
-        public const string DefaultTexDir = @"Content\";
+        public const string DefaultContentDirectory = @"Content\";
 
-        public const string ScenarioTexDir = @"Scenario\";
+        public const string ScenarioContentDirectory = @"Scenario\";
 
 
         /// <summary>
@@ -38,13 +39,13 @@ namespace Client
         public static TerrainCache Terrain { get; } = new TerrainCache();
 
 
-        public static void LoadDefault(ContentManager content)
+        public static void LoadDefaultContent(ContentManager content)
         {
 
-            var textures = Directory.EnumerateFiles(DefaultTexDir, "*.png", SearchOption.AllDirectories)
+            var textures = Directory.EnumerateFiles(DefaultContentDirectory, "*.png", SearchOption.AllDirectories)
                 .Select(fn => fn
                     .ToLowerInvariant()
-                    .GetRelativePath(DefaultTexDir))
+                    .GetRelativePath(DefaultContentDirectory))
                 .Select(fn => new TextureDef(fn))
                 .ToArray();
 
@@ -55,7 +56,7 @@ namespace Client
 
 
             //load textures, terrain, fonts
-            Textures.LoadContent(content, DefaultTexDir, textures);
+            Textures.LoadContent(content, DefaultContentDirectory, textures);
             Terrain.Reload();
             Fonts.Load(content);
 
@@ -64,43 +65,57 @@ namespace Client
         }
 
 
-        public static void LoadScenario(ContentManager content, ContentConfig config)
+        public static void LoadScenarioContent(ContentManager content, HandshakeReplyMessage msg)
+        {
+            var sc = ScenarioFile.LoadBytes(msg.ScenarioData);
+
+            unzipMessage(msg);
+
+
+            loadScenarioContent(content, sc.Content);
+        }
+
+        static void loadScenarioContent(ContentManager content, ContentConfig config)
         {
             //add to content listing
             ContentList.Parse(config);
 
             //load textures, terrain
-            Textures.LoadContent(content, ScenarioTexDir, config.Textures);
+            content.RootDirectory = ScenarioContentDirectory;
+            Textures.LoadContent(content, ScenarioContentDirectory, config.Textures);
+
+            //reload the terrain if it was swapped in. 
             Terrain.Reload();
         }
 
-        public static void UnzipContent(byte[] texData, string outputDir, string archivePath = ".", string tempDir = "temp")
+        static void unzipMessage(HandshakeReplyMessage msg)
         {
+
             //clear temp
-            tempDir = Path.GetFullPath(tempDir);
-            if (Directory.Exists(tempDir))
-                Directory.Delete(tempDir, true);
+            var TempDir = Path.GetFullPath("temp");
+            if (Directory.Exists(TempDir))
+                Directory.Delete(TempDir, true);
 
             //unzip to temp
-            ScenarioFile.UnzipContent(texData, tempDir);
+            ScenarioFile.UnzipContent(msg.ContentData, TempDir);
 
-            var newDir = Path.GetFullPath(outputDir); 
 
-            //delete old scenarios
-            if(Directory.Exists(newDir))
-                Directory.Delete(newDir, true);
+            //clear scenario dir
+            var scenarioContentDir = Path.GetFullPath(ScenarioContentDirectory); 
+            if(Directory.Exists(scenarioContentDir))
+                Directory.Delete(scenarioContentDir, true);
 
             //create sub-directories
-            if(Directory.Exists(tempDir))
+            if(Directory.Exists(TempDir))
             {
-                foreach (string dirPath in Directory.GetDirectories(tempDir, "*",
+                foreach (string dirPath in Directory.GetDirectories(TempDir, "*",
                     SearchOption.AllDirectories))
-                    Directory.CreateDirectory(dirPath.Replace(tempDir, newDir));
+                    Directory.CreateDirectory(dirPath.Replace(TempDir, scenarioContentDir));
 
                 //copy all files
-                foreach (string filePath in Directory.GetFiles(tempDir, "*.*",
+                foreach (string filePath in Directory.GetFiles(TempDir, "*.*",
                     SearchOption.AllDirectories))
-                    File.Copy(filePath, filePath.Replace(tempDir, newDir), true);
+                    File.Copy(filePath, filePath.Replace(TempDir, scenarioContentDir), true);
             }
         }
 

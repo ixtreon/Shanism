@@ -25,7 +25,7 @@ namespace Engine.Systems
                 return;
 
             //stunned units are useless
-            if (Owner.StateFlags.HasFlag(UnitState.Stunned))
+            if (Owner.StateFlags.HasFlag(UnitFlags.Stunned))
                 return;
 
             if (Owner.Order == null)

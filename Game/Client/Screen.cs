@@ -1,6 +1,7 @@
 ﻿using IO;
 using IO.Common;
 using IO.Objects;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,35 +17,26 @@ namespace Client
         const int DefaultUiScale = 240;
 
 
-        static Point screenSize = new Point(800, 600);
-
         /// <summary>
         /// Gets the UI-to-pixel scaling. 
         /// </summary>
         public static double UiScale { get; private set; } = DefaultUiScale;
 
         /// <summary>
-        /// Gets or sets the camera center point in in-game coordinates. 
+        /// Gets the camera center point in in-game coordinates. 
         /// </summary>
-        public static Vector CenterPoint { get; set; }
+        public static Vector CenterPoint { get; private set; }
 
         /// <summary>
-        /// Gets whether the camera is locked to the center. NYI. 
+        /// Gets the in-game size of the screen. 
         /// </summary>
-        public static bool IsLocked { get; private set; }
+        public static Vector InGameSize { get; private set; } = Constants.Client.WindowSize;
+
 
         /// <summary>
-        /// Gets or sets the screen size in pixels and updates the UI scale. 
+        /// Gets the screen size in pixels. 
         /// </summary>
-        public static Point PixelSize
-        {
-            get { return screenSize; }
-            set
-            {
-                screenSize = value;
-                UiScale = Math.Min(screenSize.X, screenSize.Y) / 2;
-            }
-        }
+        public static Point PixelSize { get; private set; } = new Point(800, 600);
 
         /// <summary>
         /// Gets the size of the screen in UI units. 
@@ -67,28 +59,28 @@ namespace Client
         /// </summary>
         public static Point ScreenHalfSize
         {
-            get { return screenSize / 2; }
+            get { return PixelSize / 2; }
         }
 
 
-
-        public static void Update(Microsoft.Xna.Framework.GraphicsDeviceManager graphics, IHero hero)
+        public static void SetCamera(Point? windowSz, Vector? cameraCenter = null, Vector? gameSz = null)
         {
-            var hasHero = (hero != null);
-            CenterPoint = hero?.Position ?? Vector.Zero;
+            if (windowSz != null)
+            {
+                PixelSize = windowSz.Value;
+                UiScale = Math.Min(PixelSize.X, PixelSize.Y) / 2;
+            }
 
-            IsLocked = hasHero;
-
-            PixelSize = new Point(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
+            CenterPoint = cameraCenter ?? CenterPoint;
+            InGameSize = gameSz ?? InGameSize;
         }
-
 
         /// <summary>
         /// Gets the screen co-ordinates of the given in-game point. 
         /// </summary>
         public static Vector GameToScreen(Vector p)
         {
-            return (p - CenterPoint) * PixelSize / Constants.Client.WindowSize + ScreenHalfSize;
+            return (p - CenterPoint) * PixelSize / InGameSize + ScreenHalfSize;
         }
 
         /// <summary>
@@ -96,7 +88,7 @@ namespace Client
         /// </summary>
         public static Vector ScreenToGame(Vector position)
         {
-            return (position - ScreenHalfSize) * Constants.Client.WindowSize / PixelSize + CenterPoint;
+            return (position - ScreenHalfSize) *  InGameSize / PixelSize + CenterPoint;
         }
 
 

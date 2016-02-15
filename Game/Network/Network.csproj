@@ -85,15 +85,11 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AutoMapper, Version=4.0.4.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AutoMapper.4.0.4\lib\net45\AutoMapper.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="C5">
       <HintPath>..\..\packages\C5.2.3.0.1\lib\net40\C5.dll</HintPath>
     </Reference>
     <Reference Include="Lidgren.Network, Version=2012.1.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Lidgren.Network.1.0.0-CI00005\lib\net451\Lidgren.Network.dll</HintPath>
+      <HintPath>..\..\packages\Lidgren.Network.1.0.2\lib\net451\Lidgren.Network.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="protobuf-net">
@@ -109,14 +105,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Log.cs" />
-    <Compile Include="Objects\AbilityStub.cs" />
-    <Compile Include="Objects\BuffStub.cs" />
-    <Compile Include="Objects\DoodadStub.cs" />
-    <Compile Include="Objects\HeroStub.cs" />
     <Compile Include="NetworkExt.cs" />
     <Compile Include="Client\ObjectFactory.cs" />
-    <Compile Include="Objects\ObjectStub.cs" />
-    <Compile Include="Objects\UnitStub.cs" />
     <Compile Include="Client\LClient.cs" />
     <Compile Include="Server\LServer.cs" />
     <Compile Include="Common\LPeer.cs" />

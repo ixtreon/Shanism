@@ -33,7 +33,6 @@ namespace ShanoEditor.Views
         {
             this.components = new System.ComponentModel.Container();
             this.chkInfinite = new System.Windows.Forms.CheckBox();
-            this.shanoMap1 = new ShanoEditor.Views.Maps.ShanoMap();
             this.lblSize = new System.Windows.Forms.Label();
             this.nWidth = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
@@ -77,19 +76,6 @@ namespace ShanoEditor.Views
         "ted),\r\nor a finite, fixed map. ");
             this.chkInfinite.UseVisualStyleBackColor = true;
             this.chkInfinite.CheckedChanged += new System.EventHandler(this.chkInfinite_CheckedChanged);
-            // 
-            // shanoMap1
-            // 
-            this.shanoMap1.Cursor = System.Windows.Forms.Cursors.Cross;
-            this.shanoMap1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.shanoMap1.Location = new System.Drawing.Point(0, 0);
-            this.shanoMap1.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
-            this.shanoMap1.Name = "shanoMap1";
-            this.shanoMap1.ObjectBrush = null;
-            this.shanoMap1.Size = new System.Drawing.Size(342, 675);
-            this.shanoMap1.TabIndex = 0;
-            this.shanoMap1.TerrainBrush = null;
-            this.shanoMap1.TerrainBrushSize = 1;
             // 
             // lblSize
             // 
@@ -286,7 +272,6 @@ namespace ShanoEditor.Views
             // mapSplitter.Panel2
             // 
             this.mapSplitter.Panel2.Controls.Add(this.btnMaxTools);
-            this.mapSplitter.Panel2.Controls.Add(this.shanoMap1);
             this.mapSplitter.Size = new System.Drawing.Size(580, 677);
             this.mapSplitter.SplitterDistance = 232;
             this.mapSplitter.TabIndex = 1;
@@ -371,7 +356,6 @@ namespace ShanoEditor.Views
         private System.Windows.Forms.NumericUpDown nWidth;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.NumericUpDown nHeight;
-        private Maps.ShanoMap shanoMap1;
         private System.Windows.Forms.Button btnResizeMap;
         private System.Windows.Forms.GroupBox pFiniteSettings;
         private System.Windows.Forms.Panel pMapSettings;

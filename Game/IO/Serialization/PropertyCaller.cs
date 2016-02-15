@@ -12,7 +12,7 @@ namespace IO.Serialization
     /// Provides a fast method of getting and setting object properties. 
     /// </summary>
     /// <typeparam name="TThis">The type of the this.</typeparam>
-    public class PropertyCaller
+    public static class PropertyCaller
     {
         static readonly Dictionary<Tuple<Type, string>, IPropertyCallAdapter> instances = new Dictionary<Tuple<Type, string>, IPropertyCallAdapter>();
 
@@ -73,6 +73,8 @@ namespace IO.Serialization
             return instance;
         }
     }
+
+
     public interface IPropertyCallAdapter
     {
         object InvokeGet(object @this);

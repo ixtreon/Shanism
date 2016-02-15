@@ -51,14 +51,6 @@ namespace Engine.Systems.Buffs
         public string Description { get; private set; }
 
         /// <summary>
-        /// Gets the identifier of this buff. Currently its name. 
-        /// </summary>
-        public string Id
-        {
-            get { return Name; }
-        }
-
-        /// <summary>
         /// Gets or sets the life modifier of this buff. 
         /// </summary>
         public double Life { get; set; }
@@ -79,6 +71,11 @@ namespace Engine.Systems.Buffs
         public double Dodge { get; set; }
 
         /// <summary>
+        /// Gets or sets the critical strike chance modifier provided by this buff. 
+        /// </summary>
+        public double Crit { get; set; }
+
+        /// <summary>
         /// Gets or sets the movement speed modifier of this buff. 
         /// </summary>
         public double MoveSpeed { get; set; }
@@ -95,7 +92,7 @@ namespace Engine.Systems.Buffs
         /// <summary>
         /// Gets or sets the attack speed percentage modifier of this buff. 
         /// </summary>
-        public int AttackSpeed { get; set; }
+        public int AttackSpeedPercentage { get; set; }
 
         /// <summary>
         /// Gets or sets the mnimum damage modifier of this buff. 
@@ -172,7 +169,7 @@ namespace Engine.Systems.Buffs
             this.Dodge = @base.Dodge;
             this.MoveSpeed = @base.MoveSpeed;
             this.MoveSpeedPercentage = @base.MoveSpeedPercentage;
-            this.AttackSpeed = @base.AttackSpeed;
+            this.AttackSpeedPercentage = @base.AttackSpeedPercentage;
             this.MinDamage = @base.MinDamage;
             this.MaxDamage = @base.MaxDamage;
             this.Strength = @base.Strength;

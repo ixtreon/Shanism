@@ -109,7 +109,7 @@ namespace ScenarioLib
                 .ToList();
 
             units = unitTypes
-                .Select(ty => (IUnit)Activator.CreateInstance(ty, null, Vector.Zero))
+                .Select(ty => (IUnit)Activator.CreateInstance(ty, new object[] { null }))
                 .ToDictionary(o => o.GetType().FullName, o => o);
 
 
@@ -118,7 +118,7 @@ namespace ScenarioLib
                 .ToList();
 
             doodads = doodadTypes
-                .Select(ty => (IDoodad)Activator.CreateInstance(ty, Vector.Zero))
+                .Select(ty => (IDoodad)Activator.CreateInstance(ty, null))
                 .ToDictionary(o => o.GetType().FullName, o => o);
 
 
@@ -129,8 +129,7 @@ namespace ScenarioLib
         {
             return ty.GetConstructors()
                 .Select(c => c.GetParameters())
-                .Any(ps => ps.Length == 2
-                    && typeof(Vector).IsAssignableFrom(ps[1].ParameterType)
+                .Any(ps => ps.Length == 1
                     && typeof(IPlayer).IsAssignableFrom(ps[0].ParameterType));
         }
 
@@ -139,8 +138,7 @@ namespace ScenarioLib
         {
             return ty.GetConstructors()
                 .Select(c => c.GetParameters())
-                .Any(ps => ps.Length == 1
-                    && typeof(Vector).IsAssignableFrom(ps[0].ParameterType));
+                .Any(ps => ps.Length == 0);
         }
     }
 }

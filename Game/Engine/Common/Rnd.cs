@@ -7,9 +7,9 @@ using IO.Common;
 
 namespace Engine
 {
-    public class Rnd
+    public static class Rnd
     {
-        private static Random rnd = new Random();
+        static Random rnd = new Random();
 
 
         /// <summary>

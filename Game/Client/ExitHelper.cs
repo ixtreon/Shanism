@@ -8,16 +8,17 @@ namespace Client
 {
     static class ExitHelper
     {
-        static MainGame TheGame;
+        static ClientInstance TheGame;
 
-        public static void SetGame(MainGame theGame)
+        public static void SetGame(ClientInstance theGame)
         {
             TheGame = theGame;
         }
 
         public static void Exit()
         {
-            TheGame.Exit();
+            if(TheGame != null)
+                TheGame.Exit();
         }
     }
 }

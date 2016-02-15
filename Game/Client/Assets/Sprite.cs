@@ -75,12 +75,13 @@ namespace Client.Assets
         /// </summary>
         void updateModel()
         {
-            if (Object.ModelName.ToLowerInvariant() != modelName)
+            var _mName = (Object.ModelName ?? string.Empty).ToLowerInvariant();
+            if (_mName != modelName)
             {
                 //refetch model, reset animation
-                modelName = Object.ModelName.ToLowerInvariant();
+                modelName = _mName;
 
-                modelDef = ContentList.ModelDict.TryGet(modelName)
+                modelDef = ContentList.ModelDict.TryGet(_mName)
                     ?? SpriteCache.DefaultModel;
 
                 animationName = null;
@@ -96,10 +97,11 @@ namespace Client.Assets
         /// </summary>
         void updateAnimation(int msElapsed)
         {
-            if (Object.AnimationName.ToLowerInvariant() != animationName)
+            var _animName = (Object.AnimationName ?? string.Empty).ToLowerInvariant();
+            if (_animName != animationName)
             {
                 //refetch animation
-                animationName = Object.AnimationName.ToLowerInvariant();
+                animationName = _animName;
                 animationDef = modelDef.Animations.TryGet(animationName)
                     ?? modelDef.Animations.TryGet("stand")
                     ?? modelDef.Animations.First().Value

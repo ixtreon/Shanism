@@ -21,7 +21,7 @@ namespace DefaultScenario.Buffs
             Icon = "horror-eerie-2";
 
             MoveSpeedPercentage = -190;
-            AttackSpeed = -25;
+            AttackSpeedPercentage = -25;
             Strength = 5;
         }
     }

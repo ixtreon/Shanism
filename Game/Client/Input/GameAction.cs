@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework.Input;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +23,11 @@ namespace Client.Input
         MoveDown,
 
         Chat,
+
+        /// <summary>
+        /// Reloads the user interface. Useful for debugging. 
+        /// </summary>
+        ReloadUi,
 
         //should be last!
         ActionBar,

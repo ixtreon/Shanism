@@ -23,10 +23,10 @@ namespace IO.Message.Server
         /// Informs the client of the id of its hero. 
         /// </summary>
         /// <param name="hero"></param>
-        public PlayerStatusMessage(IHero hero)
+        public PlayerStatusMessage(uint heroId)
             : this()
         {
-            HeroId = hero.Guid;
+            HeroId = heroId;
         }
     }
 }

@@ -27,14 +27,14 @@ namespace Client.UI.Common
 
         public override void OnDraw(Graphics g)
         {
-            var hasText = ShowText && MaxValue != 0;
+            var hasText = ShowText && MaxValue > 0;
             var text = hasText ? (Value.ToString("0") + "/" + MaxValue.ToString("0")) : string.Empty;
 
             //background
             g.Draw(Content.Textures.Blank, Vector.Zero, Size, BackColor);
 
             //value
-            if(MaxValue != 0)
+            if(MaxValue > 0)
             {
                 var borderSize = new Vector(Size.Y / 10);
                 var fullSize = Size - borderSize * 2;

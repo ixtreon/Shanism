@@ -137,6 +137,8 @@ namespace Client.UI
             castBar.Target = MainHero;
             heroBuffBar.Target = MainHero;
             heroFrame.Target = MainHeroControl;
+
+            Ticker.Default.Update(msElapsed);
         }
     }
 }

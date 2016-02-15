@@ -8,6 +8,9 @@ namespace IO.Objects
 {
     public interface IAbility
     {
+        uint Id { get; }
+
+
         /// <summary>
         /// Gets the name of the ability. 
         /// </summary>

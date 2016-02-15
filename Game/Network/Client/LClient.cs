@@ -39,7 +39,7 @@ namespace Network
 
         public IHero MainHero { get; private set; }
 
-        public IClient GameClient { get; private set; }
+        public IShanoClient GameClient { get; private set; }
 
 
         static LClient()
@@ -57,7 +57,7 @@ namespace Network
             var conn = NetClient.Connect(hostAddress, NetworkPort);
         }
 
-        public void SetClient(IClient client)
+        public void SetClient(IShanoClient client)
         {
             this.GameClient = client;
 
@@ -73,7 +73,7 @@ namespace Network
         internal override void OnConnected(NetConnection conn)
         {
             //send a handshake init no matter if the client requested it or not, lel
-            HandshakeInitMessage ioMsg = new HandshakeInitMessage(PlayerName);
+            var ioMsg = new HandshakeInitMessage(PlayerName);
             SendMessage(ioMsg);
         }
 

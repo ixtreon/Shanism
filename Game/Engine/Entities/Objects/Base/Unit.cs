@@ -216,9 +216,7 @@ namespace Engine.Entities
         /// </summary>
         public double Life
         {
-            get
-            {
-                return LifePercentage * MaxLife;
+            get { return LifePercentage * MaxLife;
             }
             set
             {
@@ -236,10 +234,7 @@ namespace Engine.Entities
         /// </summary>
         public double Mana
         {
-            get
-            {
-                return ManaPercentage * MaxMana;
-            }
+            get { return ManaPercentage * MaxMana; }
             set
             {
                 if (MaxMana > 0)
@@ -269,6 +264,8 @@ namespace Engine.Entities
         public int TotalCastingTime {  get { return (Order as CastOrder?)?.Ability?.CastTime ?? -1; } }
         #endregion
 
+        public override bool HasCollision {  get { return !IsDead && !StateFlags.HasFlag(UnitFlags.NoCollision); } }
+
         protected Unit()
         {
             BaseLife = 5;
@@ -278,16 +275,16 @@ namespace Engine.Entities
             Owner = Player.NeutralAggressive;
         }
 
-        public Unit(Player owner, int level = 1)
+        protected Unit(Player owner, int level = 1)
         {
             Owner = owner;
             Level = level;
 
-            Scale = 0.4;
+            Scale = 2;
             BaseAttacksPerSecond = 0.6;
             BaseMinDamage = 0;
             BaseMaxDamage = 2;
-            BaseMoveSpeed = 5;
+            BaseMoveSpeed = 20;
             BaseDefense = 0;
             BaseDodgeChance = 5;
             BaseLife = 5;

@@ -32,7 +32,7 @@ namespace Client.Objects
         /// Creates a new ObjectControl for the given game object. 
         /// </summary>
         /// <param name="obj">The underlying game object. </param>
-        public ObjectControl(IGameObject obj)
+        protected ObjectControl(IGameObject obj)
         {
             Object = obj;
 

@@ -1,0 +1,152 @@
+﻿using Client.Input;
+using Client.Map;
+using Client.UI;
+using IO;
+using IO.Message;
+using IO.Message.Client;
+using IO.Message.Server;
+using IO.Objects;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using ScenarioLib;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Client
+{
+    /// <summary>
+    /// The main game class that starts the client engine. 
+    /// </summary>
+    class ClientInstance : Game, IClientInstance
+    {
+        readonly ClientEngine _clientEngine;
+
+        GraphicsDeviceManager graphics;
+
+
+        Rectangle _windowSize;
+        bool _stopResizeRecurse;
+        bool _isLoaded;
+
+
+        #region IShanoClient implementation
+
+        public IShanoClient Engine { get { return _clientEngine; } }
+
+        public event Action GameLoaded;
+
+        #endregion
+
+
+        public ClientInstance(string playerName)
+        {
+            graphics = new GraphicsDeviceManager(this);
+            _clientEngine = new ClientEngine(playerName, graphics, Content);
+        }
+
+
+        /// <summary>
+        /// Run at the beginning. 
+        /// </summary>
+        protected override void Initialize()
+        {
+            base.Initialize();
+
+            Content.RootDirectory = "Content";
+            Window.Title = "ShanoRPG";
+
+            ExitHelper.SetGame(this);
+
+            GraphicsDevice.RasterizerState = new RasterizerState
+            {
+                CullMode = CullMode.None,
+            };
+
+            //no vsync
+            graphics.SynchronizeWithVerticalRetrace = false;
+            this.IsFixedTimeStep = false;
+            graphics.ApplyChanges();
+
+
+            //hook resizing, set mouse
+            IsMouseVisible = true;
+            Window.AllowUserResizing = true;
+            Window.ClientSizeChanged += Window_ClientSizeChanged;
+        }
+
+
+        /// <summary>
+        /// Changes the back buffer size in response to window resize. 
+        /// </summary>
+        void Window_ClientSizeChanged(object sender, EventArgs e)
+        {
+            if (_stopResizeRecurse) return;
+            _stopResizeRecurse = true;
+
+            var sz = Window.ClientBounds;
+            if (sz != _windowSize && sz.Width > 0 && sz.Height > 0)
+            {
+                //update graphics size
+                _windowSize = sz;
+                graphics.PreferredBackBufferWidth = sz.Width;
+                graphics.PreferredBackBufferHeight = sz.Height;
+                graphics.ApplyChanges();
+
+            }
+
+            //update drawtargets
+            _clientEngine.WindowSizeChanged(Window.ClientBounds.ToRect());
+
+            _stopResizeRecurse = false;
+        }
+
+
+        /// <summary>
+        /// LoadContent will be called once per game and is the place to load
+        /// all of your content.
+        /// </summary>
+        protected override void LoadContent()
+        {
+            _clientEngine.LoadContent();
+        }
+
+
+        /// <summary>
+        /// Allows the game to run logic such as updating the world,
+        /// checking for collisions, gathering input, and playing audio.
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        protected override void Update(GameTime gameTime)
+        {
+            _clientEngine.Update(gameTime);
+
+            base.Update(gameTime);
+        }
+
+        /// <summary>
+        /// This is called when the game should draw itself.
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        protected override void Draw(GameTime gameTime)
+        {
+            if(!_isLoaded)
+            {
+                _isLoaded = true;
+                GameLoaded?.Invoke();
+                Window_ClientSizeChanged(null, null);
+            }
+
+            _clientEngine.Draw(gameTime);
+
+            base.Draw(gameTime);
+        }
+
+        public void SetServer(IReceptor server)
+        {
+            _clientEngine.SetServer(server);
+        }
+    }
+}

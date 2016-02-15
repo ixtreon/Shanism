@@ -60,15 +60,15 @@ namespace IO.Common
 
         public static MapChunkId ChunkOf(Vector pos)
         {
-            int x = (int)Math.Floor(pos.X / ChunkSize.X);
-            int y = (int)Math.Floor(pos.Y / ChunkSize.Y);
+            var x = (int)Math.Floor(pos.X / ChunkSize.X);
+            var y = (int)Math.Floor(pos.Y / ChunkSize.Y);
             return new MapChunkId(x, y);
         }
 
         public static IEnumerable<MapChunkId> ChunksBetween(Vector lowerLeft, Vector upperRight)
         {
-            var lowBin = ChunkOf(lowerLeft).ChunkId - new Point(1);
-            var hiBin = ChunkOf(upperRight).ChunkId + new Point(1);
+            var lowBin = ChunkOf(lowerLeft).ChunkId;
+            var hiBin = ChunkOf(upperRight).ChunkId;
 
             for (int ix = lowBin.X; ix <= hiBin.X; ix++)
                 for (int iy = lowBin.Y; iy <= hiBin.Y; iy++)

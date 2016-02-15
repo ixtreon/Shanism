@@ -12,6 +12,9 @@ namespace IO.Objects
     /// </summary>
     public interface IBuff
     {
+        uint Id { get; }
+
+
         /// <summary>
         /// Gets the icon of the buff. 
         /// </summary>
@@ -34,7 +37,7 @@ namespace IO.Objects
         double Dodge { get; }
         double MoveSpeed { get; }
         int MoveSpeedPercentage { get; }
-        int AttackSpeed { get; }
+        int AttackSpeedPercentage { get; }
         double MinDamage { get; }
         double MaxDamage { get; }
 

@@ -13,8 +13,8 @@ namespace Client.Input
     static class KeyboardInfo
     {
 
-        static KeyboardState oldKeyboard;
-        static KeyboardState newKeyboard;
+        static HashSet<Keys> oldKeysDown = new HashSet<Keys>();
+        static HashSet<Keys> newKeysDown = new HashSet<Keys>();
         
 
         public static ChatProvider ChatProvider { get; private set; }
@@ -24,7 +24,7 @@ namespace Client.Input
         /// </summary>
         public static bool IsControlDown
         {
-            get { return newKeyboard.IsKeyDown(Keys.LeftControl) || newKeyboard.IsKeyDown(Keys.RightControl); }
+            get { return oldKeysDown.Contains(Keys.LeftControl) || newKeysDown.Contains(Keys.RightControl); }
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace Client.Input
         /// </summary>
         public static bool IsAltDown
         {
-            get { return newKeyboard.IsKeyDown(Keys.LeftAlt) || newKeyboard.IsKeyDown(Keys.RightAlt); }
+            get { return oldKeysDown.Contains(Keys.LeftAlt) || newKeysDown.Contains(Keys.RightAlt); }
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Client.Input
         /// </summary>
         public static bool IsShiftDown
         {
-            get { return newKeyboard.IsKeyDown(Keys.LeftShift) || newKeyboard.IsKeyDown(Keys.RightShift); }
+            get { return oldKeysDown.Contains(Keys.LeftShift) || newKeysDown.Contains(Keys.RightShift); }
         }
 
         static KeyboardInfo()
@@ -54,13 +54,12 @@ namespace Client.Input
         /// <param name="msElapsed"></param>
         public static void Update(int msElapsed)
         {
-            oldKeyboard = newKeyboard;
-            newKeyboard = Keyboard.GetState();
+            oldKeysDown = newKeysDown;
+            newKeysDown = new HashSet<Keys>(Keyboard.GetState().GetPressedKeys());
 
             //inform the chat provider
 
-
-            var keysJustPressed = newKeyboard.GetPressedKeys().Except(oldKeyboard.GetPressedKeys());
+            var keysJustPressed = oldKeysDown.Except(newKeysDown);
             ChatProvider.Update(msElapsed, keysJustPressed);
         }
 
@@ -69,7 +68,7 @@ namespace Client.Input
         /// </summary>
         public static bool IsDown(Keys k)
         {
-            return newKeyboard.IsKeyDown(k);
+            return newKeysDown.Contains(k);
         }
 
         /// <summary>
@@ -79,9 +78,9 @@ namespace Client.Input
         public static bool IsActivated(Keys k)
         {
             if (ShanoSettings.Current.QuickButtonPress)
-                return oldKeyboard.IsKeyUp(k) && newKeyboard.IsKeyDown(k);
+                return !oldKeysDown.Contains(k) && newKeysDown.Contains(k);
 
-            return oldKeyboard.IsKeyDown(k) && newKeyboard.IsKeyUp(k);
+            return oldKeysDown.Contains(k) && !newKeysDown.Contains(k);
         }
 
 

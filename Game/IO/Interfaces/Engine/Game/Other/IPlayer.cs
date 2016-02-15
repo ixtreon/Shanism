@@ -11,6 +11,8 @@ namespace IO.Objects
     /// </summary>
     public interface IPlayer
     {
+        uint Id { get; }
+
         /// <summary>
         /// Gets whether this player is the Neutral Aggressive player. 
         /// </summary>

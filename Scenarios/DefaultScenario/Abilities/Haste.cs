@@ -38,7 +38,7 @@ namespace DefaultScenario.Abilities
                 FullDuration = 5000,
 
                 MoveSpeedPercentage = 400,
-                AttackSpeed = 25,
+                AttackSpeedPercentage = 25,
             };
 
             e.TargetUnit.Buffs.Add(b);

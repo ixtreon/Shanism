@@ -10,12 +10,12 @@ using Engine.Entities.Objects;
 namespace Engine.Entities.Objects
 {
     /// <summary>
-    /// A projectile is a special type of doodad that travels in a straight line
+    /// A projectile is a special type of effect that travels in a straight line
     /// and fires an event whenever it collides with <see cref="Unit"/>s on its way. 
     /// This class also supports setting the max distance travelled, whether the projectile is
     /// destroyed on collision and tracking of the units that are hit.  
     /// </summary>
-    public class Projectile : Doodad
+    public class Projectile : Effect
     {
         /// <summary>
         /// Gets or sets the speed of the projectile in game units per second. 
@@ -53,7 +53,7 @@ namespace Engine.Entities.Objects
         /// <summary>
         /// Contains all units we have hit so far. 
         /// </summary>
-        private HashSet<Unit> unitsHit = new HashSet<Unit>();
+        readonly HashSet<Unit> unitsHit = new HashSet<Unit>();
 
         /// <summary>
         /// Gets or sets the owner of this projectile. 
@@ -88,7 +88,6 @@ namespace Engine.Entities.Objects
             ModelName = model;
 
             this.Owner = owner;
-            this.Destructible = false;
 
             if(ignoredUnits != null)
                 foreach(var u in ignoredUnits)
@@ -134,7 +133,7 @@ namespace Engine.Entities.Objects
                 }
             }
 
-            if (DistanceTravelled > MaxRange && MaxRange != 0)
+            if (DistanceTravelled > MaxRange && MaxRange > 0)
                 this.Destroy();
 
             base.Update(msElapsed);

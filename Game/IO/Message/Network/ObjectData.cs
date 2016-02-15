@@ -29,6 +29,7 @@ namespace IO.Message.Network
             : this()
         {
             Guid = objGuid;
+            //ObjectType = objType;
             Data = objData;
         }
     }

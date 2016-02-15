@@ -37,8 +37,7 @@ namespace ScenarioLib
         {
             return expr.Members
                 .OfType<ConstructorDeclarationSyntax>()
-                .Where(c => c.ParameterList.Parameters.Count == 0)
-                .FirstOrDefault();
+                .FirstOrDefault(c => c.ParameterList.Parameters.Count == 0);
         }
 
         public static string GetMethodName(this MemberDeclarationSyntax member)

@@ -27,7 +27,7 @@ namespace Network
         }
 
 
-        readonly IEngine engine;
+        readonly IShanoEngine engine;
 
         readonly Dictionary<NetConnection, NetGameClient> clients = new Dictionary<NetConnection, NetGameClient>();
 
@@ -37,7 +37,7 @@ namespace Network
 
 
 
-        public LServer(IEngine engine)
+        public LServer(IShanoEngine engine)
             : base(new NetServer(new NetPeerConfiguration(AppIdentifier) { Port = NetworkPort }))
         {
             this.engine = engine;

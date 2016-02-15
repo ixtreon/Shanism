@@ -150,7 +150,7 @@ namespace IO.Objects
         /// <summary>
         /// Gets the unit state flags that currently affect this unit. 
         /// </summary>
-        UnitState StateFlags { get; }
+        UnitFlags StateFlags { get; }
 
         ///// <summary>
         ///// Gets the ability this unit is currently casting or null otherwise. 

@@ -6,6 +6,7 @@ using IO.Content;
 using IO.Objects;
 using IO.Serialization;
 using IO.Util;
+using Network.Objects;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
@@ -102,11 +103,7 @@ namespace Engine.Entities
             }
         }
 
-        /// <summary>
-        /// Gets the globally unique identifier of the object. 
-        /// </summary>
-        public uint Guid { get; private set; }
-
+        public abstract bool HasCollision { get; }
 
         public abstract ObjectType Type { get; }
 
@@ -177,11 +174,9 @@ namespace Engine.Entities
             Name = "Dummy Unit";
             ModelName = IO.Constants.Content.DefaultValues.ModelName;
             Scale = 0.4;
-
-            Guid = ObjectGuid.GetNew();
         }
 
-        public GameObject(
+        protected GameObject(
             string name = null,
             Vector? position = null, 
             string modelName = null,
@@ -191,18 +186,14 @@ namespace Engine.Entities
             Position = position ?? Vector.Zero;
             ModelName = modelName ?? IO.Constants.Content.DefaultValues.ModelName;
             Scale = scale ?? 0.4;
-
-            Guid = ObjectGuid.GetNew();
         }
 
-        public GameObject(GameObject proto)
+        protected GameObject(GameObject proto)
         {
             Name = proto.Name;
             Position = proto.Position;
             ModelName = proto.ModelName;
             Scale = proto.Scale;
-
-            Guid = ObjectGuid.GetNew();
         }
 
         public void SetAnimation(string anim)
@@ -240,7 +231,7 @@ namespace Engine.Entities
 
         public override int GetHashCode()
         {
-            return (int)Guid;
+            return (int)Id;
         }
 
 
@@ -248,12 +239,23 @@ namespace Engine.Entities
         {
             if (!(obj is GameObject))
                 return false;
-            return ((GameObject)obj).Guid == Guid;
+            return ((GameObject)obj).Id == Id;
         }
 
         public override string ToString()
         {
-            return "{0} #{1}".F(Type.ToString(), Guid);
+            return "{0} #{1}".F(Type.ToString(), Id);
+        }
+
+
+        public static implicit operator ObjectStub(GameObject obj)
+        {
+            return new ObjectStub();
+        }
+
+        public static implicit operator GameObject(ObjectStub obj)
+        {
+            return new Doodad();
         }
     }
 }

@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Collections;
 using IO;
 using IO.Common;
 using Color = Microsoft.Xna.Framework.Color;
@@ -322,7 +321,7 @@ namespace Client.UI
 
 
 
-        public Control()
+        protected Control()
         {
             Visible = true;
             MouseDown += UserControl_MouseDown;
@@ -444,7 +443,7 @@ namespace Client.UI
         }
 
         /// <summary>
-        /// Updates the control's state and fires the appropriate events in response to user input. 
+        /// Updates the state of the control and recursively calls update for all child controls. 
         /// </summary>
         /// <param name="msElapsed"></param>
         public void Update(int msElapsed)
@@ -485,18 +484,14 @@ namespace Client.UI
         protected virtual void OnUpdate(int msElapsed) { }
 
 
-        /// <summary>
-        /// Returns the control under the mouse pointer: could be this or any control, even null if there is no such control. 
-        /// </summary>
-        /// <returns></returns>
-        private Control GetHoverControl()
+        Control recalcHoverControl()
         {
             //search child controls first
             //order by reverse z - higher is first
             var childHover = controls
                 .Where(c => c.Visible)
                 .OrderBy(c => -c.ZOrder)
-                .Select(c => c.GetHoverControl())
+                .Select(c => c.recalcHoverControl())
                 .Where(c => c != null)
                 .FirstOrDefault();
 
@@ -533,7 +528,7 @@ namespace Client.UI
 
             //update the hover control
             var oldHover = HoverControl ?? this;
-            HoverControl = GetHoverControl() ?? this;
+            HoverControl = recalcHoverControl() ?? this;
 
             //mouse move
             if (mPos != oldMPos)

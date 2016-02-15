@@ -10,14 +10,14 @@ namespace Engine.Entities
 {
     partial class Unit
     {
-        public UnitState StateFlags { get; private set; }
+        public UnitFlags StateFlags { get; private set; }
 
-        public Dictionary<UnitState, int> StateStacks = new Dictionary<UnitState, int>();
+        public Dictionary<UnitFlags, int> StateStacks = new Dictionary<UnitFlags, int>();
 
         /// <summary>
         /// Applies a single instance of the given state to the unit. 
         /// </summary>
-        public void ApplyState(UnitState state)
+        public void ApplyState(UnitFlags state)
         {
             var stacks = StateStacks.TryGetVal(state) ?? 0;
 
@@ -33,7 +33,7 @@ namespace Engine.Entities
         /// </summary>
         /// <param name="state">The UnitState to remove. </param>
         /// <param name="purgeAll">Whether to remove all instances of the state. </param>
-        public void RemoveState(UnitState state, bool purgeAll = false)
+        public void RemoveState(UnitFlags state, bool purgeAll = false)
         {
             //get n of stacks
             var stacks = StateStacks.TryGetVal(state) ?? 0;
@@ -61,7 +61,7 @@ namespace Engine.Entities
         }
 
 
-        public bool HasState(UnitState state)
+        public bool HasState(UnitFlags state)
         {
             return StateFlags.HasFlag(state);
         }

@@ -19,3 +19,9 @@
 /processorParam:DebugMode=Auto
 /build:Shaders/shader.fx
 
+#begin ShanoFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:ShanoFont.spritefont
+

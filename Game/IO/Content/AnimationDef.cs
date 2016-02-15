@@ -61,8 +61,11 @@ namespace IO.Content
             if (!IsDynamic)
                 return Span;
 
-            var x = Span.X + (frame % Span.Width);
-            var y = Span.Y + (frame / Span.Width);
+            var w = Span.Width > 0 ? Span.Width : 1;
+            var h = Span.Height > 0 ? Span.Height  : 1;
+
+            var x = Span.X + (frame % w);
+            var y = Span.Y + (frame / w);
             return new Rectangle(x, y, 1, 1);
         }
 

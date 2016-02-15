@@ -34,7 +34,7 @@ namespace IO.Message.Server
             : this()
         {
             Object = obj;
-            Guid = obj.Guid;
+            Guid = obj.Id;
         }
     }
 }

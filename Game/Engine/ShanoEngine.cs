@@ -10,19 +10,19 @@ using System.Linq;
 using System.Threading;
 using IO.Performance;
 using IO.Util;
+using Engine.Network;
 
 namespace Engine
 {
     /// <summary>
     /// The game engine lies here. 
     /// </summary>
-    public class ShanoEngine : IEngine
+    public class ShanoEngine : IShanoEngine
     {
         /// <summary>
         /// The frames per second we aim to run at. 
         /// </summary>
-        const int FPS = 50;
-
+        const int FPS = 60;
 
 
         ConcurrentSet<MapChunkId> generatedChunks { get; } = new ConcurrentSet<MapChunkId>();
@@ -36,10 +36,6 @@ namespace Engine
 
         internal PerfCounter PerfCounter { get; } = new PerfCounter();
 
-        /// <summary>
-        /// The current game map containing unit/doodad/sfx info. 
-        /// </summary>
-        internal EntityMap EntityMap { get; } = new EntityMap();
 
         /// <summary>
         /// Gets the scenario this engine is playing. 
@@ -68,22 +64,20 @@ namespace Engine
         /// </summary>
         public double GameTime { get; private set; }
 
+
+        #region Systems
+
         /// <summary>
-        /// Gets whether this engine is open for online play. 
+        /// The current game map containing unit/doodad/sfx info. 
         /// </summary>
-        internal bool IsOnline { get; private set; }
+        internal MapSystem map { get; } = new MapSystem();
+
+        NetworkSystem network { get; } = new NetworkSystem();
 
 
+        List<GameSystem> systems { get; } = new List<GameSystem>();
+        #endregion
 
-        internal Network.LServer NetworkServer { get; private set; }
-
-        internal ObjectMap Map
-        {
-            get
-            {
-                return EntityMap.Map;
-            }
-        }
 
         public ShanoEngine(int mapSeed, string scenarioDir)
         {
@@ -97,11 +91,15 @@ namespace Engine
                 throw e;
             }
 
+            //register the server as the parent of all objects. 
             ScenarioObject.Init(this);
-
 
             //create the terrain, object map from the scenario. 
             TerrainMap = Maps.Terrain.MapGod.Create(Scenario.MapConfig, mapSeed);
+
+            //create all subsystems
+            systems.Add((map = new MapSystem()));
+            systems.Add(network = new NetworkSystem());
 
             //run scripts
             Scenario.RunScripts(cs => cs.OnGameStart());
@@ -109,7 +107,7 @@ namespace Engine
 
         #region IEngine implementation
 
-        public INetReceptor AcceptClient(IClient c)
+        public INetReceptor AcceptClient(IShanoClient c)
         {
             // TODO: do some checks on player join?x
 
@@ -167,14 +165,7 @@ namespace Engine
         /// <param name="port"></param>
         public void OpenToNetwork()
         {
-            if (IsOnline)
-            {
-                Console.WriteLine("Trying to open the server for network play but it is already online!");
-                return;
-            }
-
-            IsOnline = true;
-            NetworkServer = new Network.LServer(this);
+            network.Start(this);
         }
         #endregion
 
@@ -220,13 +211,11 @@ namespace Engine
         {
             PerfCounter.Reset();
 
-            if (IsOnline)
-                NetworkServer.Update(msElapsed);
+            foreach (var sys in systems)
+                sys.Update(msElapsed);
+
 
             GameTime += msElapsed;
-
-            //update the map along with all units. 
-            EntityMap.Update(msElapsed);
 
             foreach (var p in Players)
                 p.Update(msElapsed);
@@ -248,7 +237,7 @@ namespace Engine
             if (!generatedChunks.TryAdd(chunk))
             {
                 foreach (var dood in TerrainMap.GetNativeDoodads(rect))
-                    EntityMap.Add(dood);
+                    map.Add(dood);
             }
         }
 

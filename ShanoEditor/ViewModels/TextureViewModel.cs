@@ -34,8 +34,6 @@ namespace ShanoEditor.ViewModels
         public Point FullSize { get { return new Point(Image.Width, Image.Height); } }
 
 
-        TextureDef oldData;
-
 
         public TextureViewModel(string fullPath, string relPath, Bitmap bmp, TextureDef data)
         {

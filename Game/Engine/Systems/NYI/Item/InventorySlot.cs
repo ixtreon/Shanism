@@ -17,11 +17,12 @@ namespace Engine.Systems.Item
         Neck     = 1 << 1,
         Shoulder = 1 << 2,
         Torso    = 1 << 3,
-        Legs     = 1 << 4,
-        Feet     = 1 << 5,
-        Arms     = 1 << 6,
-        MainHand = 1 << 7,
-        OffHand  = 1 << 8,
+        Back     = 1 << 4,
+        Legs     = 1 << 5,
+        Feet     = 1 << 6,
+        Arms     = 1 << 7,
+        MainHand = 1 << 8,
+        OffHand  = 1 << 9,
         
 
         All      = (1 << 16) - 1,

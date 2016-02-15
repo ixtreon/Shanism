@@ -16,6 +16,7 @@ namespace Client.Map
     /// Contains the data for a chunk, including an array of the tiles 
     /// and a pointer to the VertexBuffer on the GPU where it is contained. 
     /// </summary>
+    [Obsolete]
     class ChunkData : IDisposable
     {
         public readonly TerrainType[] Tiles;
@@ -40,10 +41,12 @@ namespace Client.Map
         {
             get { return Constants.Terrain.ChunkSize; }
         }
+
         public int Height
         {
             get { return Constants.Terrain.ChunkSize; }
         }
+
         public int Area
         {
             get { return Width * Height; }
@@ -65,7 +68,7 @@ namespace Client.Map
         /// Builds the framebuffer for this chunk. Throws an exception if the framebuffer is already created. 
         /// </summary>
         /// <param name="device"></param>
-        public void BuildBuffer(GraphicsDevice device, Func<int, int, TerrainType> getTerrain)
+        public void BuildBuffer(GraphicsDevice device)
         {
             if (HasBuffer)
                 throw new Exception("Don't call me twice!");

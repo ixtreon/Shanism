@@ -21,7 +21,7 @@ namespace DefaultScenario.Buffs
             Icon = "enchant-orange-3";
 
             MoveSpeedPercentage = 400;
-            AttackSpeed = 25;
+            AttackSpeedPercentage = 25;
         }
     }
 }

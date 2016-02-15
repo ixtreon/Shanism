@@ -7,9 +7,9 @@ namespace IO.Objects
 {
     public interface IGameObject
     {
-        ObjectType Type { get; }
+        uint Id { get; }
 
-        uint Guid { get; }
+        ObjectType Type { get; }
 
         Vector Position { get; }
 

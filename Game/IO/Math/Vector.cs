@@ -31,30 +31,18 @@ namespace IO.Common
         /// </summary>
         public static readonly Vector MinValue = new Vector(double.MinValue);
 
-        [ProtoMember(1)]
-        double x;
-
-        [ProtoMember(2)]
-        double y;
-
         /// <summary>
         /// Gets or sets the X coordinate of this vector. 
         /// </summary>
-        public double X
-        {
-            get { return x; }
-            set { x = value; }
-        }
+        [ProtoMember(1)]
+        public double X;
 
         /// <summary>
         /// Gets or sets the Y coordinate of this vector. 
         /// </summary>
 
-        public double Y
-        {
-            get { return y; }
-            set { y = value; }
-        }
+        [ProtoMember(2)]
+        public double Y;
 
         public double this[int dimension]
         {
@@ -62,17 +50,8 @@ namespace IO.Common
             {
                 switch (dimension)
                 {
-                    case 0: return x;
-                    case 1: return y;
-                    default: throw new ArgumentOutOfRangeException(nameof(dimension), "Vector dimension must be 0 or 1!");
-                }
-            }
-            set
-            {
-                switch (dimension)
-                {
-                    case 0: x = value; break;
-                    case 1: y = value; break;
+                    case 0: return X;
+                    case 1: return Y;
                     default: throw new ArgumentOutOfRangeException(nameof(dimension), "Vector dimension must be 0 or 1!");
                 }
             }
@@ -94,7 +73,7 @@ namespace IO.Common
         /// </summary>
         public Vector(double v)
         {
-            x = y = v;
+            X = Y = v;
         }
 
         /// <summary>
@@ -102,24 +81,18 @@ namespace IO.Common
         /// </summary>
         public Vector(double x, double y)
         {
-            this.x = x;
-            this.y = y;
+            this.X = x;
+            this.Y = y;
         }
 
 
         #region Operator Overloads
-
-        public static Vector operator -(Vector a)
-        {
-            return new Vector(-a.x, -a.y);
-        }
-
         /// <summary>
         /// Performs an element-wise addition on the two vectors. 
         /// </summary>
         public static Vector operator +(Vector a, Vector b)
         {
-            return new Vector(a.x + b.x, a.y + b.y);
+            return new Vector(a.X + b.X, a.Y + b.Y);
         }
 
         /// <summary>
@@ -127,7 +100,7 @@ namespace IO.Common
         /// </summary>
         public static Vector operator -(Vector a, Vector b)
         {
-            return new Vector(a.x - b.x, a.y - b.y);
+            return new Vector(a.X - b.X, a.Y - b.Y);
         }
 
         /// <summary>
@@ -135,7 +108,7 @@ namespace IO.Common
         /// </summary>
         public static Vector operator /(Vector a, Vector b)
         {
-            return new Vector(a.x / b.x, a.y / b.y);
+            return new Vector(a.X / b.X, a.Y / b.Y);
         }
 
         /// <summary>
@@ -143,17 +116,17 @@ namespace IO.Common
         /// </summary>
         public static Vector operator *(Vector a, Vector b)
         {
-            return new Vector(a.x * b.x, a.y * b.y);
+            return new Vector(a.X * b.X, a.Y * b.Y);
         }
 
         public static bool operator ==(Vector a, Vector b)
         {
-            return a.x.Equals(b.x) && a.y.Equals(b.y);
+            return a.X.Equals(b.X) && a.Y.Equals(b.Y);
         }
 
         public static bool operator !=(Vector a, Vector b)
         {
-            return !a.x.Equals(b.x) || !a.y.Equals(b.y);
+            return !a.X.Equals(b.X) || !a.Y.Equals(b.Y);
         }
 
         /// <summary>
@@ -161,7 +134,7 @@ namespace IO.Common
         /// </summary>
         public static Vector operator -(Vector a, double v)
         {
-            return new Vector(a.x - v, a.y - v);
+            return new Vector(a.X - v, a.Y - v);
         }
 
         /// <summary>
@@ -169,17 +142,17 @@ namespace IO.Common
         /// </summary>
         public static Vector operator +(Vector a, double v)
         {
-            return new Vector(a.x + v, a.y + v);
+            return new Vector(a.X + v, a.Y + v);
         }
 
         public static Vector operator *(Vector a, double mult)
         {
-            return new Vector(a.x * mult, a.y * mult);
+            return new Vector(a.X * mult, a.Y * mult);
         }
 
         public static Vector operator /(Vector a, double mult)
         {
-            return new Vector(a.x / mult, a.y / mult);
+            return new Vector(a.X / mult, a.Y / mult);
         }
 
 
@@ -192,13 +165,20 @@ namespace IO.Common
 
         #region Unary ops
 
+
+        public static Vector operator -(Vector a)
+        {
+            return new Vector(-a.X, -a.Y);
+        }
+
+
         /// <summary>
         /// Returns whether any of the components of this vector is <see cref="double.NaN"/>. 
         /// </summary>
         /// <returns></returns>
         public bool IsNan()
         {
-            return double.IsNaN(x) || double.IsNaN(y);
+            return double.IsNaN(X) || double.IsNaN(Y);
         }
 
 
@@ -207,7 +187,7 @@ namespace IO.Common
         /// </summary>
         public double LengthSquared()
         {
-            return x * x + y * y;
+            return X * X + Y * Y;
         }
 
         /// <summary>
@@ -234,7 +214,7 @@ namespace IO.Common
         /// </summary>
         public Point ToPoint()
         {
-            return new Point((int)x, (int)y);
+            return new Point((int)X, (int)Y);
         }
 
         /// <summary>
@@ -242,7 +222,7 @@ namespace IO.Common
         /// </summary>
         public Point Round()
         {
-            return new Point((int)Math.Round(x), (int)Math.Round(y));
+            return new Point((int)Math.Round(X), (int)Math.Round(Y));
         }
 
         /// <summary>
@@ -250,7 +230,7 @@ namespace IO.Common
         /// </summary>
         public Point Floor()
         {
-            return new Point((int)Math.Floor(x), (int)Math.Floor(y));
+            return new Point((int)Math.Floor(X), (int)Math.Floor(Y));
         }
 
         /// <summary>
@@ -258,7 +238,7 @@ namespace IO.Common
         /// </summary>
         public Point Ceiling()
         {
-            return new Point((int)Math.Ceiling(x), (int)Math.Ceiling(y));
+            return new Point((int)Math.Ceiling(X), (int)Math.Ceiling(Y));
         }
 
         #endregion
@@ -271,8 +251,8 @@ namespace IO.Common
         /// </summary>
         public double DistanceToSquared(Vector other)
         {
-            var dx = x - other.x;
-            var dy = y - other.y;
+            var dx = X - other.X;
+            var dy = Y - other.Y;
             return dx * dx + dy * dy;
         }
 
@@ -289,7 +269,7 @@ namespace IO.Common
         /// </summary>
         public double AngleTo(Vector pos)
         {
-            return Math.Atan2(pos.y - y, pos.x - x);
+            return Math.Atan2(pos.Y - Y, pos.X - X);
         }
 
         #endregion
@@ -302,7 +282,13 @@ namespace IO.Common
         /// <returns>Whether this point is inside the rectangle. </returns>
         public bool Inside(Vector pos, Vector size)
         {
-            return x >= pos.x && y >= pos.y && x <= pos.x + size.x && y <= pos.y + size.y;
+            return X >= pos.X && Y >= pos.Y && X <= pos.X + size.X && Y <= pos.Y + size.Y;
+        }
+
+
+        public Vector MoveInside(Vector pos, Vector size)
+        {
+            return Clamp(pos, pos + size);
         }
 
         /// <summary>
@@ -313,7 +299,7 @@ namespace IO.Common
         /// <returns>A new point. </returns>
         public Vector PolarProjection(double angle, double distance)
         {
-            return new Vector(x + Math.Cos(angle) * distance, y + Math.Sin(angle) * distance);
+            return new Vector(X + Math.Cos(angle) * distance, Y + Math.Sin(angle) * distance);
         }
 
         /// <summary>
@@ -325,8 +311,8 @@ namespace IO.Common
         public Vector Clamp(Vector min, Vector max)
         {
             return new Vector(
-                Math.Min(max.x, Math.Max(min.x, x)),
-                Math.Min(max.y, Math.Max(min.y, y)));
+                Math.Min(max.X, Math.Max(min.X, X)),
+                Math.Min(max.Y, Math.Max(min.Y, Y)));
         }
 
 
@@ -337,8 +323,8 @@ namespace IO.Common
             unchecked       // http://stackoverflow.com/questions/5221396/what-is-an-appropriate-gethashcode-algorithm-for-a-2d-point-struct-avoiding
             {
                 int hash = 17;
-                hash = hash * 23 + x.GetHashCode();
-                hash = hash * 23 + y.GetHashCode();
+                hash = hash * 23 + X.GetHashCode();
+                hash = hash * 23 + Y.GetHashCode();
                 return hash;
             }
         }
@@ -356,7 +342,7 @@ namespace IO.Common
 
         public string ToString(string format)
         {
-            return string.Format("[{0}, {1}]", x.ToString(format), y.ToString(format));
+            return string.Format("[{0}, {1}]", X.ToString(format), Y.ToString(format));
         }
 
         #endregion

@@ -21,8 +21,8 @@ class SpawnMonsters : CustomScript
     {
         spawnMonsterCamps();
         spawnDoodadCircle();
-        spawnNRandomMonsters(100);
-        spawnNTrees(10000);
+        spawnNRandomMonsters(0);
+        spawnNTrees(0);
     }
 
     void spawnNTrees(int n)
@@ -55,10 +55,10 @@ class SpawnMonsters : CustomScript
         const double DoodadDist = 2;
         const int DoodadCount = 50;
         foreach (var i in Enumerable.Range(0, DoodadCount))
-        {
+        {   
             var dist = 2 * Math.PI * i / DoodadCount;
             var pos = c.PolarProjection(dist, DoodadDist);
-            var m = new Effect { Position = pos, ModelName = "tree-1" };
+            var m = new Tree { Position = pos };
 
             Map.Add(m);
         }

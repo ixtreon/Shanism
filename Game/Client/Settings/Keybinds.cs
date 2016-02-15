@@ -38,8 +38,10 @@ namespace Client.Settingsz
             this[GameAction.MoveLeft] = Keys.A;
             this[GameAction.MoveRight] = Keys.D;
 
+            this[GameAction.ReloadUi] = new Keybind(ModifierKeys.Control | ModifierKeys.Shift, Keys.R);
+
             foreach(var i in Enumerable.Range(1, 9))
-                this[0, i - 1] = new Keybind(ModifierKeys.Shift, Keys.D0 + i);
+                this[0, i - 1] = new Keybind(Keys.D0 + i);
 
 
         }
@@ -66,6 +68,11 @@ namespace Client.Settingsz
                 var act = actionId(barId, keyId);
                 setKeybind(act, value);
             }
+        }
+
+        public Keybind? TryGet(GameAction act)
+        {
+            return rawKeybinds.TryGetVal(act);
         }
 
         public Keybind? TryGet(int barId, int keyId)

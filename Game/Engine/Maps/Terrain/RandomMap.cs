@@ -172,16 +172,16 @@ namespace Engine.Maps
             //get terrain
 
             //get distance from equator (huge perlin)
-            var distFromEquator = new Perlin()
+            var distFromEquator = new Perlin
             {
                 Seed = Seed + 100,
                 Frequency = zone_freq,
 
             };
 
-            humidityModule = new ScaleBias()
+            humidityModule = new ScaleBias
             {
-                Source0 = new Perlin()
+                Source0 = new Perlin
                 {
                     Seed = Seed + 101,
                     Frequency = 1,
@@ -196,12 +196,12 @@ namespace Engine.Maps
         {
             const float flat_freq = 1f;
 
-            var flatTerrain = new ScaleBias()
+            var flatTerrain = new ScaleBias
             {
                 //flat terrain is ~(0; 0.45)
                 Source0 = new Turbulence
                 {
-                    Source0 = new Billow()
+                    Source0 = new Billow
                     {
                         //billow ranges -1.42 to 2.65
                         Seed = Seed,
@@ -214,13 +214,13 @@ namespace Engine.Maps
                 Scale = 0.1,
             };
             //var zuza = getMinMax(flatTerrain, 100000);
-            var mountainTerrain = new ScaleBias()
+            var mountainTerrain = new ScaleBias
             {
                 // 0.3 : 1.00
-                Source0 = new Turbulence()
+                Source0 = new Turbulence
                 {
                     //????
-                    Source0 = new RidgedMulti()
+                    Source0 = new RidgedMulti
                     {
                         // -1 : 1.42?
                         Frequency = flat_freq / 2,
@@ -233,15 +233,15 @@ namespace Engine.Maps
                 Scale = 0.29,
             };
             var zuzz = getMinMax(mountainTerrain, 100000);
-            var allTheGround = new Blend()
+            var allTheGround = new Blend
             {
                 //flat terrain
                 Source0 = flatTerrain,
                 //mountain terrain
                 Source1 = mountainTerrain,
-                Control = new ScaleBias()
+                Control = new ScaleBias
                 {
-                    Source0 = new Perlin()
+                    Source0 = new Perlin
                     {
                         Frequency = flat_freq / 20,
                         Persistence = 0.35,
@@ -250,7 +250,7 @@ namespace Engine.Maps
                     Scale = 1,
                 }
             };
-            var seas = new ScaleBias()
+            var seas = new ScaleBias
             {
                 //-1.0 : -0.2
                 Source0 = flatTerrain,  //0 : 0.45
@@ -265,7 +265,7 @@ namespace Engine.Maps
             var zzz = getMinMax(flatTerrain);
             var zz = getMinMax(seas);
 
-            var seaGround = new Blend()
+            var seaGround = new Blend
             {
                 //flat terrain
                 Source0 = allTheGround,
@@ -273,7 +273,7 @@ namespace Engine.Maps
                 Source1 = seas,
                 Control = new ScaleBias
                 {
-                    Source0 = new Perlin()
+                    Source0 = new Perlin
                     {
                         Frequency = flat_freq / 32,
                         Seed = Seed + 3,

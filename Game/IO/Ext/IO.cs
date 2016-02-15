@@ -17,8 +17,8 @@ namespace IO
             if (!folder.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.InvariantCulture))
                 folder += Path.DirectorySeparatorChar;
 
-            Uri pathUri = new Uri(absolutePath);
-            Uri folderUri = new Uri(folder);
+            var pathUri = new Uri(absolutePath);
+            var folderUri = new Uri(folder);
 
             return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri)
                 .ToString()

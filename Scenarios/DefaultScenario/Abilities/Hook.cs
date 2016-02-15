@@ -49,14 +49,13 @@ namespace DefaultScenario.Abilities
                 Hook.Position = Hook.Position.PolarProjection(angle, StepSize);
 
                 var u = Map.GetUnitsInRange(Hook.Position, hookrange)
-                    .Where(uu => uu != Owner)
-                    .FirstOrDefault();
+                    .FirstOrDefault(uu => uu != Owner);
 
                 //zahapi, ako ima
                 if (u != null)
                 {
                     zahapaniaUnit = u;
-                    zahapaniaUnit.ApplyState(UnitState.Stunned);
+                    zahapaniaUnit.ApplyState(UnitFlags.Stunned);
 
                     //dmg ako e vrag
                     if (u.Owner.IsEnemyOf(Owner.Owner))
@@ -81,7 +80,7 @@ namespace DefaultScenario.Abilities
             }
 
             if (zahapaniaUnit != null)
-                zahapaniaUnit.RemoveState(UnitState.Stunned);
+                zahapaniaUnit.RemoveState(UnitFlags.Stunned);
 
             Hook.Destroy();
         }

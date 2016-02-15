@@ -25,17 +25,16 @@ namespace Client
         /// <summary>
         /// The guy that handles objects. 
         /// </summary>
-        public ObjectGod Objects { get { return ObjectGod.Default; } }
+        public ObjectSystem Objects { get { return ObjectSystem.Default; } }
 
 
         public CombatText DamageText { get; } = new CombatText();
 
         public event Action<ActionMessage> ActionPerformed;
 
-
         public GameManager()
         {
-            Location = Vector.Zero;
+            AbsolutePosition = new Vector(0);
 
             Interface = new UiManager();
 
@@ -69,33 +68,32 @@ namespace Client
 
         protected override void OnUpdate(int msElapsed)
         {
-            UpdateMain(msElapsed);
-
+            //Maximize();
             Interface.Maximize();
             Objects.Maximize();
+
+            UpdateMain(msElapsed);
 
             // update the interface's main hero from the objects' main hero. 
             Interface.MainHeroControl = Objects.MainHeroControl;
 
             //do it here so it can be spammed, not just performed on click
-            if(mouseState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+            if (mouseState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
             {
                 var ab = Interface.CurrentAbility;
 
                 if (ab == null || ab.CurrentCooldown > 0)
                     return;
 
-                var msgGuid = (HoverControl as ObjectControl)?.Object.Guid ?? 0;
+                var msgGuid = (HoverControl as ObjectControl)?.Object.Id ?? 0;
                 var msgLoc = Screen.ScreenToGame(mouseState.Position.ToPoint());
                 var msg = new ActionMessage(ab.Name, msgGuid, msgLoc);
 
                 ActionPerformed?.Invoke(msg);
             }
-             
+
             Interface.Hover = HoverControl as UnitControl;
         }
-
-        readonly object _interfaceLock = new object();
 
         public override void OnDraw(Graphics g)
         {

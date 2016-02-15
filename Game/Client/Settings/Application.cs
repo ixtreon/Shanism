@@ -15,6 +15,6 @@ namespace Client.Settingsz
         public bool QuickButtonPress { get; set; } = true;
 
 
-        public KeybindSettings Keybinds { get; } = new KeybindSettings(true);
+        public KeybindSettings Keybinds { get; private set; } = new KeybindSettings(true);
     }
 }

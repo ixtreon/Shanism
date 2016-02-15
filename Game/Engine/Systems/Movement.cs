@@ -1,4 +1,5 @@
 ﻿using Engine.Entities;
+using IO;
 using IO.Common;
 using System;
 using System.Collections.Generic;
@@ -56,34 +57,82 @@ namespace Engine.Systems
 
         Vector resolveStep(double angle, double dist, int nTries = 5)
         {
-            do
+            var suggestedPos = Owner.Position.PolarProjection(angle, dist);
+
+            if (Owner.HasState(UnitFlags.NoCollision))
+                return suggestedPos;
+
+            //fix terrain
+            var startP = (suggestedPos - Owner.Scale).Floor();
+            var endP = (suggestedPos + Owner.Scale).Ceiling();
+
+            foreach(var p in startP.IterateToInclusive(endP))
             {
-                var suggestedPos = Owner.Position.PolarProjection(angle, dist);
-                if (CanStep(suggestedPos))
-                    return suggestedPos;
+                if (isTileOk(Owner.Terrain.GetTerrain(p), Owner.CanFly, Owner.CanSwim, Owner.CanWalk))
+                    continue;
 
-                dist /= 2;
+                var closestPoint = suggestedPos.Clamp(p, p + Point.One);
+                var distSq = suggestedPos.DistanceToSquared(closestPoint);
+
+                var minDist = Owner.Scale / 2;
+                if (distSq < minDist * minDist)
+                {
+                    var ang = closestPoint.AngleTo(suggestedPos);
+                    suggestedPos = closestPoint.PolarProjection(ang, minDist);
+                }
             }
-            while (--nTries > 0);
 
+            if (!isTileOk(Owner.Terrain.GetTerrain(suggestedPos), Owner.CanFly, Owner.CanSwim, Owner.CanWalk))
+                suggestedPos = Owner.Position;
 
-            return Owner.Position;
+            //fix objects
+            var nearbyObjects = Owner.Map
+                .GetObjectsInRange(Owner.Position, dist + Constants.Units.MaxCollisionSize)
+                .Where(u => u != Owner && u.HasCollision)
+                .ToList();
+
+            foreach(var obj in nearbyObjects)
+            {
+                var minDist = (obj.Scale + Owner.Scale) / 2;
+                if (obj.Position.DistanceToSquared(suggestedPos) < minDist * minDist)
+                {
+                    var ang = obj.Position.AngleTo(suggestedPos);
+                    suggestedPos = obj.Position.PolarProjection(ang, minDist);
+                }
+            }
+
+            return suggestedPos;
         }
 
-        public bool CanStep(Vector newPos)
+        static bool resolveTile(Vector ourPos, double ourScale, Point terrainPos, TerrainType tt, bool canFly, bool canSwim, bool canWalk)
         {
-            var tt = Owner.Terrain.GetTerrain(newPos.Floor());
+            //var tt = owner.Terrain.GetTerrain(pos.Floor());
 
+            //see if we are close enough to this terrain tile
+            var closestPoint = ourPos.Clamp(terrainPos, Point.One);
+            var distSq = ourPos.DistanceToSquared(closestPoint);
+
+            if (distSq > ourScale * ourScale)
+                return true;
+
+            return isTileOk(tt, canFly, canSwim, canWalk);
+        }
+        
+        static bool isTileOk(TerrainType tt, bool canFly, bool canSwim, bool canWalk)
+        {
             //no map, no walk
             if (tt == TerrainType.None)
                 return false;
 
-            //water is cool if swim/fly
-            if (tt == TerrainType.Water || tt == TerrainType.DeepWater)
-                return Owner.CanFly || Owner.CanSwim;
+            if (canFly)
+                return true;
 
-            //otherwise should walk/fly..
-            return Owner.CanFly || Owner.CanWalk;
+            //water is cool if swim
+            if (tt == TerrainType.Water || tt == TerrainType.DeepWater)
+                return canSwim;
+
+            //otherwise should walk..
+            return canWalk;
         }
     }
 }

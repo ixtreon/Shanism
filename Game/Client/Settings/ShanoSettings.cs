@@ -22,18 +22,24 @@ namespace Client
         static ShanoSettings()
         {
             Reload();
+            Current.Keybinds[Input.GameAction.ToggleMainMenu] = Microsoft.Xna.Framework.Input.Keys.Escape;
         }
 
         public static void Reload()
         {
+            var success = false;
             try
             {
                 var fileData = File.ReadAllText(SettingsFile);
                 Current = JsonConvert.DeserializeObject<ApplicationSettings>(fileData);
+                success = (Current != null);
             }
-            catch (Exception e)
+            catch { success = false; }
+
+
+            if (!success)
             {
-                Console.WriteLine("Unable to load settings data from the '{0}' file: {1}".F(SettingsFile, e.Message));
+                Console.WriteLine("Unable to load proper settings data from the '{0}' file. ".F(SettingsFile));
                 Current = new ApplicationSettings();
                 Save();
             }

@@ -12658,10 +12658,14 @@
               "$ref": "14"
             },
             "Span": {
-              "X": 0,
-              "Y": 0,
-              "Width": 3,
-              "Height": 1
+              "Position": {
+                "X": 0,
+                "Y": 0
+              },
+              "Size": {
+                "X": 3,
+                "Y": 1
+              }
             },
             "IsDynamic": true,
             "Period": 500,
@@ -12673,8 +12677,8 @@
         "HitBox": {
           "X": 0.0,
           "Y": 0.0,
-          "Width": 1.0,
-          "Height": 1.0
+          "Width": 0.0,
+          "Height": 0.0
         }
       },
       {
@@ -12684,10 +12688,14 @@
               "$ref": "3"
             },
             "Span": {
-              "X": 29,
-              "Y": 28,
-              "Width": 3,
-              "Height": 4
+              "Position": {
+                "X": 29,
+                "Y": 28
+              },
+              "Size": {
+                "X": 3,
+                "Y": 4
+              }
             },
             "IsDynamic": false,
             "Period": 160,
@@ -12699,8 +12707,8 @@
         "HitBox": {
           "X": 0.0,
           "Y": 0.0,
-          "Width": 1.0,
-          "Height": 1.0
+          "Width": 0.0,
+          "Height": 0.0
         }
       },
       {
@@ -12710,10 +12718,14 @@
               "$ref": "15"
             },
             "Span": {
-              "X": 0,
-              "Y": 0,
-              "Width": 20,
-              "Height": 1
+              "Position": {
+                "X": 0,
+                "Y": 0
+              },
+              "Size": {
+                "X": 20,
+                "Y": 1
+              }
             },
             "IsDynamic": true,
             "Period": 50,
@@ -12725,8 +12737,8 @@
         "HitBox": {
           "X": 0.0,
           "Y": 0.0,
-          "Width": 1.0,
-          "Height": 1.0
+          "Width": 0.0,
+          "Height": 0.0
         }
       },
       {
@@ -12736,13 +12748,17 @@
               "$ref": "3"
             },
             "Span": {
-              "X": 27,
-              "Y": 29,
-              "Width": 2,
-              "Height": 3
+              "Position": {
+                "X": 27,
+                "Y": 29
+              },
+              "Size": {
+                "X": 2,
+                "Y": 3
+              }
             },
             "IsDynamic": false,
-            "Period": 0,
+            "Period": 10,
             "IsLooping": false,
             "Frames": 1
           }
@@ -12751,8 +12767,38 @@
         "HitBox": {
           "X": 0.0,
           "Y": 0.0,
-          "Width": 1.0,
-          "Height": 1.0
+          "Width": 0.0,
+          "Height": 0.0
+        }
+      },
+      {
+        "Animations": {
+          "stand": {
+            "Texture": {
+              "$ref": "1"
+            },
+            "Span": {
+              "Position": {
+                "X": 0,
+                "Y": 0
+              },
+              "Size": {
+                "X": 4,
+                "Y": 3
+              }
+            },
+            "IsDynamic": true,
+            "Period": 70,
+            "IsLooping": true,
+            "Frames": 12
+          }
+        },
+        "Name": "fireshit",
+        "HitBox": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Width": 0.0,
+          "Height": 0.0
         }
       }
     ]

@@ -13,9 +13,9 @@ namespace Client.Input
     /// </summary>
     struct Keybind
     {
-        public ModifierKeys Modifiers { get; set; }
+        public ModifierKeys Modifiers { get; }
 
-        public Keys Key { get; set; }
+        public Keys Key { get; }
 
         public Keybind(Keys key)
         {
@@ -23,9 +23,10 @@ namespace Client.Input
             Key = key;
         }
 
-        public Keybind(ModifierKeys mod, Keys key)
+        [JsonConstructor]
+        public Keybind(ModifierKeys modifiers, Keys key)
         {
-            Modifiers = mod;
+            Modifiers = modifiers;
             Key = key;
         }
 
@@ -58,6 +59,13 @@ namespace Client.Input
             return new Keybind(k);
         }
 
+        public override bool Equals(object obj)
+        {
+            if (!(obj is Keybind))
+                return false;
+            return (Keybind)obj == this;
+        }
+
         public override string ToString()
         {
             if (Key == Keys.None)
@@ -66,6 +74,11 @@ namespace Client.Input
             if (Modifiers != ModifierKeys.None)
                 return Modifiers.ToString() + "+" + Key.ToString();
             return Key.ToString();
+        }
+
+        public override int GetHashCode()
+        {
+            return (((long)Key << 32) | (long)Modifiers).GetHashCode();
         }
 
     }

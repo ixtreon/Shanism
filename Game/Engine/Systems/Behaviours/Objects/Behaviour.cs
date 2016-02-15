@@ -37,7 +37,7 @@ namespace Engine.Systems.Behaviours
         /// Creates a new behaviour for the given unit. 
         /// </summary>
         /// <param name="owner"></param>
-        public Behaviour(Unit owner)
+        protected Behaviour(Unit owner)
         {
             this.Owner = owner;
 
@@ -55,7 +55,7 @@ namespace Engine.Systems.Behaviours
         /// Creates a new behaviour for the same unit. 
         /// </summary>
         /// <param name="b"></param>
-        public Behaviour(Behaviour b)
+        protected Behaviour(Behaviour b)
          : this(b.Owner)
         { }
 

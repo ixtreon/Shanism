@@ -65,18 +65,18 @@ namespace ShanoRPGWin
         private void StartRemoteGame(string playerName, string ipAddress)
         {
             var netClient = new Network.LClient(ipAddress, playerName);
-            var client = ShanoGame.Create(playerName);
+            var clientGame = ShanoGame.CreateClient(playerName);
 
-            client.SetServer(netClient);
-            netClient.SetClient(client);
+            clientGame.SetServer(netClient);
+            netClient.SetClient(clientGame.Engine);
 
-            client.Run();
+            clientGame.Run();
         }
 
         void StartLocalGame(string playerName)
         {
             // get the selected map seed, scenario
-            int mapSeed = (int)nbMapSeed.Value;
+            var mapSeed = (int)nbMapSeed.Value;
             var scenarioPath = Settings.Default.CurrentScenario;
 
             // start the local game

@@ -12,6 +12,7 @@ namespace IO.Common
     public struct Point
     {
         public static readonly Point Zero = new Point();
+        public static readonly Point One = new Point(1);
 
         /// <summary>
         /// The X coordinate of the point. 
@@ -44,6 +45,12 @@ namespace IO.Common
         {
             this.X = x;
             this.Y = y;
+        }
+
+        
+        public static Point operator -(Point p)
+        {
+            return new Point(-p.X, -p.Y);
         }
 
 

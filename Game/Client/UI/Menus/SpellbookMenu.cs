@@ -23,7 +23,7 @@ namespace Client.UI
         int _currentPage = 0;
 
         SortedSet<SpellButton> spellButtons = new SortedSet<SpellButton>(
-            new GenericComparer<SpellButton>((x, y) => x.Ability.Name.CompareTo(y.Ability.Name)));
+            new GenericComparer<SpellButton>((x, y) => string.Compare(x.Ability.Name, y.Ability.Name, StringComparison.Ordinal)));
 
         public int Pages
         {
@@ -79,7 +79,7 @@ namespace Client.UI
                     }
                 foreach (var ab in newAbils)     // add the actually new abilities
                 {
-                    SpellButton sb = new SpellButton
+                    var sb = new SpellButton
                     {
                         CanSelect = false,
                         Size = new Vector(0.15),
@@ -119,8 +119,7 @@ namespace Client.UI
 
         protected override void OnUpdate(int msElapsed)
         {
-            if (Target == null)
-                Visible = false;
+            Visible &= (Target != null);
 
             base.OnUpdate(msElapsed);
         }

@@ -20,7 +20,7 @@ namespace Engine.Systems
 
         internal override void Update(int msElapsed)
         {
-            if (Owner.IsDead || Owner.StateFlags.HasFlag(UnitState.Stunned) || Owner.Behaviour == null)
+            if (Owner.IsDead || Owner.StateFlags.HasFlag(UnitFlags.Stunned) || Owner.Behaviour == null)
                 return;
 
             //update behaviour

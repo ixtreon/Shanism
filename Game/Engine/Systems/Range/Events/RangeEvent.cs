@@ -41,7 +41,7 @@ namespace Engine.Systems.Range
         /// Creates a constraint that targets all game objects. 
         /// </summary>
         /// <param name="range">The distance at which this cosntraint is triggered. </param>
-        public RangeEvent(double range)
+        protected RangeEvent(double range)
         {
             if (range < 0 || range > Constants.RangeEvents.MaxRangeUnits)
                 throw new ArgumentOutOfRangeException("Distance must be between 0 and {0}".F(Constants.RangeEvents.MaxRangeUnits));
@@ -54,7 +54,7 @@ namespace Engine.Systems.Range
         /// </summary>
         /// <param name="range">The distance at which this cosntraint is triggered. </param>
         /// <param name="target">The object that can trigger this constraint. </param>
-        public RangeEvent(double range, GameObject target)
+        protected RangeEvent(double range, GameObject target)
             : this(range)
         {
             Target = target;

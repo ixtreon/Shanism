@@ -19,7 +19,7 @@ namespace IO
         /// <summary>
         /// Gets the max value of the counter. 
         /// </summary>
-        public int MaxValue { get; private set; }
+        public int MaxValue { get; private set; } 
 
         /// <summary>
         /// Creates a new counter with the given maximum value. 
@@ -29,7 +29,7 @@ namespace IO
         {
             if (maxValue < 0) throw new ArgumentException("{0} ({1}) must be a non-negative integer!".F(nameof(maxValue), maxValue));
 
-            MaxValue = maxValue;
+            MaxValue = Math.Max(1, maxValue);
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace IO
             if (newMax < 0) throw new ArgumentException("The value of '{0}' ({1}) must be a non-negative integer!".F(nameof(newMax), newMax));
 
             Value = 0;
-            MaxValue = newMax ?? MaxValue;
+            MaxValue = Math.Max(1, newMax ?? MaxValue);
         }
     }
 }

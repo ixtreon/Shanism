@@ -26,7 +26,7 @@ namespace IO.Message
 
     //server
     [ProtoInclude((int)MessageType.HandshakeReply, typeof(HandshakeReplyMessage))]
-    [ProtoInclude((int)MessageType.MapReply, typeof(MapReplyMessage))]
+    [ProtoInclude((int)MessageType.MapReply, typeof(MapDataMessage))]
     [ProtoInclude((int)MessageType.ObjectSeen, typeof(ObjectSeenMessage))]
     [ProtoInclude((int)MessageType.PlayerStatusUpdate, typeof(PlayerStatusMessage))]
     [ProtoInclude((int)MessageType.DamageEvent, typeof(DamageEventMessage))]

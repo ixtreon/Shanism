@@ -48,7 +48,7 @@ namespace Client.UI.Common
         public bool HasBorder { get; set; }
 
         /// <summary>
-        /// Gets or sets whether this button is currently selected. 
+        /// Gets or sets whether this button is currently selected (toggled). 
         /// </summary>
         public bool IsSelected
         {
@@ -61,7 +61,7 @@ namespace Client.UI.Common
         }
 
         /// <summary>
-        /// Gets or sets whether this button can be selected. 
+        /// Gets or sets whether this button can be selected (toggled). 
         /// </summary>
         public bool CanSelect { get; set; }
 

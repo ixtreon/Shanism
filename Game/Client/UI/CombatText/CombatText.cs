@@ -23,7 +23,7 @@ namespace Client.UI.CombatText
         {
             public Color Color;
             public Vector Location;
-            public Vector Velocity = textSpeed;
+            public Vector Velocity;
 
             public string Text;
             public int Duration;
@@ -39,32 +39,30 @@ namespace Client.UI.CombatText
         public void AddDamageLabel(DamageEventMessage msg)
         {
             //get unit position
-            var unit = ObjectGod.Default.TryGet(msg.UnitId);
+            var unit = ObjectSystem.Default.TryGet(msg.UnitId);
             if (unit == null)
                 return;
 
             var labelPos = Screen.GameToUi(unit.Position);
-
-            //get damagetype color
             var color = Color.Red;
-
-
             var td = new TextData
             {
                 Color = color,
                 Location = unit.Position, //shitty UI coordinates ;z
                 Text = msg.ValueChange.ToString("0"),
                 Duration = DefaultDuration,
+
+                Velocity = new Vector(textSpeed.X * textDirection, textSpeed.Y),
             };
+
             textDirection *= -1;
-            td.Velocity.X *= textDirection;
 
             labels.Add(td);
         }
 
         protected override void OnUpdate(int msElapsed)
         {
-            List<TextData> toRemove = new List<TextData>();
+            var toRemove = new List<TextData>();
             foreach(var td in labels)
             {
                 td.Duration -= msElapsed;

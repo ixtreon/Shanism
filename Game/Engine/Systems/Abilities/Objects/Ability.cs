@@ -90,7 +90,7 @@ namespace Engine.Systems.Abilities
         /// <summary>
         /// Creates a new ability with default parameters. 
         /// </summary>
-        public Ability()
+        protected Ability()
         {
         }
 
@@ -98,7 +98,7 @@ namespace Engine.Systems.Abilities
         /// Creates a new ability of the specified type. 
         /// </summary>
         /// <param name="targetType"></param>
-        public Ability(AbilityTargetType targetType)
+        protected Ability(AbilityTargetType targetType)
         {
             TargetType = targetType;
         }

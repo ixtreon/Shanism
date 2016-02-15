@@ -33,11 +33,15 @@ namespace Engine.Entities.Objects
 
         public override ObjectType Type { get { return ObjectType.Effect; } }
 
+        public override bool HasCollision {  get { return false; } }
 
         public Effect(GameObject anchor)
         {
             AttachedTo = anchor;
         }
+
+        public Effect(Effect @base)
+            : base(@base) { }
 
         public Effect()
         {
