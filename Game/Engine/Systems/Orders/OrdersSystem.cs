@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Entities;
+using Engine.Objects;
 using IO.Message;
 using IO.Common;
 
@@ -25,7 +25,7 @@ namespace Engine.Systems
                 return;
 
             //stunned units are useless
-            if (Owner.StateFlags.HasFlag(UnitFlags.Stunned))
+            if (Owner.States.HasFlag(UnitFlags.Stunned))
                 return;
 
             if (Owner.Order == null)

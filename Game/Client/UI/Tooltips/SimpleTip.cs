@@ -27,32 +27,34 @@ namespace Client.UI.Tooltips
             Font = Content.Fonts.NormalFont;
             BackColor = Color.Black.SetAlpha(25);
         }
-        
+
 
         protected override void OnUpdate(int msElapsed)
         {
             var tipAsString = (HoverControl?.ToolTip as string);
 
             //visible if that's a string
-            Visible = HoverControl != null && !string.IsNullOrWhiteSpace(tipAsString);
-            if (Visible)// && Text != tipAsString)
-            {
-                Text = tipAsString;
+            IsVisible = HoverControl != null && !string.IsNullOrWhiteSpace(tipAsString);
+            if (!IsVisible)
+                return;
 
-                //update size, position
-                Size = Font.MeasureStringUi(Text, 0.5) + new Vector(Padding * 2);
-                var screenPosRaw =
-                    (mouseState.Position.ToPoint() + new Point(14, 26));
-                var screenPos = screenPosRaw
-                    .Clamp(Point.Zero, Screen.PixelSize - ScreenSize);
-                AbsolutePosition = Screen.ScreenToUi(screenPos);
-            }
+            Text = tipAsString;
+
+            //update size, position
+            Size = Font.MeasureStringUi(Text, 0.5) + new Vector(Padding * 2);
+            var screenPosRaw =
+                (mouseState.Position.ToPoint() + new Point(14, 26));
+            var screenPos = screenPosRaw
+                .Clamp(Point.Zero, Screen.ScreenSize - ScreenSize);
+            AbsolutePosition = Screen.ScreenToUi(screenPos);
+
+            BringToFront();
         }
-        
+
 
         public override void OnDraw(Graphics g)
         {
-            if (Visible)
+            if (IsVisible)
             {
                 g.Draw(Content.Textures.Blank, Vector.Zero, new Vector(555), Color.Black.SetAlpha(150));
                 g.DrawString(Font, Text, Color.White, new Vector(Padding), 0, 0, 0.5);

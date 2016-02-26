@@ -15,7 +15,9 @@ namespace IO.Message.Client
         public string PlayerName;
 
 
-        HandshakeInitMessage() { Type = MessageType.HandshakeInit; }
+        public override MessageType Type { get { return MessageType.HandshakeInit; } }
+
+        HandshakeInitMessage() { }
 
         public HandshakeInitMessage(string playerName)
             : this()

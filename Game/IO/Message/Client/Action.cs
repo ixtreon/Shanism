@@ -23,7 +23,7 @@ namespace IO.Message.Client
         /// The string id of the action being performed. 
         /// </summary>
         [ProtoMember(1)]
-        public readonly string AbilityId = string.Empty;
+        public readonly uint AbilityId = 0;
 
         /// <summary>
         /// The Guid of the target, if there is one. 
@@ -37,7 +37,9 @@ namespace IO.Message.Client
         [ProtoMember(3)]
         public readonly Vector TargetLocation;
 
-        ActionMessage() { Type = MessageType.Action; }
+        public override MessageType Type { get { return MessageType.Action; } }
+
+        ActionMessage() { }
 
         /// <summary>
         /// Creates a new message for the specified action. 
@@ -46,7 +48,7 @@ namespace IO.Message.Client
         /// <param name="abilityId">The string id of the action to perform. </param>
         /// <param name="targetGuid">The target of the ability, if any. </param>
         /// <param name="targetLoc">The location this ability is cast towards. </param>
-        public ActionMessage(string abilityId, uint targetGuid, Vector targetLoc)
+        public ActionMessage(uint abilityId, uint targetGuid, Vector targetLoc)
             : this()
         {
             TargetGuid = targetGuid;

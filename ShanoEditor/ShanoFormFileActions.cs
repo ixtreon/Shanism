@@ -9,6 +9,7 @@ using IO;
 using System.IO;
 using ScenarioLib;
 using ShanoEditor.ViewModels;
+using ShanoEditor.Views;
 
 namespace ShanoEditor
 {
@@ -21,38 +22,42 @@ namespace ShanoEditor
 
         async void create()
         {
-            var dialog = new SaveFileDialog
+            const string placeholderText = "Folder Selection";
+
+            //save currently opened scenario, if any
+            var wasClosed = await close();
+            if (!wasClosed)
+                return;
+
+            //modify the UI
+            StatusLoading = true;
+
+            var dialog = new OpenFileDialog
             {
                 CheckFileExists = false,
                 CheckPathExists = true,
+                ValidateNames = false,
                 Filter = "Folders|%",
-                FileName = "CustomScenario",
+                FileName = placeholderText,
             };
 
             if (dialog.ShowDialog() != DialogResult.OK)
                 return;
 
-            await create(dialog.FileName);
-        }
-
-        async Task create(string filePath)
-        {
-            CompiledScenario sc;
-            try
-            {
-                sc = new CompiledScenario(filePath);
-            }
-            catch
-            {
-                MessageBox.Show("Unable to create a scenario at the given directory! ('{0}')".F(filePath));
-                return;
-            }
+            var filePath = Path.GetDirectoryName(dialog.FileName);
+            var sc = new CompiledScenario(filePath);
 
             await open(sc);
+
+            StatusLoading = false;
         }
 
-        private async Task open()
+        async Task open()
         {
+            var wasClosed = await close();
+            if (!wasClosed)
+                return;
+
             var dialog = new OpenFileDialog
             {
                 ValidateNames = false,
@@ -72,7 +77,7 @@ namespace ShanoEditor
         /// <summary>
         /// Opens an existing scenario. 
         /// </summary>
-        private async Task open(string filePath)
+        async Task open(string filePath)
         {
             if (string.IsNullOrEmpty(filePath)) throw new ArgumentNullException(nameof(filePath));
 
@@ -80,47 +85,60 @@ namespace ShanoEditor
             StatusLoading = true;
             Model = null;
 
-            CompiledScenario scenario = null;
-            string _error = string.Empty;
-            try
-            {
-                scenario = await Task.Run(() => CompiledScenario.Load(filePath));
-                if (scenario == null)
-                    _error = "Cannot find a scenario at `{0}`. ".F(filePath);
-            }
-            catch (Exception e)
-            {
-                //_error = e.Message;
-                _error = "Bad scenario data. ";
-            }
-
+            string scenarioLoadErrors = string.Empty;
+            var scenario = await Task.Run(() => CompiledScenario.Load<CompiledScenario>(filePath, out scenarioLoadErrors));
             if (scenario == null)
             {
-                MessageBox.Show("Unable to load the scenario: \n\n{0}".F(_error), "ShanoEditor", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Unable to load a scenario from `{filePath}`. The error returned was: \n {scenarioLoadErrors}", "ShanoEditor", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                StatusLoading = false;
+
+                Settings.Default.RemoveFromRecent(filePath);
+                updateRecentsMenu();
                 return;
             }
 
-            //update UI
-            Settings.Default.UpdateRecentFiles(filePath);
-
             await open(scenario);
-        }
 
-        private async Task open(CompiledScenario scenario)
-        {
-            //create the viewmodel
-            Model = new ScenarioViewModel(scenario);
-            await Model.Load();
-
-            //set the views' model
-            scenarioTree.Scenario = Model.Scenario;
-            foreach (var view in scenarioViews)
-                view.SetModel(Model);
-
-            updateCaption();
             StatusLoading = false;
         }
 
+        async Task open(CompiledScenario scenario)
+        {
+            //create the viewmodel
+            Model = new ScenarioViewModel(scenario);
+            await Model.Reload();
+
+            //set the views' model
+            scenarioTree.SetScenario(scenario.Config);
+            ScenarioControl.ApplyModel(this, Model);
+
+            //update UI
+            Settings.Default.AddToRecent(scenario.Config.BaseDirectory);
+            updateRecentsMenu();
+            updateCaption();
+        }
+
+
+        async Task<bool> close()
+        {
+            if (Model == null || !Model.IsDirty)
+                return true;
+
+            var z = MessageBox.Show(
+                "You have not saved your changes to the scenario. Would you like to do that now?",
+                "ShanoEditor",
+                MessageBoxButtons.YesNoCancel,
+                MessageBoxIcon.Warning);
+
+            if (z == DialogResult.Cancel)
+                return false;
+
+            if (z == DialogResult.Yes)
+                await save();
+
+            updateCaption();
+            return true;
+        }
 
         async Task save()
         {
@@ -140,10 +158,10 @@ namespace ShanoEditor
 
         void updateCaption()
         {
-            if(Model != null)
+            if (Model != null)
             {
                 var editPostfix = Model.IsDirty ? " *" : "";
-                Text = "{0} - {1}{2}".F(Model.Scenario.Name, WindowTitle, editPostfix);
+                Text = "{0} - {1}{2}".F(Model.Scenario.Config.Name, WindowTitle, editPostfix);
             }
             else
             {

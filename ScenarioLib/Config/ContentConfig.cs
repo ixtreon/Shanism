@@ -18,6 +18,7 @@ namespace ScenarioLib
         public List<TextureDef> Textures { get; set; } = new List<TextureDef>();
 
         [JsonProperty]
-        public List<ModelDef> Models { get; set;  } = new List<ModelDef>();
+        public List<AnimationDef> Animations { get; set; } = new List<AnimationDef>();
+
     }
 }

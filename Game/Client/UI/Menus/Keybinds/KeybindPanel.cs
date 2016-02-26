@@ -1,4 +1,5 @@
 ﻿using Client.Input;
+using IO;
 using IO.Common;
 using System;
 using System.Collections.Generic;
@@ -23,9 +24,8 @@ namespace Client.UI.Menus.Keybinds
 
         public void InitKeybindLabels()
         {
-            var allKeyButtons = Enum.GetValues(typeof(GameAction))
-                .Cast<GameAction>()
-                .Where(a => a != GameAction.ToggleMainMenu)
+            var allKeyButtons = Enum<GameAction>.Values
+                .Where(a => a != GameAction.ToggleMenus)
                 .Where(a => a < GameAction.ActionBar)
                 .Select(a => new KeyBoxLabel(a))
                 .ToList();
@@ -45,5 +45,6 @@ namespace Client.UI.Menus.Keybinds
             }
 
         }
+
     }
 }

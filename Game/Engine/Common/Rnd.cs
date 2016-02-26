@@ -7,6 +7,11 @@ using IO.Common;
 
 namespace Engine
 {
+    /// <summary>
+    /// Represents a static instance of a (simple) pseudo-random number generator, 
+    /// a device that produces a sequence of numbers 
+    /// that meet certain (weak) statistical requirements for randomness.
+    /// </summary>
     public static class Rnd
     {
         static Random rnd = new Random();
@@ -26,6 +31,14 @@ namespace Engine
             return rnd.Next(minValue, maxValue);
         }
 
+        /// <summary>
+        /// Returns a random number within a specified range. 
+        /// </summary>
+        /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
+        /// <param name="maxValue">The exclusive upper bound of the random number returned. maxValue must be greater than or equal to minValue.</param>
+        /// <returns>
+        /// A double-precision value greater than or equal to minValue and less than maxValue;
+        /// </returns>
         public static double NextDouble(double minValue = 0, double maxValue = 1)
         {
             return rnd.NextDouble() * (maxValue - minValue) + minValue;

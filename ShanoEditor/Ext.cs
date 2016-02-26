@@ -11,6 +11,11 @@ namespace ShanoEditor
     static class Ext
     {
 
+        public static ShanoColor ToShanoColor(this System.Drawing.Color c)
+        {
+            return new ShanoColor(c.R, c.G, c.B, c.A);
+        }
+
         public static System.Drawing.Rectangle ToNetRectangle(this Rectangle r)
         {
             return new System.Drawing.Rectangle(r.X, r.Y, r.Width, r.Height);

@@ -19,8 +19,8 @@ namespace Client
         {
             sb.Draw(tex,
                 sourceRectangle: sourceRect.ToXnaRect(),
-                position: destPos.ToXnaVector(),
-                scale: (destSz / sourceRect.Size).ToXnaVector(),
+                position: destPos.ToVector2(),
+                scale: (destSz / sourceRect.Size).ToVector2(),
                 color: c);
         }
     }

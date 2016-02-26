@@ -1,0 +1,62 @@
+﻿using Engine.Objects;
+using Engine.Objects.Entities;
+using IO;
+using ScenarioLib;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Engine.Common
+{
+    public class ObjectCreator
+    {
+        static readonly HashSet<Type> baseTypes = new HashSet<Type>
+        {
+            typeof(Doodad),
+            typeof(Effect),
+        };
+
+        readonly Dictionary<string, Type> recognizedTypes;
+
+        public IEnumerable<Type> CustomTypes => recognizedTypes.Values.Except(baseTypes);
+
+        public IEnumerable<Type> BaseTypes => baseTypes;
+
+
+        public ObjectCreator(CompiledScenario sc)
+        {
+            recognizedTypes = baseTypes
+                .Concat(sc.DefinedEntityTypes)
+                .ToDictionary(ty => ty.FullName, ty => ty);
+        }
+
+
+        public Entity CreateObject(ObjectConstructor oc)
+        {
+            var objTy = recognizedTypes.TryGet(oc.TypeName);
+            if (objTy == null)
+                return null;
+
+            var e = (Entity)Activator.CreateInstance(objTy);
+            e.Position = oc.Location;
+
+            //TODO: set owner
+            //if (!string.IsNullOrEmpty(oc.Owner) && e is Unit)
+            //    ((Unit)e).Owner = Player.NeutralAggressive;
+
+            //set animation
+            if (!string.IsNullOrEmpty(oc.Animation))
+                e.AnimationSuffix = oc.Animation;
+
+            if (oc.Size > 0)
+                e.Scale = oc.Size;
+
+            if (oc.Tint.HasValue)
+                e.DefaultTint = e.CurrentTint = oc.Tint.Value;
+
+            return e;
+        }
+    }
+}

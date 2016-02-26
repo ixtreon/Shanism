@@ -13,10 +13,10 @@ namespace ShanoRPGWin.UI.Scenarios
 {
     public partial class ScenarioDetails : UserControl
     {
-        public event Action<ScenarioFile> ScenarioSelected;
+        public event Action<ScenarioConfig> ScenarioSelected;
 
-        ScenarioFile _scenario;
-        public ScenarioFile Scenario
+        ScenarioConfig _scenario;
+        public ScenarioConfig Scenario
         {
             get { return _scenario; }
             set

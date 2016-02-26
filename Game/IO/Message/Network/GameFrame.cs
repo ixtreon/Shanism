@@ -13,15 +13,17 @@ namespace IO.Message.Network
     public class GameFrameMessage : IOMessage
     {
         [ProtoMember(1)]
-        readonly byte[] Data;
+        public readonly byte[] Data;
 
 
-        GameFrameMessage() { Type = MessageType.GameFrame; }
+        public override MessageType Type { get { return MessageType.GameFrame; } }
 
-        public GameFrameMessage(uint objGuid, ObjectType objType, byte[] objData)
+        GameFrameMessage() { }
+
+        public GameFrameMessage(byte[] datas)
             : this()
         {
-            Data = objData;
+            Data = datas;
         }
     }
 }

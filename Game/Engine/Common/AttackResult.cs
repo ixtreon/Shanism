@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Engine.Common
 {
-    public enum AttackResult    //unused
+    enum AttackResult    //unused
     {
         Hit, Crit, Dodge, 
     }

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
 using Engine.Systems;
-using Engine.Entities;
+using Engine.Objects;
 using Engine;
 using Engine.Common;
 using IO.Common;
-using Engine.Entities.Objects;
+using Engine.Objects.Entities;
 using Engine.Events;
 
 namespace Engine.Systems.Abilities

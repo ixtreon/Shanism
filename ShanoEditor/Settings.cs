@@ -28,14 +28,24 @@ namespace ShanoEditor.Properties {
             // Add code to handle the SettingsSaving event here.
         }
 
-        public void UpdateRecentFiles(string path)
+        public void AddToRecent(string path)
         {
             var recents = RecentFiles
                 .Split('\n')
                 .Where(s => s != path)
-                .Take(Settings.Default.NumRecentFiles - 1)
+                .Take(NumRecentFiles - 1)
                 .Prepend(path);
 
+
+            RecentFiles = string.Join("\n", recents);
+            Save();
+        }
+        public void RemoveFromRecent(string path)
+        {
+            var recents = RecentFiles
+                .Split('\n')
+                .Where(s => s != path)
+                .Take(NumRecentFiles - 1);
 
             RecentFiles = string.Join("\n", recents);
             Save();

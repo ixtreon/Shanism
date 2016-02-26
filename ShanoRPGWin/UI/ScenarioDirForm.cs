@@ -15,14 +15,14 @@ namespace ShanoRPGWin.UI
 {
     public partial class ScenarioDirForm : Form
     {
-        ScenarioFile selectedScenario;
+        ScenarioConfig selectedScenario;
 
         ScenarioLibrary selectedLibrary;
 
         /// <summary>
         /// Gets the scenario which the user ultimately chose. 
         /// </summary>
-        public ScenarioFile ChosenScenario { get; private set; }
+        public ScenarioConfig ChosenScenario { get; private set; }
 
         public event Action ScenariosLoaded;
 
@@ -44,7 +44,7 @@ namespace ShanoRPGWin.UI
         /// <summary>
         /// Tries to find the given scenario. 
         /// </summary>
-        public ScenarioFile FindScenario(string path)
+        public ScenarioConfig FindScenario(string path)
         {
             return libTree.FindScenario(path);
         }
@@ -79,7 +79,7 @@ namespace ShanoRPGWin.UI
             selectedScenario = null;
         }
 
-        void LibTree_SelectedScenario(ScenarioFile sc, ScenarioLibrary lib)
+        void LibTree_SelectedScenario(ScenarioConfig sc, ScenarioLibrary lib)
         {
             //show scenario
             scenarioDetails.Scenario = sc;
@@ -136,7 +136,7 @@ namespace ShanoRPGWin.UI
         #endregion
 
         #region Other event handlers
-        void scenarioDetails_ScenarioSelected(ScenarioFile sc)
+        void scenarioDetails_ScenarioSelected(ScenarioConfig sc)
         {
             //selected a scenario => set dialog result and hide
             ChosenScenario = sc;

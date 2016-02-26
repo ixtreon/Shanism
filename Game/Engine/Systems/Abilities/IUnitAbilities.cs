@@ -1,4 +1,4 @@
-﻿using Engine.Entities;
+﻿using Engine.Objects;
 using System;
 using System.Collections.Generic;
 
@@ -23,7 +23,7 @@ namespace Engine.Systems.Abilities
         /// <summary>
         /// The event raised when this unit learns a new ability. 
         /// </summary>
-        event Action<Ability> OnAbilityGained;
+        event Action<Ability> OnAbilityLearned;
 
         /// <summary>
         /// The event raised when this unit loses an ability. 
@@ -48,7 +48,7 @@ namespace Engine.Systems.Abilities
         /// Tries to get the value of the given ability from this unit's spell book. 
         /// Returns null if the ability is not found. 
         /// </summary>
-        /// <param name="key">The name of the ability to look for. </param>
-        Ability TryGet(string abilityId);
+        /// <param name="abilityId">The ID of the ability to look for. </param>
+        Ability TryGet(uint abilityId);
     }
 }

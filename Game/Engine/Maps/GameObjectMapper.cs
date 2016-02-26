@@ -1,4 +1,4 @@
-﻿using Engine.Entities;
+﻿using Engine.Objects;
 using IO.Common;
 using System;
 using System.Collections.Generic;
@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 namespace Engine.Maps
 {
     /// <summary>
-    /// Maps instances of <see cref="GameObject"/> to bins of type <see cref="Point"/>. 
-    /// Also provides wrappers around <see cref="ScenarioObject.Update(int)"/> and <see cref="GameObject.IsDestroyed"/> to the map provider. 
+    /// Maps instances of <see cref="Entity"/> to bins of type <see cref="Point"/>. 
+    /// Also provides wrappers around <see cref="GameObject.Update(int)"/> and <see cref="Entity.IsDestroyed"/> to the map provider. 
     /// </summary>
-    class GameObjectMapper : IObjectMapper<GameObject, Point>
+    class GameObjectMapper : IObjectMapper<Entity, Point>
     {
         double binSize { get; }
 
@@ -25,6 +25,7 @@ namespace Engine.Maps
             this.binSize = binSize;
         }
 
+
         public Point GetBinId(Vector pos)
         {
             return (pos / binSize).Floor();
@@ -33,7 +34,7 @@ namespace Engine.Maps
         /// <summary>
         /// Returns the id of the bin an object belongs to.
         /// </summary>
-        public Point GetBinId(GameObject obj)
+        public Point GetBinId(Entity obj)
         {
             return GetBinId(obj.Position);
         }
@@ -41,7 +42,7 @@ namespace Engine.Maps
         /// <summary>
         /// Gets whether an object should be removed from the map as soon as possible.
         /// </summary>
-        public bool ShouldRemove(GameObject obj)
+        public bool ShouldRemove(Entity obj)
         {
             return obj.IsDestroyed;
         }
@@ -51,7 +52,7 @@ namespace Engine.Maps
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="msElapsed">The time elapsed since the last update, in milliseconds.</param>
-        public void Update(GameObject obj, int msElapsed)
+        public void Update(Entity obj, int msElapsed)
         {
             obj.Update(msElapsed);
         }
@@ -63,7 +64,7 @@ namespace Engine.Maps
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public bool ForcesBinUpdates(GameObject obj)
+        public bool ForcesBinUpdates(Entity obj)
         {
             return true;    // NYI
         }

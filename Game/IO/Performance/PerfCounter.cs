@@ -12,11 +12,14 @@ namespace IO.Performance
     /// <summary>
     /// Provides a breakdown of the performance of an application.. 
     /// </summary>
-    public class PerfCounter
+    public class PerfCounter : IPerformanceStats
     {
         public static readonly PerfCounter Default = new PerfCounter();
 
         readonly ConcurrentDictionary<string, SectionCounter> stats = new ConcurrentDictionary<string, SectionCounter>();
+
+
+        public IReadOnlyDictionary<string, long> Measurements => stats.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.TotalElapsed);
 
         /// <summary>
         /// Resets the timings for all performance categories in the application. 

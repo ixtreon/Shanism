@@ -1,5 +1,5 @@
-﻿using Engine.Entities;
-using Engine.Entities.Objects;
+﻿using Engine.Objects;
+using Engine.Objects.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

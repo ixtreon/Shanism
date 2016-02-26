@@ -11,7 +11,7 @@ namespace ShanoServer
 {
     class Program
     {
-        const string defaultPath = @"..\..\..\Scenarios\DefaultScenario";
+        const string defaultPath = @"D:\Shanism\Scenarios\DefaultScenario";
 
         static readonly Regex argRegexHelp = new Regex(@"(-|\/)(help|h|\?)");
         static readonly Regex argRegexScenario = new Regex(@"(-|\/)(sc|scenario)");

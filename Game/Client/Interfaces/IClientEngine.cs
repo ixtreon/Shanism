@@ -1,5 +1,6 @@
 ﻿using IO;
 using IO.Common;
+using IO.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,9 @@ using GameTime = Microsoft.Xna.Framework.GameTime;
 namespace Client
 {
     /// <summary>
-    /// A client engine. Contains the logic necessary to draw the game. 
+    /// An instance of the game client engine. 
+    /// Contains the logic necessary to draw and update the ShanoRpg. 
+    /// Is also a <see cref="IShanoClient"/> that can play on a <see cref="IShanoEngine"/>. 
     /// </summary>
     public interface IClientEngine : IShanoClient
     {
@@ -30,7 +33,7 @@ namespace Client
         /// </summary>
         /// <param name="cameraPos">The in-game center of the camera. </param>
         /// <param name="windowSz">The window size. </param>
-        void SetCameraParams(Vector? cameraPos = null, Vector? windowSz = null);
+        void SetCameraParams(Vector? cameraPos = null, IEntity lockedEntity = null, Vector? windowSz = null);
 
         void ToggleUI(bool visible);
 

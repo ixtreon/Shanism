@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Entities;
+using Engine.Objects;
 using IO.Message;
 using IO.Common;
 
@@ -20,7 +20,7 @@ namespace Engine.Systems
 
         internal override void Update(int msElapsed)
         {
-            if (Owner.IsDead || Owner.StateFlags.HasFlag(UnitFlags.Stunned) || Owner.Behaviour == null)
+            if (Owner.IsDead || Owner.States.HasFlag(UnitFlags.Stunned) || Owner.Behaviour == null)
                 return;
 
             //update behaviour

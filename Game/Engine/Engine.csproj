@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -23,6 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>bin\Debug\Engine.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -137,12 +138,14 @@
     <Compile Include="Common\AttackResult.cs" />
     <Compile Include="Common\DamageFlags.cs" />
     <Compile Include="Common\DamageResult.cs" />
+    <Compile Include="Common\ObjectCreator.cs" />
     <Compile Include="Common\Rnd.cs" />
+    <Compile Include="Maps\IGameMap.cs" />
+    <Compile Include="Objects\Buffs\Stunned.cs" />
     <Compile Include="Events\AbilityCastArgs.cs" />
     <Compile Include="Events\LocationChangeArgs.cs" />
     <Compile Include="Events\ObjectMoveArgs.cs" />
     <Compile Include="GameSystem.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Maps\GameObjectMapper.cs" />
     <Compile Include="Maps\HashMap.cs" />
     <Compile Include="Maps\ObjectMap.cs" />
@@ -151,6 +154,8 @@
     <Compile Include="Maps\Terrain\MapGod.cs" />
     <Compile Include="Maps\Terrain\RandomMap.cs" />
     <Compile Include="Network\NetSystem.cs" />
+    <Compile Include="Players\ShanoReceptor.cs" />
+    <Compile Include="Serialization\ShanoReader.cs" />
     <Compile Include="Systems\Behaviours\BehaviourSystem.cs" />
     <Compile Include="Systems\Abilities\AbilitySystem.cs" />
     <Compile Include="Systems\Buffs\IUnitBuffs.cs" />
@@ -161,26 +166,24 @@
     <Compile Include="Systems\NYI\Item\InventorySlot.cs" />
     <Compile Include="Systems\NYI\Item\InventoryType.cs" />
     <Compile Include="Systems\UnitSystem.cs" />
-    <Compile Include="Systems\Range\Events\RangeEvent.cs" />
-    <Compile Include="Systems\Range\Events\PointRangeEvent.cs" />
-    <Compile Include="Systems\Range\Events\UnitRangeEvent.cs" />
+    <Compile Include="Systems\Range\RangeEvent.cs" />
     <Compile Include="Events\UnitDamagingArgs.cs" />
     <Compile Include="Events\UnitDamagedArgs.cs" />
     <Compile Include="Events\UnitDyingArgs.cs" />
     <Compile Include="Maps\MapSystem.cs" />
     <Compile Include="Maps\Hash.cs" />
-    <Compile Include="Entities\Objects\Units\Combat.cs" />
-    <Compile Include="Entities\Objects\Units\Movement.cs" />
-    <Compile Include="Entities\Objects\Units\Vision.cs" />
+    <Compile Include="Objects\Entities\UnitPartials\Combat.cs" />
+    <Compile Include="Objects\Entities\UnitPartials\Movement.cs" />
+    <Compile Include="Objects\Entities\UnitPartials\Vision.cs" />
     <Compile Include="Systems\Abilities\Objects\Attributes\AbilityTypes.cs" />
     <Compile Include="Systems\Abilities\Objects\Attributes\SpamAbility.cs" />
-    <Compile Include="Systems\Buffs\Objects\Buff.cs" />
-    <Compile Include="Entities\Objects\Base\Doodad.cs" />
-    <Compile Include="Entities\Objects\GameItem.cs" />
-    <Compile Include="Entities\GameObject.cs" />
+    <Compile Include="Objects\Buffs\Buff.cs" />
+    <Compile Include="Objects\Entities\Base\Doodad.cs" />
+    <Compile Include="Objects\GameItem.cs" />
+    <Compile Include="Objects\Entity.cs" />
     <Compile Include="Systems\Buffs\BuffSystem.cs" />
-    <Compile Include="Entities\Objects\Units\Orders.cs" />
-    <Compile Include="Entities\Objects\Units\States.cs" />
+    <Compile Include="Objects\Entities\UnitPartials\Orders.cs" />
+    <Compile Include="Objects\Entities\UnitPartials\States.cs" />
     <Compile Include="Systems\Abilities\Objects\Attack.cs" />
     <Compile Include="Systems\Behaviours\Objects\SpamBehaviour.cs" />
     <Compile Include="Systems\Behaviours\Objects\Behaviour.cs" />
@@ -188,16 +191,16 @@
     <Compile Include="Systems\Behaviours\Objects\BehaviourList.cs" />
     <Compile Include="Systems\Behaviours\Objects\FollowBehaviour.cs" />
     <Compile Include="Systems\Behaviours\Objects\ReturnBehaviour.cs" />
-    <Compile Include="Systems\Buffs\Objects\BuffInstance.cs" />
+    <Compile Include="Objects\Buffs\BuffInstance.cs" />
     <Compile Include="Systems\NYI\Chat\ChatProvider.cs" />
     <Compile Include="Systems\Scripting\CustomScript.cs" />
     <Compile Include="Systems\NYI\Item\InventorySystem.cs" />
     <Compile Include="Systems\NYI\Item\InventoryItem.cs" />
-    <Compile Include="Entities\Objects\Monster.cs" />
-    <Compile Include="Entities\Objects\Projectile.cs" />
-    <Compile Include="Entities\Objects\Base\Effect.cs" />
-    <Compile Include="Entities\Objects\Units\UnitHelper.cs" />
-    <Compile Include="Player.cs" />
+    <Compile Include="Objects\Entities\Monster.cs" />
+    <Compile Include="Objects\Entities\Projectile.cs" />
+    <Compile Include="Objects\Entities\Base\Effect.cs" />
+    <Compile Include="Objects\Entities\UnitPartials\UnitHelper.cs" />
+    <Compile Include="Players\Player.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -212,17 +215,18 @@
     <Compile Include="Scenario.cs" />
     <Compile Include="Systems\Orders\Objects\IOrder.cs" />
     <Compile Include="ShanoEngine.cs" />
-    <Compile Include="Entities\Objects\Base\Unit.cs" />
-    <Compile Include="Entities\Objects\Hero.cs" />
+    <Compile Include="Objects\Entities\Base\Unit.cs" />
+    <Compile Include="Objects\Entities\Base\Hero.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Entities\ScenarioObject.cs" />
+    <Compile Include="Objects\GameObject.cs" />
     <Compile Include="Systems\Orders\OrdersSystem.cs" />
     <Compile Include="Systems\Range\UnitRangeSystem.cs" />
     <Compile Include="Systems\Vision\VisionSystem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="ClassDiagram1.cd" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -230,6 +234,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\lib\IxSerializer\IxSerializer.csproj">
+      <Project>{41be9dd9-644c-4a90-8d47-667b4323df7a}</Project>
+      <Name>IxSerializer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ScenarioLib\ScenarioLib.csproj">
       <Project>{bada50f2-93bc-4eba-949a-bf892ae4b7e5}</Project>
       <Name>ScenarioLib</Name>
@@ -243,7 +251,9 @@
       <Name>Network</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Systems\Network\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

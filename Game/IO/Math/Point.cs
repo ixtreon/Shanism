@@ -5,14 +5,48 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IxSerializer.Modules;
+using System.IO;
 
 namespace IO.Common
 {
+    /// <summary>
+    /// Represents a point in the 2D plane with integral coordinates. 
+    /// </summary>
     [ProtoContract]
-    public struct Point
+    public struct Point : IxSerializable
     {
+        /// <summary>
+        /// The point that has both of its X and Y coordinates set to zero. 
+        /// </summary>
         public static readonly Point Zero = new Point();
+
+        /// <summary>
+        /// The point that has both of its X and Y coordinates set to one. 
+        /// </summary>
         public static readonly Point One = new Point(1);
+
+
+        /// <summary>
+        /// Deserializes the data from the specified reader into this object.
+        /// </summary>
+        /// <param name="r"></param>
+        public void Deserialize(BinaryReader r)
+        {
+            X = r.ReadInt32();
+            Y = r.ReadInt32();
+        }
+
+        /// <summary>
+        /// Serializes this object to the given writer.
+        /// </summary>
+        /// <param name="w"></param>
+        public void Serialize(BinaryWriter w)
+        {
+            w.Write(X);
+            w.Write(Y);
+        }
+
 
         /// <summary>
         /// The X coordinate of the point. 
@@ -156,6 +190,13 @@ namespace IO.Common
 
         #region Overrides
 
+        /// <summary>
+        /// Determines whether the specified <see cref="object" />, is equal to this instance.
+        /// </summary>
+        /// <param name="obj">The <see cref="object" /> to compare with this instance.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified <see cref="object" /> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
         public override bool Equals(object obj)
         {
             if (!(obj is Point))
@@ -164,14 +205,27 @@ namespace IO.Common
             return p == this;
         }
 
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
         public override string ToString()
         {
-            return "[{0}, {1}]".F(X, Y);
+            return $"[{X}, {Y}]";
         }
 
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// </returns>
         public override int GetHashCode()
         {
-            unchecked       // http://stackoverflow.com/questions/5221396/what-is-an-appropriate-gethashcode-algorithm-for-a-2d-point-struct-avoiding
+            // http://stackoverflow.com/questions/5221396/what-is-an-appropriate-gethashcode-algorithm-for-a-2d-point-struct-avoiding
+            unchecked
             {
                 int hash = 17;
                 hash = hash * 23 + X.GetHashCode();

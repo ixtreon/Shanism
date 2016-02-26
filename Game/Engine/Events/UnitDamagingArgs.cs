@@ -1,5 +1,5 @@
 ﻿using Engine.Common;
-using Engine.Entities;
+using Engine.Objects;
 using IO.Common;
 using System;
 
@@ -13,19 +13,20 @@ namespace Engine.Events
         /// <summary>
         /// Gets the unit that is dealing the damage. 
         /// </summary>
-        public readonly Unit DamagingUnit;
+        public Unit DamagingUnit { get; }
 
         /// <summary>
         /// Gets the unit that is receiving the damage. 
         /// </summary>
-        public readonly Unit DamagedUnit;
-
-
-        public DamageFlags DamageFlags { get; set; }
-
+        public Unit DamagedUnit { get; }
 
         /// <summary>
-        /// Gets or sets the <see cref="DamageType"/> of the attack. 
+        /// Gets or sets the damage flags of the event. 
+        /// </summary>
+        public DamageFlags DamageFlags { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DamageType"/> of the event. 
         /// </summary>
         public DamageType DamageType { get; set; }
 
@@ -35,13 +36,14 @@ namespace Engine.Events
         /// </summary>
         public double BaseDamage { get; set; }
 
-        public UnitDamagingArgs(Unit attacker, Unit receiver, DamageType type, DamageFlags flags, double baseAmount)
+        public UnitDamagingArgs(Unit attacker, Unit receiver, DamageType type, DamageFlags flags, double baseDamage)
         {
-            BaseDamage = baseAmount;
-            DamageType = type;
-            DamageFlags = flags;
             DamagingUnit = attacker;
             DamagedUnit = receiver;
+
+            DamageType = type;
+            DamageFlags = flags;
+            BaseDamage = baseDamage;
         }
     }
 }

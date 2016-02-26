@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Engine.Common;
-using Engine.Systems.Buffs;
+using Engine.Objects.Buffs;
 using Engine.Systems.Abilities;
 using Engine.Systems.Item;
+using IO.Common;
 
-namespace Engine.Entities
+namespace Engine.Objects
 {
     //NYI
-    public class InventoryItem : ScenarioObject
+    class InventoryItem : GameObject
     {
+        public override ObjectType ObjectType {  get { return ObjectType.Item; } }
+
+
         public string Name { get; set; }
 
         public string Description { get; set; }

@@ -24,7 +24,7 @@ namespace IO
         /// <returns></returns>
         INetReceptor AcceptClient(IShanoClient c);
 
-        void StartPlaying(INetReceptor rec);
+        void StartPlaying(IReceptor rec);
 
 
         void OpenToNetwork();

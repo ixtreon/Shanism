@@ -1,4 +1,4 @@
-﻿using Engine.Entities.Objects;
+﻿using Engine.Objects.Entities;
 using IO;
 using System;
 using System.Collections.Concurrent;
@@ -11,7 +11,13 @@ using System.Collections;
 
 namespace Engine.Maps
 {
-
+    /// <summary>
+    /// Maps objects of type <typeparamref name="TVal"/> to bins of type <typeparamref name="TKey"/>. 
+    /// Supports parallel updates and handles objects add/remove/update via the <see cref="IObjectMapper{TVal, TKey}"/> interface. 
+    /// 
+    /// </summary>
+    /// <typeparam name="TKey"></typeparam>
+    /// <typeparam name="TVal"></typeparam>
     class HashMap<TKey, TVal> : IEnumerable<TVal>
     {
         #region Delegates
@@ -31,10 +37,9 @@ namespace Engine.Maps
         #endregion
 
 
-        ConcurrentDictionary<TKey, HashBin> binDict { get; }
+        readonly ConcurrentDictionary<TKey, HashBin> binDict;
 
-        IObjectMapper<TVal, TKey> objectMapper { get; }
-
+        readonly IObjectMapper<TVal, TKey> objectMapper;
 
         /// <summary>
         /// The event raised whenever an item is added to this HashMap. 
@@ -51,13 +56,11 @@ namespace Engine.Maps
         /// </summary>
         public event BinChangeDelegate ItemBinChanged;
 
+
         /// <summary>
-        /// Gets a snapshot of all the bins that are initialized. 
+        /// Gets a snapshot of all currently initialized bins. 
         /// </summary>
-        internal IEnumerable<HashBin> Bins
-        {
-            get { return binDict.Values; }
-        }
+        internal IEnumerable<HashBin> Bins => binDict.Values;
 
 
 
@@ -122,14 +125,15 @@ namespace Engine.Maps
         /// Gets all objects in the specified bin. 
         /// </summary>
         /// <param name="binId">The bin identifier.</param>
-        public IEnumerable<TVal> GetBinObjects(TKey binId)
+        public IEnumerable<TVal> BinQuery(TKey binId)
         {
             HashBin bin = null;
             binDict.TryGetValue(binId, out bin);
             return bin?.Objects ?? Enumerable.Empty<TVal>();
         }
 
-        int msElapsed;
+        volatile int msElapsed;
+
         /// <summary>
         /// Updates all bins (and all objects in them) in parallel.  
         /// </summary>
@@ -144,19 +148,13 @@ namespace Engine.Maps
             item.Value.Update(msElapsed);
         }
 
-        public IEnumerator<TVal> GetEnumerator()
-        {
-            return Bins.SelectMany(b => b.Objects).GetEnumerator();
-        }
+        public IEnumerator<TVal> GetEnumerator() => binDict.SelectMany(b => b.Value.Objects).GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         internal class HashBin
         {
-            readonly BinChangeDelegate ObjectMovedToAnotherBin;
+            readonly BinChangeDelegate ObjectBinChanged;
             readonly ItemDelegate ObjectRemoved;
 
             /// <summary>
@@ -176,7 +174,7 @@ namespace Engine.Maps
             /// <summary>
             /// Gets all objects currently in the bin. 
             /// </summary>
-            public IEnumerable<TVal> Objects { get { return objects; } }
+            public IEnumerable<TVal> Objects => objects;
 
 
             public HashBin(IObjectMapper<TVal, TKey> mapper, TKey id, 
@@ -186,7 +184,7 @@ namespace Engine.Maps
                 objectMapper = mapper;
                 Id = id;
 
-                ObjectMovedToAnotherBin = onObjectMovedToAnotherBin;
+                ObjectBinChanged = onObjectMovedToAnotherBin;
                 ObjectRemoved = onObjectRemoved;
             }
 
@@ -225,7 +223,7 @@ namespace Engine.Maps
                     var newBinId = objectMapper.GetBinId(obj);
                     if (!newBinId.Equals(Id))
                     {
-                        ObjectMovedToAnotherBin(obj, Id, newBinId);
+                        ObjectBinChanged(obj, Id, newBinId);
                         continue;
                     }
 
@@ -236,13 +234,15 @@ namespace Engine.Maps
                 newObjects = new ConcurrentQueue<TVal>();
             }
 
-            public override string ToString()
-            {
-                return "HashBin @ {0} ({1} items)".F(Id, objects.Count);
-            }
+            public override string ToString() => $"HashBin @ {Id} ({objects.Count} items)";
         }
     }
 
+    /// <summary>
+    /// Maps objects of type <typeparamref name="TVal"/> to values of type <typeparamref name="TKey"/>. 
+    /// </summary>
+    /// <typeparam name="TVal"></typeparam>
+    /// <typeparam name="TKey"></typeparam>
     interface IObjectMapper<TVal, TKey>
     {
         /// <summary>

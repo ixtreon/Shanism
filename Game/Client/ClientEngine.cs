@@ -45,6 +45,7 @@ namespace Client
         readonly ContentManager ContentManager;
 
         SpriteBatch spriteBatch;
+        public GraphicsDevice GraphicsDevice { get { return graphics.GraphicsDevice; } }
 
         RenderTarget2D terrainTexture;
         RenderTarget2D objectsTexture;
@@ -56,7 +57,7 @@ namespace Client
         /// <summary>
         /// Gets the name of the current player. 
         /// </summary>
-        public string PlayerName { get; }
+        string PlayerName;
 
         /// <summary>
         /// Gets the server this client is connected to. 
@@ -81,29 +82,17 @@ namespace Client
         public event Action<MapRequestMessage> MapRequested;
         public event Action HandshakeInit;
 
-        string IShanoClient.Name
-        {
-            get { return PlayerName; }
-        }
+        string IShanoClient.Name => PlayerName;
         #endregion
 
-        public GraphicsDevice GraphicsDevice { get { return graphics.GraphicsDevice; } }
 
         public bool IsConnected { get; private set; }
-
-        IO.Common.Vector CameraPosition
-        {
-            get { return Game.Objects.MainHero?.Position ?? IO.Common.Vector.Zero; }
-        }
-
 
         public ClientEngine(string playerName, IGraphicsDeviceService graphics, ContentManager content)
         {
             ContentManager = content;
             PlayerName = playerName;
             this.graphics = graphics;
-
-
         }
 
 
@@ -113,7 +102,8 @@ namespace Client
 
             server.MessageSent += (m) =>
             {
-                pendingMessages.Enqueue(m);
+                if (m != null)
+                    pendingMessages.Enqueue(m);
             };
         }
 
@@ -132,7 +122,7 @@ namespace Client
 
                 case MessageType.DamageEvent:
                     var dmgEv = (DamageEventMessage)msg;
-                    Game.DamageText.AddDamageLabel(dmgEv);
+                    Game.FloatingText.AddDamageLabel(dmgEv);
                     break;
             }
         }
@@ -171,12 +161,15 @@ namespace Client
         }
 
 
+        Assets.CircleDict circles;
+
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
         /// </summary>
         public void LoadContent()
         {
+            circles = new Assets.CircleDict(32, 1024, graphics.GraphicsDevice);
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
@@ -214,9 +207,10 @@ namespace Client
         public void Update(GameTime gameTime)
         {
             var msElapsed = (int)gameTime.ElapsedGameTime.TotalMilliseconds;
+            KeyboardInfo.Update(msElapsed);
 
             //update the local server
-            if(Server != null)
+            if (Server != null)
                 Server.UpdateServer(msElapsed);
 
             //Parse its messages
@@ -228,7 +222,6 @@ namespace Client
                 return;
 
             //keyboard
-            KeyboardInfo.Update(msElapsed);
             UpdateKeys();
 
             //camera
@@ -238,11 +231,11 @@ namespace Client
             Game.Update(msElapsed);
 
             //terrain
-            MapManager.CameraPosition = CameraPosition;
             MapManager.Update(msElapsed);
         }
 
         MovementState lastMoveState;
+        bool showDebugStats = false;
 
         void UpdateKeys()
         {
@@ -257,19 +250,17 @@ namespace Client
                 MovementStateChanged(new MoveMessage(moveState));
             }
 
-            //health bars
-            if (KeyboardInfo.IsActivated(GameAction.ShowHealthBars))
-                ShanoSettings.Current.QuickButtonPress = !ShanoSettings.Current.QuickButtonPress;
-
             //reload UI
-            if (KeyboardInfo.IsActivated(GameAction.ReloadUi))
-                Game.ReloadUi();
+            if (KeyboardInfo.IsActivated(GameAction.ToggleDebugInfo))
+                showDebugStats = !showDebugStats;
         }
 
         /// <summary>
         /// The (averaged) time to render a frame. 
         /// </summary>
         double timeToRender = 0;
+
+
 
         /// <summary>
         /// Called whenever the game should draw itself.
@@ -314,14 +305,15 @@ namespace Client
                     drawCode: () =>
                     {
                         Game.Interface.Draw(spriteBatch);
-                        drawDebugStats(spriteBatch, gameTime.ElapsedGameTime.TotalMilliseconds);
+                        if(showDebugStats)
+                            drawDebugStats(spriteBatch, gameTime.ElapsedGameTime.TotalMilliseconds);
                     });
 
 
 
                 // 5. reset surface, put all textures on
                 StartDrawing(spriteBatch, null,
-                    clearColor: Color.LightBlue,
+                    clearColor: Color.Black,
                     blend: BlendState.NonPremultiplied,
                     drawCode: () =>
                     {
@@ -329,6 +321,10 @@ namespace Client
                         spriteBatch.Draw(objectsTexture, Microsoft.Xna.Framework.Vector2.Zero, Color.White);
                         //spriteBatch.Draw(shadowTextureB, Vector2.Zero, Color.White);
                         spriteBatch.Draw(interfaceTexture, Microsoft.Xna.Framework.Vector2.Zero, Color.White);
+
+                        //var circleSz = (int)(64 + Ticker.Default.Value * (1024 - 64));
+                        //var circleTex = circles.GetTexture(circleSz / 2);
+                        //spriteBatch.Draw(circleTex, new Microsoft.Xna.Framework.Rectangle(100, 100, circleSz, circleSz), Color.Red);
                     });
             }
         }
@@ -355,9 +351,13 @@ namespace Client
 
         void onHandshakeReply(HandshakeReplyMessage msg)
         {
+            if(IsConnected)
+            {
+                return;
+            }
+
             if (!msg.Success)
             {
-                IsConnected = false;
                 return;
             }
 
@@ -382,7 +382,7 @@ namespace Client
         {
             var txt = "Connecting...";
             var font = Client.Content.Fonts.LargeFont;
-            var pos = new Point(Screen.PixelSize.X / 10);
+            var pos = new Point(Screen.ScreenSize.X / 10);
 
             GraphicsDevice.SetRenderTarget(null);
             GraphicsDevice.Clear(Color.Black);
@@ -413,6 +413,7 @@ namespace Client
                 "Game X/Y: {0:0.00}".F(mpGame),
                 "{0} objects".F(Game.Objects.Controls.Count()),
                 "Hover: " + Control.HoverControl.GetType().Name,
+                "Focus: " + Control.FocusControl?.GetType().Name,
                 Server.GetPerfData(),
 
             }.Aggregate((a, b) => a + '\n' + b);
@@ -424,14 +425,16 @@ namespace Client
 
         #region IClientEngine implementation
 
-        public void SetCameraParams(Vector? cameraPos = null, Vector? windowSz = null)
+        public void SetCameraParams(Vector? cameraPos = null,
+            IEntity lockedEntity = null, 
+            Vector? windowSz = null)
         {
-            Screen.SetCamera(null, cameraPos, windowSz);
+            Screen.SetCamera(null, cameraPos, lockedEntity, windowSz);
         }
 
         public void ToggleUI(bool visible)
         {
-            Game.Interface.Visible = visible;
+            Game.Interface.IsVisible = visible;
         }
 
         public Vector GameToScreen(Vector gamePos)

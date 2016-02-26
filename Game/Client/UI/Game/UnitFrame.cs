@@ -64,6 +64,8 @@ namespace Client.UI
                 Size = new Vector(labelLength, nameFont.UiHeight),
                 AutoSize = false,
 
+                //BackColor = Color.Green,
+
                 Font = nameFont,
                 Text = "Manqche",
                 TextColor = Color.White,
@@ -82,6 +84,8 @@ namespace Client.UI
                 Text = "Level ???",
                 TextColor = Color.White,
                 TextXAlign = 0.5f,
+
+                //BackColor = Color.Blue,
 
                 ToolTip = "???/???",
             };
@@ -126,7 +130,7 @@ namespace Client.UI
         {
             var unitTarget = Target?.Unit;
 
-            Visible = (unitTarget != null);
+            IsVisible = (unitTarget != null);
 
             healthBar.Target = unitTarget;
             manaBar.Target = unitTarget;

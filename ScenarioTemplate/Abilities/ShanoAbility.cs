@@ -1,30 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using IO;
-using IO.Common;
+﻿using IO.Common;
 using Engine.Events;
 using Engine.Systems.Abilities;
 
-namespace ScenarioTemplate.Abilities
+class ShanoAbility : Ability
 {
-    class ShanoAbility : Ability
+    public ShanoAbility()
     {
-        public ShanoAbility()
-        {
-            TargetType = AbilityTargetType.PointTarget;
+        // This code runs once the ability is created. 
+        // Put initialization logic here. 
 
-            Name = "Dummy Ability";
-            Description = "Dummy Description";
+        TargetType = AbilityTargetType.PointTarget;
 
-            Cooldown = 1000;
-            ManaCost = 5;
-        }
+        Name = "Dummy Ability";
+        Description = "Dummy Description";
 
-        protected override void OnCast(AbilityCastArgs e)
-        {
-            //This code will be executed when the spell is cast. 
-        }
+        Cooldown = 1000;
+        ManaCost = 5;
     }
+    protected override void OnCast(AbilityCastArgs e)
+    {
+        // This code is executed whenever the ability is cast. 
+        // The variable `e` contains useful data about the event. 
+    }
+
+    protected override void OnLearned()
+    {
+        // This code is executed once when the ability is given to some unit. 
+        // this.Owner refers to the unit that learned the ability. 
+    }
+
+    protected override void OnUpdate(int msElapsed)
+    {
+        // This code is executed every frame once the ability is learned by some unit. 
+        // Be careful what you put here...
+    }
+
 }

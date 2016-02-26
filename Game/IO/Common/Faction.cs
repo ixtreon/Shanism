@@ -8,7 +8,7 @@ namespace IO.Common
     /// <summary>
     /// Represents a faction (such as a tribe of gnolls) or (TODO) a guild. 
     /// </summary>
-    public class Faction
+    class Faction
     {
         public static readonly Faction Player = new Faction("Player");
 

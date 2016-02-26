@@ -6,14 +6,24 @@ using System.Text;
 using System.Threading.Tasks;
 using IO.Common;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
 namespace IO.Objects
 {
     /// <summary>
     /// Represents an empty buff as reconstructed by a network client. 
     /// </summary>
-    public class BuffStub : IBuffInstance
+    public class BuffInstanceStub : ObjectStub, IBuffInstance
     {
-        public uint Id { get; set; }
+
+        public BuffInstanceStub() { }
+
+        public BuffInstanceStub(uint id)
+            : base(id)
+        {
+
+        }
+
 
         public double Agility { get; private set; }
 
@@ -53,5 +63,7 @@ namespace IO.Objects
         public bool HasIcon { get; private set; }
 
         public double Vitality { get; private set; }
+
+        public UnitFlags UnitStates { get; private set; }
     }
 }

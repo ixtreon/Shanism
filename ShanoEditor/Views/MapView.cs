@@ -16,31 +16,31 @@ namespace ShanoEditor.Views
     {
         public override ScenarioViewType ViewType { get; } = ScenarioViewType.Map;
 
-        public MapConfig Map { get { return Model.Scenario.MapConfig; } }
+        public MapConfig Map { get { return Model.Scenario.Config.Map; } }
 
 
-        EditorClient Client { get; }
+        EditorControl Client { get; }
         EditorEngine Engine { get; set; }
 
         protected override async Task LoadModel()
         {
             if (Map == null) return;
 
-            //shanoMap1.SetModel(Model);
-
-            chkInfinite.Checked = Map.Infinite;
+            chkInfinite.Checked = Map.IsInfinite;
             chkInfinite_CheckedChanged(null, null);
+
+            propPanel.LoadModel(Model.Content.Animations);
 
             nWidth.Value = Map.Width;
             nHeight.Value = Map.Height;
         }
 
 
-        protected override async Task SaveModel()
+        protected override void SaveModel()
         {
             if (Map == null) return;
 
-            Map.Infinite = chkInfinite.Checked;
+            Map.IsInfinite = chkInfinite.Checked;
         }
 
         public MapView()
@@ -54,27 +54,26 @@ namespace ShanoEditor.Views
 
             //shanoMap1.MapModified += ShanoMap1_MapRedrawn;
 
-            Client = new EditorClient { Dock = DockStyle.Fill };
-
+            Client = new EditorControl { Dock = DockStyle.Fill };
+            Engine = new EditorEngine(Client);
+            Engine.MapChanged += onMapChanged;
 
             Client.GameLoaded += () =>
             {
-                Engine = new EditorEngine(Client, Model);
+                Engine.LoadScenario(Model);
             };
 
             mapSplitter.Panel2.Controls.Add(Client);
         }
 
+        void onMapChanged()
+        {
+            MarkAsChanged();
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-
-            listPanel1.Dock = DockStyle.Fill;
-            listPanel1.Width = mapSplitter.Panel1.Width;
-
-            listPanel1.AddPanel(pMapSettings, "Settings");
-            listPanel1.AddPanel(pTerrain, "Terrain");
-            listPanel1.AddPanel(pObjects, "Objects");
         }
 
         private void ShanoMap1_MapRedrawn()
@@ -102,10 +101,12 @@ namespace ShanoEditor.Views
                 (nWidth.Value != Map.Width || nHeight.Value != Map.Height);
         }
 
-        private void btnResizeMap_Click(object sender, EventArgs e)
+        void btnResizeMap_Click(object sender, EventArgs e)
         {
             //resize the map
-            Map.ResizeMap((int)nWidth.Value, (int)nHeight.Value);
+
+            var newSz = new IO.Common.Point((int)nWidth.Value, (int)nHeight.Value);
+            Engine.ResizeMap(newSz);
             //shanoMap1.SetMap(Map);
             //shanoMap1.Invalidate();
 
@@ -144,31 +145,19 @@ namespace ShanoEditor.Views
             nHeight.Value = Map.Height;
         }
 
-        private void pTerrain_BrushTypeSelected(IO.Common.TerrainType val)
+        private void onTerrainBrushChanged()
         {
-            //shanoMap1.ObjectBrush = null;
-            //shanoMap1.TerrainBrush = val;
+            Engine.SetBrush(pTerrain.TerrainType, pTerrain.TerrainSize, pTerrain.IsCircle);
         }
 
-        private void pTerrain_BrushSizeSelected(int val)
+        private void pObjects_ObjectSelected(IO.Objects.IEntity obj)
         {
-            //shanoMap1.TerrainBrushSize = val;
+            Engine.SetBrush(obj);
         }
 
-        private void pObjects_ObjectSelected(IO.Objects.IGameObject obj)
+        private void propPanel_BrushChanged(ObjectConstructor obj)
         {
-            //shanoMap1.TerrainBrush = null;
-            //shanoMap1.ObjectBrush = obj;
-        }
-
-        private void pTerrain_VisibleChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pObjects_VisibleChanged(object sender, EventArgs e)
-        {
-
+            Engine.SetBrush(obj);
         }
     }
 }

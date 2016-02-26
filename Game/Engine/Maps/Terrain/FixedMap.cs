@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Entities.Objects;
+using Engine.Objects.Entities;
 using IO.Common;
+using Engine.Objects;
 
 namespace Engine.Maps
 {
@@ -36,15 +37,15 @@ namespace Engine.Maps
                     var mx = rect.X + ix;
                     var my = rect.Y + iy;
                     if (mx >= 0 && mx < Bounds.Width && my >= 0 && my < Bounds.Height)
-                        outMap[ix + IO.Constants.Terrain.ChunkSize * iy] = map[mx, my];
+                        outMap[ix + rect.Width * iy] = map[mx, my];
                     else
-                        outMap[ix + IO.Constants.Terrain.ChunkSize * iy] = TerrainType.None;
+                        outMap[ix + rect.Width * iy] = TerrainType.None;
                 }
         }
 
-        public IEnumerable<Doodad> GetNativeDoodads(Rectangle rect)
+        public IEnumerable<Entity> GetNativeEntities(Rectangle rect)
         {
-            return Enumerable.Empty<Doodad>();
+            return Enumerable.Empty<Entity>();
         }
 
         public TerrainType GetTerrain(Vector loc)

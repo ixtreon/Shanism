@@ -37,7 +37,7 @@ namespace Client.Objects
         {
             var sz = new Vector(Unit.Scale);
 
-            var c = Unit.IsDead ? Color.Black : Color.White;
+            var c = Unit.IsDead ? Color.Black : Object.CurrentTint.ToColor();
             g.Draw(Sprite, Vector.Zero, Size, c, (float)ZOrder);
 
             if ((MouseOver || ShanoSettings.Current.QuickButtonPress) && !Unit.IsDead)

@@ -39,14 +39,12 @@ namespace ShanoEditor.Views
         }
 
         #region Overrides and Event Handlers
-        protected override void OnCheckedChanged(EventArgs e)
+
+        protected override void OnClick(EventArgs e)
         {
-            base.OnCheckedChanged(e);
-
-            if (Checked)
-                ObjectSelected?.Invoke(Object);
+            ObjectSelected?.Invoke(Object);
+            base.OnClick(e);
         }
-
         #endregion
     }
 }

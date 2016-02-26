@@ -18,7 +18,7 @@ namespace ShanoEditor.Views.Content
         /// <summary>
         /// Gets the current model of this control. 
         /// </summary>
-        public AnimationViewModel AnimationModel { get; private set; }
+        AnimationViewModel Animation;
 
 
 
@@ -40,7 +40,7 @@ namespace ShanoEditor.Views.Content
 
         private void ElapsedCounter_Tick(object sender, EventArgs e)
         {
-            var toContinue = !frameTicker.Tick() || AnimationModel.Animation.IsLooping;
+            var toContinue = !frameTicker.Tick() || Animation.IsLooping;
 
             if(!toContinue)
                 elapsedCounter.Enabled = false;
@@ -50,20 +50,20 @@ namespace ShanoEditor.Views.Content
 
         public void SetAnimation(AnimationViewModel anim)
         {
-            AnimationModel = anim;
+            Animation = anim;
 
             //update timer interval and state
-            if (AnimationModel == null || !AnimationModel.Animation.IsDynamic)
+            if (Animation == null || !Animation.IsDynamic)
             {
                 elapsedCounter.Enabled = false;
             }
             else
             {
-                var period = AnimationModel.Animation.Period;
+                var period = Animation.Period;
                 if (period <= 0) period = 10;
 
                 elapsedCounter.Interval = period;
-                frameTicker = new Counter(AnimationModel.Animation.Span.Area);
+                frameTicker = new Counter(Animation.Span.Area);
 
                 elapsedCounter.Enabled = true;
             }
@@ -76,19 +76,19 @@ namespace ShanoEditor.Views.Content
             var g = e.Graphics;
             g.Clear(Color.Black);
 
-            if (AnimationModel?.Texture == null)
+            if (Animation?.Texture == null)
                 return;
 
             //draw image
-            var imgRatio = (float)AnimationModel.Size.X / AnimationModel.Size.Y;
+            var imgRatio = (float)Animation.Size.X / Animation.Size.Y;
 
             var destSz = new Vector(Math.Min(Width, Height * imgRatio),
                 Math.Min(Height, Width / imgRatio)).ToPoint();
 
             var destPos = (Size.ToPoint() - destSz) / 2;
 
-            var anim = AnimationModel.Animation.IsDynamic ? frameTicker.Value : 0;
-            AnimationModel.Paint(g, new Rectangle(destPos, destSz), anim);
+            var anim = Animation.IsDynamic ? frameTicker.Value : 0;
+            Animation.Paint(g, new Rectangle(destPos, destSz), anim);
 
             base.OnPaint(e);
         }

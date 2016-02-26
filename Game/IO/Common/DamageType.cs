@@ -7,26 +7,21 @@ using System.Threading.Tasks;
 
 namespace IO.Common
 {
+    /// <summary>
+    /// The different types of damage that can be dealt. 
+    /// </summary>
     public enum DamageType
     {
+        /// <summary>
+        /// Physical damage gets reduced by the target's defense. 
+        /// </summary>
         Physical,
+
+        /// <summary>
+        /// Magical damage gets increased by the caster's magic power
+        /// and is reduced by the target's magic defense. 
+        /// </summary>
         Magical,
     }
 
-    public static class DamageTypeExt
-    {
-        public static double GetResistance(this IUnit u, DamageType damageType)
-        {
-            switch (damageType)
-            {
-                case DamageType.Physical:
-                    return 1 / (Constants.Engine.DamageReductionPerDefense * u.Defense + 1);
-
-                case DamageType.Magical:
-                    return 0;
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-    }
 }

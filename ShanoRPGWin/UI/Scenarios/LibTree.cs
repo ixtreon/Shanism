@@ -143,9 +143,9 @@ namespace ShanoRPGWin.UI.Scenarios
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public ScenarioFile FindScenario(string path)
+        public ScenarioConfig FindScenario(string path)
         {
-            return Nodes.Find(path, true).FirstOrDefault()?.Tag as ScenarioFile;
+            return Nodes.Find(path, true).FirstOrDefault()?.Tag as ScenarioConfig;
         }
 
         /// <summary>
@@ -182,7 +182,7 @@ namespace ShanoRPGWin.UI.Scenarios
         }
 
         public event Action<ScenarioLibrary> SelectedLibrary;
-        public event Action<ScenarioFile, ScenarioLibrary> SelectedScenario;
+        public event Action<ScenarioConfig, ScenarioLibrary> SelectedScenario;
         public event Action SelectionCleared;
 
         private void LibTree_AfterSelect(object sender, TreeViewEventArgs e)
@@ -198,7 +198,7 @@ namespace ShanoRPGWin.UI.Scenarios
                 return;
             }
 
-            ScenarioFile sc;
+            ScenarioConfig sc;
             var parentKey = e.Node.Parent?.Name ?? string.Empty;
             if (librariesInUse.TryGetValue(parentKey, out lib) && lib.TryGet(nodeKey, out sc))
             {

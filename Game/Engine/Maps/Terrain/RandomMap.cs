@@ -6,7 +6,8 @@ using System.Text;
 using IO.Common;
 using SharpNoise.Modules;
 using System.Diagnostics;
-using Engine.Entities.Objects;
+using Engine.Objects.Entities;
+using Engine.Objects;
 
 namespace Engine.Maps
 {
@@ -80,7 +81,7 @@ namespace Engine.Maps
         /// </summary>
         /// <param name="rect"></param>
         /// <returns></returns>
-        public IEnumerable<Doodad> GetNativeDoodads(Rectangle rect)
+        public IEnumerable<Entity> GetNativeEntities(Rectangle rect)
         {
             foreach (var pt in rect.Iterate())
             {
@@ -96,7 +97,7 @@ namespace Engine.Maps
                         var dy = Hash.GetDouble(pt.X, pt.Y, 2);
                         var loc = pt + new Vector(dx, dy);
 
-                        yield return new Doodad(name: "tree", location: loc);
+                        yield return new Doodad { ModelName = "tree", Position = loc };
                     }
                 }
             }
@@ -304,7 +305,7 @@ namespace Engine.Maps
             terrainModule = seaGround;
         }
 
-        string getMinMax(Module kur, int samples = 1000)
+        string getMinMax(Module m, int samples = 1000)
         {
             const double range = 1E6;
             var rnd = new Random();
@@ -315,7 +316,7 @@ namespace Engine.Maps
                 var x = rnd.NextDouble() * 2 * range - range;
                 var y = rnd.NextDouble() * 2 * range - range;
                 var z = rnd.NextDouble() * 2 * range - range;
-                var val = kur.GetValue(x, y, z);
+                var val = m.GetValue(x, y, z);
                 if (val < min)
                     min = val;
                 if (val > max)

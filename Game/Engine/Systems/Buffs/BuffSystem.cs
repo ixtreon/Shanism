@@ -1,13 +1,14 @@
-﻿using Engine.Systems.Buffs;
+﻿using Engine.Objects;
+using Engine.Objects.Buffs;
+using Engine.Objects.Entities;
+using Engine.Systems;
+using IO.Util;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Collections;
-using IO.Util;
-using Engine.Entities;
-using Engine.Entities.Objects;
 
 namespace Engine.Systems.Buffs
 {
@@ -70,6 +71,8 @@ namespace Engine.Systems.Buffs
             var lifeRegen = Constants.Units.BaseLifeRegen;
             var manaRegen = Constants.Units.BaseManaRegen;
 
+            var states = target.BaseStates;
+
             foreach (var b in target.Buffs)
             {
                 maxLife += b.Life;
@@ -89,6 +92,8 @@ namespace Engine.Systems.Buffs
 
                 //lifeRegen += b.LifeRegen;
                 //manaRegen += b.ManaRegen;
+
+                states |= b.UnitStates;
             }
 
             target.MaxLife = maxLife;
@@ -107,6 +112,8 @@ namespace Engine.Systems.Buffs
 
             target.LifeRegen = lifeRegen;
             target.ManaRegen = manaRegen;
+
+            target.States = states;
         }
 
         static void updateHeroStats(Hero target)
@@ -145,42 +152,26 @@ namespace Engine.Systems.Buffs
         /// <summary>
         /// Applies the given buff to the unit. 
         /// </summary>
-        /// <param name="b">The buff to apply. </param>
-        public void Add(Buff b)
+        /// <param name="buff">The buff to apply. </param>
+        /// <param name="caster">The caster of the buff. </param>
+        public BuffInstance Apply(Unit caster, Buff buff)
         {
             if (Target.IsDead)
-                return;
+                return null;
 
+            var newBuff = new BuffInstance(buff, caster, Target);
+            buffs.TryAdd(newBuff);
 
-            //if no such buffs, just apply a new instance. 
-            var existing = buffs
-                .Where(buff => b.Id == buff.Prototype.Id)
+            var existingBuffs = buffs
+                .Where(oldBuff => oldBuff.Equals(newBuff))
+                .OrderBy(b => b.DurationLeft)
                 .ToList();
 
-            if(!existing.Any())
-            {
-                buffs.TryAdd(new BuffInstance(b, Target));
-                return;
-            }
+            //remove a stack if need be
+            if (buff.MaxStacks > 0 && existingBuffs.Count >= buff.MaxStacks)
+                buffs.TryRemove(existingBuffs.First());
 
-            //if such a buff already exists, refer to the stacking type of the buff. 
-            switch (b.Type)
-            {
-                case IO.Common.BuffType.Aura:
-                case IO.Common.BuffType.NonStacking:
-                    existing.FirstOrDefault()?.RefreshDuration();   //should have just one such buff
-                    break;
-
-                case IO.Common.BuffType.StackingRefresh:            //add new, refresh existing
-                    foreach (var eb in existing)
-                        eb.RefreshDuration();
-                    buffs.TryAdd(new BuffInstance(b, Target));
-                    break;
-
-                case IO.Common.BuffType.StackingNormal:             //just add new buff instance
-                    buffs.TryAdd(new BuffInstance(b, Target));
-                    break;
-            }
+            return newBuff;
         }
 
         /// <summary>
@@ -190,7 +181,7 @@ namespace Engine.Systems.Buffs
         public void Remove(Buff buffType)
         {
             var toRemove = buffs
-                .Where(b => b.Prototype == buffType)
+                .Where(b => b.Prototype.Equals(buffType))
                 .ToList();
 
             foreach (var b in toRemove)
@@ -205,7 +196,7 @@ namespace Engine.Systems.Buffs
         public void Remove(Buff buffType, int nStacks)
         {
             var toRemove = buffs
-                .Where(b => b.Prototype == buffType)
+                .Where(b => b.Prototype.Equals(buffType))
                 .Take(nStacks)
                 .ToList();
 

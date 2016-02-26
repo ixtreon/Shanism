@@ -17,21 +17,13 @@ namespace Client.Assets
 {
     /// <summary>
     /// Manages the creation and handling of sprites for game objects. 
-    /// Assumes the <see cref="IGameObject.ModelName"/> is not changed. 
+    /// Assumes the <see cref="IEntity.ModelName"/> is not changed. 
     /// </summary>
     class SpriteCache
     {
-        public static ModelDef DefaultModel { get; } = new ModelDef(Constants.Content.DefaultValues.ModelName);
-
-        static SpriteCache()
-        {
-            DefaultModel.Animations.Add(Constants.Content.DefaultValues.Animation,
-                new AnimationDef(new TextureDef(Constants.Content.DefaultValues.ModelTexture)));
-        }
-
         ContentList content { get; }
 
-        ConditionalWeakTable<IGameObject, Sprite> sprites { get; } = new ConditionalWeakTable<IGameObject, Sprite>();
+        ConditionalWeakTable<IEntity, Sprite> sprites { get; } = new ConditionalWeakTable<IEntity, Sprite>();
 
 
 
@@ -46,7 +38,7 @@ namespace Client.Assets
         /// </summary>
         /// <param name="obj"></param>
         /// <returns>The object's existing sprite or a new one otherwise. </returns>
-        public Sprite this[IGameObject obj]
+        public Sprite this[IEntity obj]
         {
             get
             {

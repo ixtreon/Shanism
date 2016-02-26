@@ -15,7 +15,9 @@ namespace IO.Message.Client
         [ProtoMember(1)]
         public MapChunkId Chunk;
 
-        MapRequestMessage() { Type = MessageType.MapRequest; }
+        public override MessageType Type { get { return MessageType.MapRequest; } }
+
+        MapRequestMessage() { }
 
         public MapRequestMessage(MapChunkId chunk)
             : this()

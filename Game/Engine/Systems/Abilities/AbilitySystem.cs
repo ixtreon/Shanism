@@ -1,4 +1,4 @@
-﻿using Engine.Entities;
+﻿using Engine.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,15 +6,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
 using IO;
+using System.Collections.Concurrent;
 
 namespace Engine.Systems.Abilities
 {
     class AbilitySystem : UnitSystem, IUnitAbilities
     {
         /// <summary>
-        /// Contains mapping between ability ids (strings) and the spells. 
+        /// Contains mapping between ability ids and the abilities themselves. 
         /// </summary>
-        protected Dictionary<string, Ability> abilities = new Dictionary<string, Ability>();
+        protected ConcurrentDictionary<uint, Ability> abilities = new ConcurrentDictionary<uint, Ability>();
 
         /// <summary>
         /// The event raised just after a spell was cast. 
@@ -24,7 +25,7 @@ namespace Engine.Systems.Abilities
         /// <summary>
         /// The event raised when this unit learns a new ability. 
         /// </summary>
-        public event Action<Ability> OnAbilityGained;
+        public event Action<Ability> OnAbilityLearned;
 
         /// <summary>
         /// The event raised when this unit loses an ability. 
@@ -61,25 +62,23 @@ namespace Engine.Systems.Abilities
             if (a.Owner != null)
                 throw new Exception("This ability already belongs to somebody else...");
 
-            if (abilities.ContainsKey(a.Name))
+            if (!abilities.TryAdd(a.Id, a))
                 throw new Exception("Ye already have this ability!");
 
             a.SetOwner(Owner);
-
-            abilities.Add(a.Name, a);
-            OnAbilityGained?.Invoke(a);
+            OnAbilityLearned?.Invoke(a);
         }
 
         /// <summary>
         /// Removes the given ability from the spellbook of this hero. 
+        /// <para/>
+        /// If this ability is not owned by the unit, 
+        /// its ability list is checked for an ability with the same id. 
         /// </summary>
         /// <returns>Whether the ability was successfully found and removed. </returns>
         public bool Remove(Ability a)
         {
-            if (a.Owner != Owner)
-                throw new InvalidOperationException("The given ability does not belong to this unit!");
-
-            var result = abilities.Remove(a.Name);
+            var result = abilities.TryRemove(a.Id, out a);
             if(result)
                 OnAbilityLost?.Invoke(a);
             return result;
@@ -87,11 +86,14 @@ namespace Engine.Systems.Abilities
 
         /// <summary>
         /// Activates (casts) the specified ability. 
+        /// <para/>
+        /// If this ability is not owned by the unit, 
+        /// its ability list is checked for an ability with the same id. 
         /// </summary>
         internal bool ActivateAbility(Ability ability, object target)
         {
-            //check if we have the ability
-            if (!abilities.ContainsValue(ability))
+            //fetch the ability with the same id from the ability dict
+            if (!abilities.TryGetValue(ability.Id, out ability))
                 throw new InvalidOperationException("The given ability does not belong to this unit!");
 
             //check if we own the ability
@@ -118,23 +120,17 @@ namespace Engine.Systems.Abilities
         /// Tries to get the value of the given ability from this unit's spell book. 
         /// Returns null if the ability is not found. 
         /// </summary>
-        /// <param name="key">The name of the ability to look for. </param>
-        public Ability TryGet(string abilityId)
+        /// <param name="abilityId">The ID of the ability to look for. </param>
+        public Ability TryGet(uint abilityId)
         {
             return abilities.TryGet(abilityId);
         }
 
 
         #region IEnumerable<Ability> Implementation
-        public IEnumerator<Ability> GetEnumerator()
-        {
-            return abilities.Values.GetEnumerator();
-        }
+        public IEnumerator<Ability> GetEnumerator() => abilities.Values.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return abilities.Values.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => abilities.Values.GetEnumerator();
         #endregion
 
 

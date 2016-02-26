@@ -60,9 +60,9 @@ namespace Client.UI
 
         protected override void OnUpdate(int msElapsed)
         {
-            this.Visible = (Target != null);
+            this.IsVisible = (Target != null);
 
-            if (Visible)
+            if (IsVisible)
             {
                 //get the new buffs
                 BuffList = Target.Buffs?.Take(MaxBuffs) ?? Enumerable.Empty<IBuffInstance>();

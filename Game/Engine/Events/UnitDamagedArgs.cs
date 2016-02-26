@@ -1,6 +1,6 @@
 ﻿using Engine.Common;
-using Engine.Entities;
-using Engine.Entities.Objects;
+using Engine.Objects;
+using Engine.Objects.Entities;
 using IO.Common;
 using System;
 

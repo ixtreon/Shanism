@@ -1,4 +1,4 @@
-﻿using Engine.Entities;
+﻿using Engine.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,25 +17,24 @@ namespace Engine.Systems.Chat
         /// <summary>
         /// Sends a message from the given unit. 
         /// </summary>
-        /// <param name="p"></param>
-        /// <param name="message"></param>
         /// <param name="sender"></param>
+        /// <param name="message"></param>
         public void SendChat(Player sender, string message)
         {
-            var pls = sender.VisibleObjects
-                .OfType<Unit>()
-                .Select(u => u.Owner)
-                .Distinct();
+            //var pls = sender.VisibleObjects
+            //    .OfType<Unit>()
+            //    .Select(u => u.Owner)
+            //    .Distinct();
 
-            var msg = new IO.Message.Server.ChatMessage(message, sender);
-            foreach (var pl in pls)
-                pl.SendMessage(msg);
+            //var msg = new IO.Message.Server.ChatMessage(message, sender);
+            //foreach (var pl in pls)
+            //    pl.SendMessage(msg);
         }
 
         public void SendWhisper(Player sender, Player receiver, string message)
         {
-            var msg = new IO.Message.Server.ChatMessage(message, sender);
-            receiver.SendMessage(msg);
+            //var msg = new IO.Message.Server.ChatMessage(message, sender);
+            //receiver.SendMessage(msg);
         }
     }
 }

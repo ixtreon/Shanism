@@ -47,7 +47,7 @@ namespace ScenarioLib
         /// <summary>
         /// The custom assemblies used to compile scenarios. 
         /// </summary>
-        private static readonly string[] customAssemblies = new[]
+        static readonly string[] customAssemblies = 
         {
             "IO.dll",
             "Engine.dll",
@@ -112,51 +112,32 @@ namespace ScenarioLib
         /// Throws an <see cref="InvalidOperationException"/> if <see cref="IsCompiled"/> is false. 
         /// </summary>
         /// <returns></returns>
-        public void LoadCompiledAssembly()
+        public bool LoadCompiledAssembly(out string errors)
         {
             if (!IsCompiled)
                 throw new InvalidOperationException("Please compile the scenario first!");
 
-            var rawAssembly = File.ReadAllBytes(_OutputFilePath);
-            var rawSymbols = File.ReadAllBytes(_OutputPdbPath);
-
-            //TODO: Load in the sandboxed assembly!
-            Assembly = AppDomain.CurrentDomain.Load(rawAssembly, rawSymbols);
-        }
-
-        public T CompileAndLoad<T>(out string errors)
-            where T : ScenarioFile
-        {
-            //compile the assemblies
-
-            var compileErrors = Compile();
-
-            if(compileErrors.Any())
+            try
             {
-                errors = compileErrors
-                    .Select(d => d.ToString())
-                    .Aggregate((a, b) => a + Environment.NewLine + b);
-                return null;
-            }
+                var rawAssembly = File.ReadAllBytes(_OutputFilePath);
+                var rawSymbols = File.ReadAllBytes(_OutputPdbPath);
 
-            //parse the scenario config
-            var scenario = ScenarioFile.Load<T>(ScenarioDir);
-            if (scenario == null)
+                //TODO: Load in a sandbox!
+                Assembly = AppDomain.CurrentDomain.Load(rawAssembly, rawSymbols);
+            }
+            catch (Exception e)
             {
-                errors = "Invalid scenario declaration. ";
-                return null;
+                errors = e.Message;
+                return false;
             }
-
-            //load the assembly
-            LoadCompiledAssembly();
 
             errors = string.Empty;
-            return scenario;
+            return true;
         }
 
         /// <summary>
         /// Compiles all files in the <see cref="ScenarioDir"/> directory. 
-        /// If successful returns null, otherwise returns a string containing the compile errors as returned by the compiler. 
+        /// If successful returns null, otherwise returns the compile errors. 
         /// </summary>
         public IEnumerable<Diagnostic> Compile()
         {

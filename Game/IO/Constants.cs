@@ -20,7 +20,7 @@ namespace IO
                 public const string ObjectTexture = "dummy";
 
                 /// <summary>
-                /// Gets the name of a default model that is always defined. 
+                /// Gets the name of a default model that is always defined and uses the default object texture. 
                 /// </summary>
                 public const string ModelName = "dummy";
 
@@ -35,10 +35,15 @@ namespace IO
                 /// <summary>
                 /// The name of the animation used by default with all models. 
                 /// </summary>
-                public const string Animation = "stand";
+                public const string Animation = "";
             }
 
             public const string TextureExtension = ".png";
+
+            /// <summary>
+            /// The sub-directory in the scenario folder where textures are kept. 
+            /// </summary>
+            public const string TexturesDirectory = "Textures";
 
             public const string TerrainFile = "terrain";
 
@@ -50,14 +55,14 @@ namespace IO
 
         public static class Client
         {
-            //144x90
-            public const int WindowWidth = 120;
-            public const int WindowHeight = 72;
+            //5184
+            public const int WindowWidth = 96;
+            public const int WindowHeight = 54;
 
             public static readonly Point WindowSize = new Point(WindowWidth, WindowHeight);
         }
 
-        public static class Terrain
+        public static class Terrain 
         {
             public static readonly int ChunkSize = Client.WindowHeight / 2;
         }

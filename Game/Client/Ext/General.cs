@@ -14,6 +14,13 @@ namespace Client
     {
 
         #region XNA.Color Extensions
+
+        /// <summary>
+        /// Sets the alpha value of the color as a number from 0 to 255. 
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
         public static Color SetAlpha(this Color c, int a)
         {
             return c * ((float)a / 255);
@@ -27,8 +34,8 @@ namespace Client
         /// <returns></returns>
         public static Color Darken(this Color c, int perc = 5)
         {
-            var ratio = 100 + perc;
-            return new Color(c.R * 100 / ratio, c.G * 100 / ratio, c.B * 100 / ratio, c.A);
+            var ratio = 100 - perc;
+            return new Color(c.R * ratio / 100, c.G * ratio / 100, c.B * ratio / 100, c.A);
         }
 
         /// <summary>
@@ -39,16 +46,28 @@ namespace Client
         /// <returns></returns>
         public static Color Brighten(this Color c, int perc = 5)
         {
-            var ratio = 100 - perc;
-            return new Color(c.R * 100 / ratio, c.G * 100 / ratio, c.B * 100 / ratio, c.A);
+            return new Color(
+                c.R + (255 - c.R) * perc / 100, 
+                c.G + (255 - c.G) * perc / 100, 
+                c.B + (255 - c.B) * perc / 100, c.A);
         }
         #endregion
 
 
         #region maths primitives transformations
-        public static Vector2 ToXnaVector(this IO.Common.Vector v)
+        public static Vector2 ToVector2(this IO.Common.Vector v)
         {
             return new Vector2((float)v.X, (float)v.Y);
+        }
+
+        /// <summary>
+        /// Converts this <see cref="IO.Common.Vector"/>
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        public static Vector3 ToVector3(this IO.Common.Vector v)
+        {
+            return new Vector3((float)v.X, (float)v.Y, 0);
         }
 
         public static IO.Common.Point ToPoint(this Point p)
@@ -68,6 +87,11 @@ namespace Client
         }
         #endregion
 
+
+        public static Color ToColor(this IO.Common.ShanoColor c)
+        {
+            return new Color(c.R, c.G, c.B, c.A);
+        }
 
         public static void SyncValues<TKey, TVal>(this IDictionary<TKey, TVal> dict, IEnumerable<TKey> other, 
             Func<TKey, TVal> addValueFactory,

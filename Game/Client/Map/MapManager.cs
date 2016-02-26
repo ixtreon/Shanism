@@ -17,7 +17,6 @@ namespace Client.Map
     /// <summary>
     /// Handles map communication with the server. 
     /// </summary>
-    [Obsolete]
     class MapManager : IClientSystem
     {
         /// <summary>
@@ -28,12 +27,12 @@ namespace Client.Map
         /// <summary>
         /// The maximum number of chunks to keep in memory. 
         /// </summary>
-        const int MaxChunks = 100;
+        const int MaxChunks = 10000;
 
         /// <summary>
         /// Contains a map of all available chunks. 
         /// </summary>
-        readonly ConcurrentDictionary<MapChunkId, ChunkData> ChunksAvailable = new ConcurrentDictionary<MapChunkId, ChunkData>();
+        readonly Dictionary<MapChunkId, ChunkData> ChunksAvailable = new Dictionary<MapChunkId, ChunkData>();
 
         /// <summary>
         /// Contains a map of all chunk requests made so far. 
@@ -44,10 +43,13 @@ namespace Client.Map
 
         public event Action<MapChunkId> ChunkRequested;
 
-        public Vector CameraPosition { get; set; }
+        public Vector CameraPosition { get { return Screen.InGameCenter; } }
+
+        readonly GraphicsDevice _device;
 
         public MapManager(GraphicsDevice device)
         {
+            _device = device;
             effect = new BasicEffect(device)
             {
                 VertexColorEnabled = true,
@@ -57,7 +59,7 @@ namespace Client.Map
         public void Update(int msElapsed)
         {
             //request nearby chunks
-            foreach (var c in EnumerateNearbyChunks())
+            foreach (var c in EnumerateNearbyChunks(1))
                 requestChunk(c);
 
             cleanupChunks();
@@ -70,13 +72,48 @@ namespace Client.Map
             if (msg == null)
                 return;
 
-            var rect = msg.Chunk.Span;
-            var chunkData = new ChunkData(msg.Chunk, msg.Data);
+            //clear map
+            if(!msg.HasMap)
+            {
+                clearMap(msg);
+                return;
+            }
 
-            ChunksAvailable[chunkData.Chunk] = chunkData;
-            chunkData.BuildBuffer(effect.GraphicsDevice);
+            //set map
+            setMap(msg);
         }
 
+        void setMap(MapDataMessage msg)
+        {
+            foreach (var ch in MapChunkId.ChunksBetween(msg.Span.Position, msg.Span.FarPosition - 1))
+            {
+                var chunkData = ChunksAvailable.TryGet(ch);
+
+                if (chunkData == null)
+                {
+                    chunkData = new ChunkData(_device, ch, msg.Data, msg.Span);
+                    ChunksAvailable[ch] = chunkData;
+                }
+                else
+                    chunkData.SetTiles(msg.Data, msg.Span);
+            }
+        }
+
+        void clearMap(MapDataMessage msg)
+        {
+            ChunkData chunkData;
+
+            foreach (var ch in MapChunkId.ChunksBetween(msg.Span.Position, msg.Span.FarPosition))
+            {
+                var overlap = ch.Span.IntersectWith(msg.Span);
+
+                //remove the whole chunk if we can
+                if (overlap == ch.Span)
+                    ChunksAvailable.Remove(ch);
+                else if(ChunksAvailable.TryGetValue(ch, out chunkData))
+                    chunkData.ClearTiles(overlap);
+            }
+        }
 
         /// <summary>
         /// Sends a request to the server for the given chunk. 
@@ -100,20 +137,6 @@ namespace Client.Map
             ChunkRequested(chunk);
         }
 
-        /// <summary>
-        /// Tries to get the Chunk with the given id, or returns null if it is not available. 
-        /// </summary>
-        /// <param name="chunkId">The id of the chunk as a Point. </param>
-        /// <returns></returns>
-        public ChunkData GetChunk(MapChunkId chunk)
-        {
-            ChunkData chunkTiles = null;
-            ChunksAvailable.TryGetValue(chunk, out chunkTiles);
-            if (chunkTiles == null)
-                return null;
-            return chunkTiles;
-        }
-
         void cleanupChunks()
         {
             if (ChunksAvailable.Count > MaxChunks)
@@ -124,7 +147,7 @@ namespace Client.Map
                 foreach (var id in toRemove)
                 {
                     var chunk = ChunksAvailable[id];
-                    ChunksAvailable.TryRemove(id, out chunk);
+                    ChunksAvailable.Remove(id);
                     chunkRequests.Remove(id);
                     //chunk.Dispose();
                 }
@@ -152,7 +175,7 @@ namespace Client.Map
 
                 foreach (var chunkId in EnumerateNearbyChunks())
                 {
-                    var chunk = GetChunk(chunkId);
+                    var chunk = ChunksAvailable.TryGet(chunkId);
                     if (chunk != null && chunk.HasBuffer)
                     {
                         device.SetVertexBuffer(chunk.Buffer);
@@ -163,10 +186,10 @@ namespace Client.Map
 
         }
 
-        IEnumerable<MapChunkId> EnumerateNearbyChunks()
+        IEnumerable<MapChunkId> EnumerateNearbyChunks(int bonusRange = 0)
         {
-            var lowLeft = CameraPosition - Screen.InGameSize / 2;
-            var upRight = CameraPosition + Screen.InGameSize / 2;
+            var lowLeft = CameraPosition - Screen.InGameSize / 2 - MapChunkId.ChunkSize * bonusRange;
+            var upRight = CameraPosition + Screen.InGameSize / 2 + MapChunkId.ChunkSize * bonusRange;
 
             var chunks = MapChunkId.ChunksBetween(lowLeft, upRight).ToArray();
             return chunks;

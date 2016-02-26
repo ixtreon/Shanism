@@ -1,0 +1,190 @@
+﻿using Engine.Objects.Entities;
+using IO;
+using IO.Common;
+using IO.Content;
+using IO.Objects;
+using IO.Util;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Engine.Objects
+{
+    /// <summary>
+    /// A base class for all objects that show on the game map. 
+    /// Currently this includes effects, doodads, units and heroes (a type of unit). 
+    /// </summary>
+    public abstract class Entity : GameObject, IEntity
+    {
+
+
+        /// <summary>
+        /// The size of the *texture*. 
+        /// TODO: make it a Vector. 
+        /// </summary>
+        double _scale = Constants.Units.DefaultUnitSize;
+
+
+        //circulars ...        
+        /// <summary>
+        /// Gets the list of units that see this entity. 
+        /// </summary>
+        protected internal readonly ConcurrentSet<Unit> SeenBy = new ConcurrentSet<Unit>();
+
+
+        /// <summary>
+        /// Gets or sets the name of this entity. 
+        /// </summary>
+        public string Name { get; set; } = "Dummy Unit";
+
+        /// <summary>
+        /// Gets or sets the scale of this entity, also the size of its texture. 
+        /// The size must be positive and less than <see cref="IO.Constants.Engine.MaximumObjectSize"/>. 
+        /// </summary>
+        public double Scale
+        {
+            get { return _scale; }
+            set
+            {
+                if (value <= 0 || value > IO.Constants.Engine.MaximumObjectSize)
+                    throw new ArgumentOutOfRangeException(nameof(value), 
+                        $"Value must be between 0 and {IO.Constants.Engine.MaximumObjectSize} (see {nameof(IO.Constants.Engine.MaximumObjectSize)}). ");
+
+                _scale = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this collides with other entities on the map. 
+        /// </summary>
+        public abstract bool HasCollision { get; }
+
+        /// <summary>
+        /// Gets the object type of this entity.
+        /// </summary>
+        public abstract override ObjectType ObjectType { get; }
+        
+
+        /// <summary>
+        /// Gets or sets the custom data for this entity. 
+        /// </summary>
+        public dynamic Data { get; set; }
+
+        /// <summary>
+        /// Gets whether this entity should be removed from the map.
+        /// </summary>
+        internal bool IsDestroyed { get; set; }
+
+        /// <summary>
+        /// Gets or sets the location of the center of this game object. 
+        /// </summary>
+        public Vector Position { get; set; }
+
+        /// <summary>
+        /// Gets the angle at which this entity is displayed. 
+        /// </summary>
+        public double Facing { get; set; }
+
+        /// <summary>
+        /// Gets or sets the default tint color of this entity. 
+        /// </summary>
+        public ShanoColor DefaultTint { get; set; } = ShanoColor.White;
+
+        /// <summary>
+        /// Gets or sets the current tint color of this entity. 
+        /// </summary>
+        public ShanoColor CurrentTint { get; set; } = ShanoColor.White;
+
+
+        /// <summary>
+        /// Gets or sets the model, also animation prefix, of this entity. 
+        /// </summary>
+        public string ModelName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the animation suffix of this entity. 
+        /// </summary>
+        public string AnimationSuffix { get; set; }
+
+        /// <summary>
+        /// Gets the full animation name of the object.
+        /// </summary>
+        public string AnimationName
+            => ModelName + "/" + AnimationSuffix;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Entity"/> class.
+        /// </summary>
+        protected Entity() { }
+
+
+        /// <summary>
+        /// Creates a new <see cref="Entity"/> that is a clone of the given <see cref="Entity"/>. 
+        /// </summary>
+        /// <param name="base">The entity that is to be cloned. </param>
+        protected Entity(Entity @base)
+        {
+            Name = @base.Name;
+            Position = @base.Position;
+            ModelName = @base.ModelName;
+            AnimationSuffix = @base.AnimationSuffix;
+            Scale = @base.Scale;
+        }
+
+        /// <summary>
+        /// Resets this entity's current animation to the default animation name. 
+        /// </summary>
+        public void ResetAnimation() =>
+            AnimationSuffix = IO.Constants.Content.DefaultValues.Animation;
+
+
+        /// <summary>
+        /// Marks this GameObject for destruction, eventually removing it from the game. 
+        /// </summary>
+        public virtual void Destroy()
+        {
+            if (IsDestroyed)
+            {
+                Console.WriteLine("Trying to destroy an object twice!");
+                return;
+            }
+
+            IsDestroyed = true;
+        }
+
+        internal override void Update(int msElapsed)
+        {
+        }
+
+
+        /// <summary>
+        /// Returns the hash code for this instance.
+        /// </summary>
+        /// <returns>A 32-bit signed integer hash code.</returns>
+        public override int GetHashCode() => (int)Id;
+
+
+        /// <summary>
+        /// Determines whether the specified <see cref="object" />, is equal to this instance.
+        /// </summary>
+        /// <param name="obj">The <see cref="object" /> to compare with this instance.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified <see cref="object" /> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
+        public override bool Equals(object obj) =>
+            (obj is Entity) && ((Entity)obj).Id == Id;
+
+
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
+        public override string ToString() => $"{ObjectType} #{Id}";
+    }
+}

@@ -4,83 +4,87 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
+using IxSerializer.Modules;
 
 namespace IO.Common
 {
     /// <summary>
     /// Represents a rectangle in the continuous 2D plane. 
     /// </summary>
-    [ProtoContract]
-    [JsonObject(MemberSerialization.OptIn)]
-    public struct RectangleF
+    [ProtoContract(ImplicitFields = ImplicitFields.AllFields)]
+    [JsonObject(MemberSerialization.Fields)]
+    public struct RectangleF : IxSerializable
     {
         public static readonly RectangleF Empty = new RectangleF();
 
-        /// <summary>
-        /// Gets or sets the position of the bottom-left (low) corner of the rectangle. 
-        /// </summary>
-        [ProtoMember(1)]
-        public readonly Vector Position;
-
 
         /// <summary>
-        /// Gets or sets the size of the rectangle. 
+        /// Deserializes the data from the specified reader into this object.
         /// </summary>
-        [ProtoMember(2)]
-        public readonly Vector Size;
+        /// <param name="r"></param>
+        public void Deserialize(BinaryReader r)
+        {
+            _x = r.ReadDouble();
+            _y = r.ReadDouble();
+            _width = r.ReadDouble();
+            _height = r.ReadDouble();
+        }
 
-        [JsonProperty]
-        public double X
+        /// <summary>
+        /// Serializes this object to the given writer.
+        /// </summary>
+        /// <param name="w"></param>
+        public void Serialize(BinaryWriter w)
         {
-            get { return Position.X; }
+            w.Write(X);
+            w.Write(Y);
+            w.Write(Width);
+            w.Write(Height);
         }
-        [JsonProperty]
-        public double Y
-        {
-            get { return Position.Y; }
-        }
-        [JsonProperty]
-        public double Width
-        {
-            get { return Size.X; }
-        }
-        [JsonProperty]
-        public double Height
-        {
-            get { return Size.Y; }
-        }
+
+
+        double _x;
+        double _y;
+        double _width;
+        double _height;
+
+        /// <summary>
+        /// Gets the position of the bottom-left (low) corner of the rectangle. 
+        /// </summary>
+        public Vector Position { get { return new Vector(_x, _y); } }
+
+        /// <summary>
+        /// Gets the size of the rectangle. 
+        /// </summary>
+        public Vector Size { get { return new Vector(_width, _height); } }
+
+
+        public double X { get { return _x; } }
+        public double Y { get { return _y; } }
+
+        public double Width { get { return _width; } }
+        public double Height { get { return _height; } }
 
         /// <summary>
         /// Gets the left (low X) edge of the rectangle. 
         /// </summary>
-        public double Left
-        {
-            get { return Position.X; }
-        }
+        public double Left { get { return _x; } }
 
         /// <summary>
         /// Gets the right (high X) edge of the rectangle. 
         /// </summary>
-        public double Right
-        {
-            get { return Position.X + Size.X; }
-        }
+        public double Right { get { return _x + _width; } }
 
         /// <summary>
         /// Gets the bottom (low Y) edge of the rectangle. 
         /// </summary>
-        public double Bottom
-        {
-            get { return Position.Y; }
-        }
+        public double Bottom { get { return _y; } }
 
         /// <summary>
         /// Gets the top (high Y) edge of the rectangle. 
         /// </summary>
-        public double Top
-        {
-            get { return Position.Y + Size.Y; }
-        }
+        public double Top { get { return _y + _height; } }
 
 
         /// <summary>
@@ -91,7 +95,7 @@ namespace IO.Common
         /// <summary>
         /// Gets the top left (low X, high Y) corner of this rectangle. 
         /// </summary>
-        public Vector TopLeft {  get { return new Vector(Left, Top); } }
+        public Vector TopLeft { get { return new Vector(Left, Top); } }
 
         /// <summary>
         /// Gets the bottom right (high X, low Y) corner of this rectangle. 
@@ -101,15 +105,18 @@ namespace IO.Common
         /// <summary>
         /// Gets the top right (high X, high Y) corner of this rectangle. 
         /// </summary>
-        public Vector TopRight {  get { return new Vector(Right, Top); } }
-
-
-        public Vector FarPosition { get { return Position + Size; } }
+        public Vector TopRight { get { return new Vector(Right, Top); } }
 
         /// <summary>
-        /// Gets the point that lies at the center of this rectangle. 
+        /// Gets the top right (high X, high Y) corner of this rectangle. 
+        /// </summary>
+        public Vector FarPosition { get { return TopRight; } }
+
+        /// <summary>
+        /// Gets the point at the center of this rectangle. 
         /// </summary>
         public Vector Center { get { return Position + Size / 2.0; } }
+
 
         public static RectangleF operator *(RectangleF r, Vector p)
         {
@@ -148,20 +155,35 @@ namespace IO.Common
             return new RectangleF(r.Position, r.Size);
         }
 
+        /// <summary>
+        /// Gets the area of this rectangle. 
+        /// </summary>
         public double Area { get { return Width * Height; } }
 
-        public RectangleF(Vector position, Vector size)
-        {
-            this.Position = position;
-            this.Size = size;
-        }
 
         public RectangleF(double x, double y, double width, double height)
         {
-            this.Position = new Vector(x, y);
-            this.Size = new Vector(width, height);
+            _x = x;
+            _y = y;
+            _width = width;
+            _height = height;
         }
-        
+
+        public RectangleF(Vector position, Vector size)
+        {
+            _x = position.X;
+            _y = position.Y;
+            _width = size.X;
+            _height = size.Y;
+        }
+
+        public RectangleF(RectangleF src)
+        {
+            _x = src._x;
+            _y = src._y;
+            _width = src._width;
+            _height = src._height;
+        }
 
         /// <summary>
         /// Gets the intersection (common area) of the two rectangles. 
@@ -172,9 +194,10 @@ namespace IO.Common
         {
             var x = Math.Max(rectangle.X, X);
             var y = Math.Max(rectangle.Y, Y);
-            var w = Math.Min(rectangle.Width, Width);
-            var h = Math.Min(rectangle.Height, Height);
-            return new RectangleF(x, y, w, h);
+            var farX = Math.Min(rectangle.Right, Right);
+            var farY = Math.Min(rectangle.Top, Top);
+
+            return new RectangleF(x, y, farX - x, farY - y);
         }
 
         /// <summary>
@@ -183,6 +206,11 @@ namespace IO.Common
         public bool Contains(Vector p)
         {
             return Contains(p.X, p.Y);
+        }
+
+        public RectangleF Inflate(double v)
+        {
+            return new RectangleF(_x - v, _y - v, _width + 2 * v, _height + 2 * v);
         }
 
         /// <summary>
@@ -194,14 +222,24 @@ namespace IO.Common
         }
 
 
-        public override string ToString()
-        {
-            return ToString("0.00");
-        }
+        /// <summary>
+        /// Returns a <see cref="string" /> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="string" /> that represents this instance.
+        /// </returns>
+        public override string ToString() => ToString("0.00");
 
+        /// <summary>
+        /// Returns a <see cref="string" /> that represents this instance.
+        /// </summary>
+        /// <param name="format">The format.</param>
+        /// <returns>
+        /// A <see cref="string" /> that represents this instance.
+        /// </returns>
         public string ToString(string format)
         {
-            return "[ {0}, {1}, {2}, {3} ]".F(X.ToString(format), Y.ToString(format), Width.ToString(format), Height.ToString(format));
+            return $"[{X.ToString(format)}, {Y.ToString(format)}, {Width.ToString(format)}, {Height.ToString(format)}]";
         }
     }
 }

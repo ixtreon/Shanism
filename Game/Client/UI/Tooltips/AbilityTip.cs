@@ -23,25 +23,30 @@ namespace Client.UI.Tooltips
 
         public TextureFont Font { get; set; }
 
-        readonly Label txtName = new Label
-        {
-            Location = new Vector(0.02),
-            Text = "lalalala",
-        };
-
-        readonly Label txtStuff = new Label
-        {
-            Location = new Vector(0.02, 0.10),
-            Text = "lalalal",
-            Font = Content.Fonts.NormalFont,
-            TextColor = Color.White,
-        };
-        
+        readonly Label txtName;
+        readonly Label txtStuff;
 
         public AbilityTip()
         {
             Font = Content.Fonts.NormalFont;
             BackColor = Color.Black.SetAlpha(25);
+
+            txtName = new Label
+            {
+                Location = new Vector(Padding),
+                Text = "lalalala",
+
+                Font = Content.Fonts.FancyFont,
+            };
+
+            txtStuff = new Label
+            {
+                Location = new Vector(Padding, txtName.Bottom),
+                Text = "lalalal",
+                Font = Content.Fonts.NormalFont,
+                TextColor = Color.White,
+            };
+
 
             Add(txtName);
             Add(txtStuff);
@@ -52,19 +57,18 @@ namespace Client.UI.Tooltips
             var ability = HoverControl?.ToolTip as IAbility;
 
             //continue if visible
-            Visible = (ability != null);
-            if (!Visible)
+            IsVisible = (ability != null);
+            if (!IsVisible)
                 return;
 
 
             Ability = ability;
 
             txtName.Text = ability.Name;
-            txtStuff.Text = "MC: {0}  R: {1}  CD: {2}s  CT: {3}s".F(
-                ability.ManaCost, 
-                ability.CastRange, 
-                (ability.Cooldown / 1000.0).ToString("0.0"), 
-                (ability.CastTime / 1000.0).ToString("0.0"));
+            txtStuff.Text = $"MC: {ability.ManaCost} " 
+                + $"R: {ability.CastRange} "
+                + $"CD: {(ability.Cooldown / 1000.0).ToString("0.0")}s "
+                + $"CT: {(ability.CastTime / 1000.0).ToString("0.0")}s";
 
             var descriptionMaxWidth = BaseSize.X - Padding * 4;
             var desc = Font.MeasureStringUi(ability.Description, descriptionMaxWidth);
@@ -72,19 +76,21 @@ namespace Client.UI.Tooltips
             Size = new Vector(Math.Max(BaseSize.X, desc.X), BaseSize.Y + 4 * Padding + desc.Y);
             var screenPos =
                 (mouseState.Position.ToPoint() + new Point(14, 26))
-                .Clamp(Point.Zero, Screen.PixelSize - this.ScreenSize);
+                .Clamp(Point.Zero, Screen.ScreenSize - this.ScreenSize);
             AbsolutePosition = Screen.ScreenToUi(screenPos);
+
+            BringToFront();
         }
 
         public override void OnDraw(Graphics g)
         {
-            if (Visible)
+            if (IsVisible)
             {
                 //bg
                 g.Draw(Content.Textures.Blank, Vector.Zero, Size, Color.Black.SetAlpha(150));
 
                 //text
-                g.DrawString(Font, Ability?.Description, Color.White, new Vector(Padding, BaseSize.Y + Padding) , 0, 0, txtMaxWidth: BaseSize.X - 2 * Padding);
+                g.DrawString(Font, Ability?.Description, Color.White, new Vector(Padding, txtStuff.Bottom + Padding) , 0, 0, txtMaxWidth: BaseSize.X - 2 * Padding);
             }
         }
     }

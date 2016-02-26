@@ -16,7 +16,9 @@ namespace IO.Message.Client
         [ProtoMember(1)]
         public readonly MovementState Direction;
 
-        MoveMessage() { Type = MessageType.MoveUpdate; }
+        public override MessageType Type { get { return MessageType.MoveUpdate; } }
+
+        MoveMessage() { }
 
         public MoveMessage(MovementState st)
             : this()

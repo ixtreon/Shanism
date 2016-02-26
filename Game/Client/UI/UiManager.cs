@@ -11,11 +11,14 @@ using IO.Message.Client;
 using IO.Objects;
 using IO.Common;
 using Color = Microsoft.Xna.Framework.Color;
+using Client.UI.CombatText;
 
 namespace Client.UI
 {
     class UiManager : Control
     {
+        public FloatingTextProvider FloatingText { get; } = new FloatingTextProvider();
+
 
         readonly UnitFrame heroFrame;
         readonly UnitFrame targetFrame;
@@ -25,6 +28,7 @@ namespace Client.UI
         readonly CastBar castBar;
         readonly ChatBox chatBox;
         readonly BuffBar heroBuffBar;
+        readonly ErrorTextControl errors;
 
         HeroControl _mainHeroControl;
 
@@ -41,16 +45,15 @@ namespace Client.UI
                 {
                     _mainHeroControl = value;
 
+                    // adds all abilities of the hero to the bar
                     abilityBar.Controls
                         .OfType<SpellButton>()
-                        .Zip(MainHero.Abilities,
+                        .Zip(MainHero.Abilities ?? Enumerable.Empty<IAbility>(),
                             (sb, a) => sb.Ability = a)
                         .ToArray();
                 }
             }
         }
-
-        public IHero MainHero {  get { return MainHeroControl?.Hero; } }
 
         /// <summary>
         /// Gets or sets the current target of the player. 
@@ -70,10 +73,14 @@ namespace Client.UI
             set { hoverFrame.Target = value; }
         }
 
+        public IHero MainHero => MainHeroControl?.Hero;
+
+
         public UiManager()
         {
             Size = new Vector(2, 1);
             CanHover = false;
+            GameActionActivated += onActionActivated;
 
             var castBarSize = new Vector(0.5f, 0.08f);
 
@@ -120,9 +127,26 @@ namespace Client.UI
             //Add(HeroBuffs);
             Add(menus);
 
+            //errors
+            Add((errors = new ErrorTextControl()));
+
             //tooltips
-            this.Add(new Tooltips.SimpleTip());
-            this.Add(new Tooltips.AbilityTip());
+            Add(new Tooltips.SimpleTip());
+            Add(new Tooltips.AbilityTip());
+
+            Add(FloatingText);
+
+            Maximize();
+        }
+
+        void onActionActivated(GameAction ga)
+        {
+            menus.ActivateAction(ga);
+        }
+
+        public void DisplayError(string msg)
+        {
+            errors.LogError(msg);
         }
 
         public IAbility CurrentAbility
@@ -132,13 +156,13 @@ namespace Client.UI
 
         protected override void OnUpdate(int msElapsed)
         {
+            Ticker.Default.Update(msElapsed);
+
             menus.OurHero = MainHero;
 
             castBar.Target = MainHero;
             heroBuffBar.Target = MainHero;
             heroFrame.Target = MainHeroControl;
-
-            Ticker.Default.Update(msElapsed);
         }
     }
 }

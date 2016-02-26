@@ -23,26 +23,37 @@ namespace ShanoEditor.Views
         protected bool Loading;
 
         public ScenarioViewModel Model { get; private set; }
-        
 
-        public void SetModel(ScenarioViewModel model)
+        
+        public static void ApplyModel(Form frm, ScenarioViewModel model)
+        {
+            var kidz = enumerateChildren(frm).ToList();
+
+            foreach (var c in kidz.OfType<IScenarioControl>())
+                c.SetModel(model);
+        }
+
+        public async void SetModel(ScenarioViewModel model)
         {
             if (Model != model)
             {
                 Model = model;
 
-                Task.Run(async () =>
-                {
-                    Loading = true;
-                    await LoadModel();
-                    Loading = false;
-                });
+                Loading = true;
+                LoadModel();
+                Loading = false;
             }
+        }
+        
+        static IEnumerable<Control> enumerateChildren(Control c)
+        {
+            var kidz = c.Controls.Cast<Control>();
+            return kidz.Concat(kidz.SelectMany(enumerateChildren));
         }
 
         public async void Save()
         {
-            await SaveModel();
+            SaveModel();
         }
 
         /// <summary>
@@ -55,7 +66,7 @@ namespace ShanoEditor.Views
         /// Made for controls to update the ViewModel 
         /// in case they are being lazy about it. 
         /// </summary>
-        protected virtual async Task SaveModel() { }
+        protected virtual void SaveModel() { }
 
 
         public void MarkAsChanged()

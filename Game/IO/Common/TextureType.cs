@@ -10,6 +10,7 @@ namespace IO
     /// <summary>
     /// The type of a texture. 
     /// </summary>
+    [Obsolete]
     public enum TextureType
     {
         Icon = 0,
@@ -18,6 +19,7 @@ namespace IO
         Terrain = 3,
     }
 
+    [Obsolete]
     public static class TextureTypeExt
     {
         public static readonly string[] dirs = 

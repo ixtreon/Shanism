@@ -1,4 +1,4 @@
-﻿using Engine.Entities;
+﻿using Engine.Objects;
 using Engine.Systems.Abilities;
 using IO.Common;
 using System;
@@ -42,7 +42,7 @@ namespace Engine.Events
         public bool Success { get; set; } = true;
 
 
-        public AbilityCastArgs(Ability a, Unit caster, object target)
+        internal AbilityCastArgs(Ability a, Unit caster, object target)
         {
             CastingUnit = caster;
 

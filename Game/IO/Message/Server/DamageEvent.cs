@@ -41,7 +41,9 @@ namespace IO.Message.Server
             get { return NewValue - ValueChange; }
         }
 
-        DamageEventMessage() { Type = MessageType.DamageEvent; }
+        public override MessageType Type { get { return MessageType.DamageEvent; } }
+
+        DamageEventMessage() { }
 
         public DamageEventMessage(IUnit target, DamageType dmgType, double change, bool isHealth)
             : this()

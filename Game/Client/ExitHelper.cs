@@ -8,9 +8,9 @@ namespace Client
 {
     static class ExitHelper
     {
-        static ClientInstance TheGame;
+        static ClientGame TheGame;
 
-        public static void SetGame(ClientInstance theGame)
+        public static void SetGame(ClientGame theGame)
         {
             TheGame = theGame;
         }

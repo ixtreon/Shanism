@@ -1,4 +1,5 @@
 ﻿using IO.Content;
+using IO.Util;
 using ScenarioLib;
 using System;
 using System.Collections.Generic;
@@ -16,11 +17,12 @@ namespace Client.Assets
         /// <summary>
         /// Gets the dictionary that contains all textures keyed by their name. 
         /// </summary>
-        public Dictionary<string, TextureDef> TextureDict { get; } = new Dictionary<string, TextureDef>();
+        public Dictionary<string, TextureDef> Textures { get; } = new Dictionary<string, TextureDef>();
+        
         /// <summary>
         /// Gets the dictionary that contains all models keyed by their name. 
         /// </summary>
-        public Dictionary<string, ModelDef> ModelDict { get; } = new Dictionary<string, ModelDef>();
+        public Dictionary<string, AnimationDef> Animations { get; } = new Dictionary<string, AnimationDef>();
 
         /// <summary>
         /// Adds the models and textures from the given scenario configuration to this list. 
@@ -28,7 +30,7 @@ namespace Client.Assets
         public void Parse(ContentConfig content)
         {
             Parse(content.Textures);
-            Parse(content.Models);
+            Parse(content.Animations);
         }
 
         /// <summary>
@@ -37,16 +39,16 @@ namespace Client.Assets
         public void Parse(IEnumerable<TextureDef> textures)
         {
             foreach (var tex in textures)
-                TextureDict[tex.Name.ToLower()] = tex;
+                Textures[tex.Name.ToLower()] = tex;
         }
 
         /// <summary>
         /// Adds the given models to this list. 
         /// </summary>
-        public void Parse(IEnumerable<ModelDef> models)
+        public void Parse(IEnumerable<AnimationDef> animations)
         {
-            foreach (var m in models)
-                ModelDict[m.Name.ToLower()] = m;
+            foreach (var a in animations)
+                Animations[AnimPath.Normalize(a.Name)] = a;
         }
     }
 }

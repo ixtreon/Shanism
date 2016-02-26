@@ -7,15 +7,12 @@ using System.Text;
 using System.Threading.Tasks;
 using IO.Common;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
 namespace IO.Objects
 {
-    /// <summary>
-    /// Represents an empty ability as reconstructed by a network client. 
-    /// </summary>
-    public class AbilityStub : IAbility
+    public class AbilityStub : ObjectStub, IAbility
     {
-        public uint Id { get; set; }
-
         public double CastRange { get; private set; }
 
         public int CastTime { get; private set; }
@@ -27,11 +24,18 @@ namespace IO.Objects
         public string Description { get; private set; }
 
         public string Icon { get; private set; }
-
         public int ManaCost { get; private set; }
 
         public string Name { get; private set; }
 
         public AbilityTargetType TargetType { get; private set; }
+
+        public AbilityStub() { }
+
+        public AbilityStub(uint id)
+            : base(id)
+        {
+
+        }
     }
 }

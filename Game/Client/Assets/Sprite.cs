@@ -3,6 +3,7 @@ using IO;
 using IO.Common;
 using IO.Content;
 using IO.Objects;
+using IO.Util;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -13,8 +14,8 @@ using System.Threading.Tasks;
 namespace Client.Assets
 {
     /// <summary>
-    /// The visual representation of a <see cref="IGameObject"/>. 
-    /// Tracks the model and animation of a single <see cref="IGameObject"/> and keeps the corresponding <see cref="Texture2D"/> for drawing. 
+    /// The visual representation of a <see cref="IEntity"/>. 
+    /// Tracks the model and animation of a single <see cref="IEntity"/> and keeps the corresponding <see cref="Texture2D"/> for drawing. 
     /// </summary>
     class Sprite
     {
@@ -33,7 +34,7 @@ namespace Client.Assets
         /// <summary>
         /// Gets the game object this sprite is attached to. 
         /// </summary>
-        IGameObject Object { get; }
+        IEntity Object { get; }
 
 
         public Texture2D Texture { get; protected set; }
@@ -44,13 +45,13 @@ namespace Client.Assets
         string modelName;
         string animationName;
 
-        ModelDef modelDef;
         AnimationDef animationDef;
 
-        TextureDef textureDef {  get { return animationDef.Texture; } }
+
+        TextureDef textureDef => Content.Listing.Textures.TryGet(animationDef.Texture.ToLowerInvariant());
 
 
-        public Sprite(ContentList content, IGameObject obj)
+        public Sprite(ContentList content, IEntity obj)
         {
             ContentList = content;
             Object = obj;
@@ -62,30 +63,9 @@ namespace Client.Assets
         /// <param name="msElapsed"></param>
         public void Update(int msElapsed)
         {
-            //check if model changed
-            updateModel();
-
             //check if animation changed
             updateAnimation(msElapsed);
 
-        }
-
-        /// <summary>
-        /// Checks if the object's model has changed. 
-        /// </summary>
-        void updateModel()
-        {
-            var _mName = (Object.ModelName ?? string.Empty).ToLowerInvariant();
-            if (_mName != modelName)
-            {
-                //refetch model, reset animation
-                modelName = _mName;
-
-                modelDef = ContentList.ModelDict.TryGet(_mName)
-                    ?? SpriteCache.DefaultModel;
-
-                animationName = null;
-            }
         }
 
         /// <summary>
@@ -102,11 +82,8 @@ namespace Client.Assets
             {
                 //refetch animation
                 animationName = _animName;
-                animationDef = modelDef.Animations.TryGet(animationName)
-                    ?? modelDef.Animations.TryGet("stand")
-                    ?? modelDef.Animations.First().Value
-                    ?? SpriteCache.DefaultModel.Animations.First().Value;
-
+                animationDef = ContentList.Animations.TryGet(AnimPath.Normalize(_animName))
+                    ?? AnimationDef.Default;
 
                 //reset counters
                 elapsedCounter.Reset(animationDef.Period);

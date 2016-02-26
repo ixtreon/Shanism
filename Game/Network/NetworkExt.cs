@@ -44,15 +44,20 @@ namespace Network
         /// <returns></returns>
         public static IOMessage ToIOMessage(this NetIncomingMessage msg)
         {
-            msg.Position = 0;
-            var len = msg.ReadInt32();
-            var bytes = msg.ReadBytes(len);
+            try
+            {
+                msg.Position = 0;
+                var len = msg.ReadInt32();
+                var bytes = msg.ReadBytes(len);
 
-            IOMessage ioMsg = null;
-            using (var ms = new MemoryStream(bytes))
-                ioMsg = Serializer.Deserialize<IOMessage>(ms);
+                using (var ms = new MemoryStream(bytes))
+                    return Serializer.Deserialize<IOMessage>(ms);
+            }
+            catch(Exception e)
+            {
+                return null;
+            }
 
-            return ioMsg;
         }
     }
 }

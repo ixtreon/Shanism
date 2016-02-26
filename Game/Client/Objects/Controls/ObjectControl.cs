@@ -26,13 +26,13 @@ namespace Client.Objects
         /// <summary>
         /// Gets the underlying game object of this control. 
         /// </summary>
-        public readonly IGameObject Object;
+        public readonly IEntity Object;
 
         /// <summary>
         /// Creates a new ObjectControl for the given game object. 
         /// </summary>
         /// <param name="obj">The underlying game object. </param>
-        protected ObjectControl(IGameObject obj)
+        protected ObjectControl(IEntity obj)
         {
             Object = obj;
 

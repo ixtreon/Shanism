@@ -23,7 +23,9 @@ namespace IO.Message.Network
         readonly byte[] Data;
 
 
-        ObjectDataMessage() { Type = MessageType.ObjectData; }
+        public override MessageType Type { get { return MessageType.ObjectData; } }
+
+        ObjectDataMessage() { }
 
         public ObjectDataMessage(uint objGuid, ObjectType objType, byte[] objData)
             : this()

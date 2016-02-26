@@ -20,6 +20,10 @@ namespace Client.UI
         Button btnOptions;
         Button btnExit;
 
+        public event Action KeybindsClicked;
+        public event Action ExitClicked;
+        public event Action OptionsClicked;
+
 
         public MainMenu()
         {
@@ -32,7 +36,7 @@ namespace Client.UI
             ParentAnchor = AnchorMode.None;
 
             BackColor = Color.Black.SetAlpha(150);
-            Action = GameAction.ToggleMainMenu;
+            ToggleAction = GameAction.ToggleMenus;
 
 
             btnKeys = new Button("Keybinds")
@@ -66,24 +70,26 @@ namespace Client.UI
             btnExit.MouseUp += btnExit_MouseUp;
         }
 
-        void btnOptions_MouseUp(MouseButtonEvent obj)
+        void btnOptions_MouseUp(MouseButtonArgs obj)
         {
-
+            OptionsClicked?.Invoke();
         }
 
-        void btnKeys_MouseUp(MouseButtonEvent e)
+        void btnKeys_MouseUp(MouseButtonArgs e)
         {
             Hide();
 
-            if (Parent.Controls.OfType<KeybindMenu>().Any()) return;
+            KeybindsClicked?.Invoke();
 
-            var kbMenu = new KeybindMenu { Visible = true };
+            if (Parent.Controls.OfType<KeybindsMenu>().Any()) return;
+
+            var kbMenu = new KeybindsMenu { IsVisible = true };
             Parent.Add(kbMenu);
         }
 
-        void btnExit_MouseUp(MouseButtonEvent e)
+        void btnExit_MouseUp(MouseButtonArgs e)
         {
-            ExitHelper.Exit();
+            ExitClicked?.Invoke();
         }
 
         protected override void OnUpdate(int msElapsed)

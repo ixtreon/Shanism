@@ -1,8 +1,5 @@
-﻿using Client.Common;
-using Client.Textures;
-using IO;
+﻿using IO;
 using IO.Common;
-using IO.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -24,12 +21,16 @@ namespace Client.Assets
             Texture = terrainTex;
         }
 
-        public PointsInfo GetTile(TerrainType ty)
+        public RectangleF GetTileTextureBounds(TerrainType tty)
         {
-            var id = (int)ty;
-            var x = id % TerrainFileSplitsX;
-            var y = id / TerrainFileSplitsX;
-            return new PointsInfo(x, y, TerrainFileSplitsX, TerrainFileSplitsY);
+            const double delta = 1e-5;
+
+            var ttyId = (int)tty;
+            var x = ttyId % TerrainFileSplitsX;
+            var y = ttyId / TerrainFileSplitsX;
+            var logicalSize = new Vector(TerrainFileSplitsX, TerrainFileSplitsY);
+
+            return new RectangleF(x, y, 1, 1).Inflate(-delta) / logicalSize;
         }
     }
 }

@@ -9,6 +9,9 @@ using IO.Common;
 
 namespace Client.UI.Common
 {
+    /// <summary>
+    /// Displays a bar representing the current value of a property relative to the maximum value of that property. 
+    /// </summary>
     class ValueBar : Control
     {
         public bool ShowText = false;

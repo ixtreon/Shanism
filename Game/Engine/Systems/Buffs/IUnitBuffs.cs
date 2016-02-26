@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Engine.Objects;
+using Engine.Objects.Buffs;
+using System.Collections.Generic;
 
 namespace Engine.Systems.Buffs
 {
@@ -7,8 +9,9 @@ namespace Engine.Systems.Buffs
         /// <summary>
         /// Applies the given buff to the unit. 
         /// </summary>
+        /// <param name="caster">The caster of the buff. Can be null. </param>
         /// <param name="b">The buff to apply. </param>
-        void Add(Buff b);
+        BuffInstance Apply(Unit caster, Buff b);
 
         /// <summary>
         /// Purges all buffs from this unit. 

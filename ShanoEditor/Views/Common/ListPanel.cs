@@ -87,7 +87,7 @@ namespace ShanoEditor.Views
         public event Action<ListedPanel> CaptionClicked
         {
             add { CaptionLabel.Click += (o, e) => value(this); }
-            remove { CaptionLabel.Click -= (o, e) => value(this); }
+            remove { throw new NotImplementedException(); }
         }
 
         public bool Expanded

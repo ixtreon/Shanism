@@ -4,10 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
 namespace Engine.Systems.Item
 {
     /* supports up to 32 (64) slots */
 
+    /// <summary>
+    /// Gets the enumeration of viable inventory slots. 
+    /// </summary>
     [Flags]
     public enum InventorySlots
     {

@@ -1,5 +1,4 @@
 ﻿using IO.Common;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -16,123 +15,123 @@ namespace Client.Map
     /// Contains the data for a chunk, including an array of the tiles 
     /// and a pointer to the VertexBuffer on the GPU where it is contained. 
     /// </summary>
-    [Obsolete]
     class ChunkData : IDisposable
     {
-        public readonly TerrainType[] Tiles;
+        readonly TerrainType[] tiles;
 
-        public readonly int Timestamp;
+        readonly VertexBuffer buffer;
 
-
-        public readonly MapChunkId Chunk;
-
-        volatile VertexBuffer buffer;
-        public VertexBuffer Buffer
-        {
-            get { return buffer; }
-        }
+        readonly VertexPositionTexture[] vertexData;
 
 
+        public MapChunkId Chunk { get; }
+
+        public int Timestamp { get; }
 
         public bool HasBuffer { get; private set; }
 
+        
+        public VertexBuffer Buffer => buffer;
 
-        public int Width
+        public int Width => Constants.Terrain.ChunkSize;
+
+        public int Height => Constants.Terrain.ChunkSize;
+
+        public int Area => Width * Height;
+
+
+        public ChunkData(GraphicsDevice device, MapChunkId chunk, TerrainType[] msgTiles, Rectangle msgSpan)
         {
-            get { return Constants.Terrain.ChunkSize; }
+            vertexData = new VertexPositionTexture[6 * Area];
+
+            Chunk = chunk;
+            Timestamp = Environment.TickCount;
+
+            buffer = new VertexBuffer(device, typeof(VertexPositionTexture), 6 * Area, BufferUsage.WriteOnly);
+            tiles = new TerrainType[Constants.Terrain.ChunkSize * Constants.Terrain.ChunkSize];
+            ClearTiles(false);
+
+            SetTiles(msgTiles, msgSpan);
         }
 
-        public int Height
+        public void ClearTiles(bool toRebuildBuffer = true)
         {
-            get { return Constants.Terrain.ChunkSize; }
+            for (var i = 0; i < tiles.Length; i++)
+                tiles[i] = TerrainType.None;
+
+            if(toRebuildBuffer)
+                rebuildBuffer();
         }
 
-        public int Area
+        public void ClearTiles(Rectangle msgSpan)
         {
-            get { return Width * Height; }
+            var intersect = Chunk.Span.IntersectWith(msgSpan);
+            setTilesUnsafe(intersect, (_) => TerrainType.None);
+
+            rebuildBuffer(intersect - Chunk.BottomLeft);
         }
 
-        public TerrainType GetTile(int x, int y)
+
+        public void SetTiles(TerrainType[] msgTiles, Rectangle msgSpan)
         {
-            return Tiles[(x - Chunk.BottomLeft.X) + Constants.Terrain.ChunkSize * (y - Chunk.BottomLeft.Y)];
+            var intersect = Chunk.Span.IntersectWith(msgSpan);
+            setTilesUnsafe(intersect, (inGamePt) =>
+            {
+                var arrPt = inGamePt - msgSpan.Position;
+                var arrPos = arrPt.X + msgSpan.Width * arrPt.Y;
+
+                return msgTiles[arrPos];
+            });
+
+            rebuildBuffer(intersect - Chunk.BottomLeft);
         }
 
-        public ChunkData(MapChunkId chunk, TerrainType[] tiles)
+        void setTilesUnsafe(Rectangle span, Func<Point, TerrainType> func)
         {
-            this.Chunk = chunk;
-            this.Tiles = tiles;
-            this.Timestamp = Environment.TickCount;
+            foreach (var inGamePt in span.Iterate())
+            {
+                var chunkPt = inGamePt - Chunk.BottomLeft;
+                var chunkPos = chunkPt.X + Chunk.Span.Width * chunkPt.Y;
+                tiles[chunkPos] = func(inGamePt);
+            }
         }
 
         /// <summary>
         /// Builds the framebuffer for this chunk. Throws an exception if the framebuffer is already created. 
         /// </summary>
-        /// <param name="device"></param>
-        public void BuildBuffer(GraphicsDevice device)
+        /// <param name="rebuildRect">The rectangle to rebuild local to the chunk. Defaults to (0, 0, w, h). </param>
+        void rebuildBuffer(Rectangle? rebuildRect = null)
         {
-            if (HasBuffer)
-                throw new Exception("Don't call me twice!");
-
+            var r = rebuildRect ?? new Rectangle(0, 0, Width, Height);
             ThreadPool.QueueUserWorkItem(o =>
             {
-                var vertexData = new List<VertexPositionTexture>();
+                foreach (var pt in r.Iterate())
+                {
+                    var ttyId = pt.X + pt.Y * Constants.Terrain.ChunkSize;
+                    var ttyTexPos = Content.Terrain.GetTileTextureBounds(tiles[ttyId]);
+                    var ttyGamePos = new RectangleF(Chunk.BottomLeft + pt, Vector.One);
 
-                foreach (var x in Enumerable.Range(0, Width))
-                    foreach (var y in Enumerable.Range(0, Height))
-                    {
-                        var pi = Content.Terrain.GetTile(Tiles[x + y * Constants.Terrain.ChunkSize]);
-                        var pos = Chunk.BottomLeft + new Vector(Chunk.Span.Width * x / Width, Chunk.Span.Height * y / Height);
-                        var _tileFar = 1;
-                        var _tileClose = 0;
+                    vertexData[6 * ttyId + 0] = genPoint(ttyGamePos.BottomLeft, ttyTexPos.BottomLeft);
+                    vertexData[6 * ttyId + 1] = genPoint(ttyGamePos.BottomRight, ttyTexPos.BottomRight);
+                    vertexData[6 * ttyId + 2] = genPoint(ttyGamePos.TopLeft, ttyTexPos.TopLeft);
 
-                        vertexData.Add(genPoint(pos.X + _tileClose, pos.Y + _tileClose, pi.TopLeft));
-                        vertexData.Add(genPoint(pos.X + _tileFar, pos.Y + _tileClose, pi.TopRight));
-                        vertexData.Add(genPoint(pos.X + _tileClose, pos.Y + _tileFar, pi.BottomLeft));
+                    vertexData[6 * ttyId + 3] = genPoint(ttyGamePos.TopLeft, ttyTexPos.TopLeft);
+                    vertexData[6 * ttyId + 4] = genPoint(ttyGamePos.BottomRight, ttyTexPos.BottomRight);
+                    vertexData[6 * ttyId + 5] = genPoint(ttyGamePos.TopRight, ttyTexPos.TopRight);
+                }
 
-                        vertexData.Add(genPoint(pos.X + _tileClose, pos.Y + _tileFar, pi.BottomLeft));
-                        vertexData.Add(genPoint(pos.X + _tileFar, pos.Y + _tileClose, pi.TopRight));
-                        vertexData.Add(genPoint(pos.X + _tileFar, pos.Y + _tileFar, pi.BottomRight));
-                    }
-
-                buffer = new VertexBuffer(device, typeof(VertexPositionTexture), 6 * Area, BufferUsage.WriteOnly);
-                buffer.SetData(vertexData.ToArray());
+                buffer.SetData(vertexData);
                 HasBuffer = true;
             });
-        }
-
-
-        /// <summary>
-        /// Checks a corner for nice tiling. NYI
-        /// </summary>
-        void checkCorner(int x, int y, int dx, int dy, Func<int, int, TerrainType> func, List<VertexPositionTexture> list)
-        {
-            //var thisTile = func(x, y);
-            //var tiles = new[]
-            //{
-            //    func(x + dx, y),
-            //    func(x, y + dx),
-            //    func(x + dx, y + dx),
-            //};
-
-            //if(tiles[0] == tiles[1] && tiles[1] == tiles[2] && tiles[0] != thisTile)
-            //{
-            //    var sprite = SpriteFactory.Terrain.GetSprite(tiles[0]);
-            //}
-            //if (n_same == 0)
-            //{
-            //    var loc = new Vector(x + 0.5, y + 0.5);
-            //    list.Add(genPoint())
-            //}
         }
 
         /// <summary>
         /// Returns a VertexPositionTexture for the given in-texture point 
         /// which is at the provided in-game x/y co-ordinates. 
         /// </summary>
-        VertexPositionTexture genPoint(double x, double y, Vector texPos)
-        {
-            return new VertexPositionTexture(new Vector3((float)x, (float)y, 0), texPos.ToXnaVector());
-        }
+        VertexPositionTexture genPoint(Vector inGamePos, Vector texPos)
+            => new VertexPositionTexture(inGamePos.ToVector3(), texPos.ToVector2());
+
 
         public void Dispose()
         {

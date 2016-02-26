@@ -21,135 +21,48 @@ namespace ShanoEditor.Views
 
         TextureViewModel CurrentTexture { get; set; }
 
-
-        public IEnumerable<TextureViewModel> AllTextures
-        {
-            get { return Model.Content.Textures.Values; }
-        }
-
-        public event Action TexturesLoaded;
-
         public TexturesView()
         {
             InitializeComponent();
-            texTree.ImageList = StaticImageList.FolderList;
+
+            texBrowser.TextureSelected += onTextureSelected;
+            texBrowser.TextureCheckedChanged += onTextureCheckedChanged;
         }
 
         protected override async Task LoadModel()
         {
-            RefreshTree();
+            texBrowser.SetModel(Model.Content.Textures);
         }
 
-        protected override async Task SaveModel()
+        void onTextureCheckedChanged(TextureViewModel tex, bool isChecked)
         {
-
+            pTexProps.Enabled = tex.Included;
+            MarkAsChanged();
         }
 
-        void RefreshTree()
-        {
-            texTree.Nodes.Clear();
-            var rootNode = texTree.Nodes.Add("Textures");
-
-            //update the visible list
-            foreach (var tex in Model.Content.Textures.Values)
-            {
-                //split path into segments
-                var texturePathSegments = tex.Path
-                    .Split(Path.DirectorySeparatorChar);
-
-
-                //find or create the folder structure
-                var folderNode = rootNode;
-                foreach (var pathSegment in texturePathSegments.DropLast())
-                {
-                    var segmentNode = folderNode.Nodes.Find(pathSegment, false)
-                        .SingleOrDefault();
-                    if (segmentNode == null)
-                        folderNode.Nodes.Add(segmentNode = new TreeNode
-                        {   //add new folder
-                            Text = pathSegment,
-                            Name = pathSegment,
-                            ImageIndex = 0,
-                            SelectedImageIndex = 0,
-                        });
-                    folderNode = segmentNode;
-                }
-
-                //create the texture node
-                var nodeText = texturePathSegments.Last();
-                folderNode.Nodes.Add(new TreeNode
-                {
-                    Text = nodeText,
-                    Name = tex.Path,
-                    Checked = tex.Included,
-                    ImageIndex = 1,
-                    SelectedImageIndex = 1,
-                    Tag = tex
-                });
-            }
-
-            rootNode.ExpandAll();
-
-        }
-
-        void updateUi(TextureViewModel texData)
+        void onTextureSelected(TextureViewModel texData)
         {
             pTexProps.Enabled = texData?.Included ?? false;
 
-            //update the right panel
-            if (texData != null)
+            if (texData == null)
             {
-                CurrentTexture = texData;
-
-                texView.SetTexture(CurrentTexture);
-                pTexProps.SelectedObject = CurrentTexture;
+                pTexProps.SelectedObject = null;
+                texView.Reset();
+                return;
             }
+
+            //update the right panel
+            texView.SetTexture(texData);
+            pTexProps.SelectedObject = texData;
         }
 
-        private void pTexProps_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        void pTexProps_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             var it = e.ChangedItem;
 
             texView.Invalidate();
             MarkAsChanged();
         }
-
-        private void texTree_AfterCheck(object sender, TreeViewEventArgs e)
-        {
-            var n = e.Node;
-            var texData = n.Tag as TextureViewModel;
-
-            if (texData == null)   // a folder, recurse
-            {
-                selectAll(n, n.Checked);
-                return;
-            }
-
-            // save to the scenario
-            if (!Loading)
-            {
-                texData.Included = n.Checked;
-                MarkAsChanged();
-            }
-
-            if (n.IsSelected)
-                updateUi(texData);
-        }
-
-        void selectAll(TreeNode n, bool selected)
-        {
-            foreach(TreeNode cn in n.Nodes)
-            {
-                cn.Checked = selected;
-                selectAll(cn, selected);
-            }
-        }
-
-        private void texTree_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-
-            var texData = e.Node.Tag as TextureViewModel;
-            updateUi(texData);
-        }
+        
     }
 }

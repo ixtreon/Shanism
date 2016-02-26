@@ -19,14 +19,16 @@ namespace IO.Message.Server
         /// Gets the GUID of the game object. 
         /// </summary>
         [ProtoMember(1)]
-        public readonly uint Guid;
+        public readonly uint ObjectId;
 
-        ObjectUnseenMessage() { Type = MessageType.ObjectUnseen; }
+        public override MessageType Type { get { return MessageType.ObjectUnseen; } }
+
+        ObjectUnseenMessage() { }
 
         public ObjectUnseenMessage(uint guid)
             :this()
         {
-            Guid = guid;
+            ObjectId = guid;
         }
     }
 }

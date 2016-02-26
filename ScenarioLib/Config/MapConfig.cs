@@ -21,18 +21,7 @@ namespace ScenarioLib
         /// Gets or sets whether the map is infinite. 
         /// </summary>
         [JsonProperty]
-        public bool Infinite { get; set; }
-
-
-        /// <summary>
-        /// Gets or sets the width of the map, if it is finite. 
-        /// </summary>
-        public int Width { get { return Terrain.GetLength(0); } }
-
-        /// <summary>
-        /// Gets or sets the height of the map, if it is finite. 
-        /// </summary>
-        public int Height { get { return Terrain.GetLength(1); } }
+        public bool IsInfinite { get; set; }
 
         /// <summary>
         /// Gets or sets the terrain data for a finite map. 
@@ -44,21 +33,28 @@ namespace ScenarioLib
         /// Gets or sets the list of <see cref="ObjectConstructor"/>s that are created. 
         /// </summary>
         [JsonProperty]
-        public List<ObjectConstructor> ObjectList { get; set; } = new List<ObjectConstructor>();
+        public List<ObjectConstructor> Objects { get; } = new List<ObjectConstructor>();
+
+
+        /// <summary>
+        /// Gets or sets the width of the map, if it is finite. 
+        /// </summary>
+        public int Width => Terrain.GetLength(0);
+
+        /// <summary>
+        /// Gets or sets the height of the map, if it is finite. 
+        /// </summary>
+        public int Height => Terrain.GetLength(1);
 
         /// <summary>
         /// Gets the size of the map. 
         /// </summary>
-        public Point Size
-        {
-            get { return new Point(Width, Height); }
-        }
+        public Point Size => new Point(Width, Height);
 
 
         public MapConfig()
         {
-            Infinite = false;
-
+            IsInfinite = false;
             Terrain = new TerrainType[64, 64];
         }
 

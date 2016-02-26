@@ -19,11 +19,11 @@ namespace ShanoEditor.Views.Maps
         {
             public string Name { get; }
 
-            public List<IGameObject> Objects { get; }
+            public List<IEntity> Objects { get; }
 
             public FlowLayoutPanel Panel { get; }
 
-            public GameObjectPanel(string name, List<IGameObject> objs, FlowLayoutPanel p)
+            public GameObjectPanel(string name, List<IEntity> objs, FlowLayoutPanel p)
             {
                 Name = name;
                 Objects = objs;
@@ -33,10 +33,10 @@ namespace ShanoEditor.Views.Maps
 
         List<GameObjectPanel> categories { get; } = new List<GameObjectPanel>();
 
-        int selectedCategory = -1;
-        
+        int selectedCategoryId = -1;
 
-        public event Action<IGameObject> ObjectSelected;
+
+        public event Action<IEntity> ObjectSelected;
 
         public GameObjectList()
         {
@@ -46,11 +46,22 @@ namespace ShanoEditor.Views.Maps
 
         protected override async Task LoadModel()
         {
-            AddObjects("Units", Model.Scenario.DefinedUnits, true);
-            AddObjects("Doodads", Model.Scenario.DefinedDoodads, false);
+            if (Model?.Scenario == null)
+                return;
+
+            var units = Model.Scenario.DefinedEntities
+                .Where(o => o is IUnit);
+
+            var doodads = Model.Scenario.DefinedEntities
+                .Where(o => o is IDoodad);
+
+            if (units.Any())
+                AddObjects("Custom Units", units, true);
+            if (doodads.Any())
+                AddObjects("Custom Doodads", doodads, false);
         }
 
-        void AddObjects(string name, IEnumerable<IGameObject> objects, bool canOwn)
+        void AddObjects(string name, IEnumerable<IEntity> objects, bool canOwn)
         {
             var objList = objects.ToList();
 
@@ -70,16 +81,7 @@ namespace ShanoEditor.Views.Maps
                 cbCategory.SelectedIndex = 0;
         }
 
-        void refreshPanelTextures()
-        {
-            var btns = mainPanel.Controls
-                .OfType<FlowLayoutPanel>()
-                .SelectMany(p => p.Controls.OfType<GameObjectButton>());
-
-
-        }
-
-        FlowLayoutPanel createPanel(List<IGameObject> objs, bool canOwn)
+        FlowLayoutPanel createPanel(List<IEntity> objs, bool canOwn)
         {
             var p = new FlowLayoutPanel
             {
@@ -89,12 +91,10 @@ namespace ShanoEditor.Views.Maps
             };
             p.VisibleChanged += (o, e) => pOwner.Visible = canOwn;
 
-            foreach(var o in objs)
+            foreach (var o in objs)
             {
-                var mdl = o.ModelName;
-                var anim = Constants.Content.DefaultValues.Animation;
-
-                var animView = Model.Content.Models.TryGet(mdl)?.Animations.TryGet(anim);
+                var animView = Model.Content
+                    .Animations.TryGet(o.AnimationName);
 
                 var btn = new GameObjectButton(o);
                 btn.ObjectSelected += onGameObjectClicked;
@@ -107,40 +107,40 @@ namespace ShanoEditor.Views.Maps
         }
 
 
-        private void onGameObjectClicked(IGameObject obj)
+        void onGameObjectClicked(IEntity obj)
         {
             ObjectSelected?.Invoke(obj);
         }
 
-        private void cbCategory_SelectedIndexChanged(object sender, EventArgs e)
+        void onCategoryChanged(object sender, EventArgs e)
         {
             var id = cbCategory.SelectedIndex;
-            if(id != selectedCategory)
+            if (id == selectedCategoryId)
+                return;
+
+            //if old category valid, make it invisible
+            if (selectedCategoryId >= 0 && selectedCategoryId < categories.Count)
             {
-                if (selectedCategory >= 0 && selectedCategory < categories.Count)
-                {
-                    categories[selectedCategory].Panel.Visible = false;
-                    foreach (var c in categories[selectedCategory].Panel
-                        .Controls
-                        .OfType<GameObjectButton>())
-                        c.Checked = false;
-                }
+                var selectedCategory = categories[selectedCategoryId];
 
-                selectedCategory = id;
-
-
-                if (selectedCategory >= 0 && selectedCategory < categories.Count)
-                    categories[selectedCategory].Panel.Visible = true;
+                selectedCategory.Panel.Visible = false;
+                foreach (var c in selectedCategory.Panel
+                    .Controls
+                    .OfType<GameObjectButton>())
+                    c.Checked = false;
             }
+
+            selectedCategoryId = id;
+
+            //if new category valid, make it visible
+            if (selectedCategoryId >= 0 && selectedCategoryId < categories.Count)
+                categories[selectedCategoryId].Panel.Visible = true;
         }
 
-        private void GameObjectList_Load(object sender, EventArgs e)
-        {
 
-        }
-
-        private void pOwner_VisibleChanged(object sender, EventArgs e)
+        void pOwner_VisibleChanged(object sender, EventArgs e)
         {
+            //resize mainPanel if object can be owned
             var anchor = pOwner.Visible ? (Control)pOwner : cbCategory;
             var anchorBot = anchor.Bottom + anchor.Margin.Bottom + mainPanel.Margin.Top;
             var d = anchorBot - mainPanel.Top;

@@ -8,19 +8,33 @@ using System.Threading.Tasks;
 
 namespace IO.Content
 {
+    /// <summary>
+    /// Represents an animation that can be used by in-game objects and displays one or more frames of a <see cref="TextureDef"/>. 
+    /// Animations can be either dynamic or static and are further defined by their source texture and span /frames/. 
+    /// </summary>
     public class AnimationDef
     {
         /// <summary>
         /// A placeholder animation that is present in all games. Uses <see cref="TextureDef.Default"/> as its texture. 
         /// </summary>
-        public static readonly AnimationDef Default = new AnimationDef(TextureDef.Default);
+        public static readonly AnimationDef Default = new AnimationDef("dummy/stand", TextureDef.Default.Name, new Rectangle(Point.Zero, Point.One));
 
-        public TextureDef Texture { get; set; }
+        /// <summary>
+        /// Gets or sets the name of this animation. 
+        /// </summary>
+        public string Name { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets the source texture for this animation. 
+        /// </summary>
+        public string Texture { get; set; }
+
 
         /// <summary>
         /// Gets the span of this animation. 
         /// </summary>
-        public Rectangle Span { get; set; }
+        public Rectangle Span { get; set; } = new Rectangle(Point.Zero, Point.One);
 
         /// <summary>
         /// Gets or sets whether this animation is dynamic. 
@@ -42,7 +56,7 @@ namespace IO.Content
         public int Period { get; set; }
 
         /// <summary>
-        /// Gets or sets whether a dynamic animation is looping. 
+        /// Gets or sets whether a dynamic animation is looping.    
         /// Undefined if <see cref="IsDynamic"/> is false. 
         /// </summary>
         public bool IsLooping { get; set; }
@@ -50,7 +64,7 @@ namespace IO.Content
         /// <summary>
         /// Gets the number of frames in this animation. 
         /// </summary>
-        public int Frames {  get { return IsDynamic ? Span.Area : 1; } }
+        public int Frames => IsDynamic ? Span.Area : 1;
 
         /// <summary>
         /// Returns the span of the n'th frame in this animation. 
@@ -70,32 +84,51 @@ namespace IO.Content
         }
 
         /// <summary>
-        /// Creates a new animation spanning the whole texture. 
+        /// Creates a new static animation spanning all or part of a texture. 
         /// </summary>
-        /// <param name="tex"></param>
-        public AnimationDef(TextureDef tex)
+        /// <param name="animName">The name of the animation. </param>
+        /// <param name="texName">The name of the source texture. </param>
+        public AnimationDef(string animName, string texName, Rectangle span)
         {
+            Name = animName;
+
             IsDynamic = false;
-            Texture = tex;
-            Span = new Rectangle(Point.Zero, tex.Splits);
+            Texture = texName;
+            Span = span;
         }
 
         /// <summary>
-        /// Creates a new dynamic animation all or part of a texture. 
+        /// Creates a new dynamic animation spanning all or part of a texture. 
         /// </summary>
-        /// <param name="tex">The source texture for the animation. </param>
+        /// <param name="animName">The name of the animation. </param>
+        /// <param name="texName">The source texture for the animation. </param>
         /// <param name="span"></param>
         /// <param name="period"></param>
         /// <param name="isLooping"></param>
-        public AnimationDef(TextureDef tex, Rectangle span, int period = 100, bool isLooping = true)
+        public AnimationDef(string animName, string texName, Rectangle span, int period, bool isLooping)
         {
+            Name = animName;
+
             IsDynamic = true;
-            Texture = tex;
+            Texture = texName;
             Span = span;
             Period = period;
             IsLooping = isLooping;
         }
 
+        public AnimationDef(AnimationDef @base)
+        {
+            IsDynamic = @base.IsDynamic;
+            IsLooping = @base.IsLooping;
+            Name = @base.Name;
+            Period = @base.Period;
+            Span = @base.Span;
+            Texture = @base.Texture;
+        }
+
+        /// <summary>
+        /// Creates a new empty animation. 
+        /// </summary>
         public AnimationDef() { }
     }
 }

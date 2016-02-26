@@ -52,13 +52,14 @@ namespace ShanoEditor
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.scenarioTree = new ShanoEditor.ScenarioTree();
-            this.modelsView = new ShanoEditor.Views.ModelsView();
-            this.texView = new ShanoEditor.Views.TexturesView();
-            this.mapView = new ShanoEditor.Views.MapView();
-            this.detailsView = new ShanoEditor.Views.DetailsView();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.scenarioLoadProgressBar = new System.Windows.Forms.ToolStripProgressBar();
+            this.scenarioTree = new ShanoEditor.ScenarioTree();
+            this.modelsView = new ShanoEditor.Views.AnimationsView();
+            this.texView = new ShanoEditor.Views.TexturesView();
+            this.mapView = new ShanoEditor.Views.MapView();
+            this.detailsView = new ShanoEditor.Views.ScenarioView();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -245,13 +246,35 @@ namespace ShanoEditor
             this.splitContainer1.SplitterDistance = 166;
             this.splitContainer1.TabIndex = 4;
             // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.statusLabel,
+            this.scenarioLoadProgressBar});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 486);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(789, 22);
+            this.statusStrip1.TabIndex = 5;
+            // 
+            // statusLabel
+            // 
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(0, 17);
+            // 
+            // scenarioLoadProgressBar
+            // 
+            this.scenarioLoadProgressBar.Enabled = false;
+            this.scenarioLoadProgressBar.Name = "scenarioLoadProgressBar";
+            this.scenarioLoadProgressBar.Size = new System.Drawing.Size(100, 16);
+            this.scenarioLoadProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.scenarioLoadProgressBar.Visible = false;
+            // 
             // scenarioTree
             // 
             this.scenarioTree.Dock = System.Windows.Forms.DockStyle.Fill;
             this.scenarioTree.HideSelection = false;
             this.scenarioTree.Location = new System.Drawing.Point(0, 0);
             this.scenarioTree.Name = "scenarioTree";
-            this.scenarioTree.Scenario = null;
             this.scenarioTree.Size = new System.Drawing.Size(166, 462);
             this.scenarioTree.TabIndex = 0;
             // 
@@ -285,20 +308,6 @@ namespace ShanoEditor
             this.detailsView.Name = "detailsView";
             this.detailsView.Size = new System.Drawing.Size(181, 240);
             this.detailsView.TabIndex = 3;
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.statusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 486);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(789, 22);
-            this.statusStrip1.TabIndex = 5;
-            // 
-            // statusLabel
-            // 
-            this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(0, 17);
             // 
             // ShanoEditorForm
             // 
@@ -348,13 +357,14 @@ namespace ShanoEditor
         private System.Windows.Forms.ToolStripMenuItem dasToolStripMenuItem1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private ScenarioTree scenarioTree;
-        private DetailsView detailsView;
+        private ScenarioView detailsView;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private MapView mapView;
         private TexturesView texView;
-        private ModelsView modelsView;
+        private AnimationsView modelsView;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripProgressBar scenarioLoadProgressBar;
     }
 }
 

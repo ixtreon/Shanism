@@ -13,7 +13,7 @@ using Client.Assets;
 namespace Client.UI.Common
 {
     /// <summary>
-    /// A button that shows an image and can be clicked. 
+    /// A button that shows an image and/or text and can be clicked. 
     /// </summary>
     class Button : Control
     {
@@ -38,9 +38,10 @@ namespace Client.UI.Common
 
         public Color FontColor { get; set; } = Color.Black;
 
-
-        public Color BackHoverColor { get; set; }
-
+        /// <summary>
+        /// The color painted on top of the background color when the mouse is over the button. 
+        /// </summary>
+        public Color HoverOverlayColor { get; set; } = Color.Black.SetAlpha(32);
 
         /// <summary>
         /// Gets or sets whether this button has a border drawn around it. 
@@ -73,13 +74,12 @@ namespace Client.UI.Common
             Text = text;
             Texture = texture;
 
-            BackColor = Color.White.Darken(95);
-            BackHoverColor = BackColor.Darken(50);
+            BackColor = Color.White.Darken(40);
 
             MouseDown += Button_MouseDown;
         }
 
-        void Button_MouseDown(Input.MouseButtonEvent obj)
+        void Button_MouseDown(Input.MouseButtonArgs obj)
         {
             if (CanSelect && !IsSelected)
                 select(true);
@@ -94,8 +94,9 @@ namespace Client.UI.Common
         public override void OnDraw(Graphics g)
         {
             //draw background
-            var bgc = MouseOver ? BackHoverColor : BackColor;
-            g.Draw(Content.Textures.Blank, Vector.Zero, Size, bgc);
+            g.Draw(Content.Textures.Blank, Vector.Zero, Size, BackColor);
+            if(MouseOver)
+                g.Draw(Content.Textures.Blank, Vector.Zero, Size, HoverOverlayColor);
 
             //draw texture
             if (Texture != null)

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Entities;
-using Engine.Entities.Objects;
+using Engine.Objects;
+using Engine.Objects.Entities;
+using IO.Common;
 using ScenarioLib;
 
 namespace Engine.Systems
@@ -12,9 +13,9 @@ namespace Engine.Systems
     /// <summary>
     /// A base for the creation of custom game scripts. 
     /// </summary>
-    public abstract class CustomScript : ScenarioObject
+    public abstract class CustomScript : GameObject
     {
-
+        public override ObjectType ObjectType {  get { return ObjectType.Script; } }
         /// <summary>
         /// The method executed when the game has started. 
         /// </summary>
@@ -47,7 +48,7 @@ namespace Engine.Systems
         /// <summary>
         /// NYI
         /// </summary>
-        /// <param name="d"></param>
+        /// <param name="unit"></param>
         public virtual void OnUnitDeath(Unit unit) { }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Engine.Entities;
+﻿using Engine.Objects;
 using Engine.Systems.Orders;
 using System;
 using System.Collections.Generic;
@@ -45,7 +45,7 @@ namespace Engine.Systems.Behaviours
             this.Owner.DamageReceived += OnDamageReceived;
         }
 
-        private void OnObjectSeen(GameObject obj)
+        private void OnObjectSeen(Entity obj)
         {
             if (obj is Unit)
                 OnUnitInVisionRange((Unit)obj);

@@ -45,9 +45,14 @@ namespace ShanoEditor.Views
             this.chkFixedSeed = new System.Windows.Forms.CheckBox();
             this.txtFixedSeed = new System.Windows.Forms.NumericUpDown();
             this.mapSplitter = new System.Windows.Forms.SplitContainer();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.pTerrain = new ShanoEditor.Views.Maps.TerrainList();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.pObjects = new ShanoEditor.Views.Maps.GameObjectList();
-            this.listPanel1 = new ShanoEditor.Views.ListPanel();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.propPanel = new ShanoEditor.Views.Maps.PropPanel();
             this.btnMaxTools = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.nWidth)).BeginInit();
@@ -60,6 +65,11 @@ namespace ShanoEditor.Views
             this.mapSplitter.Panel1.SuspendLayout();
             this.mapSplitter.Panel2.SuspendLayout();
             this.mapSplitter.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            this.tabPage4.SuspendLayout();
             this.SuspendLayout();
             // 
             // chkInfinite
@@ -91,7 +101,7 @@ namespace ShanoEditor.Views
             // nWidth
             // 
             this.nWidth.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.nWidth.Location = new System.Drawing.Point(60, 20);
+            this.nWidth.Location = new System.Drawing.Point(52, 20);
             this.nWidth.Maximum = new decimal(new int[] {
             1024,
             0,
@@ -117,7 +127,7 @@ namespace ShanoEditor.Views
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(115, 20);
+            this.label1.Location = new System.Drawing.Point(107, 20);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(14, 16);
             this.label1.TabIndex = 4;
@@ -126,7 +136,7 @@ namespace ShanoEditor.Views
             // nHeight
             // 
             this.nHeight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.nHeight.Location = new System.Drawing.Point(135, 20);
+            this.nHeight.Location = new System.Drawing.Point(127, 20);
             this.nHeight.Margin = new System.Windows.Forms.Padding(3, 3, 12, 3);
             this.nHeight.Maximum = new decimal(new int[] {
             1024,
@@ -155,7 +165,7 @@ namespace ShanoEditor.Views
             this.btnResizeMap.Location = new System.Drawing.Point(15, 47);
             this.btnResizeMap.Margin = new System.Windows.Forms.Padding(12, 3, 0, 0);
             this.btnResizeMap.Name = "btnResizeMap";
-            this.btnResizeMap.Size = new System.Drawing.Size(141, 26);
+            this.btnResizeMap.Size = new System.Drawing.Size(133, 26);
             this.btnResizeMap.TabIndex = 8;
             this.btnResizeMap.Text = "Resize";
             this.toolTip1.SetToolTip(this.btnResizeMap, "Applies the changes to the  map size. ");
@@ -177,7 +187,7 @@ namespace ShanoEditor.Views
             this.pFiniteSettings.Margin = new System.Windows.Forms.Padding(12, 3, 12, 3);
             this.pFiniteSettings.Name = "pFiniteSettings";
             this.pFiniteSettings.Padding = new System.Windows.Forms.Padding(3, 3, 3, 0);
-            this.pFiniteSettings.Size = new System.Drawing.Size(200, 89);
+            this.pFiniteSettings.Size = new System.Drawing.Size(192, 89);
             this.pFiniteSettings.TabIndex = 10;
             this.pFiniteSettings.TabStop = false;
             this.pFiniteSettings.Text = "Finite Map Settings";
@@ -186,7 +196,7 @@ namespace ShanoEditor.Views
             // 
             this.btnCancelMapResize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancelMapResize.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCancelMapResize.Location = new System.Drawing.Point(159, 47);
+            this.btnCancelMapResize.Location = new System.Drawing.Point(151, 47);
             this.btnCancelMapResize.Name = "btnCancelMapResize";
             this.btnCancelMapResize.Size = new System.Drawing.Size(26, 26);
             this.btnCancelMapResize.TabIndex = 9;
@@ -197,16 +207,15 @@ namespace ShanoEditor.Views
             // 
             // pMapSettings
             // 
-            this.pMapSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.pMapSettings.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.pMapSettings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.pMapSettings.Controls.Add(this.chkInfinite);
             this.pMapSettings.Controls.Add(this.pInfiniteSettings);
             this.pMapSettings.Controls.Add(this.pFiniteSettings);
-            this.pMapSettings.Location = new System.Drawing.Point(3, 96);
+            this.pMapSettings.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pMapSettings.Location = new System.Drawing.Point(3, 3);
             this.pMapSettings.Name = "pMapSettings";
-            this.pMapSettings.Size = new System.Drawing.Size(224, 210);
+            this.pMapSettings.Size = new System.Drawing.Size(216, 551);
             this.pMapSettings.TabIndex = 0;
             // 
             // pInfiniteSettings
@@ -220,7 +229,7 @@ namespace ShanoEditor.Views
             this.pInfiniteSettings.Margin = new System.Windows.Forms.Padding(12);
             this.pInfiniteSettings.Name = "pInfiniteSettings";
             this.pInfiniteSettings.Padding = new System.Windows.Forms.Padding(3, 3, 3, 0);
-            this.pInfiniteSettings.Size = new System.Drawing.Size(200, 57);
+            this.pInfiniteSettings.Size = new System.Drawing.Size(192, 57);
             this.pInfiniteSettings.TabIndex = 11;
             this.pInfiniteSettings.TabStop = false;
             this.pInfiniteSettings.Text = "Infinite Map Settings";
@@ -241,7 +250,7 @@ namespace ShanoEditor.Views
             // txtFixedSeed
             // 
             this.txtFixedSeed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtFixedSeed.Location = new System.Drawing.Point(135, 21);
+            this.txtFixedSeed.Location = new System.Drawing.Point(127, 21);
             this.txtFixedSeed.Margin = new System.Windows.Forms.Padding(3, 3, 12, 3);
             this.txtFixedSeed.Maximum = new decimal(new int[] {
             2000000000,
@@ -263,48 +272,103 @@ namespace ShanoEditor.Views
             // mapSplitter.Panel1
             // 
             this.mapSplitter.Panel1.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.mapSplitter.Panel1.Controls.Add(this.pTerrain);
-            this.mapSplitter.Panel1.Controls.Add(this.pObjects);
-            this.mapSplitter.Panel1.Controls.Add(this.pMapSettings);
-            this.mapSplitter.Panel1.Controls.Add(this.listPanel1);
+            this.mapSplitter.Panel1.Controls.Add(this.tabControl1);
             this.mapSplitter.Panel1MinSize = 222;
             // 
             // mapSplitter.Panel2
             // 
             this.mapSplitter.Panel2.Controls.Add(this.btnMaxTools);
-            this.mapSplitter.Size = new System.Drawing.Size(580, 677);
+            this.mapSplitter.Size = new System.Drawing.Size(928, 585);
             this.mapSplitter.SplitterDistance = 232;
             this.mapSplitter.TabIndex = 1;
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage4);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(230, 583);
+            this.tabControl1.TabIndex = 3;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.pMapSettings);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(222, 557);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Map";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.pTerrain);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(222, 557);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Terrain";
+            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // pTerrain
             // 
             this.pTerrain.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.pTerrain.Location = new System.Drawing.Point(7, 312);
+            this.pTerrain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pTerrain.Location = new System.Drawing.Point(3, 3);
             this.pTerrain.Name = "pTerrain";
-            this.pTerrain.Size = new System.Drawing.Size(220, 296);
+            this.pTerrain.Size = new System.Drawing.Size(216, 551);
             this.pTerrain.TabIndex = 17;
-            this.pTerrain.BrushTypeSelected += new System.Action<IO.Common.TerrainType>(this.pTerrain_BrushTypeSelected);
-            this.pTerrain.BrushSizeSelected += new System.Action<int>(this.pTerrain_BrushSizeSelected);
-            this.pTerrain.VisibleChanged += new System.EventHandler(this.pTerrain_VisibleChanged);
+            this.pTerrain.TerrainBrushChanged += new System.Action(this.onTerrainBrushChanged);
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.pObjects);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(222, 557);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Objects";
+            this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // pObjects
             // 
             this.pObjects.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.pObjects.Location = new System.Drawing.Point(7, 339);
+            this.pObjects.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pObjects.Location = new System.Drawing.Point(3, 3);
             this.pObjects.Name = "pObjects";
-            this.pObjects.Size = new System.Drawing.Size(208, 314);
+            this.pObjects.Size = new System.Drawing.Size(216, 551);
             this.pObjects.TabIndex = 0;
-            this.pObjects.ObjectSelected += new System.Action<IO.Objects.IGameObject>(this.pObjects_ObjectSelected);
-            this.pObjects.VisibleChanged += new System.EventHandler(this.pObjects_VisibleChanged);
+            this.pObjects.ObjectSelected += new System.Action<IO.Objects.IEntity>(this.pObjects_ObjectSelected);
             // 
-            // listPanel1
+            // tabPage4
             // 
-            this.listPanel1.BackColor = System.Drawing.SystemColors.Control;
-            this.listPanel1.Location = new System.Drawing.Point(0, -1);
-            this.listPanel1.Margin = new System.Windows.Forms.Padding(0);
-            this.listPanel1.Name = "listPanel1";
-            this.listPanel1.Size = new System.Drawing.Size(227, 94);
-            this.listPanel1.TabIndex = 16;
+            this.tabPage4.Controls.Add(this.propPanel);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(222, 557);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "Props";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // propPanel
+            // 
+            this.propPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
+            this.propPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propPanel.Location = new System.Drawing.Point(3, 3);
+            this.propPanel.Name = "propPanel";
+            this.propPanel.Size = new System.Drawing.Size(216, 551);
+            this.propPanel.TabIndex = 0;
+            this.propPanel.BrushChanged += new System.Action<ScenarioLib.ObjectConstructor>(this.propPanel_BrushChanged);
             // 
             // btnMaxTools
             // 
@@ -331,7 +395,7 @@ namespace ShanoEditor.Views
             this.Controls.Add(this.mapSplitter);
             this.MinimumSize = new System.Drawing.Size(310, 240);
             this.Name = "MapView";
-            this.Size = new System.Drawing.Size(580, 677);
+            this.Size = new System.Drawing.Size(928, 585);
             ((System.ComponentModel.ISupportInitialize)(this.nWidth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nHeight)).EndInit();
             this.pFiniteSettings.ResumeLayout(false);
@@ -345,6 +409,11 @@ namespace ShanoEditor.Views
             this.mapSplitter.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.mapSplitter)).EndInit();
             this.mapSplitter.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage4.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -367,7 +436,12 @@ namespace ShanoEditor.Views
         private System.Windows.Forms.NumericUpDown txtFixedSeed;
         private System.Windows.Forms.Button btnCancelMapResize;
         private Maps.GameObjectList pObjects;
-        private ShanoEditor.Views.ListPanel listPanel1;
         private Maps.TerrainList pTerrain;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TabPage tabPage4;
+        private Maps.PropPanel propPanel;
     }
 }

@@ -10,6 +10,9 @@ using Color = Microsoft.Xna.Framework.Color;
 
 namespace Client.UI.Common
 {
+    /// <summary>
+    /// Displays a simple label. 
+    /// </summary>
     class Label : Control
     {
         public string Text { get; set; } = string.Empty;
@@ -47,8 +50,8 @@ namespace Client.UI.Common
         public override void OnDraw(Graphics g)
         {
 
-            var maxTextLen = Size.X - Padding * 2;
-            var textPos = new Vector(Padding, Size.Y / 2) + new Vector(maxTextLen, 0) * TextXAlign;
+            var maxTextLen = Size.X;
+            var textPos = new Vector(Padding + maxTextLen * TextXAlign, Size.Y / 2);
 
             g.Draw(Content.Textures.Blank, Vector.Zero, Size, BackColor);
             g.DrawString(Font, Text, TextColor, textPos, TextXAlign, 0.5f, maxTextLen);

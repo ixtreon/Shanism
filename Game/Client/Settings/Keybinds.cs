@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.Settingsz
+namespace Client
 {
     //unused
     class KeybindSettings
@@ -25,20 +25,22 @@ namespace Client.Settingsz
         {
             if (!init) return;
 
-            this[GameAction.ToggleMainMenu] = Keys.Escape;
-
+            this[GameAction.ToggleMenus] = Keys.Escape;
             this[GameAction.ToggleCharacterMenu] = Keys.C;
-            this[GameAction.ToggleSpellBook] = Keys.P;
+            this[GameAction.ToggleAbilityMenu] = Keys.B;
 
-            this[GameAction.Chat] = Keys.Enter;
             this[GameAction.ShowHealthBars] = Keys.Tab;
+
+            this[GameAction.ReloadUi] = new Keybind(ModifierKeys.Control | ModifierKeys.Shift, Keys.R);
+            this[GameAction.ToggleDebugInfo] = Keys.F12;
+
 
             this[GameAction.MoveUp] = Keys.W;
             this[GameAction.MoveDown] = Keys.S;
             this[GameAction.MoveLeft] = Keys.A;
             this[GameAction.MoveRight] = Keys.D;
+            this[GameAction.Chat] = Keys.Enter;
 
-            this[GameAction.ReloadUi] = new Keybind(ModifierKeys.Control | ModifierKeys.Shift, Keys.R);
 
             foreach(var i in Enumerable.Range(1, 9))
                 this[0, i - 1] = new Keybind(Keys.D0 + i);
@@ -53,7 +55,7 @@ namespace Client.Settingsz
         /// <returns></returns>
         public Keybind this[GameAction act]
         {
-            get { return rawKeybinds[act]; }
+            get { return rawKeybinds.TryGetVal(act) ?? Keybind.None; }
             set
             {
                 setKeybind(act, value);
@@ -62,7 +64,7 @@ namespace Client.Settingsz
 
         public Keybind this[int barId, int keyId]
         {
-            get { return rawKeybinds[actionId(barId, keyId)]; }
+            get { return rawKeybinds.TryGetVal(actionId(barId, keyId)) ?? Keybind.None; }
             set
             {
                 var act = actionId(barId, keyId);

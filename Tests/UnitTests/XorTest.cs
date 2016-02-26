@@ -13,8 +13,12 @@ namespace UnitTests
     [TestClass]
     public class XorTest
     {
-        const int SIZE = 8192;
-        const int REPS = 10000;
+        const int NumBatches = 8;
+        const int StartBatchSize = 1024;
+        const int MaxBatchSize = StartBatchSize * (1 << NumBatches);
+        const int REPS = 1000;
+
+
 
         public TestContext TestContext { get; set; }
 
@@ -23,9 +27,9 @@ namespace UnitTests
         public void TestMe()
         {
 
-            masivA = new byte[SIZE];
-            masivB = new byte[SIZE];
-            outMasiv = new byte[SIZE];
+            masivA = new byte[MaxBatchSize];
+            masivB = new byte[MaxBatchSize];
+            outMasiv = new byte[MaxBatchSize];
 
             var rnd = new Random();
             rnd.NextBytes(masivA);
@@ -34,36 +38,42 @@ namespace UnitTests
 
             Stopwatch.StartNew().Stop();
 
-            foreach (var _ in Enumerable.Range(0, 10))
+            foreach (var i in Enumerable.Range(0, NumBatches))
             {
+                var sz = StartBatchSize * (1 << i);
+                Console.WriteLine($"Batch Size: {sz}");
+
                 {
                     var sw = Stopwatch.StartNew();
-                    for (int i = 0; i < REPS; i++)
-                        methodB();
+                    for (var _ = 0; _ < REPS; _++)
+                        methodA(sz);
                     sw.Stop();
-                    TestContext.WriteLine(sw.ElapsedTicks.ToString());
+                    Console.Write($"A: {sw.ElapsedTicks}\t");
                 }
 
                 {
                     var sw = Stopwatch.StartNew();
-                    for (int i = 0; i < REPS; i++)
-                        methodC();
+                    for (var _ = 0; _ < REPS; _++)
+                        methodB(sz);
                     sw.Stop();
-                    TestContext.WriteLine(sw.ElapsedTicks.ToString());
+                    Console.Write($"B: {sw.ElapsedTicks}\t");
                 }
-                TestContext.WriteLine("");
+
+                {
+                    var sw = Stopwatch.StartNew();
+                    for (var _ = 0; _ < REPS; _++)
+                        methodC(sz);
+                    sw.Stop();
+                    Console.Write($"C: {sw.ElapsedTicks}\t");
+                }
+                Console.WriteLine();
             }
 
         }
 
+        /* Common */
         byte[] masivA, masivB;
         byte[] outMasiv;
-
-        void methodA()
-        {
-            for (var i = 0; i < SIZE; i++)
-                outMasiv[i] = (byte)(masivA[i] ^ masivB[i]);
-        }
 
         [StructLayout(LayoutKind.Explicit)]
         struct UnionArray
@@ -78,32 +88,47 @@ namespace UnitTests
             public int[] Ints;
         }
 
-        void methodB()
+
+        /* Method A - sequential xor */
+
+        void methodA(int sz)
+        {
+            for (var i = 0; i < sz; i++)
+                outMasiv[i] = (byte)(masivA[i] ^ masivB[i]);
+        }
+
+
+        /* Method B - union array */
+
+        void methodB(int sz)
         {
             unA = new UnionArray { Bytes = masivA };
             unB = new UnionArray { Bytes = masivB };
             unOut = new UnionArray { Bytes = outMasiv };
 
-            var long_sz = SIZE * sizeof(byte) / sizeof(long);
+            var long_sz = sz * sizeof(byte) / sizeof(long);
 
             for (var i = 0; i < long_sz; i++)
                 unOut.Longs[i] = unA.Longs[i] ^ unB.Longs[i];
         }
 
+
+        /* Method C - parallelized union array */
+
         UnionArray unA, unB, unOut;
 
-        void methodC()
+        void methodC(int sz)
         {
             unA = new UnionArray { Bytes = masivA };
             unB = new UnionArray { Bytes = masivB };
             unOut = new UnionArray { Bytes = outMasiv };
 
-            var long_sz = SIZE * sizeof(byte) / sizeof(long);
+            var long_sz = sz * sizeof(byte) / sizeof(long);
 
-            Parallel.ForEach(Partitioner.Create(0, long_sz), doShit);
+            Parallel.ForEach(Partitioner.Create(0, long_sz), doPartXor);
         }
 
-        void doShit(Tuple<int, int> part)
+        void doPartXor(Tuple<int, int> part)
         {
             for (var i = part.Item1; i < part.Item2; i++)
                 unOut.Ints[i] = unA.Ints[i] ^ unB.Ints[i];

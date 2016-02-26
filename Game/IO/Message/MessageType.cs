@@ -20,6 +20,11 @@ namespace IO.Message
         ///-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
         /// <summary>
+        /// A message sent by the client to the server to initiate a handshake. 
+        /// </summary>
+        HandshakeInit,
+
+        /// <summary>
         /// A message sent by the client to request a map chunk. 
         /// </summary>
         MapRequest,
@@ -34,17 +39,17 @@ namespace IO.Message
         /// </summary>
         Action,
 
-        /// <summary>
-        /// A message sent by the client to the server to initiate a handshake. 
-        /// </summary>
-        HandshakeInit,
-
         ///-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
         /// <summary>
         /// A message sent by the server in reply to a client's hanshake message. See <see cref="HandshakeInit"/>. 
         /// </summary>
         HandshakeReply,
+
+        /// <summary>
+        /// A message sent by the server to inform the hero of his status (i.e. if a player has a hero). 
+        /// </summary>
+        PlayerStatusUpdate,
 
         /// <summary>
         /// A message sent by the server in reply to a client's map request. 
@@ -61,11 +66,6 @@ namespace IO.Message
         /// A message sent by the server containing a partial update of am object's state. 
         /// </summary>
         PartialUpdate,
-
-        /// <summary>
-        /// A message sent by the server to inform the hero of his status (i.e. if a player has a hero). 
-        /// </summary>
-        PlayerStatusUpdate,
 
         /// <summary>
         /// A message sent by the server to inform of a nearby unit being damaged. 

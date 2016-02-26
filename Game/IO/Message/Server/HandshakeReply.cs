@@ -7,6 +7,12 @@ using System.Text;
 
 namespace IO.Message.Server
 {
+    /// <summary>
+    /// The reply of a server to a client willing to join the game. 
+    /// Contains whether the client is successfully accepted. 
+    /// If the client is accepted also contains the data 
+    /// necessary to play the current scenario. 
+    /// </summary>
     [ProtoContract]
     public class HandshakeReplyMessage : IOMessage
     {
@@ -28,7 +34,9 @@ namespace IO.Message.Server
         [ProtoMember(3)]
         public readonly byte[] ContentData;
 
-        HandshakeReplyMessage() { Type = MessageType.HandshakeReply; }
+        public override MessageType Type { get { return MessageType.HandshakeReply; } }
+
+        HandshakeReplyMessage() { }
 
         public HandshakeReplyMessage(bool isSuccessful, byte[] scenarioData, byte[] contentData)
             :this()

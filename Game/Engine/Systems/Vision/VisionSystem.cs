@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Entities;
+using Engine.Objects;
 using Engine.Systems.Range;
 
 namespace Engine.Systems
@@ -41,14 +41,14 @@ namespace Engine.Systems
             if (u.ObjectVisionRangeEvent == null || u.RangeEvents.Remove(u.ObjectVisionRangeEvent))
             {
                 //add a new handler
-                u.ObjectVisionRangeEvent = new UnitRangeEvent(u, u.VisionRange);
+                u.ObjectVisionRangeEvent = new RangeEvent(u.VisionRange);
                 u.ObjectVisionRangeEvent.Triggered += unit_ObjectInRange;
 
                 u.RangeEvents.Add(u.ObjectVisionRangeEvent);
             }
         }
 
-        void unit_ObjectInRange(GameObject obj)
+        void unit_ObjectInRange(Entity obj)
         {
             if (Target.visibleObjects.TryAdd(obj))
             {
@@ -57,12 +57,8 @@ namespace Engine.Systems
             }
         }
 
-        bool shouldRemoveObject(GameObject o)
+        bool shouldRemoveObject(Entity o)
         {
-            if(o is Entities.Objects.Doodad)
-            {
-                int life = 42;
-            }
             //not destroyed
             if (o.IsDestroyed)
                 return true;

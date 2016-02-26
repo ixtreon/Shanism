@@ -11,7 +11,7 @@ namespace Engine.Maps.Terrain
     {
         public static ITerrainMap Create(MapConfig mapConfig, int seed)
         {
-            if (mapConfig.Infinite)
+            if (mapConfig.IsInfinite)
                 return new RandomMap(seed);
             else
                 return new FixedMap(mapConfig.Terrain);

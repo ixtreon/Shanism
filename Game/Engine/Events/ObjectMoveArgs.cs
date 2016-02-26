@@ -1,4 +1,4 @@
-﻿using Engine.Entities;
+﻿using Engine.Objects;
 using IO.Common;
 using System;
 using System.Collections.Generic;
@@ -13,13 +13,13 @@ namespace Engine.Events
     /// </summary>
     public class ObjectMoveArgs
     {
-        public readonly GameObject MovingUnit;
+        public readonly Entity MovingUnit;
 
         public readonly Vector OldLocation;
 
         public readonly Vector NewLocation;
 
-        internal ObjectMoveArgs(GameObject obj, Vector oldLocation, Vector newLocation)
+        internal ObjectMoveArgs(Entity obj, Vector oldLocation, Vector newLocation)
         {
             MovingUnit = obj;
             OldLocation = oldLocation;

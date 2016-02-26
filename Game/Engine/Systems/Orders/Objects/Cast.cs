@@ -1,9 +1,9 @@
-﻿using Engine.Entities;
+﻿using Engine.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using IO.Common;
-using Engine.Entities.Objects;
+using Engine.Objects.Entities;
 using Engine.Systems.Behaviours;
 using Engine.Systems.Abilities;
 

@@ -1,6 +1,7 @@
 ﻿using Client.Input;
 using Client.UI.Common;
 using IO.Common;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,14 +15,13 @@ namespace Client.UI.Menus.Keybinds
     {
         static readonly string NoKeybindString = "<none>";
 
-        static KeyBoxLabel SelectedKeyBox;
-
         readonly Label lblText;
         readonly Label lblValue;
 
+        /// <summary>
+        /// Gets the gameaction this keybox can change the binding to. 
+        /// </summary>
         public GameAction Action { get; }
-
-        bool IsActive { get; set; }
 
         public KeyBoxLabel(GameAction action)
         {
@@ -29,7 +29,8 @@ namespace Client.UI.Menus.Keybinds
 
             Action = action;
             Size = new Vector(0.77, labelFont.UiHeight + 2 * Padding);
-            this.MouseUp += onMouseUp;
+            CanFocus = true;
+            KeyPressed += onKeyPressed;
 
             var captionSize = new Vector(0.4, Size.Y);
             var keyLabelWidth = Size.X - captionSize.X;
@@ -66,28 +67,43 @@ namespace Client.UI.Menus.Keybinds
             Add(lblValue);
         }
 
-        void onMouseUp(MouseButtonEvent obj)
+        void onKeyPressed(Keybind k)
         {
-            if (!IsActive && SelectedKeyBox != this)
-            {
-                if(SelectedKeyBox != null)
-                    SelectedKeyBox.IsActive = false;
+            if (k == Keys.LeftControl || k == Keys.RightControl
+                || k == Keys.LeftAlt || k == Keys.RightAlt
+                || k == Keys.LeftShift || k == Keys.RightShift)
+                return;
 
-                SelectedKeyBox = this;
+            if (k != Keys.Escape)
+            {
+                var modKeys = ModifierKeys.None;
+                if (KeyboardInfo.IsShiftDown)
+                    modKeys |= ModifierKeys.Shift;
+                if (KeyboardInfo.IsControlDown)
+                    modKeys |= ModifierKeys.Control;
+                if (KeyboardInfo.IsAltDown)
+                    modKeys |= ModifierKeys.Alt;
+
+                var kb = new Keybind(modKeys, k.Key);
+                ShanoSettings.Current.Keybinds[Action] = kb;
             }
-            IsActive = !IsActive;
+
+            ClearFocus();
         }
 
         protected override void OnUpdate(int msElapsed)
         {
-            var kb = ShanoSettings.Current.Keybinds.TryGet(Action);
-            lblValue.Text = kb?.ToString() ?? NoKeybindString;
+            var kb =ShanoSettings.Current.Keybinds.TryGet(Action);
+
+            lblValue.Text = kb?.ToShortString() ?? NoKeybindString;
 
             lblText.TextColor = MouseOver ? Color.Goldenrod.Brighten(20) : Color.Goldenrod;
-            if (IsActive)
+            ToolTip = kb?.ToString() ?? string.Empty;
+
+            if (IsFocused)
                 BackColor = Color.Black.SetAlpha((int)Ticker.Default.GetValue(150, 200));
             else
-                BackColor = Color.Black.SetAlpha(IsActive ? 200 : (MouseOver ? 100 : 50));
+                BackColor = Color.Black.SetAlpha(MouseOver ? 100 : 50);
         }
     }
 }

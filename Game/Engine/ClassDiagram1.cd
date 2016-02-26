@@ -1,0 +1,608 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Engine.Common.DamageResult" Collapsed="true">
+    <Position X="33" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Common\DamageResult.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Common.ObjectCreator" Collapsed="true">
+    <Position X="33" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAEIgAAgAIAAAAAAAAAAA=</HashCode>
+      <FileName>Common\ObjectCreator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Rnd" Collapsed="true">
+    <Position X="33" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAEAAAAAAAAAAAAAAEAAAAAAACAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>Common\Rnd.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Constants" Collapsed="true">
+    <Position X="31.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Constants.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.GameSystem" Collapsed="true">
+    <Position X="11.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.GameObject" Collapsed="true">
+    <Position X="10.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQCAAAAABBAAAAAAAAAAAAAAggAAAAAAMACAAAAAMI=</HashCode>
+      <FileName>Objects\GameObject.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Engine.Player" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="26" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACACAAAAQCAQAAAQEBJAAAQAAAAECAAGIAQAAgAAAkA=</HashCode>
+      <FileName>Players\Player.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Engine.Scenario" Collapsed="true">
+    <Position X="24.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAQIAAAAAAAAACAEAAAABAAAAAA=</HashCode>
+      <FileName>Scenario.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.ShanoEngine" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="27.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAEAQAACBAIAAAAAAYQIAYAIAhICAAJEgAAAAAAEI=</HashCode>
+      <FileName>ShanoEngine.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Engine.Events.AbilityCastArgs" Collapsed="true">
+    <Position X="24.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAgEAAQBAAAAAgAAAAAA=</HashCode>
+      <FileName>Events\AbilityCastArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Events.LocationChangeArgs" Collapsed="true">
+    <Position X="29.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Events\LocationChangeArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Events.ObjectMoveArgs" Collapsed="true">
+    <Position X="24.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAAEAAAAAAAAEAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Events\ObjectMoveArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Events.UnitDamagedArgs" Collapsed="true">
+    <Position X="33" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAABAAAAAAAAAgAAAAIAIAAAAAAAACAAA=</HashCode>
+      <FileName>Events\UnitDamagedArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Events.UnitDamagingArgs" Collapsed="true">
+    <Position X="24.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAgAAAAIAIAAAAAAAACAAA=</HashCode>
+      <FileName>Events\UnitDamagingArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Events.UnitDyingArgs" Collapsed="true">
+    <Position X="26" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIQAAAAAAAAAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>Events\UnitDyingArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Maps.GameObjectMapper" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="26" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAQgAABAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Maps\GameObjectMapper.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Engine.Maps.Hash" Collapsed="true">
+    <Position X="27.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAAAAAAAAAAAAIAAAAEAAAAAACAIAA=</HashCode>
+      <FileName>Maps\Hash.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Maps.HashMap&lt;TKey, TVal&gt;" Collapsed="true">
+    <Position X="3.5" Y="12.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYAACAgBQAAQBAAAAAAAAAAAgAAwYAEEAABAAAEAAA=</HashCode>
+      <FileName>Maps\HashMap.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Engine.Maps.MapSystem" Collapsed="true">
+    <Position X="10.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYAgAQIABAAAAAAAAAACAAAQAAABCAAAAAAAAAAAAA=</HashCode>
+      <FileName>Maps\MapSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Maps.ObjectMap" Collapsed="true">
+    <Position X="3.5" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAEAAAAAQAABA=</HashCode>
+      <FileName>Maps\ObjectMap.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Maps.FixedMap" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="24.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAkA=</HashCode>
+      <FileName>Maps\Terrain\FixedMap.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Engine.Maps.RandomMap" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="27.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>SBAAAAAAAAAABEAAAEACAAAAAAAAAAAAAFIAQAAAAkA=</HashCode>
+      <FileName>Maps\Terrain\RandomMap.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Engine.Maps.Terrain.MapGod" Collapsed="true">
+    <Position X="31.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Maps\Terrain\MapGod.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Network.NetworkSystem" Collapsed="true">
+    <Position X="12.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAAAAAAAAAAAAAAACAAAAAAAAAAgAAAAA=</HashCode>
+      <FileName>Network\NetSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Objects.Buffs.Buff" Collapsed="true">
+    <Position X="19.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAkAhhEgABCBgQSIAAQEAABiAIAAAYAAKgEBACA=</HashCode>
+      <FileName>Objects\Buffs\Buff.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Engine.Objects.Buffs.BuffInstance" Collapsed="true">
+    <Position X="1.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAkChhAgARABgAQIgCQAAABCAAAAAYAAKgEBACA=</HashCode>
+      <FileName>Objects\Buffs\BuffInstance.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Engine.Objects.Buffs.StunnedBuff" Collapsed="true">
+    <Position X="19.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Objects\Buffs\Stunned.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Objects.Entities.Doodad" Collapsed="true">
+    <Position X="3.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAABAEAAAAAAAAAAAAAAAAAIAAAEAAAAA=</HashCode>
+      <FileName>Objects\Entities\Base\Doodad.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Engine.Objects.Entities.Effect" Collapsed="true">
+    <Position X="5.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAQBAAAAAAIAAAAAAAAAAAAIAAAAAAAgA=</HashCode>
+      <FileName>Objects\Entities\Base\Effect.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Engine.Objects.Entities.Hero" Collapsed="true">
+    <Position X="8" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAkAAAgAgAADAAAgBAAACkBAAAAAAIAAAAAAQAA=</HashCode>
+      <FileName>Objects\Entities\Base\Hero.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Engine.Objects.Entities.Monster" Collapsed="true">
+    <Position X="10.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Objects\Entities\Monster.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Objects.Entities.Projectile" Collapsed="true">
+    <Position X="5.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAACAAAAIAgADACAAAAABAAAAAgAAAAAAAAAABAA=</HashCode>
+      <FileName>Objects\Entities\Projectile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Objects.Entities.GameItem" Collapsed="true">
+    <Position X="3.5" Y="7.75" Width="1.5" />
+    <InheritanceLine Type="Engine.Objects.Entities.Doodad" FixedFromPoint="true">
+      <Path>
+        <Point X="4.25" Y="6.941" />
+        <Point X="4.25" Y="7.75" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Objects\GameItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Objects.Unit" Collapsed="true">
+    <Position X="9.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>MAWJCQSpmEkUBJRAgjIsOAMQWAlC00uxZo6BJuhBM2E=</HashCode>
+      <FileName>Objects\Entities\Base\Unit.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Engine.Objects.UnitHelper" Collapsed="true">
+    <Position X="27.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Objects\Entities\UnitPartials\UnitHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Objects.Entity" Collapsed="true">
+    <Position X="7" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAACAAAQABA0ggIAAAxAAABAAJAAAIAAQAgAICA=</HashCode>
+      <FileName>Objects\Entity.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Engine.Objects.InventoryItem" Collapsed="true">
+    <Position X="12.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAgAgAAAAAAAAQAAAAAAAAAAIAAAAEAAgA=</HashCode>
+      <FileName>Systems\NYI\Item\InventoryItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Players.ShanoReceptor" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="31.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACBAAAQAAGAAADQAAAgBAAkABADAAwAAAAA=</HashCode>
+      <FileName>Players\ShanoReceptor.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Engine.Properties.Settings" Collapsed="true">
+    <Position X="26" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAAAAAAAAAIAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Serialization.ShanoReader" Collapsed="true">
+    <Position X="29.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAEAAAAAAAAAAIAAAAEAAAAAAAAIAAAIAAAA=</HashCode>
+      <FileName>Serialization\ShanoReader.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.Abilities.AbilitySystem" Collapsed="true">
+    <Position X="12.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYAAACAAAAAABAAAAAABAAUAAAAAAAEAAABBAAAAAE=</HashCode>
+      <FileName>Systems\Abilities\AbilitySystem.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Engine.Systems.Abilities.Ability" Collapsed="true">
+    <Position X="14.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAgECIEAAgAAIMGAAIAAQUAAEAAYAgAIAAggEAACA=</HashCode>
+      <FileName>Systems\Abilities\Objects\Ability.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Engine.Systems.Abilities.Attack" Collapsed="true">
+    <Position X="14.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAACA=</HashCode>
+      <FileName>Systems\Abilities\Objects\Attack.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.Abilities.AbilityTypes" Collapsed="true">
+    <Position X="27.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAA=</HashCode>
+      <FileName>Systems\Abilities\Objects\Attributes\AbilityTypes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.Abilities.AbilityTypeAttribute" Collapsed="true">
+    <Position X="26" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Systems\Abilities\Objects\Attributes\SpamAbility.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.BehaviourSystem" Collapsed="true">
+    <Position X="6" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Systems\Behaviours\BehaviourSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.CombatSystem" Collapsed="true">
+    <Position X="8.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Systems\Combat\CombatSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.MovementSystem" Collapsed="true">
+    <Position X="10.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAACAACAAgAAAAAAAgAAgAAAEAACAIAAAAAAAEAA=</HashCode>
+      <FileName>Systems\Movement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.CollisionSystem" Collapsed="true">
+    <Position X="15" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Systems\NYI\Collision\CollisionSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.OrdersSystem" Collapsed="true">
+    <Position X="17.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Systems\Orders\OrdersSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.CustomScript" Collapsed="true">
+    <Position X="17" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQBAEAAAAAAAAAAAAAAAIQAAAAAAIA=</HashCode>
+      <FileName>Systems\Scripting\CustomScript.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.UnitSystem" Collapsed="true">
+    <Position X="11.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Systems\UnitSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.VisionSystem" Collapsed="true">
+    <Position X="21.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAQEAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>Systems\Vision\VisionSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.Behaviours.AggroBehaviour" Collapsed="true">
+    <Position X="0.75" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAgAQgAAQEAAAAAICCAAAQAAAAQAAAAAAAAAAAA=</HashCode>
+      <FileName>Systems\Behaviours\Objects\AggroBehaviour.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.Behaviours.Behaviour" Collapsed="true">
+    <Position X="4" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAACAQAAAQAAAIAAAAAAAAQAAAAAAAAAAAAIAAEA=</HashCode>
+      <FileName>Systems\Behaviours\Objects\Behaviour.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.Behaviours.BehaviourList" Collapsed="true">
+    <Position X="0.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYAAAAAAAAAABAAAACAAAAAAQAAAAEEAAAAAAAEAAA=</HashCode>
+      <FileName>Systems\Behaviours\Objects\BehaviourList.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Engine.Systems.Behaviours.FollowBehaviour" Collapsed="true">
+    <Position X="3" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAACAAAQAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>Systems\Behaviours\Objects\FollowBehaviour.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.Behaviours.ReturnBehaviour" Collapsed="true">
+    <Position X="5.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQEAAAAAAAAAAAAAAAAAAAAAQAAAEBAAAAAAAACAAQ=</HashCode>
+      <FileName>Systems\Behaviours\Objects\ReturnBehaviour.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.Behaviours.SpamBehaviour" Collapsed="true">
+    <Position X="7.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAgAAAAAAAAAAAQAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>Systems\Behaviours\Objects\SpamBehaviour.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.Buffs.BuffSystem" Collapsed="true">
+    <Position X="19.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQBAEAAABAAABAAAAAABCAAEAAAAAAEAAAAAABAAAA=</HashCode>
+      <FileName>Systems\Buffs\BuffSystem.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Engine.Systems.Chat.ChatProvider" Collapsed="true">
+    <Position X="29.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAQ=</HashCode>
+      <FileName>Systems\NYI\Chat\ChatProvider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.Item.InventorySystem" Collapsed="true">
+    <Position X="1.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgQAAAAAQAAAAAAgAAAAAABAABEAAAAAISAgAAACEAA=</HashCode>
+      <FileName>Systems\NYI\Item\InventorySystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.Range.RangeEvent" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="31.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAgAAAAECAwAAAAAACAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Systems\Range\RangeEvent.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Engine.Systems.Range.UnitRangeSystem" Collapsed="true">
+    <Position X="3.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAA=</HashCode>
+      <FileName>Systems\Range\UnitRangeSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Systems.Range.RangeBuffer" Collapsed="true">
+    <Position X="29.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAA=</HashCode>
+      <FileName>Systems\Range\UnitRangeSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Engine.Systems.Item.InventoryType" Collapsed="true">
+    <Position X="26" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAECAAgAAAAAAAAAAAAAAAAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Systems\NYI\Item\InventoryType.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Engine.Systems.Orders.CastOrder" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="24.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAgAAgAAAACAAAAAAAIAAAQAAAACAAiA=</HashCode>
+      <FileName>Systems\Orders\Objects\Cast.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Engine.Systems.Orders.MoveLocation" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="27.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAACAAAAAAAAAAgCAAAAAAAAAAAYAAAQAAAAAAAiA=</HashCode>
+      <FileName>Systems\Orders\Objects\MoveLocation.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Engine.Systems.Orders.MoveUnit" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="29.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAACAAAAAAAAAAgCAAAAAAAAAAAYJAAQAAAAAAAiA=</HashCode>
+      <FileName>Systems\Orders\Objects\MoveUnit.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Engine.Systems.Orders.PlayerMoveOrder" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="31.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAACAAAAAAAAACAQAAAQAABAAAAAA=</HashCode>
+      <FileName>Systems\Orders\Objects\PlayerMove.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Engine.Systems.Orders.Stand" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="33" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Systems\Orders\Objects\Stand.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Interface Name="Engine.Maps.IObjectMapper&lt;TVal, TKey&gt;" Collapsed="true">
+    <Position X="24.25" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAQgAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Maps\HashMap.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Engine.Maps.ITerrainMap" Collapsed="true">
+    <Position X="26" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAkA=</HashCode>
+      <FileName>Maps\Terrain\ITerrainMap.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Engine.Systems.Abilities.IUnitAbilities" Collapsed="true">
+    <Position X="27.75" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAACAAAAAAAAAAAAABAAUAAAAAAAAAAABAAAAAAA=</HashCode>
+      <FileName>Systems\Abilities\IUnitAbilities.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Engine.Systems.Buffs.IUnitBuffs" Collapsed="true">
+    <Position X="29.5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAAAAAAAAABAAAAAAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>Systems\Buffs\IUnitBuffs.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Engine.Systems.Orders.IOrder" Collapsed="true">
+    <Position X="0.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Systems\Orders\Objects\IOrder.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Engine.Systems.Orders.IMoveOrder" Collapsed="true">
+    <Position X="0.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAACAAAAAAAAAAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>Systems\Orders\Objects\IOrder.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="Engine.Common.AttackResult" Collapsed="true">
+    <Position X="26" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Common\AttackResult.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Engine.Common.DamageFlags" Collapsed="true">
+    <Position X="27.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAIAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAEAAAA=</HashCode>
+      <FileName>Common\DamageFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Engine.Maps.RandomObject" Collapsed="true">
+    <Position X="31.25" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Maps\Terrain\RandomMap.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Engine.Systems.Abilities.AbilityType" Collapsed="true">
+    <Position X="24.25" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAA=</HashCode>
+      <FileName>Systems\Abilities\Objects\Attributes\AbilityTypes.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Engine.Systems.Item.InventorySlots" Collapsed="true">
+    <Position X="29.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IQIAAAEAAQAAAIEAAAAAAAAAAAAAAAAAYIAAAAEEAAA=</HashCode>
+      <FileName>Systems\NYI\Item\InventorySlot.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

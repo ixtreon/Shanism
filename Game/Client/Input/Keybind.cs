@@ -13,6 +13,8 @@ namespace Client.Input
     /// </summary>
     struct Keybind
     {
+        public static readonly Keybind None = new Keybind(ModifierKeys.None, Keys.None);
+
         public ModifierKeys Modifiers { get; }
 
         public Keys Key { get; }
@@ -39,7 +41,7 @@ namespace Client.Input
             if (Modifiers.HasFlag(ModifierKeys.Control))    ans += "C";
             if (Modifiers.HasFlag(ModifierKeys.Alt))        ans += "A";
             if (Modifiers.HasFlag(ModifierKeys.Shift))      ans += "S";
-            ans += KeyMap.GetChar(Key, false) ?? '?';
+            ans += KeyMap.GetChar(Key, false)?.ToString().ToUpper() ?? Key.ToString();
             return ans;
         }
 

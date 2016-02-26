@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using IO;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,33 +16,36 @@ namespace Client.Input
 
         static HashSet<Keys> oldKeysDown = new HashSet<Keys>();
         static HashSet<Keys> newKeysDown = new HashSet<Keys>();
+
         
 
         public static ChatProvider ChatProvider { get; private set; }
 
+
+        public static IEnumerable<Keys> JustPressedKeys { get; private set; }
+
+        public static IEnumerable<Keys> JustReleasedKeys { get; private set; }
+
+        public static IEnumerable<GameAction> JustActivatedActions { get; private set; }
+
+        //static IEnumerable<GameAction> JustReleasedActions { get; private set; }
+
         /// <summary>
         /// Gets whether the Control key is down. 
         /// </summary>
-        public static bool IsControlDown
-        {
-            get { return oldKeysDown.Contains(Keys.LeftControl) || newKeysDown.Contains(Keys.RightControl); }
-        }
+        public static bool IsControlDown => oldKeysDown.Contains(Keys.LeftControl) || newKeysDown.Contains(Keys.RightControl);
 
         /// <summary>
         /// Gets whether the Alt key is down. 
         /// </summary>
-        public static bool IsAltDown
-        {
-            get { return oldKeysDown.Contains(Keys.LeftAlt) || newKeysDown.Contains(Keys.RightAlt); }
-        }
+        public static bool IsAltDown => oldKeysDown.Contains(Keys.LeftAlt) || newKeysDown.Contains(Keys.RightAlt);
 
         /// <summary>
         /// Gets whether the Shift key is down. 
         /// </summary>
-        public static bool IsShiftDown
-        {
-            get { return oldKeysDown.Contains(Keys.LeftShift) || newKeysDown.Contains(Keys.RightShift); }
-        }
+        public static bool IsShiftDown => oldKeysDown.Contains(Keys.LeftShift) || newKeysDown.Contains(Keys.RightShift);
+
+
 
         static KeyboardInfo()
         {
@@ -57,10 +61,27 @@ namespace Client.Input
             oldKeysDown = newKeysDown;
             newKeysDown = new HashSet<Keys>(Keyboard.GetState().GetPressedKeys());
 
-            //inform the chat provider
+            JustPressedKeys = newKeysDown.Except(oldKeysDown).ToList();
+            JustReleasedKeys = oldKeysDown.Except(newKeysDown).ToList();
 
-            var keysJustPressed = oldKeysDown.Except(newKeysDown);
-            ChatProvider.Update(msElapsed, keysJustPressed);
+            JustActivatedActions = Enum<GameAction>.Values
+                .Where(isJustActivated).ToList();
+
+            //inform the chat provider
+            ChatProvider.Update(msElapsed, JustPressedKeys);
+        }
+
+
+        static bool isJustActivated(GameAction ga)
+        {
+            var kb = ShanoSettings.Current.Keybinds[ga];
+            if (!checkModifiers(kb.Modifiers))
+                return false;
+
+            var k = kb.Key;
+            if (ShanoSettings.Current.QuickButtonPress)
+                return !oldKeysDown.Contains(k) && newKeysDown.Contains(k);
+            return oldKeysDown.Contains(k) && !newKeysDown.Contains(k);
         }
 
         /// <summary>

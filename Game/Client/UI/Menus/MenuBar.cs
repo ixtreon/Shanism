@@ -1,4 +1,5 @@
-﻿using IO.Common;
+﻿using Client.Input;
+using Client.UI.Common;
 using IO.Objects;
 using System;
 using System.Collections.Generic;
@@ -15,10 +16,13 @@ namespace Client.UI.Menus
     /// </summary>
     class MenuBar : Control
     {
-        public CharacterMenu Character { get; } = new CharacterMenu();
-        public MainMenu Main { get; } = new MainMenu();
-        public SpellBook SpellBook { get; } = new SpellBook();
+        public KeybindsMenu Keybinds { get; }
+        public OptionsWindow Options { get; }
+        public CharacterMenu Character { get; }
+        public MainMenu MainMenu { get; }
+        public SpellBook SpellBook { get; }
 
+        readonly Window[] menus;
 
         IHero _target;
         public IHero OurHero
@@ -35,11 +39,58 @@ namespace Client.UI.Menus
 
         public MenuBar(Control mainContainer)
         {
-            mainContainer.Add(Character);
-            mainContainer.Add(Main);
-            mainContainer.Add(SpellBook);
+            IsVisible = false;
 
-            Size = new Vector(0.5, 0.2);
+            GameActionActivated += onActionActivated;
+
+            menus = new Window[] 
+            {
+                (Character = new CharacterMenu()),
+                (MainMenu = new MainMenu()),
+                (SpellBook = new SpellBook()),
+                (Keybinds = new KeybindsMenu()),
+            };
+
+            foreach (var w in menus)
+                mainContainer.Add(w);
+
+            MainMenu.ExitClicked += closeTheGame;
+            MainMenu.KeybindsClicked += showKeybindMenu;
+            MainMenu.OptionsClicked += showOptionsMenu;
+        }
+
+        void showOptionsMenu()
+        {
+
+        }
+
+        void showKeybindMenu()
+        {
+            Keybinds.IsVisible = true;
+        }
+
+        void closeTheGame()
+        {
+            ExitHelper.Exit();
+        }
+
+        void onActionActivated(GameAction ga)
+        {
+            switch (ga)
+            {
+                case GameAction.ToggleMenus:
+                    if (menus.Any(m => m.IsVisible))
+                        foreach (var m in menus)
+                            m.Hide();
+                    else
+                        MainMenu.Show();
+                    break;
+
+                default:
+                    foreach (var m in menus.Where(m => m.ToggleAction == ga))
+                        m.IsVisible = !m.IsVisible;
+                    break;
+            }
         }
     }
 }

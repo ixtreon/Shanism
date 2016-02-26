@@ -15,7 +15,8 @@ namespace ShanoEditor.Views
         Details = 0,
         Map = 10,
         Content = 20,
-            Models = 21,
-            Textures = 22,
+            Animations = 21,
+            Models = 22,
+            Textures = 23,
     }
 }

@@ -12,8 +12,8 @@ namespace Client.Input
     {
         None = 0,
         Control = 1,
-        Shift = 2,
-        Alt = 4,
+        Alt = 2,
+        Shift = 4,
     }
 
 }

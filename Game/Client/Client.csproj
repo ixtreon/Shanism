@@ -132,21 +132,26 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ClientInstance.cs" />
+    <Compile Include="Assets\CircleDict.cs" />
+    <Compile Include="ClientGame.cs" />
     <Compile Include="Interfaces\IClientEngine.cs" />
     <Compile Include="Interfaces\IClientSystem.cs" />
+    <Compile Include="UI\Common\ValueLabel.cs" />
+    <Compile Include="UI\ErrorText\ErrorTextControl.cs" />
+    <Compile Include="UI\ErrorText\RangeIndicator.cs" />
+    <Compile Include="UI\Menus\Character\StatBox.cs" />
+    <Compile Include="UI\Menus\Options.cs" />
     <Compile Include="UI\Ticker.cs" />
-    <Compile Include="ContentLoader.cs" />
+    <Compile Include="Content.cs" />
     <Compile Include="Assets\ContentList.cs" />
     <Compile Include="Assets\FontCache.cs" />
     <Compile Include="Assets\Sprite.cs" />
-    <Compile Include="Common\PointsInfo.cs" />
     <Compile Include="Assets\TerrainCache.cs" />
     <Compile Include="ExitHelper.cs" />
     <Compile Include="Input\Keybind.cs" />
     <Compile Include="Input\KeyMap.cs" />
-    <Compile Include="Input\MouseButtonEvent.cs" />
-    <Compile Include="Input\MouseEvent.cs" />
+    <Compile Include="Input\MouseButtonArgs.cs" />
+    <Compile Include="Input\MouseArgs.cs" />
     <Compile Include="Ext\Effects.cs" />
     <Compile Include="Ext\SpriteBatch.cs" />
     <Compile Include="Input\ChatProvider.cs" />
@@ -160,7 +165,7 @@
     <Compile Include="UI\Menus\Keybinds\KeyBoxLabel.cs" />
     <Compile Include="UI\Menus\MenuBar.cs" />
     <Compile Include="UI\Game\SpellBarButton.cs" />
-    <Compile Include="Settings\Application.cs" />
+    <Compile Include="Settings\ShanoSettings.cs" />
     <Compile Include="Settings\Keybinds.cs" />
     <Compile Include="Shaders.cs" />
     <Compile Include="ShanoGame.cs" />
@@ -168,7 +173,7 @@
     <Compile Include="Interfaces\IClientInstance.cs" />
     <Compile Include="Map\ChunkData.cs" />
     <Compile Include="Map\MapManager.cs" />
-    <Compile Include="Objects\ObjectSystem.cs" />
+    <Compile Include="Objects\ObjectManager.cs" />
     <Compile Include="Objects\Controls\DoodadControl.cs" />
     <Compile Include="Objects\Controls\HeroControl.cs" />
     <Compile Include="Objects\Controls\ObjectControl.cs" />
@@ -181,8 +186,8 @@
     <Compile Include="ClientEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Assets\TextureFont.cs" />
-    <Compile Include="UI\CombatText\CombatText.cs" />
-    <Compile Include="UI\Common\BuffControl.cs" />
+    <Compile Include="UI\CombatText\FloatingTextProvider.cs" />
+    <Compile Include="UI\BuffControl.cs" />
     <Compile Include="UI\Game\BuffBar.cs" />
     <Compile Include="UI\Game\BuffComparer.cs" />
     <Compile Include="UI\Game\CastBar.cs" />
@@ -190,22 +195,21 @@
     <Compile Include="UI\Common\Button.cs" />
     <Compile Include="UI\Game\HealthBar.cs" />
     <Compile Include="UI\Game\ManaBar.cs" />
-    <Compile Include="UI\Common\XpBar.cs" />
+    <Compile Include="UI\Game\XpBar.cs" />
     <Compile Include="UI\Common\Label.cs" />
-    <Compile Include="UI\Menus\CharacterMenu.cs" />
-    <Compile Include="UI\Menus\KeybindMenu.cs" />
+    <Compile Include="UI\Menus\Character.cs" />
+    <Compile Include="UI\Menus\Keybinds.cs" />
     <Compile Include="UI\Menus\MainMenu.cs" />
     <Compile Include="UI\Tooltips\AbilityTip.cs" />
     <Compile Include="UI\UiManager.cs" />
     <Compile Include="UI\Game\SpellBar.cs" />
-    <Compile Include="UI\Menus\SpellbookMenu.cs" />
+    <Compile Include="UI\Menus\Abilities.cs" />
     <Compile Include="UI\Game\SpellButton.cs" />
     <Compile Include="UI\Game\UnitFrame.cs" />
     <Compile Include="UI\Tooltips\SimpleTip.cs" />
     <Compile Include="UI\Control.cs" />
     <Compile Include="UI\Common\ValueBar.cs" />
-    <Compile Include="UI\Common\Window.cs" />
-    <Compile Include="Settings\ShanoSettings.cs" />
+    <Compile Include="UI\Window.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework, Version=3.4.0.459, Culture=neutral, processorArchitecture=MSIL">

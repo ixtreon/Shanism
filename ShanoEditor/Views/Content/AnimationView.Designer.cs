@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace ShanoEditor.Views.Models
 {
-    partial class AnimationView : ScenarioControl
+    partial class AnimationView : UserControl
     {
         private Label label3;
         private Label label1;
@@ -21,6 +21,8 @@ namespace ShanoEditor.Views.Models
         {
             this.components = new System.ComponentModel.Container();
             this.pMainSplit = new System.Windows.Forms.SplitContainer();
+            this.txtName = new System.Windows.Forms.TextBox();
+            this.lblName = new System.Windows.Forms.Label();
             this.txtSpan = new System.Windows.Forms.TextBox();
             this.chkLoop = new System.Windows.Forms.CheckBox();
             this.chkDynamic = new System.Windows.Forms.CheckBox();
@@ -57,6 +59,8 @@ namespace ShanoEditor.Views.Models
             // pMainSplit.Panel1
             // 
             this.pMainSplit.Panel1.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.pMainSplit.Panel1.Controls.Add(this.txtName);
+            this.pMainSplit.Panel1.Controls.Add(this.lblName);
             this.pMainSplit.Panel1.Controls.Add(this.txtSpan);
             this.pMainSplit.Panel1.Controls.Add(this.chkLoop);
             this.pMainSplit.Panel1.Controls.Add(this.chkDynamic);
@@ -73,52 +77,79 @@ namespace ShanoEditor.Views.Models
             // 
             this.pMainSplit.Panel2.Controls.Add(this.splitContainer1);
             this.pMainSplit.Size = new System.Drawing.Size(608, 395);
-            this.pMainSplit.SplitterDistance = 202;
+            this.pMainSplit.SplitterDistance = 225;
             this.pMainSplit.TabIndex = 2;
+            // 
+            // txtName
+            // 
+            this.txtName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtName.Location = new System.Drawing.Point(73, 51);
+            this.txtName.Margin = new System.Windows.Forms.Padding(12, 6, 12, 12);
+            this.txtName.Name = "txtName";
+            this.txtName.Size = new System.Drawing.Size(140, 20);
+            this.txtName.TabIndex = 13;
+            this.txtName.Text = "?!?!?!";
+            this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
+            // 
+            // lblName
+            // 
+            this.lblName.AutoSize = true;
+            this.lblName.Location = new System.Drawing.Point(12, 54);
+            this.lblName.Margin = new System.Windows.Forms.Padding(12, 6, 3, 0);
+            this.lblName.Name = "lblName";
+            this.lblName.Size = new System.Drawing.Size(38, 13);
+            this.lblName.TabIndex = 12;
+            this.lblName.Text = "Name:";
             // 
             // txtSpan
             // 
-            this.txtSpan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSpan.Location = new System.Drawing.Point(90, 81);
+            this.txtSpan.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSpan.Location = new System.Drawing.Point(73, 116);
             this.txtSpan.Margin = new System.Windows.Forms.Padding(12, 6, 12, 12);
             this.txtSpan.Name = "txtSpan";
-            this.txtSpan.Size = new System.Drawing.Size(100, 20);
+            this.txtSpan.Size = new System.Drawing.Size(140, 20);
             this.txtSpan.TabIndex = 11;
             this.txtSpan.Text = "[ 99, 99, 99, 99 ]";
             this.txtSpan.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // chkLoop
             // 
-            this.chkLoop.AutoSize = true;
-            this.chkLoop.Location = new System.Drawing.Point(33, 176);
+            this.chkLoop.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkLoop.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkLoop.Location = new System.Drawing.Point(30, 186);
             this.chkLoop.Margin = new System.Windows.Forms.Padding(30, 6, 3, 3);
             this.chkLoop.Name = "chkLoop";
-            this.chkLoop.Size = new System.Drawing.Size(64, 17);
+            this.chkLoop.Size = new System.Drawing.Size(183, 17);
             this.chkLoop.TabIndex = 10;
-            this.chkLoop.Text = "Looping";
+            this.chkLoop.Text = "Is Looping:";
             this.toolTip.SetToolTip(this.chkLoop, "Controls whether the animation loops after it has finished playing. ");
             this.chkLoop.UseVisualStyleBackColor = true;
-            this.chkLoop.CheckedChanged += new System.EventHandler(this.chkLoop_CheckedChanged);
+            this.chkLoop.CheckedChanged += new System.EventHandler(this.onLoopingChanged);
             // 
             // chkDynamic
             // 
-            this.chkDynamic.AutoSize = true;
-            this.chkDynamic.Location = new System.Drawing.Point(15, 125);
+            this.chkDynamic.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkDynamic.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkDynamic.Location = new System.Drawing.Point(15, 160);
             this.chkDynamic.Margin = new System.Windows.Forms.Padding(12, 12, 3, 3);
             this.chkDynamic.Name = "chkDynamic";
-            this.chkDynamic.Size = new System.Drawing.Size(67, 17);
+            this.chkDynamic.Size = new System.Drawing.Size(198, 17);
             this.chkDynamic.TabIndex = 9;
-            this.chkDynamic.Text = "Dynamic";
+            this.chkDynamic.Text = "Is Dynamic:";
             this.toolTip.SetToolTip(this.chkDynamic, "Determines whether the animation is dynamic or a static. \r\n\r\nStatic animations tr" +
         "eat their selection as a single object. \r\n\r\nDynamic animations treat their selec" +
         "tion as a series of frames. ");
             this.chkDynamic.UseVisualStyleBackColor = true;
-            this.chkDynamic.CheckedChanged += new System.EventHandler(this.chkDynamic_CheckedChanged);
+            this.chkDynamic.CheckedChanged += new System.EventHandler(this.onDynamicChanged);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 84);
+            this.label2.Location = new System.Drawing.Point(12, 119);
             this.label2.Margin = new System.Windows.Forms.Padding(12, 6, 3, 6);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(54, 13);
@@ -133,7 +164,7 @@ namespace ShanoEditor.Views.Models
             0,
             0,
             0});
-            this.nPeriod.Location = new System.Drawing.Point(119, 149);
+            this.nPeriod.Location = new System.Drawing.Point(142, 206);
             this.nPeriod.Margin = new System.Windows.Forms.Padding(3, 9, 3, 3);
             this.nPeriod.Maximum = new decimal(new int[] {
             10000,
@@ -154,17 +185,19 @@ namespace ShanoEditor.Views.Models
             0,
             0,
             0});
-            this.nPeriod.ValueChanged += new System.EventHandler(this.nPeriod_ValueChanged);
+            this.nPeriod.ValueChanged += new System.EventHandler(this.onPeriodChanged);
             // 
             // label5
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(30, 295);
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label5.Location = new System.Drawing.Point(15, 317);
             this.label5.Margin = new System.Windows.Forms.Padding(24, 6, 3, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(141, 13);
+            this.label5.Size = new System.Drawing.Size(198, 33);
             this.label5.TabIndex = 6;
             this.label5.Text = "(select tiles in the right pane)";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnTextures
             // 
@@ -172,17 +205,17 @@ namespace ShanoEditor.Views.Models
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnTextures.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.btnTextures.FormattingEnabled = true;
-            this.btnTextures.Location = new System.Drawing.Point(73, 48);
+            this.btnTextures.Location = new System.Drawing.Point(73, 83);
             this.btnTextures.Margin = new System.Windows.Forms.Padding(12, 12, 12, 6);
             this.btnTextures.Name = "btnTextures";
-            this.btnTextures.Size = new System.Drawing.Size(117, 21);
+            this.btnTextures.Size = new System.Drawing.Size(140, 21);
             this.btnTextures.TabIndex = 4;
             this.btnTextures.SelectedIndexChanged += new System.EventHandler(this.btnTextures_SelectedIndexChanged);
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(30, 151);
+            this.label8.Location = new System.Drawing.Point(30, 208);
             this.label8.Margin = new System.Windows.Forms.Padding(30, 6, 3, 6);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(40, 13);
@@ -192,7 +225,7 @@ namespace ShanoEditor.Views.Models
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 51);
+            this.label3.Location = new System.Drawing.Point(12, 86);
             this.label3.Margin = new System.Windows.Forms.Padding(12, 6, 3, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(46, 13);
@@ -208,7 +241,7 @@ namespace ShanoEditor.Views.Models
             this.label1.Location = new System.Drawing.Point(0, 0);
             this.label1.Margin = new System.Windows.Forms.Padding(0, 0, 0, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(202, 27);
+            this.label1.Size = new System.Drawing.Size(225, 27);
             this.label1.TabIndex = 0;
             this.label1.Text = "Animation Properties";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -227,7 +260,7 @@ namespace ShanoEditor.Views.Models
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.animationBox);
-            this.splitContainer1.Size = new System.Drawing.Size(402, 395);
+            this.splitContainer1.Size = new System.Drawing.Size(379, 395);
             this.splitContainer1.SplitterDistance = 226;
             this.splitContainer1.TabIndex = 1;
             // 
@@ -237,7 +270,7 @@ namespace ShanoEditor.Views.Models
             this.textureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textureBox.Location = new System.Drawing.Point(0, 0);
             this.textureBox.Name = "textureBox";
-            this.textureBox.Size = new System.Drawing.Size(402, 226);
+            this.textureBox.Size = new System.Drawing.Size(379, 226);
             this.textureBox.TabIndex = 0;
             this.textureBox.SelectionChanged += new System.Action(this.textureBox_SelectionChanged);
             // 
@@ -247,7 +280,7 @@ namespace ShanoEditor.Views.Models
             this.animationBox.Location = new System.Drawing.Point(0, 0);
             this.animationBox.Margin = new System.Windows.Forms.Padding(0);
             this.animationBox.Name = "animationBox";
-            this.animationBox.Size = new System.Drawing.Size(402, 165);
+            this.animationBox.Size = new System.Drawing.Size(379, 165);
             this.animationBox.TabIndex = 0;
             // 
             // AnimationView
@@ -277,5 +310,7 @@ namespace ShanoEditor.Views.Models
         private Content.AnimationBox animationBox;
         private ToolTip toolTip;
         private System.ComponentModel.IContainer components;
+        private TextBox txtName;
+        private Label lblName;
     }
 }

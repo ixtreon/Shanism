@@ -126,8 +126,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Ext.cs" />
-    <Compile Include="MapAdapter\GodBuilder.cs" />
-    <Compile Include="MapAdapter\EditorClient.cs">
+    <Compile Include="MapAdapter\Tools\Brush.cs" />
+    <Compile Include="MapAdapter\Tools\Brushes\CustomObjectBrush.cs" />
+    <Compile Include="MapAdapter\Tools\SelectionTool.cs" />
+    <Compile Include="MapAdapter\EditorContent.cs" />
+    <Compile Include="MapAdapter\EditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MapAdapter\EditorEngine.cs" />
@@ -135,10 +138,20 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Keyboard.cs" />
+    <Compile Include="MapAdapter\IEditorEngine.cs" />
+    <Compile Include="MapAdapter\IMapControl.cs" />
+    <Compile Include="MapAdapter\MapTool.cs" />
+    <Compile Include="MapAdapter\Tools\Brushes\ObjectBrush.cs" />
+    <Compile Include="MapAdapter\Tools\Brushes\TerrainBrush.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\Scenario\ContentLists\Animations.cs" />
+    <Compile Include="ViewModels\Scenario\ContentLists\Textures.cs" />
+    <Compile Include="Views\AnimationsView.Designer.cs">
+      <DependentUpon>AnimationsView.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\Common\IScenarioControl.cs" />
     <Compile Include="Views\Common\ObjectButton.cs">
@@ -147,28 +160,39 @@
     <Compile Include="Views\Content\AnimationBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Views\Maps\Layers\MapLayer.cs" />
-    <Compile Include="Views\Maps\Layers\ObjectLayer.cs" />
-    <Compile Include="Views\Maps\Layers\TerrainLayer.cs" />
-    <Compile Include="Views\Maps\TerrainList.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Views\Maps\TerrainList.Designer.cs">
-      <DependentUpon>TerrainList.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Maps\WorldView.cs" />
-    <Compile Include="ViewModels\AnimationViewModel.cs" />
-    <Compile Include="ViewModels\ContentViewModel.cs" />
-    <Compile Include="Views\DetailsView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Views\DetailsView.Designer.cs">
-      <DependentUpon>DetailsView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ScenarioTree.cs">
+    <Compile Include="ViewModels\Scenario\Content\Animation.cs" />
+    <Compile Include="ViewModels\Scenario\ContentViewModel.cs" />
+    <Compile Include="Views\Content\AnimationTree.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Views\Maps\GameObjectButton.cs">
+    <Compile Include="Views\Maps\PropPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\Maps\PropPanel.Designer.cs">
+      <DependentUpon>PropPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Maps\SelectionWindow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\Maps\SelectionWindow.Designer.cs">
+      <DependentUpon>SelectionWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Textures\TextureBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\Textures\TextureBrowser.Designer.cs">
+      <DependentUpon>TextureBrowser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Textures\TextureTree.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Views\ScenarioView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\ScenarioView.Designer.cs">
+      <DependentUpon>ScenarioView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ScenarioTree.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Views\Common\ListPanel.cs">
@@ -177,17 +201,20 @@
     <Compile Include="Views\Common\ListPanel.Designer.cs">
       <DependentUpon>ListPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\Maps\GameObjectButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Views\Maps\GameObjectList.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Views\Maps\GameObjectList.Designer.cs">
       <DependentUpon>GameObjectList.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\Maps\ShanoMap.cs">
+    <Compile Include="Views\Maps\TerrainList.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Views\Maps\ShanoMap.Designer.cs">
-      <DependentUpon>ShanoMap.cs</DependentUpon>
+    <Compile Include="Views\Maps\TerrainList.Designer.cs">
+      <DependentUpon>TerrainList.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\MapView.cs">
       <SubType>UserControl</SubType>
@@ -201,19 +228,16 @@
     <Compile Include="Views\Content\AnimationView.Designer.cs">
       <DependentUpon>AnimationView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\ModelsView.cs">
+    <Compile Include="Views\AnimationsView.cs">
       <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Views\ModelsView.Designer.cs">
-      <DependentUpon>ModelsView.cs</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\IViewModel.cs" />
-    <Compile Include="ViewModels\ScenarioViewModel.cs" />
-    <Compile Include="ViewModels\TextureViewModel.cs" />
-    <Compile Include="Views\Content\TextureBox.cs">
+    <Compile Include="ViewModels\Scenario\ScenarioViewModel.cs" />
+    <Compile Include="ViewModels\Scenario\Content\Texture.cs" />
+    <Compile Include="Views\Textures\TextureBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Views\Content\TextureBox.Designer.cs">
+    <Compile Include="Views\Textures\TextureBox.Designer.cs">
       <DependentUpon>TextureBox.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\Common\ScenarioControl.cs">
@@ -239,20 +263,32 @@
     <Compile Include="ShanoFormFileActions.cs">
       <SubType>Form</SubType>
     </Compile>
-    <EmbeddedResource Include="Views\DetailsView.resx">
-      <DependentUpon>DetailsView.cs</DependentUpon>
+    <EmbeddedResource Include="Views\Content\AnimationTree.resx">
+      <DependentUpon>AnimationTree.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Maps\PropPanel.resx">
+      <DependentUpon>PropPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Maps\SelectionWindow.resx">
+      <DependentUpon>SelectionWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Textures\TextureBrowser.resx">
+      <DependentUpon>TextureBrowser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Textures\TextureTree.resx">
+      <DependentUpon>TextureTree.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ScenarioView.resx">
+      <DependentUpon>ScenarioView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ScenarioTree.resx">
       <DependentUpon>ScenarioTree.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\Maps\GameObjectList.resx">
-      <DependentUpon>GameObjectList.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Views\Common\ListPanel.resx">
       <DependentUpon>ListPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\Maps\ShanoMap.resx">
-      <DependentUpon>ShanoMap.cs</DependentUpon>
+    <EmbeddedResource Include="Views\Maps\GameObjectList.resx">
+      <DependentUpon>GameObjectList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Maps\TerrainList.resx">
       <DependentUpon>TerrainList.cs</DependentUpon>
@@ -263,8 +299,8 @@
     <EmbeddedResource Include="Views\Content\AnimationView.resx">
       <DependentUpon>AnimationView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\ModelsView.resx">
-      <DependentUpon>ModelsView.cs</DependentUpon>
+    <EmbeddedResource Include="Views\AnimationsView.resx">
+      <DependentUpon>AnimationsView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\TexturesView.resx">
       <DependentUpon>TexturesView.cs</DependentUpon>
@@ -314,15 +350,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Folder-icon.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\dot-icon.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\loading.gif" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\load_icon.gif" />
   </ItemGroup>
   <ItemGroup>
@@ -339,9 +366,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Event_594_exp.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Folder_6221.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\folder_Closed_16xLG.png" />
@@ -361,6 +385,20 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="EditorContent\1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="EditorContent\circle-outline.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="EditorContent\circle.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Resources\NewFolderHS.png" />
+    <None Include="Resources\refresh_16xLG.png" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

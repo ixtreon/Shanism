@@ -11,6 +11,7 @@ using System.Threading;
 using IO.Performance;
 using IO.Util;
 using Engine.Network;
+using Engine.Players;
 
 namespace Engine
 {
@@ -29,9 +30,9 @@ namespace Engine
 
 
         /// <summary>
-        /// A list of all players currently in game. 
+        /// A list of all receptors to players currently in game. 
         /// </summary>
-        internal ConcurrentBag<Player> Players { get; } = new ConcurrentBag<Player>();
+        internal ConcurrentBag<ShanoReceptor> Players { get; } = new ConcurrentBag<ShanoReceptor>();
 
 
         internal PerfCounter PerfCounter { get; } = new PerfCounter();
@@ -82,24 +83,23 @@ namespace Engine
         public ShanoEngine(int mapSeed, string scenarioDir)
         {
             //compile the scenario
-            try
-            {
-                Scenario = Scenario.Load(Path.GetFullPath(scenarioDir));
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            string scenarioCompileErrors;
+            Scenario = Scenario.Load<Scenario>(Path.GetFullPath(scenarioDir), out scenarioCompileErrors);
+            if (Scenario == null)
+                throw new FileLoadException($"Unable to load the scenario: \n\n{scenarioCompileErrors}");
 
             //register the server as the parent of all objects. 
-            ScenarioObject.Init(this);
+            GameObject.SetEngine(this);
 
             //create the terrain, object map from the scenario. 
-            TerrainMap = Maps.Terrain.MapGod.Create(Scenario.MapConfig, mapSeed);
+            TerrainMap = Maps.Terrain.MapGod.Create(Scenario.Config.Map, mapSeed);
 
             //create all subsystems
             systems.Add((map = new MapSystem()));
             systems.Add(network = new NetworkSystem());
+
+            //add startup units n doodads
+            Scenario.CreateStartupObjects(map);
 
             //run scripts
             Scenario.RunScripts(cs => cs.OnGameStart());
@@ -111,15 +111,15 @@ namespace Engine
         {
             // TODO: do some checks on player join?x
 
-            var pl = new Player(this, c);
+            var pl = new ShanoReceptor(this, c);
             return pl;
         }
 
-        public void StartPlaying(INetReceptor rec)
+        public void StartPlaying(IReceptor rec)
         {
-            var pl = rec as Player;
+            var pl = rec as ShanoReceptor;
             if (pl == null)
-                throw new ArgumentException(nameof(rec), "You should supply a {0} of type {1} as returned by this engine!".F(nameof(IReceptor), nameof(Player)));
+                throw new ArgumentException(nameof(rec), "You should supply a {0} of type {1} as returned by this engine!".F(nameof(IReceptor), nameof(ShanoReceptor)));
 
             pl.SendHandshake(true);
 
@@ -162,7 +162,6 @@ namespace Engine
         /// <summary>
         /// Allows for network connections to be established to this game. 
         /// </summary>
-        /// <param name="port"></param>
         public void OpenToNetwork()
         {
             network.Start(this);
@@ -173,11 +172,11 @@ namespace Engine
         /// Adds the given player to the game. 
         /// </summary>
         /// <param name="pl"></param>
-        public void AddPlayer(Player pl)
+        void AddPlayer(ShanoReceptor pl)
         {
             Players.Add(pl);
 
-            Scenario.RunScripts(s => s.OnPlayerJoined(pl));
+            Scenario.RunScripts(s => s.OnPlayerJoined(pl.Player));
         }
 
 
@@ -209,16 +208,16 @@ namespace Engine
         /// <param name="msElapsed">The time elapsed since the last call of this function. </param>
         public void Update(int msElapsed)
         {
+            GameTime += msElapsed;
             PerfCounter.Reset();
 
+            //update systems
             foreach (var sys in systems)
                 sys.Update(msElapsed);
 
-
-            GameTime += msElapsed;
-
-            foreach (var p in Players)
-                p.Update(msElapsed);
+            ////update players
+            //foreach (var p in Players)
+            //    p.Update(msElapsed);
 
         }
 
@@ -226,17 +225,16 @@ namespace Engine
         /// <summary>
         /// Writes the map data for the given rectangle in the given array. 
         /// </summary>
-        /// <param name="h"></param>
         /// <param name="tileMap"></param>
-        /// <param name="rect"></param>
-        public void GetTiles(Player pl, ref TerrainType[] tileMap, MapChunkId chunk)
+        public void GetTiles(IReceptor pl, ref TerrainType[] tileMap, MapChunkId chunk)
         {
-            //TODO: check if chunk is valid
-            var rect = new Rectangle(chunk.BottomLeft, MapChunkId.ChunkSize);
-            TerrainMap.GetMap(rect, ref tileMap);
+            //TODO: check if chunk is valid for player pl
+
+
+            TerrainMap.GetMap(chunk.Span, ref tileMap);
             if (!generatedChunks.TryAdd(chunk))
             {
-                foreach (var dood in TerrainMap.GetNativeDoodads(rect))
+                foreach (var dood in TerrainMap.GetNativeEntities(chunk.Span))
                     map.Add(dood);
             }
         }
@@ -244,7 +242,7 @@ namespace Engine
         const int perfBarLength = 20;
         public string GetPerfData()
         {
-            return string.Empty;
+            //return string.Empty;
 
             var totalTimeTaken = PerfCounter.Stats.Sum(kvp => kvp.Value);
 

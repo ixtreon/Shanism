@@ -25,7 +25,9 @@ namespace IO.Message.Server
         public bool IsSystem {  get { return SenderGuid == SystemMessageId; } }
 
 
-        ChatMessage() { Type = MessageType.SendChat; }
+        public override MessageType Type { get { return MessageType.SendChat; } }
+
+        ChatMessage() { }
 
         public ChatMessage(string message, IPlayer sender)
             : this()

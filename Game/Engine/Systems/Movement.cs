@@ -1,4 +1,4 @@
-﻿using Engine.Entities;
+﻿using Engine.Objects;
 using IO;
 using IO.Common;
 using System;
@@ -59,19 +59,19 @@ namespace Engine.Systems
         {
             var suggestedPos = Owner.Position.PolarProjection(angle, dist);
 
-            if (Owner.HasState(UnitFlags.NoCollision))
+            if (Owner.States.HasFlag(UnitFlags.NoCollision))
                 return suggestedPos;
 
             //fix terrain
             var startP = (suggestedPos - Owner.Scale).Floor();
             var endP = (suggestedPos + Owner.Scale).Ceiling();
 
-            foreach(var p in startP.IterateToInclusive(endP))
+            foreach(var terrainPt in startP.IterateToInclusive(endP))
             {
-                if (isTileOk(Owner.Terrain.GetTerrain(p), Owner.CanFly, Owner.CanSwim, Owner.CanWalk))
+                if (isTileOk(Owner.Terrain.GetTerrain(terrainPt), Owner.CanFly, Owner.CanSwim, Owner.CanWalk))
                     continue;
 
-                var closestPoint = suggestedPos.Clamp(p, p + Point.One);
+                var closestPoint = suggestedPos.Clamp(terrainPt, terrainPt + Point.One);
                 var distSq = suggestedPos.DistanceToSquared(closestPoint);
 
                 var minDist = Owner.Scale / 2;
@@ -87,14 +87,13 @@ namespace Engine.Systems
 
             //fix objects
             var nearbyObjects = Owner.Map
-                .GetObjectsInRange(Owner.Position, dist + Constants.Units.MaxCollisionSize)
-                .Where(u => u != Owner && u.HasCollision)
-                .ToList();
+                .GetObjectsInRange(Owner.Position, dist + IO.Constants.Engine.MaximumObjectSize)
+                .Where(u => u != Owner && u.HasCollision);
 
             foreach(var obj in nearbyObjects)
             {
                 var minDist = (obj.Scale + Owner.Scale) / 2;
-                if (obj.Position.DistanceToSquared(suggestedPos) < minDist * minDist)
+                if (suggestedPos.DistanceTo(obj.Position) < minDist)
                 {
                     var ang = obj.Position.AngleTo(suggestedPos);
                     suggestedPos = obj.Position.PolarProjection(ang, minDist);
@@ -104,19 +103,6 @@ namespace Engine.Systems
             return suggestedPos;
         }
 
-        static bool resolveTile(Vector ourPos, double ourScale, Point terrainPos, TerrainType tt, bool canFly, bool canSwim, bool canWalk)
-        {
-            //var tt = owner.Terrain.GetTerrain(pos.Floor());
-
-            //see if we are close enough to this terrain tile
-            var closestPoint = ourPos.Clamp(terrainPos, Point.One);
-            var distSq = ourPos.DistanceToSquared(closestPoint);
-
-            if (distSq > ourScale * ourScale)
-                return true;
-
-            return isTileOk(tt, canFly, canSwim, canWalk);
-        }
         
         static bool isTileOk(TerrainType tt, bool canFly, bool canSwim, bool canWalk)
         {

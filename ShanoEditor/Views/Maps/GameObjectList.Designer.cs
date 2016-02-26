@@ -47,12 +47,12 @@ namespace ShanoEditor.Views.Maps
             this.cbCategory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbCategory.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbCategory.FormattingEnabled = true;
-            this.cbCategory.Location = new System.Drawing.Point(105, 12);
+            this.cbCategory.Location = new System.Drawing.Point(12, 42);
             this.cbCategory.Margin = new System.Windows.Forms.Padding(12, 12, 12, 0);
             this.cbCategory.Name = "cbCategory";
-            this.cbCategory.Size = new System.Drawing.Size(200, 24);
+            this.cbCategory.Size = new System.Drawing.Size(274, 24);
             this.cbCategory.TabIndex = 0;
-            this.cbCategory.SelectedIndexChanged += new System.EventHandler(this.cbCategory_SelectedIndexChanged);
+            this.cbCategory.SelectedIndexChanged += new System.EventHandler(this.onCategoryChanged);
             // 
             // mainPanel
             // 
@@ -60,10 +60,10 @@ namespace ShanoEditor.Views.Maps
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.mainPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.mainPanel.Location = new System.Drawing.Point(12, 88);
+            this.mainPanel.Location = new System.Drawing.Point(12, 164);
             this.mainPanel.Margin = new System.Windows.Forms.Padding(12);
             this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(293, 174);
+            this.mainPanel.Size = new System.Drawing.Size(274, 200);
             this.mainPanel.TabIndex = 1;
             // 
             // cbOwner
@@ -76,17 +76,17 @@ namespace ShanoEditor.Views.Maps
             this.cbOwner.Items.AddRange(new object[] {
             "Neutral Aggressive",
             "Neutral Passive"});
-            this.cbOwner.Location = new System.Drawing.Point(102, 3);
+            this.cbOwner.Location = new System.Drawing.Point(9, 41);
             this.cbOwner.Margin = new System.Windows.Forms.Padding(12, 12, 12, 0);
             this.cbOwner.Name = "cbOwner";
-            this.cbOwner.Size = new System.Drawing.Size(200, 24);
+            this.cbOwner.Size = new System.Drawing.Size(274, 24);
             this.cbOwner.TabIndex = 2;
             // 
             // lblCategory
             // 
             this.lblCategory.AutoSize = true;
             this.lblCategory.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCategory.Location = new System.Drawing.Point(9, 13);
+            this.lblCategory.Location = new System.Drawing.Point(9, 12);
             this.lblCategory.Name = "lblCategory";
             this.lblCategory.Size = new System.Drawing.Size(81, 18);
             this.lblCategory.TabIndex = 3;
@@ -96,7 +96,7 @@ namespace ShanoEditor.Views.Maps
             // 
             this.lblOwner.AutoSize = true;
             this.lblOwner.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblOwner.Location = new System.Drawing.Point(6, 4);
+            this.lblOwner.Location = new System.Drawing.Point(6, 11);
             this.lblOwner.Name = "lblOwner";
             this.lblOwner.Size = new System.Drawing.Size(62, 18);
             this.lblOwner.TabIndex = 4;
@@ -108,9 +108,9 @@ namespace ShanoEditor.Views.Maps
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pOwner.Controls.Add(this.lblOwner);
             this.pOwner.Controls.Add(this.cbOwner);
-            this.pOwner.Location = new System.Drawing.Point(3, 39);
+            this.pOwner.Location = new System.Drawing.Point(3, 70);
             this.pOwner.Name = "pOwner";
-            this.pOwner.Size = new System.Drawing.Size(311, 34);
+            this.pOwner.Size = new System.Drawing.Size(292, 79);
             this.pOwner.TabIndex = 0;
             this.pOwner.VisibleChanged += new System.EventHandler(this.pOwner_VisibleChanged);
             // 
@@ -124,8 +124,7 @@ namespace ShanoEditor.Views.Maps
             this.Controls.Add(this.mainPanel);
             this.Controls.Add(this.cbCategory);
             this.Name = "GameObjectList";
-            this.Size = new System.Drawing.Size(317, 274);
-            this.Load += new System.EventHandler(this.GameObjectList_Load);
+            this.Size = new System.Drawing.Size(298, 376);
             this.pOwner.ResumeLayout(false);
             this.pOwner.PerformLayout();
             this.ResumeLayout(false);

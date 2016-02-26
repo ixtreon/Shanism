@@ -1,8 +1,5 @@
-﻿using Engine.Entities;
-using IO;
+﻿using IO;
 using Network;
-using Network.Objects;
-using ProtoBuf.Meta;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +12,7 @@ namespace Engine.Network
     {
         public bool IsOnline { get; private set; } = false;
 
-        public LServer Server { get; private set; }
+        public NServer Server { get; private set; }
 
 
         /// <summary>
@@ -32,7 +29,7 @@ namespace Engine.Network
             }
 
             IsOnline = true;
-            Server = new LServer(engine);
+            Server = new NServer(engine);
         }
 
         internal override void Update(int msElapsed)

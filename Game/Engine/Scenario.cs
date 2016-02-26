@@ -4,13 +4,15 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Entities;
+using Engine.Objects;
 using IO.Common;
 using System.IO;
-using Engine.Entities.Objects;
+using Engine.Objects.Entities;
 using IO;
 using Engine.Systems;
 using ScenarioLib;
+using Engine.Maps;
+using Engine.Common;
 
 namespace Engine
 {
@@ -22,32 +24,24 @@ namespace Engine
         /// <summary>
         /// Gets a list of all scripts (see <see cref="CustomScript"/>) in the scenario. 
         /// </summary>
-        public IEnumerable<CustomScript> Scripts
+        public IEnumerable<CustomScript> Scripts => scripts;
+
+
+        public Scenario() { }
+
+
+        public static new Scenario Load<T>(string path, out string errors)
+            where T : Scenario, new()
         {
-            get { return scripts; }
-        }
+            var sc = CompiledScenario.Load<T>(path, out errors);
 
-
-        protected Scenario() { }
-        
-
-        public static new Scenario Load(string path)
-        {
-            return Load<Scenario>(path);
-        }
-
-
-        public static new T Load<T>(string path)
-            where T : Scenario
-        {
-            var sc = CompiledScenario.Load<T>(path);
-
-            sc.addScripts();
+            sc?.reloadScripts();
 
             return sc;
         }
 
-        void addScripts()
+
+        void reloadScripts()
         {
             scripts.Clear();
             scripts.AddRange(ScenarioAssembly
@@ -63,6 +57,18 @@ namespace Engine
         {
             foreach (var s in Scripts)
                 act(s);
+        }
+
+
+        internal void CreateStartupObjects(MapSystem map)
+        {
+            var oc = new ObjectCreator(this);
+            var entities = Config.Map.Objects
+                .Select(oc.CreateObject)
+                .ToList();
+
+            foreach (var e in entities)
+                map.Add(e);
         }
     }
 }

@@ -47,8 +47,6 @@ namespace Client.UI
 
             ButtonCount = 16;
             MaxButtonsPerRow = 8;
-
-            Locked = false;
         }
 
 

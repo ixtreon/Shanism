@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Client.UI
 {
+    /// <summary>
+    /// Provides a value between 0 and 1 that is continuous in time and changes at a rate defined by <see cref="Period"/>. 
+    /// Must be updated every frame. The default ticker should be updated somewhere in the engine. 
+    /// </summary>
     class Ticker
     {
         public static Ticker Default = new Ticker();

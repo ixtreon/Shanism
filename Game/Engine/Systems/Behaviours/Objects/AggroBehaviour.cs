@@ -1,6 +1,6 @@
 ﻿using Engine.Events;
-using Engine.Entities;
-using Engine.Entities.Objects;
+using Engine.Objects;
+using Engine.Objects.Entities;
 using IO.Common;
 using System;
 using System.Collections.Generic;
@@ -100,7 +100,6 @@ namespace Engine.Systems.Behaviours
         /// <summary>
         /// Adds to the aggro table units that come into range. 
         /// </summary>
-        /// <param name="args"></param>
         protected override void OnUnitInVisionRange(Unit unit)
         {
             if (ReturnBehaviour.Returning)

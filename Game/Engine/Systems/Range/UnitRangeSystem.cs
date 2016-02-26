@@ -1,5 +1,7 @@
-﻿using Engine.Entities;
+﻿using Engine.Objects;
+using IO;
 using IO.Common;
+using IO.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +14,7 @@ namespace Engine.Systems.Range
     {
         public Unit Origin { get; }
 
+        readonly RangeBuffer distBuffer = new RangeBuffer();
 
         public UnitRangeSystem(Unit origin)
         {
@@ -24,20 +27,36 @@ namespace Engine.Systems.Range
             if (!Origin.RangeEvents.Any())
                 return;
 
+            var originPos = Origin.Position;
             var maxConstraintRange = Origin.RangeEvents.Max.Range;
             var maxRangeSq = maxConstraintRange * maxConstraintRange;
-            var nearbyObjs = Origin.Map.Map
-                .RawQuery(new RectangleF(Origin.Position - maxConstraintRange, new Vector(2 * maxConstraintRange)));
+            var nearbyObjs = Origin.Map
+                .RawQuery(new RectangleF(originPos - maxConstraintRange, new Vector(2 * maxConstraintRange)))
+                .ToList();
 
             foreach (var otherObject in nearbyObjs)
             {
                 if (Origin == otherObject)
                     continue;
 
-                var objDistSq = otherObject.Position.DistanceToSquared(Origin.Position);
+                var oldDistSq = distBuffer.Front.TryGetVal(otherObject) ?? double.NaN;
+                var nowDistSq = otherObject.Position.DistanceToSquared(originPos);
+                distBuffer.Back[otherObject] = nowDistSq;
+
                 foreach (var c in Origin.RangeEvents)
-                    c.Check(otherObject, objDistSq);
+                    c.Check(otherObject, nowDistSq, oldDistSq);
             }
+
+            distBuffer.SwapBuffers();
+        }
+    }
+
+    class RangeBuffer : GenericBuffer<Dictionary<GameObject, double>>
+    {
+        public override void SwapBuffers()
+        {
+            base.SwapBuffers();
+            Back.Clear();
         }
     }
 }

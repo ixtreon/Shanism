@@ -1,6 +1,4 @@
-﻿using Client.Settingsz;
-using IO;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,28 +8,37 @@ using System.Threading.Tasks;
 
 namespace Client
 {
-    static class ShanoSettings
+    /// <summary>
+    /// Contains settings relating to the current player. 
+    /// This includes random stuff like button press, health bars n stuff. 
+    /// Also keybinds. 
+    /// </summary>
+    class ShanoSettings
     {
         /// <summary>
         /// The file where settings are saved. 
         /// </summary>
-        static string SettingsFile = "config.json";
+        static readonly string DefaultSettingsFile = "config.json";
 
-        public static ApplicationSettings Current { get; private set; }
+        public static ShanoSettings Current { get; private set; }
+
+
 
         static ShanoSettings()
         {
             Reload();
-            Current.Keybinds[Input.GameAction.ToggleMainMenu] = Microsoft.Xna.Framework.Input.Keys.Escape;
         }
 
+        /// <summary>
+        /// Reloads the settings file from disk. Useful when discarding unwanted changes. 
+        /// </summary>
         public static void Reload()
         {
             var success = false;
             try
             {
-                var fileData = File.ReadAllText(SettingsFile);
-                Current = JsonConvert.DeserializeObject<ApplicationSettings>(fileData);
+                var fileData = File.ReadAllText(DefaultSettingsFile);
+                Current = JsonConvert.DeserializeObject<ShanoSettings>(fileData);
                 success = (Current != null);
             }
             catch { success = false; }
@@ -39,22 +46,47 @@ namespace Client
 
             if (!success)
             {
-                Console.WriteLine("Unable to load proper settings data from the '{0}' file. ".F(SettingsFile));
-                Current = new ApplicationSettings();
-                Save();
+                Console.WriteLine($"Unable to load proper settings data from the '{DefaultSettingsFile}' file. ");
+                Current = new ShanoSettings();
+                Current.Save();
             }
+
+
+            Current.Keybinds[Input.GameAction.ToggleMenus] = Microsoft.Xna.Framework.Input.Keys.Escape;
         }
 
-        public static void Save()
+
+
+
+
+        public bool AlwaysShowHealthBars { get; set; } = true;
+
+        public bool QuickButtonPress { get; set; } = true;
+
+
+        public KeybindSettings Keybinds { get; set; } = new KeybindSettings(true);
+
+        private ShanoSettings() { }
+
+        /// <summary>
+        /// Resets all keybindings to their default values and then saves the configuration file. 
+        /// </summary>
+        public void ResetKeybinds()
+        {
+            Keybinds = new KeybindSettings(true);
+            Save();
+        }
+
+        public void Save()
         {
             try
             {
-                var datas = JsonConvert.SerializeObject(Current);
-                File.WriteAllText(SettingsFile, datas);
+                var datas = JsonConvert.SerializeObject(this);
+                File.WriteAllText(DefaultSettingsFile, datas);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Console.WriteLine("Unable to write settings data to the '{0}' file: {1}".F(SettingsFile, e.Message));
+                Console.WriteLine($"Unable to write settings data to the '{DefaultSettingsFile}' file: {e.Message}");
             }
         }
     }

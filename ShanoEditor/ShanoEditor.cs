@@ -24,16 +24,18 @@ namespace ShanoEditor
         {
             set
             {
-                if (value)  statusLabel.Text = "Loading...";
-                else        statusLabel.Text = "";
+                scenarioLoadProgressBar.Visible = value;
+                //if (value)  statusLabel.Text = "Loading...";
+                //else        statusLabel.Text = "";
             }
         }
         public bool StatusSaving
         {
             set
             {
-                if (value) statusLabel.Text = "Saving...";
-                else statusLabel.Text = "";
+                scenarioLoadProgressBar.Visible = value;
+                //if (value) statusLabel.Text = "Saving...";
+                //else statusLabel.Text = "";
             }
         }
 
@@ -47,14 +49,12 @@ namespace ShanoEditor
         public ShanoEditorForm()
         {
             InitializeComponent();
-            populateRecentMenu();
+            updateRecentsMenu();
 
             scenarioTree.SelectionChanged += tree_SelectionChanged;
 
-            scenarioViews = enumControls(this)
-                .Cast<Control>()
-                .Where(c => typeof(ScenarioControl).IsAssignableFrom(c.GetType()))
-                .Cast<ScenarioControl>()
+            scenarioViews = splitContainer1.Panel2.Controls
+                .OfType<ScenarioControl>()
                 .ToArray();
 
             foreach (var c in scenarioViews)
@@ -73,17 +73,14 @@ namespace ShanoEditor
 
         void tree_SelectionChanged(ScenarioViewType ty)
         {
-            var toShow = scenarioViews.FirstOrDefault(v => v.ViewType == ty);
-
-            //hide
             foreach (var c in scenarioViews)
-                if(c != toShow)
+                if (c.ViewType == ty)
+                    c.Show();
+                else
                     c.Hide();
-            //show
-            toShow?.Show();
         }
 
-        void populateRecentMenu()
+        void updateRecentsMenu()
         {
             recentToolStripMenuItem.DropDownItems.Clear();
 
@@ -102,6 +99,7 @@ namespace ShanoEditor
                 return;
             }
 
+            recentToolStripMenuItem.DropDownItems.Clear();
             foreach(var path in recents)
             {
 
@@ -147,19 +145,9 @@ namespace ShanoEditor
 
         async void ShanoEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (Model == null || !Model.IsDirty)
-                return;
-
-            var z = MessageBox.Show(
-                "You have not saved your changes to the scenario. Would you like to do that now?",
-                "ShanoEditor",
-                MessageBoxButtons.YesNoCancel,
-                MessageBoxIcon.Warning);
-
-            if (z == DialogResult.Cancel)
+            var wasClosed = await close();
+            if (!wasClosed)
                 e.Cancel = true;
-            else if (z == DialogResult.Yes)
-                await save();
         }
     }
 }

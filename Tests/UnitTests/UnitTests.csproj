@@ -43,7 +43,7 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="protobuf-net, Version=2.0.0.668, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\protobuf-net.2.1.0-alpha-1\lib\net45\protobuf-net.dll</HintPath>
+      <HintPath>..\..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -62,9 +62,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="IxShim - Copy.cs" />
+    <Compile Include="BsDiffTests.cs" />
+    <Compile Include="CloningPlant.cs" />
+    <Compile Include="IxShim2.cs" />
     <Compile Include="IxShim.cs" />
-    <Compile Include="protobuftest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProtoShim.cs" />
     <Compile Include="XorTest.cs" />
@@ -81,6 +82,10 @@
     <ProjectReference Include="..\..\Game\Network\Network.csproj">
       <Project>{d2fa8685-b964-498d-a34f-d191be2cba6b}</Project>
       <Name>Network</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\lib\BsDiffLib\BsDiffLib.csproj">
+      <Project>{266c8ab4-020a-49ee-beb7-e7a6a409940a}</Project>
+      <Name>BsDiffLib</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

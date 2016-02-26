@@ -15,15 +15,15 @@ namespace ScenarioLib
     /// <summary>
     /// A compiled scenario that contains information about the types of objects defined in it. 
     /// </summary>
-    public class CompiledScenario : ScenarioFile
+    public class CompiledScenario
     {
-        static readonly string[] FolderNames = new[]
+        static readonly string[] FolderNames =
         {
             "Abilities",
             "Buffs",
             "Doodads",
             "Effects",
-            //"Items",
+            "Items",
             "Scripts",
             "Units",
         };
@@ -31,114 +31,92 @@ namespace ScenarioLib
         /// <summary>
         /// Gets the assembly that contains the compiled scenario. 
         /// </summary>
-        public Assembly ScenarioAssembly { get; private set; }
+        public Assembly ScenarioAssembly { get; internal set; }
+
+        public ScenarioConfig Config { get; private set; }
+        public IEnumerable<IEntity> DefinedEntities { get; private set; }
 
 
-        Dictionary<string, IUnit> units = new Dictionary<string, IUnit>();
-        Dictionary<string, IDoodad> doodads = new Dictionary<string, IDoodad>();
-
-        /// <summary>
-        /// Gets the types of game objects defined in this scenario. 
-        /// </summary>
-        public IEnumerable<IDoodad> DefinedDoodads
-        {
-            get { return doodads.Values; }
-        }
-
-        /// <summary>
-        /// Gets an instance of each game object defined in this scenario. 
-        /// </summary>
-        public IEnumerable<IUnit> DefinedUnits
-        {
-            get { return units.Values; }
-        }
-
+        public IEnumerable<Type> DefinedEntityTypes => DefinedEntities.Select(e => e.GetType());
 
         [JsonConstructor]
-        protected CompiledScenario() { }
+        public CompiledScenario() { }
 
         /// <summary>
         /// Creates a new scenario at the given path. 
         /// </summary>
         /// <param name="scenarioPath"></param>
         public CompiledScenario(string scenarioPath)
-            : base(scenarioPath)
         {
+            Config = new ScenarioConfig(scenarioPath);
 
+            foreach (var folder in FolderNames)
+            {
+                var fullFolderName = Path.Combine(scenarioPath, folder);
+                if (!Directory.Exists(fullFolderName))
+                    Directory.CreateDirectory(fullFolderName);
+            }
         }
 
 
-        public IGameObject TryGet(string fullTypeName)
+        public static T Load<T>(string scenarioPath, out string errors)
+            where T : CompiledScenario, new()
         {
-            return (IGameObject)units.TryGet(fullTypeName) ?? doodads.TryGet(fullTypeName);
-        }
+            //load the config
+            string configLoadErrors;
+            var config = ScenarioConfig.Load(scenarioPath, out configLoadErrors);
+            if (config == null)
+            {
+                errors = "Invalid config file:"
+                    + "\n" + configLoadErrors;
+                return null;
+            }
 
-        public static new CompiledScenario Load(string scenarioPath)
-        {
-            return Load<CompiledScenario>(scenarioPath);
-        }
-
-
-        public static new T Load<T>(string scenarioPath)
-            where T : CompiledScenario
-        {
-            //call base
-            var sc = ScenarioFile.Load<T>(scenarioPath);
-
-            //compile
+            //compile..
             var cmp = new ScenarioCompiler(scenarioPath);
-            var errors = cmp.Compile();
-            if (errors.Any())
-                throw new AggregateException(errors.Select(err => new CompilerException(err)));
-            
-            //load assembly to memory
-            cmp.LoadCompiledAssembly();
+            var compileErrors = cmp.Compile();
+            if (compileErrors.Any())
+            {
+                errors = "Unable to comiple the scenario:" +
+                    "\n" + string.Join("\n", compileErrors.Select(e => e.GetMessage()));
+                return null;
+            }
 
-            //load objects from assembly
-            sc.loadAssembly(cmp.Assembly);
+            //..and load the assembly
+            string assemblyLoadErrors;
+            if (!cmp.LoadCompiledAssembly(out assemblyLoadErrors))
+            {
+                errors = "Unable to load the compiled scenario:"
+                    + "\n" + assemblyLoadErrors;
+                return null;
+            }
 
+            var definedObjs = cmp.Assembly
+                    .GetTypesDescending<IEntity>()
+                    .Where(hasParameterlessCtor)
+                    .Select(t => (IEntity)Activator.CreateInstance(t))
+                    .ToList()
+                    ?? Enumerable.Empty<IEntity>();
+
+            var sc = new T
+            {
+                Config = config,
+                ScenarioAssembly = cmp.Assembly,
+                DefinedEntities = definedObjs,
+            };
+
+            errors = string.Empty;
             return sc;
         }
 
         void loadAssembly(Assembly scAssembly)
         {
             ScenarioAssembly = scAssembly;
-
-            var unitTypes = scAssembly.GetTypesDescending<IUnit>()
-                .Where(canMakeUnit)
-                .ToList();
-
-            units = unitTypes
-                .Select(ty => (IUnit)Activator.CreateInstance(ty, new object[] { null }))
-                .ToDictionary(o => o.GetType().FullName, o => o);
-
-
-            var doodadTypes = scAssembly.GetTypesDescending<IDoodad>()
-                .Where(canMakeDoodad)
-                .ToList();
-
-            doodads = doodadTypes
-                .Select(ty => (IDoodad)Activator.CreateInstance(ty, null))
-                .ToDictionary(o => o.GetType().FullName, o => o);
-
-
         }
-
-        //must have new T(Player, Vector)
-        bool canMakeUnit(Type ty)
+        static bool hasParameterlessCtor(Type ty)
         {
             return ty.GetConstructors()
-                .Select(c => c.GetParameters())
-                .Any(ps => ps.Length == 1
-                    && typeof(IPlayer).IsAssignableFrom(ps[0].ParameterType));
-        }
-
-        //must have new T(Vector)
-        bool canMakeDoodad(Type ty)
-        {
-            return ty.GetConstructors()
-                .Select(c => c.GetParameters())
-                .Any(ps => ps.Length == 0);
+                .Any(c => c.GetParameters().Length == 0);
         }
     }
 }

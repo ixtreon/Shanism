@@ -9,6 +9,7 @@ namespace ShanoEditor.ViewModels
     public interface IViewModel
     {
         Task Save();
-        Task Load();
+
+        Task Reload();
     }
 }

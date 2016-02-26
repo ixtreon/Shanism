@@ -78,8 +78,8 @@ namespace Client.UI
         {
             var unitTarget = Target?.Unit;
 
-            Visible = (unitTarget != null);
-            if(Visible)
+            IsVisible = (unitTarget != null);
+            if(IsVisible)
             {
                 healthBar.Target = unitTarget;
                 manaBar.Target = unitTarget;

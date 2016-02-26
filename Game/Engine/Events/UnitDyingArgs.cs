@@ -1,20 +1,30 @@
-﻿using Engine.Entities;
-using Engine.Entities.Objects;
+﻿using Engine.Objects;
+using Engine.Objects.Entities;
 using System;
 using System.Linq;
 
 namespace Engine.Events
 {
+    /// <summary>
+    /// The arguments passed whenever a unit dies. 
+    /// </summary>
+    /// <seealso cref="System.EventArgs" />
     public class UnitDyingArgs : EventArgs
     {
+        /// <summary>
+        /// The unit that is dying. 
+        /// </summary>
         public readonly Unit DyingUnit;
 
+        /// <summary>
+        /// The killing unit, if any. 
+        /// </summary>
         public readonly Unit KillingUnit;
 
-        public bool IsSuicide
-        {
-            get { return KillingUnit != DyingUnit; }
-        }
+        /// <summary>
+        /// Gets whether the unit killed itself (no killer). 
+        /// </summary>
+        public bool IsSuicide => (KillingUnit != DyingUnit);
 
         /// <summary>
         /// Creates the arguments for the given unit killing itself. 
@@ -24,6 +34,11 @@ namespace Engine.Events
             : this(dyingUnit, dyingUnit)
         { }
 
+        /// <summary>
+        /// Creates the arguments for one unit killing the other. 
+        /// </summary>
+        /// <param name="dyingUnit">The dying unit.</param>
+        /// <param name="killerUnit">The killer unit.</param>
         public UnitDyingArgs(Unit dyingUnit, Unit killerUnit)
         {
             DyingUnit = dyingUnit;
@@ -32,7 +47,6 @@ namespace Engine.Events
 
         /// <summary>
         /// Creates a new UnitDyingArgs instance from the provided UnitDamageArgs argument. 
-        /// 
         /// To be used in cases where a unit damages another and the amount proves lethal. 
         /// </summary>
         /// <param name="args"></param>

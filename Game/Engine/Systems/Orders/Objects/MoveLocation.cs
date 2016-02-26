@@ -1,4 +1,4 @@
-﻿using Engine.Entities;
+﻿using Engine.Objects;
 using IO.Common;
 using System;
 using System.Collections.Generic;
@@ -24,10 +24,7 @@ namespace Engine.Systems.Orders
         public Vector TargetLocation { get; }
 
 
-        public OrderType Type
-        {
-            get { return OrderType.Move; }
-        }
+        public OrderType Type => OrderType.Move;
 
         public double Direction { get; private set; }
 
@@ -52,8 +49,19 @@ namespace Engine.Systems.Orders
             Direction = uLoc.AngleTo(TargetLocation);
             unit.movement.SetMovementState(Direction, dist);
 
+            //var potential =Vector.Zero;
+
+            //var nearbyUnits = unit.Map.GetObjectsInRange(unit.Position, 10)
+            //    .Where(u => u.HasCollision);
+
+
             //keep on
             return true;
+        }
+
+        void addForce(Vector potential, Vector pos, Vector target, double power)
+        {
+            potential += (1);
         }
 
         public static bool operator ==(MoveLocation o1, MoveLocation o2)

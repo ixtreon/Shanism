@@ -160,7 +160,7 @@
             this.scenarioDetails.Size = new System.Drawing.Size(218, 112);
             this.scenarioDetails.TabIndex = 0;
             this.scenarioDetails.Visible = false;
-            this.scenarioDetails.ScenarioSelected += new System.Action<ScenarioLib.ScenarioFile>(this.scenarioDetails_ScenarioSelected);
+            this.scenarioDetails.ScenarioSelected += new System.Action<ScenarioLib.ScenarioConfig>(this.scenarioDetails_ScenarioSelected);
             // 
             // ScenarioDirForm
             // 

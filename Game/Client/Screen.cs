@@ -23,56 +23,68 @@ namespace Client
         public static double UiScale { get; private set; } = DefaultUiScale;
 
         /// <summary>
-        /// Gets the camera center point in in-game coordinates. 
-        /// </summary>
-        public static Vector CenterPoint { get; private set; }
-
-        /// <summary>
         /// Gets the in-game size of the screen. 
         /// </summary>
         public static Vector InGameSize { get; private set; } = Constants.Client.WindowSize;
 
+        /// <summary>
+        /// Gets the in-game bounds of the screen rectangle. 
+        /// </summary>
+        public static RectangleF InGameBounds { get; private set; }
 
         /// <summary>
         /// Gets the screen size in pixels. 
         /// </summary>
-        public static Point PixelSize { get; private set; } = new Point(800, 600);
-
-        /// <summary>
-        /// Gets the size of the screen in UI units. 
-        /// </summary>
-        public static Vector UiSize
-        {
-            get {  return (Vector)PixelSize / UiScale; }
-        }
-
-        /// <summary>
-        /// Gets the font scale, which is simply the curent Ui scale over the default one. 
-        /// </summary>
-        public static double FontScale
-        {
-            get { return UiScale / DefaultUiScale; }
-        }
+        public static Point ScreenSize { get; private set; } = new Point(800, 600);
 
         /// <summary>
         /// Gets half the size of the sreen in pixels. 
         /// </summary>
-        public static Point ScreenHalfSize
-        {
-            get { return PixelSize / 2; }
-        }
+        public static Point ScreenHalfSize { get; private set; }
+
+        /// <summary>
+        /// Gets the font scale, which is simply the curent Ui scale over the default one. 
+        /// </summary>
+        public static double FontScale { get; private set; } = 1;
 
 
-        public static void SetCamera(Point? windowSz, Vector? cameraCenter = null, Vector? gameSz = null)
+        /// <summary>
+        /// Gets the size of the screen in UI units. 
+        /// </summary>
+        public static Vector UiSize => (Vector)ScreenSize / UiScale;
+
+        /// <summary>
+        /// Gets the camera center point in in-game coordinates. 
+        /// </summary>
+        public static Vector InGameCenter => _lockedEntity?.Position ?? _inGameCenter;
+
+
+        static Vector _inGameCenter;
+        static IEntity _lockedEntity;
+
+
+
+        public static void SetCamera(Point? windowSz, 
+            Vector? cameraCenter = null, 
+            IEntity lockedEntity = null,
+            Vector? inGameSz = null)
         {
             if (windowSz != null)
             {
-                PixelSize = windowSz.Value;
-                UiScale = Math.Min(PixelSize.X, PixelSize.Y) / 2;
+                ScreenSize = windowSz.Value;
+                ScreenHalfSize = ScreenSize / 2;
+
+                UiScale = Math.Min(ScreenSize.X, ScreenSize.Y) / 2;
+                FontScale = UiScale / DefaultUiScale;
             }
 
-            CenterPoint = cameraCenter ?? CenterPoint;
-            InGameSize = gameSz ?? InGameSize;
+            if (lockedEntity != null)
+                _lockedEntity = lockedEntity;
+            else if (cameraCenter != null)
+                _inGameCenter = cameraCenter.Value;
+
+            InGameSize = inGameSz ?? InGameSize;
+            InGameBounds = new RectangleF(InGameCenter - InGameSize / 2, InGameSize);
         }
 
         /// <summary>
@@ -80,7 +92,7 @@ namespace Client
         /// </summary>
         public static Vector GameToScreen(Vector p)
         {
-            return (p - CenterPoint) * PixelSize / InGameSize + ScreenHalfSize;
+            return (p - InGameCenter) * ScreenSize / InGameSize + ScreenHalfSize;
         }
 
         /// <summary>
@@ -88,7 +100,7 @@ namespace Client
         /// </summary>
         public static Vector ScreenToGame(Vector position)
         {
-            return (position - ScreenHalfSize) *  InGameSize / PixelSize + CenterPoint;
+            return (position - ScreenHalfSize) *  InGameSize / ScreenSize + InGameCenter;
         }
 
 

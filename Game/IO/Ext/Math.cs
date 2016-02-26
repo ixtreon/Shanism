@@ -9,20 +9,39 @@ namespace IO
 {
     public static class MathsExt
     {
+        /// <summary>
+        /// Creates a single long 
+        /// </summary>
+        /// <param name="a">a.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         public static long MakeLong(int a, int b)
         {
             return (((long)a << 32) | (uint)b);
         }
 
-
-        public static int Clamp(this int i, int min, int max)
+        /// <summary>
+        /// Clamps the given integer between the two supplied values.
+        /// </summary>
+        /// <param name="i">The value to clamp.</param>
+        /// <param name="minVal">The minimum value.</param>
+        /// <param name="maxVal">The maximum value.</param>
+        /// <returns></returns>
+        public static int Clamp(this int i, int minVal, int maxVal)
         {
-            return Math.Min(max, Math.Max(min, i));
+            return Math.Min(maxVal, Math.Max(minVal, i));
         }
 
-        public static double Clamp(this double i, double min, double max)
+        /// <summary>
+        /// Clamps the specified minimum value.
+        /// </summary>
+        /// <param name="i">The i.</param>
+        /// <param name="minVal">The minimum value.</param>
+        /// <param name="maxVal">The maximum value.</param>
+        /// <returns></returns>
+        public static double Clamp(this double i, double minVal, double maxVal)
         {
-            return Math.Min(max, Math.Max(min, i));
+            return Math.Min(maxVal, Math.Max(minVal, i));
         }
 
 

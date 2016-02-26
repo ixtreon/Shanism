@@ -17,12 +17,14 @@ namespace IO.Message.Server
         public readonly uint HeroId = 0;
 
 
-        PlayerStatusMessage() { Type = MessageType.PlayerStatusUpdate; }
+        public override MessageType Type { get { return MessageType.PlayerStatusUpdate; } }
+
+        PlayerStatusMessage() { }
 
         /// <summary>
         /// Informs the client of the id of its hero. 
         /// </summary>
-        /// <param name="hero"></param>
+        /// <param name="heroId">The unique ID of the hero. </param>
         public PlayerStatusMessage(uint heroId)
             : this()
         {

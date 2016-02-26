@@ -22,7 +22,9 @@ namespace IO.Message.Server
         public readonly bool IsLooping;
 
 
-        ObjectAnimationMessage() { Type = MessageType.ObjectAnimation; }
+        public override MessageType Type { get { return MessageType.ObjectAnimation; } }
+
+        ObjectAnimationMessage() { }
 
         public ObjectAnimationMessage(IUnit u, AnimationDef anim)
             : this()

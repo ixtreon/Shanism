@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -22,6 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>bin\Debug\IO.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -117,44 +118,51 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Color.cs" />
     <Compile Include="Common\DamageResult.cs" />
+    <Compile Include="Content\AnimationDef.cs" />
+    <Compile Include="Content\TextureDef.cs" />
     <Compile Include="Ext\Collections.cs" />
+    <Compile Include="Ext\Enum.cs" />
     <Compile Include="Ext\IO.cs" />
     <Compile Include="Ext\Math.cs" />
     <Compile Include="Ext\Strings.cs" />
     <Compile Include="Common\BuffType.cs" />
     <Compile Include="Common\DamageType.cs" />
     <Compile Include="Common\Faction.cs" />
+    <Compile Include="Interfaces\Engine\INetReceptor.cs" />
+    <Compile Include="Interfaces\Objects\IGameObject.cs" />
     <Compile Include="Math\RectangleF.cs" />
     <Compile Include="Message\Network\ObjectData.cs" />
     <Compile Include="Message\Network\GameFrame.cs" />
     <Compile Include="Message\Server\ObjectUnseen.cs" />
     <Compile Include="Objects\AbilityStub.cs" />
     <Compile Include="Objects\BuffStub.cs" />
-    <Compile Include="Objects\DoodadStub.cs" />
-    <Compile Include="Objects\HeroStub.cs" />
+    <Compile Include="Objects\Entities\DoodadStub.cs" />
+    <Compile Include="Objects\Entities\EffectStub.cs" />
+    <Compile Include="Objects\Entities\HeroStub.cs" />
+    <Compile Include="Objects\Entities\UnitStub.cs" />
+    <Compile Include="Objects\EntityStub.cs" />
     <Compile Include="Objects\ObjectStub.cs" />
-    <Compile Include="Objects\UnitStub.cs" />
+    <Compile Include="Performance\IPerformanceStats.cs" />
     <Compile Include="Performance\PerfCounter.cs" />
     <Compile Include="Serialization\PropertyCaller - Copy.cs" />
-    <Compile Include="Serialization\ProtoConverter.cs" />
     <Compile Include="Serialization\PropertyCaller.cs" />
+    <Compile Include="Util\AnimPath.cs" />
+    <Compile Include="Util\CloningPlant.cs" />
     <Compile Include="Util\ConcurrentSet.cs" />
+    <Compile Include="Util\GenericBackBuffer.cs" />
     <Compile Include="Util\GenericEqualityComparer.cs" />
     <Compile Include="Maps\MapChunkDef.cs" />
     <Compile Include="Common\ObjectType.cs" />
     <Compile Include="Common\OrderType.cs" />
-    <Compile Include="Content\AnimationDef.cs" />
-    <Compile Include="Content\ModelDef.cs" />
-    <Compile Include="Interfaces\Network\INetReceptor.cs" />
     <Compile Include="Interfaces\Engine\IReceptor.cs" />
     <Compile Include="Message\Server\ObjectAnimation.cs" />
-    <Compile Include="Interfaces\Engine\Game\Other\IBuff.cs" />
-    <Compile Include="Interfaces\Engine\Game\Objects\IEffect.cs" />
+    <Compile Include="Interfaces\Objects\Game\Other\IBuff.cs" />
+    <Compile Include="Interfaces\Objects\Game\Objects\IEffect.cs" />
     <Compile Include="ShadowCalc\ShadowGuy.cs" />
     <Compile Include="Common\TextureType.cs" />
     <Compile Include="Common\UnitFlags.cs" />
-    <Compile Include="Content\TextureDef.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Ext\General.cs" />
     <Compile Include="Util\GenericComparer.cs" />
@@ -174,18 +182,17 @@
     <Compile Include="Message\Server\ObjectSeen.cs" />
     <Compile Include="Message\Server\PlayerStatus.cs" />
     <Compile Include="Message\Server\DamageEvent.cs" />
-    <Compile Include="Interfaces\Engine\Game\Other\IAbility.cs" />
-    <Compile Include="Interfaces\Engine\Game\Other\IBuffInstance.cs" />
-    <Compile Include="Interfaces\Engine\Game\Objects\IDoodad.cs" />
+    <Compile Include="Interfaces\Objects\Game\Other\IAbility.cs" />
+    <Compile Include="Interfaces\Objects\Game\Other\IBuffInstance.cs" />
+    <Compile Include="Interfaces\Objects\Game\Objects\IDoodad.cs" />
     <Compile Include="Interfaces\Engine\IShanoEngine.cs" />
-    <Compile Include="Interfaces\Engine\Game\IGameObject.cs" />
-    <Compile Include="Interfaces\Engine\Game\Other\IPlayer.cs" />
-    <Compile Include="Interfaces\Engine\Game\Objects\IUnit.cs" />
-    <Compile Include="Interfaces\Engine\Game\Objects\IHero.cs" />
+    <Compile Include="Interfaces\Objects\Game\IEntity.cs" />
+    <Compile Include="Interfaces\Objects\Game\Other\IPlayer.cs" />
+    <Compile Include="Interfaces\Objects\Game\Objects\IUnit.cs" />
+    <Compile Include="Interfaces\Objects\Game\Objects\IHero.cs" />
     <Compile Include="Maps\TerrainType.cs" />
     <Compile Include="Interfaces\Client\IShanoClient.cs" />
     <Compile Include="Common\MovementState.cs" />
-    <Compile Include="Common\UnitType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\Counter.cs" />
     <Compile Include="Util\GenericId.cs" />
@@ -196,7 +203,15 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Interfaces\Network\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\IxSerializer\IxSerializer.csproj">
+      <Project>{41be9dd9-644c-4a90-8d47-667b4323df7a}</Project>
+      <Name>IxSerializer</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

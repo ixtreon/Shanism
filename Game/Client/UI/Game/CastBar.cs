@@ -35,9 +35,9 @@ namespace Client.UI
 
         protected override void OnUpdate(int msElapsed)
         {
-            this.Visible = (Target != null && Target.OrderType == OrderType.Casting && Target.TotalCastingTime > 0);
+            this.IsVisible = (Target != null && Target.OrderType == OrderType.Casting && Target.TotalCastingTime > 0);
 
-            if (this.Visible)
+            if (this.IsVisible)
             {
                 Bar.Value = Target.CastingProgress;
                 Bar.MaxValue = Target.TotalCastingTime;
@@ -59,7 +59,7 @@ namespace Client.UI
         {
             base.OnDraw(g);
 
-            if (Visible)
+            if (IsVisible)
                 g.DrawString(Content.Fonts.NormalFont, "- {0:0.0}s".F(castTimeLeft), Color.White,
                     Location + new Vector(Size.X, Size.Y / 2), 1, 0.5f);
         }

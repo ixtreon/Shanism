@@ -1,4 +1,5 @@
 ﻿using IO.Message;
+using IO.Message.Network;
 using IO.Message.Server;
 using IO.Objects;
 using System;
@@ -30,5 +31,7 @@ namespace IO
         void UpdateServer(int msElapsed);
 
         string GetPerfData();
+
+        //GameFrameMessage GetCurrentFrame();
     }
 }

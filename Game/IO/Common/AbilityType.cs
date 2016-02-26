@@ -18,7 +18,7 @@ namespace IO.Common
         Passive = 0,
 
         /// <summary>
-        /// An instant-cast ability. 
+        /// An instant-cast ability that requires no target. 
         /// </summary>
         NoTarget = 1,
 

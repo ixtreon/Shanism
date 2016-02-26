@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Engine.Entities;
 using ShanoRPGWin.Properties;
 using ShanoRPGWin.UI;
 using IO;
 using Client;
 using Local;
 using ScenarioLib;
+using Network.Client;
 
 namespace ShanoRPGWin
 {
@@ -22,7 +18,7 @@ namespace ShanoRPGWin
     {
         ScenarioDirForm scenarioPicker = new ScenarioDirForm();
 
-        ScenarioFile ChosenScenario;
+        ScenarioConfig ChosenScenario;
 
         public LauncherForm()
         {
@@ -64,7 +60,7 @@ namespace ShanoRPGWin
         //Starts connecting to the specified server. 
         private void StartRemoteGame(string playerName, string ipAddress)
         {
-            var netClient = new Network.LClient(ipAddress, playerName);
+            var netClient = new NClient(ipAddress, playerName);
             var clientGame = ShanoGame.CreateClient(playerName);
 
             clientGame.SetServer(netClient);
@@ -161,7 +157,7 @@ namespace ShanoRPGWin
             txtRemoteIp.Text = Settings.Default.RemoteIp;
         }
 
-        void setCurrentScenario(ScenarioFile scenario)
+        void setCurrentScenario(ScenarioConfig scenario)
         {
             ChosenScenario = scenario;
 

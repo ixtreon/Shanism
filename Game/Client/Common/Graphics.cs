@@ -67,8 +67,8 @@ namespace Client
             var screenSz = getClampedScreenSize(texPos, texSize);
 
             SpriteBatch.Draw(tex,
-                position: screenPos.ToXnaVector(),
-                scale: (screenSz / new Vector(tex.Width, tex.Height)).ToXnaVector(),
+                position: screenPos.ToVector2(),
+                scale: (screenSz / new Vector(tex.Width, tex.Height)).ToVector2(),
                 color: color ?? Color.White,
                 layerDepth: depth);
         }

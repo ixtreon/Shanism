@@ -13,7 +13,7 @@ namespace Client
     {
         public static IClientInstance CreateClient(string playerName)
         {
-            return new ClientInstance(playerName);
+            return new ClientGame(playerName);
         }
 
         public static IClientEngine CreateClientEngine(string playerName, IGraphicsDeviceService graphics, ContentManager content)

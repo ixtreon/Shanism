@@ -13,7 +13,7 @@ using IO;
 namespace ShanoEditor.Views.Maps
 {
 
-    class GameObjectButton : ObjectButton<IGameObject>
+    class GameObjectButton : ObjectButton<IEntity>
     {
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace ShanoEditor.Views.Maps
         public float FontSizePixels = 14;
 
 
-        public GameObjectButton(IGameObject obj)
+        public GameObjectButton(IEntity obj)
             : base(obj, 64)
         {
             DoubleBuffered = true;
@@ -51,6 +51,9 @@ namespace ShanoEditor.Views.Maps
 
             base.OnPaint(e);
 
+            if (Model == null)
+                return;
+
             var g = e.Graphics;
             var animMargin = fontMargin;
             
@@ -68,10 +71,10 @@ namespace ShanoEditor.Views.Maps
 
                 animMargin = (fontMargin * 3 + FontSizePixels) / 2;
             }
-            
+
 
             //draw animation
-            var anim = Model.Content.ModelDefaultAnimations.TryGet(Object.ModelName);
+            var anim = Model.Content.Animations.TryGet(Object.AnimationName);
             var animDest = new IO.Common.RectangleF(animMargin, fontMargin, Width - 2 * animMargin, Height - (2 * animMargin - fontMargin));
             if (anim == null)
                 g.FillRectangle(Brushes.Red, animDest.ToNetRectangle());

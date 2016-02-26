@@ -8,20 +8,33 @@ using System.Threading.Tasks;
 
 namespace IO.Util
 {
+    /// <summary>
+    /// Represents a thread-safe set of values that can be accessed by multiple threads concurrently. 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <seealso cref="System.Collections.Generic.IEnumerable{T}" />
     public class ConcurrentSet<T> : IEnumerable<T>
     {
         ConcurrentDictionary<T, bool> dict { get; }
 
-        public int Count
-        {
-            get { return dict.Count; }
-        }
+        /// <summary>
+        /// Gets the number of items contained in the <see cref="ConcurrentSet{T}"/>
+        /// </summary>
+        public int Count => dict.Count;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConcurrentSet{T}"/> class.
+        /// </summary>
         public ConcurrentSet()
         {
             dict = new ConcurrentDictionary<T, bool>();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConcurrentSet{T}"/> class
+        /// that contains elements from the specified <see cref="IEnumerable{T}"/>. 
+        /// </summary>
+        /// <param name="items">The items.</param>
         public ConcurrentSet(IEnumerable<T> items)
         {
             dict = new ConcurrentDictionary<T, bool>(items.Select(i => new KeyValuePair<T, bool>(i, true)));
@@ -68,11 +81,23 @@ namespace IO.Util
             dict.Clear();
         }
 
+        /// <summary>
+        /// Returns an enumerator that iterates through the collection.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
+        /// </returns>
         public IEnumerator<T> GetEnumerator()
         {
             return dict.Keys.GetEnumerator();
         }
 
+        /// <summary>
+        /// Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
+        /// </returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return dict.Values.GetEnumerator();

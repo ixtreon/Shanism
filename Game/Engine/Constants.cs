@@ -35,8 +35,7 @@ namespace Engine
         {
             public const double MaxVisionRange = 10;
 
-            public static double MaxCollisionSize = 3;
-
+            public const double DefaultUnitSize = 2.5;
 
             /// <summary>
             /// The damage reduction per point of defense. 

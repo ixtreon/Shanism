@@ -5,24 +5,33 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Engine.Maps;
-using Engine.Entities;
+using Engine.Objects;
 using IO;
 using IO.Common;
 using Engine.Events;
 using IO.Objects;
 using ProtoBuf;
+using IO.Util;
 
 namespace Engine.Systems.Abilities
 {
-    public abstract class Ability : ScenarioObject, IAbility
+    /// <summary>
+    /// Represents a passive or active ability that belongs to a single <see cref="Entity"/>. 
+    /// </summary>
+    /// <seealso cref="Engine.GameObject" />
+    /// <seealso cref="IO.Objects.IAbility" />
+    public abstract class Ability : GameObject, IAbility
     {
-        static Ability()
-        {
-            IO.Serialization.ProtoConverter.Default.AddMappingFromTo<IAbility, Ability>();
-        }
+
 
         /// <summary>
-        /// Gets the hero who owns this ability. 
+        /// Gets the object type of this ability. 
+        /// Always has a value of <see cref="ObjectType.Ability"/>. 
+        /// </summary>
+        public override ObjectType ObjectType => ObjectType.Ability;
+
+        /// <summary>
+        /// Gets the hero who owns and casts this ability. 
         /// </summary>
         public Unit Owner { get; private set; }
 
@@ -67,14 +76,9 @@ namespace Engine.Systems.Abilities
         public double CastRange { get; set; } = 5;
 
         /// <summary>
-        /// Gets or sets whether this ability is active (i.e. can be cast instantly or on a target). 
+        /// Gets whether this ability is active (i.e. can be cast instantly or on a target). 
         /// </summary>
         public bool IsActive { get { return TargetType != AbilityTargetType.Passive; } }
-
-        /// <summary>
-        /// Gets or sets whether ability requires a target, if it is active (targeted or not). 
-        /// </summary>
-        public bool IsTargeted { get { return TargetType == AbilityTargetType.NoTarget; } }
 
         /// <summary>
         /// Gets or sets the target types of this ability, if it is targeted. 
@@ -123,39 +127,40 @@ namespace Engine.Systems.Abilities
         /// <summary>
         /// Gets whether this ability can target another unit. 
         /// </summary>
-        public bool CanTargetUnits()
-        {
-            return TargetType.HasFlag(AbilityTargetType.UnitTarget);
-        }
+        public bool CanTargetUnits() => TargetType.HasFlag(AbilityTargetType.UnitTarget);
+
 
         /// <summary>
         /// Gets whether this ability can target a location the ground. 
         /// </summary>
-        public bool CanTargetGround()
-        {
-            return TargetType.HasFlag(AbilityTargetType.PointTarget);
-        }
+        public bool CanTargetGround() => TargetType.HasFlag(AbilityTargetType.PointTarget);
 
         /// <summary>
-        /// Can be overridden in derived classes to implement custom functionality. 
+        /// Called whenever this ability is cast by its owner. 
         /// </summary>
         protected virtual void OnCast(AbilityCastArgs e) { }
 
-
+        /// <summary>
+        /// Called when this ability is initially learned by an unit. 
+        /// </summary>
         protected virtual void OnLearned() { }
 
-
+        /// <summary>
+        /// Called once every frame once this ability is learned. 
+        /// </summary>
+        /// <param name="msElapsed">The time elapsed since the last frame, in milliseconds.</param>
         protected virtual void OnUpdate(int msElapsed) { }
 
+        /// <summary>
+        /// Checks if range, coooldown, mana cost and range to target are all OK. 
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
         public bool CanCast(object target)
         {
             if (target is Unit && ((Unit)target).IsDead)
                 return false;
 
-            //check if in control (no stuns or stuff)?
-            //TODO?!
-
-            //check range, cooldown, mana cost, range
             return IsActive 
                 && (CurrentCooldown <= 0) 
                 && (Owner.Mana >= ManaCost) 
@@ -221,6 +226,12 @@ namespace Engine.Systems.Abilities
             }
         }
 
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
         public override string ToString()
         {
             return this.Name;

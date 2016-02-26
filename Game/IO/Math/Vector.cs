@@ -5,16 +5,48 @@ using System.Text;
 using System.Threading.Tasks;
 using IO;
 using ProtoBuf;
+using Newtonsoft.Json;
+using IxSerializer.Modules;
+using System.IO;
 
 namespace IO.Common
 {
+    /// <summary>
+    /// Represents a point in 2D space. 
+    /// </summary>
     [ProtoContract]
-    public struct Vector
+    [JsonObject(MemberSerialization.OptIn)]
+    public struct Vector : IxSerializable
     {
+        /// <summary>
+        /// Deserializes the data from the specified reader into this object.
+        /// </summary>
+        /// <param name="r"></param>
+        public void Deserialize(BinaryReader r)
+        {
+            X = r.ReadDouble();
+            Y = r.ReadDouble();
+        }
+
+        /// <summary>
+        /// Serializes this object to the given writer.
+        /// </summary>
+        /// <param name="w"></param>
+        public void Serialize(BinaryWriter w)
+        {
+            w.Write(X);
+            w.Write(Y);
+        }
+
         /// <summary>
         /// Gets the vector with both coordinates set to zero. 
         /// </summary>
         public static readonly Vector Zero = new Vector();
+
+        /// <summary>
+        /// Gets the vector with both coordinates set to one. 
+        /// </summary>
+        public static readonly Vector One = new Vector(1);
 
         /// <summary>
         /// Gets the vector with both coordinates set to <see cref="double.NaN"/>. 
@@ -32,9 +64,21 @@ namespace IO.Common
         public static readonly Vector MinValue = new Vector(double.MinValue);
 
         /// <summary>
+        /// Calculates the distance from this point to the given rectangle. 
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <returns></returns>
+        public double DistanceTo(RectangleF rect)
+        {
+            var insRect = Clamp(rect.BottomLeft, rect.TopRight);
+            return DistanceTo(insRect);
+        }
+
+        /// <summary>
         /// Gets or sets the X coordinate of this vector. 
         /// </summary>
         [ProtoMember(1)]
+        [JsonProperty]
         public double X;
 
         /// <summary>
@@ -42,8 +86,12 @@ namespace IO.Common
         /// </summary>
 
         [ProtoMember(2)]
+        [JsonProperty]
         public double Y;
 
+        /// <summary>
+        /// Gets the Nth dimension of this 2-dimensional vector. 
+        /// </summary>
         public double this[int dimension]
         {
             get
@@ -285,12 +333,6 @@ namespace IO.Common
             return X >= pos.X && Y >= pos.Y && X <= pos.X + size.X && Y <= pos.Y + size.Y;
         }
 
-
-        public Vector MoveInside(Vector pos, Vector size)
-        {
-            return Clamp(pos, pos + size);
-        }
-
         /// <summary>
         /// Returns a new point that lies at the given angle and distance from this point. 
         /// </summary>
@@ -318,6 +360,12 @@ namespace IO.Common
 
         #region Object Overrides
 
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// </returns>
         public override int GetHashCode()
         {
             unchecked       // http://stackoverflow.com/questions/5221396/what-is-an-appropriate-gethashcode-algorithm-for-a-2d-point-struct-avoiding
@@ -329,17 +377,37 @@ namespace IO.Common
             }
         }
 
+        /// <summary>
+        /// Determines whether the specified <see cref="object" />, is equal to this instance.
+        /// </summary>
+        /// <param name="obj">The <see cref="object" /> to compare with this instance.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified <see cref="object" /> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
         public override bool Equals(object obj)
         {
             if (!(obj is Vector))
                 return false;
             return (Vector)obj == this;
         }
+        /// <summary>
+        /// Returns a <see cref="string" /> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="string" /> that represents this instance.
+        /// </returns>
         public override string ToString()
         {
             return ToString("0.00");
         }
 
+        /// <summary>
+        /// Returns a <see cref="string" /> that represents this instance.
+        /// </summary>
+        /// <param name="format">The string used to format the X and Y values of the vector.</param>
+        /// <returns>
+        /// A <see cref="string" /> that represents this instance.
+        /// </returns>
         public string ToString(string format)
         {
             return string.Format("[{0}, {1}]", X.ToString(format), Y.ToString(format));

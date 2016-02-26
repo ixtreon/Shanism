@@ -7,16 +7,24 @@ using System.Threading.Tasks;
 namespace Client.Input
 {
     /// <summary>
-    /// Contains all keys used in the game. 
+    /// The enumeration of user actions that can be performed in-game. 
+    /// Includes both actions sent to the server (such as moving, casting, etc)
+    /// and actions relating to the game interface. 
     /// </summary>
     enum GameAction
     {
-        ToggleMainMenu = 1,
-        ToggleSpellBook,
+        /* Menus */
+        ToggleMenus = 1,
+        ToggleAbilityMenu,
         ToggleCharacterMenu,
+
+
+        /* Game Settings */
 
         ShowHealthBars,
 
+
+        /* Hero Actions */
         MoveLeft,
         MoveRight,
         MoveUp,
@@ -24,12 +32,19 @@ namespace Client.Input
 
         Chat,
 
+
+        /* Debugging */
+
         /// <summary>
         /// Reloads the user interface. Useful for debugging. 
         /// </summary>
         ReloadUi,
 
-        //should be last!
+        ToggleDebugInfo,
+        
+        
+        /* Action Bars */
+
         ActionBar,
 
     }

@@ -11,7 +11,8 @@ namespace IO.Message.Server
 {
     /// <summary>
     /// The message sent by the server when a client sees an object. 
-    /// 
+    /// When playing local the field <see cref="Object"/> is set so the client can use it directly. 
+    /// <para/>
     /// </summary>
     [ProtoContract]
     public class ObjectSeenMessage : IOMessage
@@ -21,20 +22,26 @@ namespace IO.Message.Server
         /// The unique identifier of the object that came into range. 
         /// </summary>
         [ProtoMember(1)]
-        public readonly uint Guid;
+        public readonly uint ObjectId;
+
+        [ProtoMember(2)]
+        public readonly ObjectType ObjectType;
 
         /// <summary>
         /// The object that came in range. 
         /// </summary>
-        public readonly IGameObject Object;
+        public readonly IEntity Object;
 
-        ObjectSeenMessage() { Type = MessageType.ObjectSeen; }
+        public override MessageType Type { get { return MessageType.ObjectSeen; } }
 
-        public ObjectSeenMessage(IGameObject obj)
+        ObjectSeenMessage() { }
+
+        public ObjectSeenMessage(IEntity obj)
             : this()
         {
             Object = obj;
-            Guid = obj.Id;
+            ObjectId = obj.Id;
+            ObjectType = obj.ObjectType;
         }
     }
 }

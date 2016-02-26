@@ -18,7 +18,7 @@ namespace Client.Input
         static readonly Dictionary<Keys, char> capsCharDict = new Dictionary<Keys, char>();
 
         /// <summary>
-        /// Gets the character that shows when the given <see cref="Keys"/> structure is held down. 
+        /// Gets the character that is written when the given key is held down. 
         /// Returns null in case there is no recognized character for this <see cref="Keys"/> instance. 
         /// </summary>
         /// <param name="k">The key whose character is needed. </param>
