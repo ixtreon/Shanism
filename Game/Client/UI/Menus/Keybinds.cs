@@ -23,8 +23,8 @@ namespace Client.UI.Menus
 
         public KeybindsMenu()
         {
-            Location = new Vector(0.5, 0.5);
             Size = new Vector(1.6, 1.0);
+            Location = (new Vector(2, 1)- Size) / 2;
             ParentAnchor = AnchorMode.None;
             TitleText = "Keybinds";
 
@@ -39,7 +39,7 @@ namespace Client.UI.Menus
             {
                 ParentAnchor = AnchorMode.Left | AnchorMode.Top | AnchorMode.Right,
                 Location = new Vector(0, TitleHeight) + lblPadding,
-                Size = new Vector(lblWidth, labelFont.UiHeight * 3 + 2 * Padding),
+                Size = new Vector(lblWidth, labelFont.HeightUi * 3 + 2 * Padding),
                 AutoSize = false,
 
                 Font = Content.Fonts.NormalFont,
@@ -49,18 +49,18 @@ namespace Client.UI.Menus
             btnResetKeybinds = new Button
             {
                 ParentAnchor = AnchorMode.Top | AnchorMode.Right,
-                Location = new Vector(lblPadding + lblWidth, TitleHeight + labelFont.UiHeight) + lblPadding,
+                Location = new Vector(lblPadding + lblWidth, TitleHeight + labelFont.HeightUi) + lblPadding,
                 Size = btnSize,
 
                 Font = Content.Fonts.NormalFont,
                 Text = "Reset",
                 ToolTip = "Reset all keybindings to their default values. ",
-                BackColor = BackColor.Darken(20),
             };
             btnResetKeybinds.MouseDown += BtnResetKeybinds_MouseDown;
 
             keybinds = new KeybindPanel
             {
+                ParentAnchor = AnchorMode.Left | AnchorMode.Top | AnchorMode.Right,
                 Location = new Vector(0, lblKeybinds.Bottom) + Padding,
                 Size = new Vector(Size.X - 2 * Padding, 0.4),
 
@@ -77,8 +77,6 @@ namespace Client.UI.Menus
 
                 Font = Content.Fonts.NormalFont,
                 Text = "To change the keybind for an action bar button, hover over it using the mouse and press the button/s you want to bind it to. NYI. ",
-
-                //BackColor = Color.Blue.SetAlpha(150),
             };
 
             btnCancel = new Button
@@ -90,7 +88,6 @@ namespace Client.UI.Menus
                 Font = Content.Fonts.NormalFont,
                 Text = "Cancel",
                 ToolTip = "Discards all changes made so far. ",
-                //BackColor = Color.Red.Darken(10),
             };
             btnCancel.MouseUp += BtnCancel_MouseUp;
 
@@ -103,7 +100,6 @@ namespace Client.UI.Menus
                 Font = Content.Fonts.NormalFont,
                 Text = "Accept",
                 ToolTip = "Saves all changed keybindings. ",
-                //BackColor = Color.Green.Darken(10),
             };
             btnOk.MouseUp += BtnOk_MouseUp;
 
@@ -118,26 +114,26 @@ namespace Client.UI.Menus
 
         void onCloseButtonClicked()
         {
-            ShanoSettings.Reload();
+            Settings.Reload();
         }
 
         void BtnOk_MouseUp(MouseButtonArgs obj)
         {
-            ShanoSettings.Current.Save();
+            Settings.Current.Save();
 
             IsVisible = false;
         }
 
         void BtnCancel_MouseUp(MouseButtonArgs obj)
         {
-            ShanoSettings.Reload();
+            Settings.Reload();
 
             IsVisible = false;
         }
 
         void BtnResetKeybinds_MouseDown(MouseButtonArgs e)
         {
-            ShanoSettings.Current.ResetKeybinds();
+            Settings.Current.ResetKeybinds();
         }
     }
 }

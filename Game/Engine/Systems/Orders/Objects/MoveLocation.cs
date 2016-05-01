@@ -11,6 +11,9 @@ namespace Engine.Systems.Orders
     /// </summary>
     struct MoveLocation : IMoveOrder
     {
+        public OrderType Type => OrderType.Move;
+
+
         /// <summary>
         /// The distance from the target to stop at. 
         /// 
@@ -23,15 +26,12 @@ namespace Engine.Systems.Orders
         /// </summary>
         public Vector TargetLocation { get; }
 
-
-        public OrderType Type => OrderType.Move;
-
         public double Direction { get; private set; }
 
         public MoveLocation(Vector target, double distanceThreshold = 0.05)
         {
             DistanceThrehsold = distanceThreshold;
-            Direction = -1; //wat
+            Direction = double.NaN; //wat
             TargetLocation = target;
         }
 
@@ -85,5 +85,7 @@ namespace Engine.Systems.Orders
         {
             return base.GetHashCode();
         }
+
+        public override string ToString() => $"Move to {TargetLocation}";
     }
 }

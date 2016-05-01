@@ -42,6 +42,7 @@ namespace Engine.Systems.Buffs
                 buffs.TryRemove(b);
 
             updateStats(Target);
+
             if (Target is Hero)
                 updateHeroStats((Hero)Target);
         }
@@ -81,17 +82,17 @@ namespace Engine.Systems.Buffs
                 minDamage += b.MinDamage;
                 maxDamage += b.MaxDamage;
                 defense += b.Defense;
-                //magicDamage += b.MagicDamage;     //NYI
+                //magicDamage += b.MagicDamage;     //TODO
 
                 moveSpeed += b.MoveSpeed;
                 bonusMoveSpeed += (b.MoveSpeedPercentage / 100.0);
                 bonusAtkSpeed += (b.AttackSpeedPercentage / 100.0);
 
                 negativeDodgeChance = negativeDodgeChance * (100 - b.Dodge) / 100;
-                //negativeCritChance = negativeCritChance * (100 - b.Crit) / 100;       //NYI
+                //negativeCritChance = negativeCritChance * (100 - b.Crit) / 100;       //TODO
 
-                //lifeRegen += b.LifeRegen;
-                //manaRegen += b.ManaRegen;
+                lifeRegen += b.LifeRegen;
+                manaRegen += b.ManaRegen;
 
                 states |= b.UnitStates;
             }
@@ -154,7 +155,7 @@ namespace Engine.Systems.Buffs
         /// </summary>
         /// <param name="buff">The buff to apply. </param>
         /// <param name="caster">The caster of the buff. </param>
-        public BuffInstance Apply(Unit caster, Buff buff)
+        public BuffInstance TryApply(Unit caster, Buff buff)
         {
             if (Target.IsDead)
                 return null;
@@ -210,7 +211,8 @@ namespace Engine.Systems.Buffs
         /// <param name="buff"></param>
         public void Remove(BuffInstance buff)
         {
-            buffs.TryRemove(buff);
+            if(buff != null)
+                buffs.TryRemove(buff);
         }
 
         /// <summary>

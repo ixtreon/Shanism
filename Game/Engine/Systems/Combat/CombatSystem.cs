@@ -24,6 +24,7 @@ namespace Engine.Systems
         /// <param name="msElapsed"></param>
         internal override void Update(int msElapsed)
         {
+            //TODO: handle negative life regen killing the unit. 
             var lifeDelta = Owner.LifeRegen * msElapsed / 1000;
             Owner.Life = Math.Min(Owner.MaxLife, Owner.Life + lifeDelta);
 

@@ -16,6 +16,9 @@ namespace IO.Common
     [JsonObject(MemberSerialization.Fields)]
     public struct RectangleF : IxSerializable
     {
+        /// <summary>
+        /// Gets the empty rectangle that lies at the origin. 
+        /// </summary>
         public static readonly RectangleF Empty = new RectangleF();
 
 
@@ -52,70 +55,88 @@ namespace IO.Common
         /// <summary>
         /// Gets the position of the bottom-left (low) corner of the rectangle. 
         /// </summary>
-        public Vector Position { get { return new Vector(_x, _y); } }
+        public Vector Position => new Vector(_x, _y);
 
         /// <summary>
         /// Gets the size of the rectangle. 
         /// </summary>
-        public Vector Size { get { return new Vector(_width, _height); } }
+        public Vector Size => new Vector(_width, _height);
 
+        /// <summary>
+        /// Gets the low X coordinate of this rectangle. 
+        /// </summary>
+        public double X => _x;
 
-        public double X { get { return _x; } }
-        public double Y { get { return _y; } }
+        /// <summary>
+        /// Gets the low Y coordinate of this rectangle. 
+        /// </summary>
+        public double Y => _y;
 
-        public double Width { get { return _width; } }
-        public double Height { get { return _height; } }
+        /// <summary>
+        /// Gets the width of the rectangle. 
+        /// </summary>
+        public double Width => _width;
+
+        /// <summary>
+        /// Gets the height of the rectangle. 
+        /// </summary>
+        public double Height => _height;
 
         /// <summary>
         /// Gets the left (low X) edge of the rectangle. 
         /// </summary>
-        public double Left { get { return _x; } }
+        public double Left => _x;
 
         /// <summary>
         /// Gets the right (high X) edge of the rectangle. 
         /// </summary>
-        public double Right { get { return _x + _width; } }
+        public double Right => _x + _width;
 
         /// <summary>
         /// Gets the bottom (low Y) edge of the rectangle. 
         /// </summary>
-        public double Bottom { get { return _y; } }
+        public double Bottom => _y;
 
         /// <summary>
         /// Gets the top (high Y) edge of the rectangle. 
         /// </summary>
-        public double Top { get { return _y + _height; } }
+        public double Top => _y + _height;
 
 
         /// <summary>
         /// Gets the bottom left (low X, low Y) corner of this rectangle. 
         /// </summary>
-        public Vector BottomLeft { get { return new Vector(Left, Bottom); } }
+        public Vector BottomLeft => new Vector(Left, Bottom);
 
         /// <summary>
         /// Gets the top left (low X, high Y) corner of this rectangle. 
         /// </summary>
-        public Vector TopLeft { get { return new Vector(Left, Top); } }
+        public Vector TopLeft => new Vector(Left, Top);
 
         /// <summary>
         /// Gets the bottom right (high X, low Y) corner of this rectangle. 
         /// </summary>
-        public Vector BottomRight { get { return new Vector(Right, Bottom); } }
+        public Vector BottomRight => new Vector(Right, Bottom);
 
         /// <summary>
         /// Gets the top right (high X, high Y) corner of this rectangle. 
         /// </summary>
-        public Vector TopRight { get { return new Vector(Right, Top); } }
+        public Vector TopRight => new Vector(Right, Top);
 
         /// <summary>
         /// Gets the top right (high X, high Y) corner of this rectangle. 
         /// </summary>
-        public Vector FarPosition { get { return TopRight; } }
+        public Vector FarPosition => TopRight;
 
         /// <summary>
         /// Gets the point at the center of this rectangle. 
         /// </summary>
-        public Vector Center { get { return Position + Size / 2.0; } }
+        public Vector Center => Position + Size / 2.0;
+
+        /// <summary>
+        /// Gets the area of this rectangle. 
+        /// </summary>
+        public double Area => Width * Height;
 
 
         public static RectangleF operator *(RectangleF r, Vector p)
@@ -156,11 +177,12 @@ namespace IO.Common
         }
 
         /// <summary>
-        /// Gets the area of this rectangle. 
+        /// Initializes a new instance of the <see cref="RectangleF"/> struct.
         /// </summary>
-        public double Area { get { return Width * Height; } }
-
-
+        /// <param name="x">The x.</param>
+        /// <param name="y">The y.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
         public RectangleF(double x, double y, double width, double height)
         {
             _x = x;
@@ -169,6 +191,12 @@ namespace IO.Common
             _height = height;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RectangleF"/> struct
+        /// at the specified position and size. 
+        /// </summary>
+        /// <param name="position">The position of the rectangle. .</param>
+        /// <param name="size">The size of the rectangle. .</param>
         public RectangleF(Vector position, Vector size)
         {
             _x = position.X;
@@ -177,6 +205,11 @@ namespace IO.Common
             _height = size.Y;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RectangleF"/> struct 
+        /// that is a copy of the given rectangle. 
+        /// </summary>
+        /// <param name="src">The source rectangle.</param>
         public RectangleF(RectangleF src)
         {
             _x = src._x;
@@ -201,13 +234,21 @@ namespace IO.Common
         }
 
         /// <summary>
-        /// Returns whether the given point lies inside this rectangle. 
+        /// Returns a new rectangle 
+        /// with positive <see cref="Width"/> and <see cref="Height"/>. 
         /// </summary>
-        public bool Contains(Vector p)
+        public RectangleF MakePositive()
         {
-            return Contains(p.X, p.Y);
+            return new RectangleF(
+                Math.Min(X, X + Width),
+                Math.Min(Y, Y + Height),
+                Math.Abs(Width),
+                Math.Abs(Height));
         }
 
+        /// <summary>
+        /// Inflates the rectangle in all direction by the specified amount. 
+        /// </summary>
         public RectangleF Inflate(double v)
         {
             return new RectangleF(_x - v, _y - v, _width + 2 * v, _height + 2 * v);
@@ -220,6 +261,11 @@ namespace IO.Common
         {
             return x >= X && y >= Y && x < (X + Width) && y < (Y + Height);
         }
+
+        /// <summary>
+        /// Returns whether the given point lies inside this rectangle. 
+        /// </summary>
+        public bool Contains(Vector p) => Contains(p.X, p.Y);
 
 
         /// <summary>
@@ -238,8 +284,6 @@ namespace IO.Common
         /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public string ToString(string format)
-        {
-            return $"[{X.ToString(format)}, {Y.ToString(format)}, {Width.ToString(format)}, {Height.ToString(format)}]";
-        }
+            => $"[{X.ToString(format)}, {Y.ToString(format)}, {Width.ToString(format)}, {Height.ToString(format)}]";
     }
 }

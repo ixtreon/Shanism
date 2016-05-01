@@ -22,7 +22,7 @@ namespace Client
     /// </summary>
     class ClientGame : Game, IClientInstance
     {
-        readonly ClientEngine _clientEngine;
+        readonly IClientEngine _clientEngine;
 
         GraphicsDeviceManager graphics;
 
@@ -75,6 +75,7 @@ namespace Client
             IsMouseVisible = true;
             Window.AllowUserResizing = true;
             Window.ClientSizeChanged += Window_ClientSizeChanged;
+            _clientEngine.SetWindowSize(Window.ClientBounds.Size.ToPoint());
         }
 
 
@@ -98,7 +99,7 @@ namespace Client
             }
 
             //inform the engine
-            _clientEngine.WindowSizeChanged(Window.ClientBounds.ToRect());
+            _clientEngine.SetWindowSize(Window.ClientBounds.Size.ToPoint());
 
             _stopResizeRecurse = false;
         }
@@ -135,7 +136,7 @@ namespace Client
             {
                 _isLoaded = true;
                 GameLoaded?.Invoke();
-                Window_ClientSizeChanged(null, null);
+                //Window_ClientSizeChanged(null, null);
             }
 
             _clientEngine.Draw(gameTime);

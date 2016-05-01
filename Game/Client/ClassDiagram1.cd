@@ -1,0 +1,766 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Client.Assets.CircleDict" Collapsed="true">
+    <Position X="34.5" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAACAAAAAAAAAAQAAAAAAAAAAAQAAAAQAACAAAA=</HashCode>
+      <FileName>Assets\CircleDict.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.Assets.ContentList" Collapsed="true">
+    <Position X="31" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAABAAAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\ContentList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.Assets.FontCache" Collapsed="true">
+    <Position X="36.25" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAQAAAACAAAAAABAAAABAAAA=</HashCode>
+      <FileName>Assets\FontCache.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.Assets.Sprite" Collapsed="true">
+    <Position X="34.5" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAACAAABIAAAAgAAEAAAAAAAACBAAACgIAIAAAAAA=</HashCode>
+      <FileName>Assets\Sprite.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.Assets.SpriteCache" Collapsed="true">
+    <Position X="38" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAACAAAA=</HashCode>
+      <FileName>Assets\SpriteCache.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.Assets.TerrainCache" Collapsed="true">
+    <Position X="29.25" Y="15.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAABAAAAAAAAAACAIAAAAAAAA=</HashCode>
+      <FileName>Assets\TerrainCache.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.Assets.TextureFont" Collapsed="true">
+    <Position X="32.75" Y="15.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAUBMAIAAAAAIsQgCAAAABAAAiBACIAAEAAAAA=</HashCode>
+      <FileName>Assets\TextureFont.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.Textures.TextureCache" Collapsed="true">
+    <Position X="31" Y="15.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAABAAEBEAAAAAgKAAAAAAIAAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Assets\TextureCache.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.ClientEngine" BaseTypeListCollapsed="true">
+    <Position X="12.75" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAOEKEAEHDQCBCIgUAAMoAAggECIxAEcAAACAAAAI=</HashCode>
+      <FileName>ClientEngine.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="MapManager" />
+      <Field Name="Game" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Client.ClientGame" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="38" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAQBAAAAAAAAAxEAAAAAAAgACACAAAgABAAAAAAAAAQ=</HashCode>
+      <FileName>ClientGame.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Client.Graphics" Collapsed="true">
+    <Position X="29.25" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAggAkAAAAAAACAAQAAAAAQAAAAAAAAkA=</HashCode>
+      <FileName>Common\Graphics.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.Content" Collapsed="true">
+    <Position X="29.25" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAIIAAAAAAAAABAABEAAAAAAAAAAAAAiMAAAAAAAAg=</HashCode>
+      <FileName>Content.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.ExitHelper" Collapsed="true">
+    <Position X="34.5" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>ExitHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.EffectExt" Collapsed="true">
+    <Position X="32.75" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Ext\Effects.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.GeneralExt" Collapsed="true">
+    <Position X="38" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAEAAAAAAAAQAAEAgCEAAAAQAAACAIAAAA=</HashCode>
+      <FileName>Ext\General.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.SpriteBatchExt" Collapsed="true">
+    <Position X="36.25" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Ext\SpriteBatch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.GameManager">
+    <Position X="7.25" Y="16.5" Width="1.5" />
+    <AssociationLine Name="Interface" Type="Client.UI.UiManager" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="7.797" Y="19.338" />
+        <Point X="7.797" Y="23.875" />
+        <Point X="6.25" Y="23.875" />
+        <Point X="6.25" Y="24.25" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Objects" Type="Client.ObjectManager" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="8.305" Y="19.338" />
+        <Point X="8.305" Y="23.625" />
+        <Point X="16.75" Y="23.625" />
+        <Point X="16.75" Y="24" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="FloatingText" Type="Client.UI.CombatText.FloatingTextProvider" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="7.25" Y="17.919" />
+        <Point X="2" Y="17.919" />
+        <Point X="2" Y="24.25" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAYAAAACAAAAAAAAABACAAAAAAAAEEAAAgAAAEAgAA=</HashCode>
+      <FileName>GameManager.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Interface" />
+      <Property Name="Objects" />
+      <Property Name="FloatingText" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Client.ObjectManager">
+    <Position X="16" Y="24" Width="1.5" />
+    <AssociationLine Name="MainHeroControl" Type="Client.Objects.HeroControl" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="17.125" Y="29.472" />
+        <Point X="17.125" Y="31.5" />
+        <Point X="25" Y="31.5" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAGBADCAAAAgAAgQAJEAARRAAAAAAIAABAAEAAAA=</HashCode>
+      <FileName>Objects\ObjectManager.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="MainHeroControl" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Client.Screen" Collapsed="true">
+    <Position X="38" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAACgIAAAAECCEAEAABCCaAAAAACQAAEAAA=</HashCode>
+      <FileName>Screen.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.KeybindSettings" Collapsed="true">
+    <Position X="31" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAACAAAAAACAIAAAAABAAAAgAA=</HashCode>
+      <FileName>Settings\Keybinds.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.ShanoSettings" Collapsed="true">
+    <Position X="32.75" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAKAAAAAAAAAAAACAAAAEAAARAAACCAAAAAAAAAA=</HashCode>
+      <FileName>Settings\ShanoSettings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.Shaders" Collapsed="true">
+    <Position X="29.25" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Shaders.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.ShanoGame" Collapsed="true">
+    <Position X="43" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAABAAABAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ShanoGame.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.Input.ChatProvider" Collapsed="true">
+    <Position X="31" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAFAAAAgIAAAAAAAQAAAAAAAAAAAAAAACIAAAIAA=</HashCode>
+      <FileName>Input\ChatProvider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.Input.KeyboardInfo" Collapsed="true">
+    <Position X="32.75" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACUABAKAAAAQRAGgAAAAAAAAAAAAAACAAAEAIAAAAAA=</HashCode>
+      <FileName>Input\KeyboardInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.Input.KeyMap" Collapsed="true">
+    <Position X="34.5" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAgIAAAAAAAAAAAAAAAAAAAAAAAIIAEAAAA=</HashCode>
+      <FileName>Input\KeyMap.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.Input.MouseArgs" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAEAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>Input\MouseArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.Input.MouseButtonArgs" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Input\MouseButtonArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.Map.ChunkData" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="22" Y="21.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAABCAAAAAAAAADAEAAAgAACggAAABIAQAAQCA=</HashCode>
+      <FileName>Map\ChunkData.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Client.Map.MapManager" BaseTypeListCollapsed="true">
+    <Position X="17.75" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAQACABAABAAAAAAAEAgIQAAAAABgAgAAAAKAAABAAA=</HashCode>
+      <FileName>Map\MapManager.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="ChunksAvailable" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Client.Objects.DoodadControl" Collapsed="true">
+    <Position X="22.75" Y="29.75" Width="1.5" />
+    <InheritanceLine Type="Client.Objects.ObjectControl" FixedToPoint="true">
+      <Path>
+        <Point X="25.75" Y="28.941" />
+        <Point X="25.75" Y="29.375" />
+        <Point X="24.062" Y="29.375" />
+        <Point X="24.062" Y="29.75" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEABAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Objects\Controls\DoodadControl.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.Objects.EffectControl" Collapsed="true">
+    <Position X="25" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Objects\Controls\EffectControl.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.Objects.HeroControl" Collapsed="true">
+    <Position X="25" Y="31.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAABAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Objects\Controls\HeroControl.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.Objects.ObjectControl" Collapsed="true">
+    <Position X="25" Y="28.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAQAAAAAAEAAAA=</HashCode>
+      <FileName>Objects\Controls\ObjectControl.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.Objects.UnitControl" Collapsed="true">
+    <Position X="27.25" Y="29.75" Width="1.5" />
+    <InheritanceLine Type="Client.Objects.ObjectControl" FixedToPoint="true">
+      <Path>
+        <Point X="25.75" Y="28.941" />
+        <Point X="25.75" Y="29.375" />
+        <Point X="27.438" Y="29.375" />
+        <Point X="27.438" Y="29.75" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIABAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Objects\Controls\UnitControl.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.Common.BuffControl" Collapsed="true">
+    <Position X="24" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAABAAAAAAAAAAAAAAAAAAAEQAAA=</HashCode>
+      <FileName>UI\BuffControl.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.Common.Button" Collapsed="true">
+    <Position X="30.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAEAAAAABAAACAAABAAAJAgAIACAACgCI=</HashCode>
+      <FileName>UI\Common\Button.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.Common.Label" Collapsed="true">
+    <Position X="39.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAIAABAAAAAAAAAAAAAAAAACAECABA=</HashCode>
+      <FileName>UI\Common\Label.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.Common.ValueBar" Collapsed="true">
+    <Position X="5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAAAEAABAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>UI\Common\ValueBar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.Common.ValueLabel" Collapsed="true">
+    <Position X="10.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAwAAAAAAABAAAAAAAAAgAAAAAAAAgAAAAgCAABAAA=</HashCode>
+      <FileName>UI\Common\ValueLabel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.Common.HealthBar" Collapsed="true">
+    <Position X="4" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAABAACAAAAAQAAAgAAAAAAEAAAA=</HashCode>
+      <FileName>UI\Game\HealthBar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.Common.ManaBar" Collapsed="true">
+    <Position X="4" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>UI\Game\ManaBar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.Common.XpBar" Collapsed="true">
+    <Position X="6.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>UI\Game\XpBar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.Common.Window" Collapsed="true">
+    <Position X="30.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAIAAgGAAAIEEAAABCEAAAAACoAEAAKAARAAAAAAA=</HashCode>
+      <FileName>UI\Menus\Window.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.ChatBox" Collapsed="true">
+    <Position X="9.75" Y="33.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgoQAAAoBAAAAAAIRAAAAAAAAgAABAAAgAyAECFgA=</HashCode>
+      <FileName>UI\Chat\ChatBox.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.ErrorTextControl" Collapsed="true">
+    <Position X="11.75" Y="33.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAIAAABAAAAQAAAAFAAAAAJAAAAAAAAAAAAAECAAA=</HashCode>
+      <FileName>UI\ErrorText\ErrorTextControl.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.BuffBar" Collapsed="true">
+    <Position X="1.75" Y="33.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAgAAAAAAAAAAAAgCBAACAAAEAAAAAEAAAAAAEAwAA=</HashCode>
+      <FileName>UI\Game\BuffBar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.BuffComparer" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="29.25" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>UI\Game\BuffComparer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Client.UI.CastBar" Collapsed="true">
+    <Position X="7.75" Y="33.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAAAAABAAGAAAAAAAAACAAAAAAEAAAA=</HashCode>
+      <FileName>UI\Game\CastBar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.SpellBar" Collapsed="true">
+    <Position X="13.75" Y="33.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABABAACAAAAAAABAQAAAAAAAAQEAAACAAAAAAAAA=</HashCode>
+      <FileName>UI\Game\SpellBar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.SpellBarButton" Collapsed="true">
+    <Position X="30.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAAgBAAIAAAAAAABAgAAAAAAEAAAA=</HashCode>
+      <FileName>UI\Game\SpellBarButton.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.SpellButton" Collapsed="true">
+    <Position X="30.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgABAAJAAAAAAAAAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>UI\Game\SpellButton.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.UnitFrame" Collapsed="true">
+    <Position X="5.75" Y="33.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAggAAAIAAAAAABCACBACAAAAAAAAAAAAIEQCCA=</HashCode>
+      <FileName>UI\Game\UnitFrame.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.UnitHoverFrame" Collapsed="true">
+    <Position X="3.75" Y="33.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAAAAABAACAACAAAAAAAAAAAAIEQCAA=</HashCode>
+      <FileName>UI\Game\UnitHoverFrame.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.SpellBook" Collapsed="true">
+    <Position X="28.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAgAABAACAAAAAEAAAAAABAAAEAAiI=</HashCode>
+      <FileName>UI\Menus\Abilities.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.MainMenu" Collapsed="true">
+    <Position X="33" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AFAAAQAAAAAAAAIAAAhAIAAECCAAAAAAAAAAIAEAAAA=</HashCode>
+      <FileName>UI\Menus\MainMenu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.Ticker" Collapsed="true">
+    <Position X="34.5" Y="15.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAIAAAAAAAAAAAIAAAAAAAAAAIAAAgAAAAAAI=</HashCode>
+      <FileName>UI\Ticker.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.UiManager">
+    <Position X="5.5" Y="24.25" Width="1.5" />
+    <AssociationLine Name="Hover" Type="Client.Objects.UnitControl" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="6.812" Y="27.155" />
+        <Point X="6.812" Y="30.009" />
+        <Point X="7.292" Y="30.009" Type="JumpStart" />
+        <Point X="7.458" Y="30.009" Type="JumpEnd" />
+        <Point X="17.042" Y="30.009" Type="JumpStart" />
+        <Point X="17.208" Y="30.009" Type="JumpEnd" />
+        <Point X="22.5" Y="30.009" />
+        <Point X="22.5" Y="29.375" />
+        <Point X="25.667" Y="29.375" Type="JumpStart" />
+        <Point X="25.833" Y="29.375" Type="JumpEnd" />
+        <Point X="28.562" Y="29.375" />
+        <Point X="28.562" Y="29.75" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.885" Y="0.176" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="MainHeroControl" Type="Client.Objects.HeroControl" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="6.75" Y="27.155" />
+        <Point X="6.75" Y="30.228" />
+        <Point X="7.292" Y="30.228" Type="JumpStart" />
+        <Point X="7.458" Y="30.228" Type="JumpEnd" />
+        <Point X="16.413" Y="30.228" />
+        <Point X="16.413" Y="31.75" />
+        <Point X="25" Y="31.75" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Target" Type="Client.Objects.UnitControl" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="6.875" Y="27.155" />
+        <Point X="6.875" Y="30.009" />
+        <Point X="7.292" Y="30.009" Type="JumpStart" />
+        <Point X="7.458" Y="30.009" Type="JumpEnd" />
+        <Point X="17.042" Y="30.009" Type="JumpStart" />
+        <Point X="17.208" Y="30.009" Type="JumpEnd" />
+        <Point X="22.5" Y="30.009" />
+        <Point X="22.5" Y="29.375" />
+        <Point X="25.667" Y="29.375" Type="JumpStart" />
+        <Point X="25.833" Y="29.375" Type="JumpEnd" />
+        <Point X="28" Y="29.375" />
+        <Point X="28" Y="29.75" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.012" Y="0.549" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="abilityBar" Type="Client.UI.SpellBar" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="6.125" Y="27.155" />
+        <Point X="6.125" Y="32.552" />
+        <Point X="14.5" Y="32.552" />
+        <Point X="14.5" Y="33.5" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="castBar" Type="Client.UI.CastBar" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.938" Y="27.155" />
+        <Point X="5.938" Y="32.516" />
+        <Point X="8.5" Y="32.516" />
+        <Point X="8.5" Y="33.5" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="chatBox" Type="Client.UI.ChatBox" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="6" Y="27.155" />
+        <Point X="6" Y="32.51" />
+        <Point X="10.5" Y="32.51" />
+        <Point X="10.5" Y="33.5" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="errors" Type="Client.UI.ErrorTextControl" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="6.062" Y="27.155" />
+        <Point X="6.062" Y="32.536" />
+        <Point X="12.5" Y="32.536" />
+        <Point X="12.5" Y="33.5" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="heroBuffBar" Type="Client.UI.BuffBar" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.688" Y="27.155" />
+        <Point X="5.688" Y="32.489" />
+        <Point X="2.5" Y="32.489" />
+        <Point X="2.5" Y="33.5" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="heroFrame" Type="Client.UI.UnitFrame" FixedFromPoint="true">
+      <Path>
+        <Point X="5.812" Y="27.155" />
+        <Point X="5.812" Y="33.5" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="hoverFrame" Type="Client.UI.UnitHoverFrame" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.75" Y="27.155" />
+        <Point X="5.75" Y="32.501" />
+        <Point X="4.5" Y="32.501" />
+        <Point X="4.5" Y="33.5" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="menus" Type="Client.UI.Menus.MenuBar" ManuallyRouted="true">
+      <Path>
+        <Point X="7" Y="25.703" />
+        <Point X="7.375" Y="25.703" />
+        <Point X="7.375" Y="32.547" />
+        <Point X="16.75" Y="32.547" />
+        <Point X="16.75" Y="33.5" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="targetFrame" Type="Client.UI.UnitFrame" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.875" Y="27.155" />
+        <Point X="5.875" Y="32.497" />
+        <Point X="6.187" Y="32.497" />
+        <Point X="6.187" Y="33.5" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>BAAIAAAACCAQAAAQBAEgBCIAEAAAAEgAAQAgAEEAAAA=</HashCode>
+      <FileName>UI\UiManager.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="abilityBar" />
+      <Field Name="castBar" />
+      <Field Name="chatBox" />
+      <Field Name="errors" />
+      <Field Name="heroBuffBar" />
+      <Field Name="heroFrame" />
+      <Field Name="hoverFrame" />
+      <Field Name="menus" />
+      <Field Name="targetFrame" />
+      <Property Name="FloatingText" />
+      <Property Name="Hover" />
+      <Property Name="MainHeroControl" />
+      <Property Name="Target" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Client.UI.CombatText.FloatingTextProvider">
+    <Position X="1.25" Y="24.25" Width="1.5" />
+    <NestedTypes>
+      <Class Name="Client.UI.CombatText.FloatingTextProvider.TextData" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>UI\CombatText\FloatingTextProvider.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAABAAAABACAAAgIQABAACAAAAAAEAAAA=</HashCode>
+      <FileName>UI\CombatText\FloatingTextProvider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.ErrorText.RangeIndicator" Collapsed="true">
+    <Position X="35.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UI\ErrorText\RangeIndicator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.Menus.Character.StatBox" Collapsed="true">
+    <Position X="44.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAgAAAAAAIIAAAAAAEAgBAAAAEICIAAAAMAEAA=</HashCode>
+      <FileName>UI\Menus\Character\StatBox.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.Menus.CharacterMenu" Collapsed="true">
+    <Position X="26.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAIAACAiAAAAAAAAAAAACIAAEEAAA=</HashCode>
+      <FileName>UI\Menus\Character.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.Menus.KeybindsMenu" Collapsed="true">
+    <Position X="30.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAAAQAEAAAQAAoBAAABAAAgAAAAEA=</HashCode>
+      <FileName>UI\Menus\Keybinds.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.Menus.MenuBar" Collapsed="true">
+    <Position X="16" Y="33.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAIAAAAQCAAAAAAUQAAAAFAAAAQAAABACAA=</HashCode>
+      <FileName>UI\Menus\MenuBar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.Menus.OptionsWindow" Collapsed="true">
+    <Position X="35.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UI\Menus\Options.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.Menus.Keybinds.KeybindPanel" Collapsed="true">
+    <Position X="17.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UI\Menus\Keybinds\KeybindPanel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.Menus.Keybinds.KeyBoxLabel" Collapsed="true">
+    <Position X="21.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAAAAAAAAAgAAAAAAAAgAAQAAAAEAAAQ=</HashCode>
+      <FileName>UI\Menus\Keybinds\KeyBoxLabel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.Tooltips.AbilityTip" Collapsed="true">
+    <Position X="26.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAABAAAAAAAAAgAAAAEAAAAECAAQ=</HashCode>
+      <FileName>UI\Tooltips\AbilityTip.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.UI.Tooltips.SimpleTip" Collapsed="true">
+    <Position X="37.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAgAACAECAAA=</HashCode>
+      <FileName>UI\Tooltips\SimpleTip.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Client.Input.Keybind" Collapsed="true">
+    <Position X="29.25" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABQAEAAAAAAwEgAAAAAAAAAAAAIAAAIAIAAEAAiA=</HashCode>
+      <FileName>Input\Keybind.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Interface Name="Client.IClientEngine" Collapsed="true">
+    <Position X="29.25" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAABAAAAQAgAAAAAAAAAACAAGACAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Interfaces\IClientEngine.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Client.IClientInstance" Collapsed="true">
+    <Position X="31" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAAAACAAAAAAABAAAAAAAAAI=</HashCode>
+      <FileName>Interfaces\IClientInstance.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Client.IClientSystem" Collapsed="true">
+    <Position X="32.75" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IClientSystem.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="Client.Input.GameAction" Collapsed="true">
+    <Position X="34.5" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAACAAAAAAAAAAAAAAIBAAAAAhIQAhAAAAAgAA=</HashCode>
+      <FileName>Input\GameAction.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Client.Input.ModifierKeys" Collapsed="true">
+    <Position X="36.25" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAAAgAAAAAAAAAAAAAAAAAAIAAAAEAAAA=</HashCode>
+      <FileName>Input\ModifierKeys.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Client.Input.MouseButton" Collapsed="true">
+    <Position X="38" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAAAAAAAAAAAACAAAAAAAAAAAAACACQAAAAAAA=</HashCode>
+      <FileName>Input\MouseButtonArgs.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Client.UI.Common.BarColorStyle" Collapsed="true">
+    <Position X="31" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAgAABAAAA=</HashCode>
+      <FileName>UI\Game\HealthBar.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Client.UI.AnchorMode" Collapsed="true">
+    <Position X="29.25" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAQAAAAAAAIAAAACICAAAEAAAA=</HashCode>
+      <FileName>UI\Control.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Client.UI.CombatText.FloatingTextStyle" Collapsed="true">
+    <Position X="32.75" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAIEAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UI\CombatText\FloatingTextProvider.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

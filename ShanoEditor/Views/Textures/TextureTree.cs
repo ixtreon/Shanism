@@ -210,6 +210,9 @@ namespace ShanoEditor.Views.Content
                     Model.AddTexture(fn, destNode.Name);
 
                 await Model.Reload();
+
+                SelectedNode = Nodes.Find(destNode.Name, true).FirstOrDefault();
+                SelectedNode?.Expand();
             }
             //move other nodes
             else if (drgevent.Data.GetDataPresent(typeof(TreeNode)))
@@ -314,7 +317,7 @@ namespace ShanoEditor.Views.Content
                 });
             }
 
-            rootNode.ExpandAll();
+            rootNode.Expand();
 
         }
 

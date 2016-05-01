@@ -50,11 +50,7 @@ namespace Engine.Objects
             get { return _scale; }
             set
             {
-                if (value <= 0 || value > IO.Constants.Engine.MaximumObjectSize)
-                    throw new ArgumentOutOfRangeException(nameof(value), 
-                        $"Value must be between 0 and {IO.Constants.Engine.MaximumObjectSize} (see {nameof(IO.Constants.Engine.MaximumObjectSize)}). ");
-
-                _scale = value;
+                _scale = value.Clamp(0, IO.Constants.Engine.MaximumObjectSize);
             }
         }
 
@@ -75,7 +71,7 @@ namespace Engine.Objects
         public dynamic Data { get; set; }
 
         /// <summary>
-        /// Gets whether this entity should be removed from the map.
+        /// Gets whether this entity should be removed from the map as soon as possible. 
         /// </summary>
         internal bool IsDestroyed { get; set; }
 

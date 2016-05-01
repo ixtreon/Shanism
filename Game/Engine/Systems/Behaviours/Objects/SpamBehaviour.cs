@@ -32,7 +32,7 @@ namespace Engine.Systems.Behaviours
             if (TargetUnit == null)
                 return false;
 
-            Ability = Unit
+            Ability = Owner
                 .GetAbilitiesOfType(AbilityType.Spammable)
                 .FirstOrDefault(a => a.CanCast(TargetUnit));
 
@@ -43,5 +43,7 @@ namespace Engine.Systems.Behaviours
         {
             CurrentOrder = new CastOrder(Ability, TargetUnit);
         }
+
+        public override string ToString() => $"Cast {Ability}";
     }
 }

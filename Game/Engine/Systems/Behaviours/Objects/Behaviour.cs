@@ -17,16 +17,10 @@ namespace Engine.Systems.Behaviours
     /// </summary>
     public abstract class Behaviour
     {
-        protected Unit Owner { get; }
-
-
         /// <summary>
         /// Gets the unit this behaviour controls. 
         /// </summary>
-        public Unit Unit
-        {
-            get { return Owner; }
-        }
+        protected Unit Owner { get; }
 
         /// <summary>
         /// Gets the current order suggested by the behaviour. 

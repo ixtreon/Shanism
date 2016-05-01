@@ -23,7 +23,7 @@ namespace Client
         public static double UiScale { get; private set; } = DefaultUiScale;
 
         /// <summary>
-        /// Gets the in-game size of the screen. 
+        /// Gets the size of the screen window in in-game units. 
         /// </summary>
         public static Vector InGameSize { get; private set; } = Constants.Client.WindowSize;
 
@@ -33,17 +33,17 @@ namespace Client
         public static RectangleF InGameBounds { get; private set; }
 
         /// <summary>
-        /// Gets the screen size in pixels. 
+        /// Gets the size of the screen window in pixels. 
         /// </summary>
-        public static Point ScreenSize { get; private set; } = new Point(800, 600);
+        public static Point Size { get; private set; } = new Point(800, 600);
 
         /// <summary>
-        /// Gets half the size of the sreen in pixels. 
+        /// Gets half the size of the sreen window in pixels. 
         /// </summary>
         public static Point ScreenHalfSize { get; private set; }
 
         /// <summary>
-        /// Gets the font scale, which is simply the curent Ui scale over the default one. 
+        /// Gets the font scale, which is the curent Ui scale over the default one. 
         /// </summary>
         public static double FontScale { get; private set; } = 1;
 
@@ -51,7 +51,7 @@ namespace Client
         /// <summary>
         /// Gets the size of the screen in UI units. 
         /// </summary>
-        public static Vector UiSize => (Vector)ScreenSize / UiScale;
+        public static Vector UiSize => (Vector)Size / UiScale;
 
         /// <summary>
         /// Gets the camera center point in in-game coordinates. 
@@ -71,10 +71,10 @@ namespace Client
         {
             if (windowSz != null)
             {
-                ScreenSize = windowSz.Value;
-                ScreenHalfSize = ScreenSize / 2;
+                Size = windowSz.Value;
+                ScreenHalfSize = Size / 2;
 
-                UiScale = Math.Min(ScreenSize.X, ScreenSize.Y) / 2;
+                UiScale = Math.Min(Size.X, Size.Y) / 2;
                 FontScale = UiScale / DefaultUiScale;
             }
 
@@ -92,7 +92,7 @@ namespace Client
         /// </summary>
         public static Vector GameToScreen(Vector p)
         {
-            return (p - InGameCenter) * ScreenSize / InGameSize + ScreenHalfSize;
+            return (p - InGameCenter) * Size / InGameSize + ScreenHalfSize;
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace Client
         /// </summary>
         public static Vector ScreenToGame(Vector position)
         {
-            return (position - ScreenHalfSize) *  InGameSize / ScreenSize + InGameCenter;
+            return (position - ScreenHalfSize) *  InGameSize / Size + InGameCenter;
         }
 
 
@@ -140,9 +140,9 @@ namespace Client
         /// <summary>
         /// Gets the UI size of the given screen size. 
         /// </summary>
-        public static double ScreenToUi(int sz)
+        public static double ScreenToUi(double sz)
         {
-            return (double)sz / UiScale;
+            return sz / UiScale;
         }
     }
 }

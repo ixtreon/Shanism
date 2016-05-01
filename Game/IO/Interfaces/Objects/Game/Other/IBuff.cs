@@ -53,6 +53,16 @@ namespace IO.Objects
         double Mana { get; }
 
         /// <summary>
+        /// Gets the life regen modifier of this buff. 
+        /// </summary>
+        double LifeRegen { get; }
+
+        /// <summary>
+        /// Gets the mana regen modifier of this buff. 
+        /// </summary>
+        double ManaRegen { get; }
+
+        /// <summary>
         /// Gets the defense provided by this buff. 
         /// </summary>
         double Defense { get; }

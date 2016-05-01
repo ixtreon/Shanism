@@ -286,10 +286,8 @@ namespace IO.Common
         /// <returns>
         /// A <see cref="System.String" /> that represents this instance.
         /// </returns>
-        public override string ToString()
-        {
-            return "[ {0}, {1}, {2}, {3} ]".F(X, Y, Width, Height);
-        }
+        public override string ToString() =>
+            $"[{X}, {Y}, {Width}, {Height}]";
 
         /// <summary>
         /// Determines whether the specified <see cref="object" />, is equal to this instance.

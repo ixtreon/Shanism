@@ -32,7 +32,7 @@ namespace Engine.Systems
                 return;
 
             if (!Owner.Order.Update(Owner, msElapsed))
-                Owner.OrderStand();
+                Owner.Clear();
         }
     }
 }

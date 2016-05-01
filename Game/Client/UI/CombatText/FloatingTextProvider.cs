@@ -33,15 +33,15 @@ namespace Client.UI.CombatText
 
         Vector[] textGravities =
         {
-            new Vector(0, 0),
-            new Vector(0, 0),
-            new Vector(0, 12),
+            new Vector(0, 10),
+            new Vector(0, -10),
+            new Vector(0, 10),
         };
 
         Vector[] textSpeeds =
         {
             new Vector(0, -12),
-            new Vector(0, 5),
+            new Vector(0, 12),
             new Vector(2.5, -7),
         };
 
@@ -86,8 +86,12 @@ namespace Client.UI.CombatText
 
         public void AddLabel(Vector inGamePos, string text, Color c, FloatingTextStyle style)
         {
+            var speed = textSpeeds[(int)style];
             if (style == FloatingTextStyle.Rainbow)
+            {
                 rainbowXDirection = -rainbowXDirection;
+                speed *= new Vector(rainbowXDirection, 1);
+            }
 
             var td = new TextData
             {
@@ -96,7 +100,7 @@ namespace Client.UI.CombatText
                 Text = text,
                 Duration = DefaultDuration,
 
-                Velocity = textSpeeds[(int)style] * new Vector(rainbowXDirection, 1),
+                Velocity = speed,
                 Style = style,
             };
             labels.Add(td);
@@ -125,7 +129,7 @@ namespace Client.UI.CombatText
             foreach (var td in labels)
             {
                 var screenPos = Screen.GameToScreen(td.Location);
-                Content.Fonts.NormalFont.DrawStringScreen(g.SpriteBatch, td.Text, td.Color, screenPos, 0.5f, 0.5f);
+                Content.Fonts.NormalFont.DrawStringPx(g.SpriteBatch, td.Text, td.Color, screenPos, 0.5f, 0.5f);
             }
         }
     }

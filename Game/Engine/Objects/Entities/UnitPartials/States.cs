@@ -18,6 +18,6 @@ namespace Engine.Objects
         /// <summary>
         /// Gets the base states of the unit. 
         /// </summary>
-        public UnitFlags BaseStates { get; protected internal set; } = UnitFlags.None;
+        public UnitFlags BaseStates { get; protected set; } = UnitFlags.None;
     }
 }

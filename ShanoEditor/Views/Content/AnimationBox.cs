@@ -42,8 +42,11 @@ namespace ShanoEditor.Views.Content
         {
             var toContinue = !frameTicker.Tick() || Animation.IsLooping;
 
-            if(!toContinue)
+            if (!toContinue)
+            {
                 elapsedCounter.Enabled = false;
+                frameTicker.Tick(Animation.Span.Area - 1);
+            }
 
             Invalidate();
         }     

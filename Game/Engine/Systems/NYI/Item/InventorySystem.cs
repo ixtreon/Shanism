@@ -59,6 +59,7 @@ namespace Engine.Systems.Item
                 return true;
             }
         }
+
         public bool TryEquipItem(int fromBackpackSlot, InventorySlots slot)
         {
             lock (_lock)

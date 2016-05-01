@@ -30,7 +30,7 @@ namespace Client.Objects
             base.OnUpdate(Unit.IsDead ? 0 :  msElapsed);
 
             if (Unit.IsDead)
-                ZOrder = 1;
+                ZOrder = 0;
         }
         
         public override void OnDraw(Graphics g)
@@ -40,7 +40,7 @@ namespace Client.Objects
             var c = Unit.IsDead ? Color.Black : Object.CurrentTint.ToColor();
             g.Draw(Sprite, Vector.Zero, Size, c, (float)ZOrder);
 
-            if ((MouseOver || ShanoSettings.Current.QuickButtonPress) && !Unit.IsDead)
+            if ((MouseOver || Settings.Current.QuickButtonPress) && !Unit.IsDead)
             {
                 var barBackColor = Color.Black.SetAlpha(100);
                 var barForeColor = Color.DarkRed.SetAlpha(210);

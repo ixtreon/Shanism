@@ -31,10 +31,7 @@ namespace Engine.Objects
         /// <summary>
         /// Gets the type of the unit's current order. 
         /// </summary>
-        public virtual OrderType OrderType
-        {
-            get { return Order?.Type ?? OrderType.Stand; }
-        }
+        public virtual OrderType OrderType => Order?.Type ?? OrderType.Stand;
 
         /// <summary>
         /// Gets or sets the current behaviour of this unit. 
@@ -55,36 +52,21 @@ namespace Engine.Objects
         /// <summary>
         /// Gets whether this unit is currently moving. 
         /// </summary>
-        public bool IsMoving
-        {
-            get { return (Order is IMoveOrder); }
-        }
+        public bool IsMoving => Order is IMoveOrder;
 
         /// <summary>
         /// Gets the direction in which this unit is moving, or <see cref="double.NaN"/> if it is standing. 
         /// </summary>
-        public double MoveDirection
-        {
-            get { return (Order as IMoveOrder)?.Direction ?? double.NaN; }
-        }
+        public double MoveDirection => (Order as IMoveOrder)?.Direction ?? double.NaN;
 
-        internal void SetOrder(IOrder ord, bool isCustom)
+        internal void SetOrder(IOrder ord, bool isCustomOrder = true)
         {
             Order = ord;
-            CustomOrder = isCustom;
+            CustomOrder = isCustomOrder;
 
             //raise the order changed event
             OrderChanged?.Invoke(Order);
             AnyOrderChanged?.Invoke(this, Order);
-        }
-
-        /// <summary>
-        /// Issues an order to this unit. 
-        /// </summary>
-        /// <param name="ord"></param>
-        internal void SetOrder(IOrder ord)
-        {
-            SetOrder(ord, true);
         }
 
         /// <summary>
@@ -138,28 +120,12 @@ namespace Engine.Objects
         /// <summary>
         /// Orders the unit to stop moving and stand in one place. 
         /// </summary>
-        public void OrderStand()
-        {
-            SetOrder(new Stand(), false);
-        }
+        public void Stand() => SetOrder(new Stand(), true); 
 
         /// <summary>
         /// Clears the current order of the unit. 
-        /// Does the same job as <see cref="OrderStand"/>. 
         /// </summary>
-        public void ClearOrder()
-        {
-            OrderStand();
-        }
-
-        /// <summary>
-        /// Orders the unit to stop doing whatever. 
-        /// Does the same job as <see cref="OrderStand"/>. 
-        /// </summary>
-        public void Stop()
-        {
-            ClearOrder();
-        }
+        public void Clear() => SetOrder(new Stand(), false);
 
         //public void OrderMove(Vector target)
         //{

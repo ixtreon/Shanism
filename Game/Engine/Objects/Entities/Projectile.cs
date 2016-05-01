@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Engine.Maps;
 using IO.Common;
 using Engine.Objects.Entities;
+using IO;
 
 namespace Engine.Objects.Entities
 {
@@ -73,11 +74,14 @@ namespace Engine.Objects.Entities
         /// <summary>
         /// Creates a new projectile at the specified in-game location. 
         /// </summary>
+        /// <param name="owner">The unit that owns the projectile. </param>
         /// <param name="ignoredUnits">The collection this projectile will not collide with. </param>
-        public Projectile(IEnumerable<Unit> ignoredUnits = null)
+        public Projectile(Unit owner, IEnumerable<Unit> ignoredUnits = null)
         {
-            if(ignoredUnits != null)
-                foreach(var u in ignoredUnits)
+            Owner = owner;
+
+            if (ignoredUnits != null)
+                foreach (var u in ignoredUnits)
                     unitsHit.Add(u);
         }
 
@@ -90,38 +94,40 @@ namespace Engine.Objects.Entities
             // update location
             var dist = (Speed * msElapsed / 1000);
             Position = Position.PolarProjection(Direction, dist);
-            this.DistanceTravelled += dist;
+            DistanceTravelled += dist;
 
             //get valid targets
-            //TODO: use Bounds.Size instead of textureSize
-            var units = Map.GetUnitsInRange(Position, Scale / 2 + IO.Constants.Engine.MaximumObjectSize)
-                .Where(u => u.IsNonPlayable() && !u.IsDead);
+            var units = Map
+                .GetUnitsInRange(Position, (Scale + IO.Constants.Engine.MaximumObjectSize) / 2 )
+                .Where(u => !u.IsDead
+                    && u.Owner.IsEnemyOf(Owner)
+                    && !unitsHit.Contains(u)
+                    && u.Position.DistanceTo(Position) < (u.Scale + Scale) / 2)
+                .ToList();
 
-            if(units.Any())
+            if (units.Any())
             {
-                //get units hit by the projectile
-                var collidedUnits = units
-                    .Where(u => !unitsHit.Contains(u))
-                    .OrderBy(u => u.Position.DistanceToSquared(Position))
-                    .ToList();
+                if (DestroyOnCollision)
+                {
+                    var firstUnit = units.ArgMin(u => u.Position.DistanceToSquared(Position));
+
+                    OnUnitCollision?.Invoke(this, firstUnit);
+
+                    Destroy();
+                    return;
+                }
 
                 // and fire the event. 
-                foreach (var target in collidedUnits)
+                foreach (var target in units)
                 {
                     unitsHit.Add(target);
 
                     OnUnitCollision?.Invoke(this, target);
-
-                    if (DestroyOnCollision)
-                    {
-                        this.Destroy();
-                        break;
-                    }
                 }
             }
 
             if (DistanceTravelled > MaxRange && MaxRange > 0)
-                this.Destroy();
+                Destroy();
 
             base.Update(msElapsed);
         }

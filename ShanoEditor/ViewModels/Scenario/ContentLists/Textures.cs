@@ -123,7 +123,8 @@ namespace ShanoEditor.ViewModels
             var fileName = Path.GetFileName(srcPath);
             var destFile = Path.Combine(destFolder, fileName);
 
-            File.Copy(srcPath, destFile);
+            if(!File.Exists(destFile))
+                File.Copy(srcPath, destFile);
         }
 
         public void MoveTexture(TextureViewModel tex, string newDir)

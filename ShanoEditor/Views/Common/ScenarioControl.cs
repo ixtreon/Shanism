@@ -40,7 +40,7 @@ namespace ShanoEditor.Views
                 Model = model;
 
                 Loading = true;
-                LoadModel();
+                await LoadModel();
                 Loading = false;
             }
         }

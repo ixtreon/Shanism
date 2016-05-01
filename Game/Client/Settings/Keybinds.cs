@@ -13,10 +13,12 @@ namespace Client
     //unused
     class KeybindSettings
     {
-        const int MaxButtonsPerBar = 100;
 
         [JsonProperty]
         Dictionary<GameAction, Keybind> rawKeybinds = new Dictionary<GameAction, Keybind>();
+
+
+        public IEnumerable<KeyValuePair<GameAction, Keybind>> BoundActions => rawKeybinds;
 
         [JsonConstructor]
         KeybindSettings() { }
@@ -42,7 +44,7 @@ namespace Client
             this[GameAction.Chat] = Keys.Enter;
 
 
-            foreach(var i in Enumerable.Range(1, 9))
+            foreach (var i in Enumerable.Range(1, 9))
                 this[0, i - 1] = new Keybind(Keys.D0 + i);
 
 
@@ -56,18 +58,15 @@ namespace Client
         public Keybind this[GameAction act]
         {
             get { return rawKeybinds.TryGetVal(act) ?? Keybind.None; }
-            set
-            {
-                setKeybind(act, value);
-            }
+            set { setKeybind(act, value); }
         }
 
         public Keybind this[int barId, int keyId]
         {
-            get { return rawKeybinds.TryGetVal(actionId(barId, keyId)) ?? Keybind.None; }
+            get { return rawKeybinds.TryGetVal(AbilityGameAction.FromId(barId, keyId)) ?? Keybind.None; }
             set
             {
-                var act = actionId(barId, keyId);
+                var act = AbilityGameAction.FromId(barId, keyId);
                 setKeybind(act, value);
             }
         }
@@ -79,27 +78,46 @@ namespace Client
 
         public Keybind? TryGet(int barId, int keyId)
         {
-            var aid = actionId(barId, keyId);
+            var aid = AbilityGameAction.FromId(barId, keyId);
             return rawKeybinds.TryGetVal(aid);
         }
 
         void setKeybind(GameAction act, Keybind button)
         {
-            //see what this was doing
+            //clear keybind if none
+            if (button == Keybind.None)
+            {
+                rawKeybinds.Remove(act);
+                return;
+            }
+
+            //see if binding is new
             var oldKeyAction = rawKeybinds.FirstOrDefault(kvp => kvp.Value == button).Key;
             if (oldKeyAction != act)
             {
-                //remove old functionality
+                //remove old binding, if any
                 rawKeybinds.Remove(oldKeyAction);
 
                 //add new binding
                 rawKeybinds[act] = button;
             }
         }
+    }
 
-        static GameAction actionId(int barId, int keyId)
-        {
-            return GameAction.ActionBar + barId * MaxButtonsPerBar + keyId;
-        }
+    static class AbilityGameAction
+    {
+        const int MaxButtonsPerBar = 20;
+
+        public static GameAction FromId(int barId, int keyId) =>
+            GameAction.ActionBar_0_0 + barId * MaxButtonsPerBar + keyId;
+
+        public static bool IsBarAction(this GameAction act) =>
+            act >= GameAction.ActionBar_0_0;
+
+        public static int GetBarId(this GameAction act) =>
+            (act - GameAction.ActionBar_0_0) / MaxButtonsPerBar;
+
+        public static int GetButtonId(this GameAction act) =>
+            (act - GameAction.ActionBar_0_0) % MaxButtonsPerBar;
     }
 }

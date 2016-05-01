@@ -4,6 +4,7 @@ using IO;
 using IO.Content;
 using IO.Message.Server;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using ScenarioLib;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace Client
 
 
         /// <summary>
-        /// Gets the listing of models and textures used in the game. 
+        /// Gets the listing of textures and animations in the game. 
         /// </summary>
         public static ContentList Listing { get; } = new ContentList();
 
@@ -36,13 +37,17 @@ namespace Client
 
         public static TextureCache Textures { get; } = new TextureCache();
 
-        public static SpriteCache Sprites { get; } = new SpriteCache(Listing);
+        internal static SpriteCache Sprites { get; } = new SpriteCache(Listing);
 
         public static TerrainCache Terrain { get; } = new TerrainCache();
 
+        public static CircleDict Circles { get; set; }
 
-        public static void LoadDefaultContent(ContentManager content)
+        public static void LoadDefaultContent(GraphicsDevice graphics, ContentManager content)
         {
+            Circles = new CircleDict(32, 16384, graphics);
+
+
             var textures = Directory.EnumerateFiles(DefaultContentDirectory, "*.png", SearchOption.AllDirectories)
                 .Select(fn => fn
                     .ToLowerInvariant()

@@ -7,20 +7,26 @@ using System.Threading.Tasks;
 namespace IO
 {
     /// <summary>
-    /// Provides generic access to the values of an enumeration. 
+    /// Provides fast, generic access to the values of an enumeration. 
     /// </summary>
-    /// <typeparam name="T">The enumeration to access the values of. </typeparam>
-    public class Enum<T>
-        where T : struct
+    /// <typeparam name="TEnum">The enumeration to access the values of. </typeparam>
+    public class Enum<TEnum>
+        where TEnum : struct, IConvertible, IComparable, IFormattable
     {
         /// <summary>
-        /// Gets all the values of the provided enum. 
+        /// Gets all the values of the provided enum type. 
         /// </summary>
-        public static IReadOnlyList<T> Values { get; } = Enum.GetValues(typeof(T)).Cast<T>().ToList();
+        public static IReadOnlyList<TEnum> Values { get; } = Enum.GetValues(typeof(TEnum))
+            .Cast<TEnum>()
+            .OrderBy(e => e.ToString())
+            .ToList();
 
         /// <summary>
         /// Gets the names of all values in the provided enum. 
         /// </summary>
-        public static IReadOnlyList<string> Names { get; } = Values.Select(val => Enum.GetName(typeof(T), val)).ToList();
+        public static IReadOnlyList<string> Names { get; } = Values
+            .Select(val => Enum.GetName(typeof(TEnum), val))
+            .OrderBy(s => s)
+            .ToList();
     }
 }

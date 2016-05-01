@@ -50,8 +50,16 @@ namespace Client.UI
             oldMouseState = Mouse.GetState(),
             mouseState = Mouse.GetState();
 
+        /// <summary>
+        /// Gets the first control that is under the mouse pointer
+        /// and has <see cref="CanHover"/> set to <c>true</c>. 
+        /// </summary>
         internal static Control HoverControl { get; private set; }   //todo: make protected
 
+        /// <summary>
+        /// Gets the control that currently has keyboard focus. 
+        /// A control must have its <see cref="CanFocus"/> property set to <c>true</c> in order to become the <see cref="FocusControl"/>.
+        /// </summary>
         internal static Control FocusControl { get; private set; }
 
         #endregion
@@ -161,7 +169,7 @@ namespace Client.UI
 
         /// <summary>
         /// The event whenever a game action (a key and zero or more modifier keys) 
-        /// is activated (pressed or released as per <see cref="ShanoSettings.QuickButtonPress"/>). 
+        /// is activated (pressed or released as per <see cref="Settings.QuickButtonPress"/>). 
         /// </summary>
         public event Action<GameAction> GameActionActivated;
 
@@ -239,7 +247,7 @@ namespace Client.UI
         /// </summary>
         public IEnumerable<Control> Controls => controls;
 
-        public bool IsFocused => (FocusControl == this);
+        public bool HasFocus => (FocusControl == this);
 
 
         protected Control()
@@ -318,11 +326,14 @@ namespace Client.UI
 
 
         /// <summary>
-        /// Adds the specified control as a child of this control. 
+        /// Adds the specified control as a child of this control.
         /// </summary>
-        /// <param name="c"></param>
-        public void Add(Control c, bool relativeAnchor = true)
+        /// <param name="c">The control that is to be added. Cannot be null.</param>
+        /// <exception cref="System.ArgumentNullException"></exception>
+        public void Add(Control c)
         {
+            if (c == null) throw new ArgumentNullException(nameof(c));
+
             controls.Add(c);
 
             c.Parent = this;
@@ -498,7 +509,7 @@ namespace Client.UI
                     .Invoke(new MouseButtonArgs(HoverControl, mPos, MouseButton.Right));
 
             //focus control
-            if(justPressedLeft || justPressedRight)
+            if (justPressedLeft || justPressedRight)
             {
                 var c = HoverControl;
                 while (!c.CanFocus && c.Parent != null)
@@ -530,17 +541,18 @@ namespace Client.UI
 
         void raiseKeyboardEvents()
         {
-            if (FocusControl != null)
+            var focus = FocusControl;
+            if (focus != null)
             {
-                //if (FocusControl.ActionActivated != null)
-                //    foreach (var ga in KeyboardInfo.JustActivatedActions)
-                //        FocusControl.ActionActivated(ga);
+                //order is important: 
+                // keys first so action.chat 
+                // doesnt activate chat.enterkey which closes chat bar
+                foreach (var k in KeyboardInfo.JustPressedKeys)
+                    if (!k.IsModifier())
+                        focus.KeyPressed?.Invoke(new Keybind(KeyboardInfo.Modifiers, k));
 
                 foreach (var ga in KeyboardInfo.JustActivatedActions)
-                    FocusControl.GameActionActivated?.Invoke(ga);
-
-                foreach (var k in KeyboardInfo.JustPressedKeys)
-                    FocusControl.KeyPressed?.Invoke(k);
+                    focus.GameActionActivated?.Invoke(ga);
             }
         }
 
@@ -552,7 +564,7 @@ namespace Client.UI
         {
             //span the whole window
             var min = Screen.ScreenToUi(Point.Zero);
-            var max = Screen.ScreenToUi(new Point(Screen.ScreenSize.X, Screen.ScreenSize.Y));
+            var max = Screen.ScreenToUi(new Point(Screen.Size.X, Screen.Size.Y));
 
             AbsolutePosition = min;   //use the lowercase field so we don't move children..
             Size = max - min;
@@ -563,7 +575,7 @@ namespace Client.UI
         /// </summary>
         public void SetFocus()
         {
-            if(CanFocus)
+            if (CanFocus)
                 FocusControl = this;
         }
 

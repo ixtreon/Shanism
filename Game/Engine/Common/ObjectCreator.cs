@@ -54,7 +54,7 @@ namespace Engine.Common
                 e.Scale = oc.Size;
 
             if (oc.Tint.HasValue)
-                e.DefaultTint = e.CurrentTint = oc.Tint.Value;
+                e.CurrentTint = e.DefaultTint = oc.Tint.Value;
 
             return e;
         }

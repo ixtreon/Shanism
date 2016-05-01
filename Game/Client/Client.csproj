@@ -136,13 +136,16 @@
     <Compile Include="ClientGame.cs" />
     <Compile Include="Interfaces\IClientEngine.cs" />
     <Compile Include="Interfaces\IClientSystem.cs" />
+    <Compile Include="UI\Chat\ChatBox.cs" />
+    <Compile Include="UI\Chat\IChatProvider.cs" />
+    <Compile Include="UI\CombatText\RangeIndicator.cs" />
+    <Compile Include="UI\Common\ProgressBar.cs" />
     <Compile Include="UI\Common\ValueLabel.cs" />
     <Compile Include="UI\ErrorText\ErrorTextControl.cs" />
-    <Compile Include="UI\ErrorText\RangeIndicator.cs" />
     <Compile Include="UI\Menus\Character\StatBox.cs" />
     <Compile Include="UI\Menus\Options.cs" />
     <Compile Include="UI\Ticker.cs" />
-    <Compile Include="Content.cs" />
+    <Compile Include="Assets\Content.cs" />
     <Compile Include="Assets\ContentList.cs" />
     <Compile Include="Assets\FontCache.cs" />
     <Compile Include="Assets\Sprite.cs" />
@@ -154,7 +157,7 @@
     <Compile Include="Input\MouseArgs.cs" />
     <Compile Include="Ext\Effects.cs" />
     <Compile Include="Ext\SpriteBatch.cs" />
-    <Compile Include="Input\ChatProvider.cs" />
+    <Compile Include="Input\KeyRepeater.cs" />
     <Compile Include="Input\ModifierKeys.cs" />
     <Compile Include="Input\GameAction.cs" />
     <Compile Include="Input\KeyboardInfo.cs" />
@@ -163,13 +166,12 @@
     <Compile Include="UI\Game\UnitHoverFrame.cs" />
     <Compile Include="UI\Menus\Keybinds\KeybindPanel.cs" />
     <Compile Include="UI\Menus\Keybinds\KeyBoxLabel.cs" />
-    <Compile Include="UI\Menus\MenuBar.cs" />
+    <Compile Include="UI\MenuBar.cs" />
     <Compile Include="UI\Game\SpellBarButton.cs" />
     <Compile Include="Settings\ShanoSettings.cs" />
     <Compile Include="Settings\Keybinds.cs" />
-    <Compile Include="Shaders.cs" />
+    <Compile Include="Assets\Shaders.cs" />
     <Compile Include="ShanoGame.cs" />
-    <Compile Include="Common\GameStatus.cs" />
     <Compile Include="Interfaces\IClientInstance.cs" />
     <Compile Include="Map\ChunkData.cs" />
     <Compile Include="Map\MapManager.cs" />
@@ -191,7 +193,7 @@
     <Compile Include="UI\Game\BuffBar.cs" />
     <Compile Include="UI\Game\BuffComparer.cs" />
     <Compile Include="UI\Game\CastBar.cs" />
-    <Compile Include="UI\Chat\ChatBox.cs" />
+    <Compile Include="UI\Chat\ChatBar.cs" />
     <Compile Include="UI\Common\Button.cs" />
     <Compile Include="UI\Game\HealthBar.cs" />
     <Compile Include="UI\Game\ManaBar.cs" />
@@ -209,7 +211,7 @@
     <Compile Include="UI\Tooltips\SimpleTip.cs" />
     <Compile Include="UI\Control.cs" />
     <Compile Include="UI\Common\ValueBar.cs" />
-    <Compile Include="UI\Window.cs" />
+    <Compile Include="UI\Menus\Window.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework, Version=3.4.0.459, Culture=neutral, processorArchitecture=MSIL">
@@ -271,6 +273,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="ClassDiagram1.cd" />
     <None Include="ClientContent.mgcb" />
     <None Include="packages.config" />
     <None Include="Shaders\shader.fx" />

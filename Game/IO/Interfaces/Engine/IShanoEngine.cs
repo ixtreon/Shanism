@@ -19,7 +19,7 @@ namespace IO
 
         /// <summary>
         /// Decides whether to accept the given client to the server. 
-        /// If the client is accepted returns the network recepter responsible for it. Otherwise returns null. 
+        /// If the client is accepted returns the network receptor responsible for it. Otherwise returns null. 
         /// </summary>
         /// <returns></returns>
         INetReceptor AcceptClient(IShanoClient c);

@@ -26,12 +26,14 @@ namespace Engine.Systems.Behaviours
             if (Target == null)
                 return false;
 
-            return Unit.Position.DistanceTo(Target.Position) > Distance;
+            return Owner.Position.DistanceTo(Target.Position) > Distance;
         }
 
         public override void Update(int msElapsed)
         {
             CurrentOrder = new MoveUnit(Target, Distance, true);
         }
+
+        public override string ToString() => $"Following {Target}";
     }
 }

@@ -31,16 +31,13 @@ namespace ShanoEditor.Views.Models
         {
             InitializeComponent();
 
-            Load(null, null);
+            SetAnimation(null, null);
         }
 
-        public void Load(TexturesViewModel texs, AnimationViewModel anim)
+        public void SetAnimation(TexturesViewModel texs, AnimationViewModel anim)
         {
-            {
-                Animation = anim;
-
-                Reload(texs);
-            }
+            Animation = anim;
+            Reload(texs);
         }
 
         /// <summary>
@@ -63,7 +60,7 @@ namespace ShanoEditor.Views.Models
 
                 //update right panel
                 animationBox.SetAnimation(Animation);
-                textureBox.SetTextureSpan(Animation);
+                textureBox.SetAnimation(Animation);
 
                 //update left panel
                 txtName.Text = Animation?.Name;
@@ -93,7 +90,7 @@ namespace ShanoEditor.Views.Models
             var texture = (TextureViewModel)btnTextures.SelectedItem;
 
             Animation.Texture = texture;
-            textureBox.SetTextureSpan(Animation);
+            textureBox.SetAnimation(Animation);
             animationBox.SetAnimation(Animation);
 
             AnimationChanged?.Invoke();

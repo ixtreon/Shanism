@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.UI.ErrorText
+namespace Client.UI.Chat
 {
-    class RangeIndicator : Control
+    interface IChatProvider
     {
+        event Action<string> MessageSent;
     }
 }

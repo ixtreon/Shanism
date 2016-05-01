@@ -25,6 +25,8 @@ namespace Client.UI
         readonly int BarId;
         readonly int ButtonId;
 
+        public Keybind CurrentKeybind { get; private set; }
+
 
         public SpellBarButton(int barId, int buttonId)
         {
@@ -63,20 +65,21 @@ namespace Client.UI
         {
             base.OnDraw(g);
 
-            var currentKey = ShanoSettings.Current.Keybinds.TryGet(BarId, ButtonId) ?? Keys.None;
             var str = "";
-            if (currentKey != Keys.None)
-                str = currentKey.ToShortString() ?? "?";
-            //draw keybind
+            if (CurrentKeybind != Keys.None)
+                str = CurrentKeybind.ToShortString() ?? "?";
 
+            //draw keybind
             g.DrawString(Font, str, Color.White, new Vector(), 0, 0);
         }
 
         protected override void OnUpdate(int msElapsed)
         {
-            var currentKey = ShanoSettings.Current.Keybinds.TryGet(BarId, ButtonId);
-            if (currentKey != null && KeyboardInfo.IsActivated(currentKey.Value))
-                IsSelected = true;
+            CurrentKeybind = getKeybind(BarId, ButtonId);
         }
+
+
+        static Keybind getKeybind(int barId, int btnId)
+            => Settings.Current.Keybinds.TryGet(barId, btnId) ?? Keybind.None;
     }
 }

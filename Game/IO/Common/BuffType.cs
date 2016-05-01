@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace IO.Common
 {
     /// <summary>
-    /// Indicates the way a buff stacks on its target. 
+    /// Indicates the way a buff stacks on its target in the context of a single caster. 
     /// </summary>
     public enum BuffType
     {
@@ -27,7 +27,7 @@ namespace IO.Common
         StackingNormal,
 
         /// <summary>
-        /// A buff that has stacks with a shared duration. 
+        /// A buff that has a number of stacks where each application resets existings stacks. 
         /// </summary>
         StackingRefresh,
 

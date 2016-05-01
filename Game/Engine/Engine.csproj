@@ -92,11 +92,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Common.Logging">
@@ -144,7 +143,6 @@
     <Compile Include="Objects\Buffs\Stunned.cs" />
     <Compile Include="Events\AbilityCastArgs.cs" />
     <Compile Include="Events\LocationChangeArgs.cs" />
-    <Compile Include="Events\ObjectMoveArgs.cs" />
     <Compile Include="GameSystem.cs" />
     <Compile Include="Maps\GameObjectMapper.cs" />
     <Compile Include="Maps\HashMap.cs" />
@@ -171,7 +169,6 @@
     <Compile Include="Events\UnitDamagedArgs.cs" />
     <Compile Include="Events\UnitDyingArgs.cs" />
     <Compile Include="Maps\MapSystem.cs" />
-    <Compile Include="Maps\Hash.cs" />
     <Compile Include="Objects\Entities\UnitPartials\Combat.cs" />
     <Compile Include="Objects\Entities\UnitPartials\Movement.cs" />
     <Compile Include="Objects\Entities\UnitPartials\Vision.cs" />
@@ -227,6 +224,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="ClassDiagram1.cd" />
+    <None Include="key.snk" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

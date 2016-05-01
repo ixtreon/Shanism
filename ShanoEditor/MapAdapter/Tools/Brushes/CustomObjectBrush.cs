@@ -49,8 +49,8 @@ namespace ShanoEditor.MapAdapter
             if (Object == null)
                 return;
 
-            var llPos = control.Engine.GameToScreen(inGamePos - Object.Scale / 2);
-            var urPos = control.Engine.GameToScreen(inGamePos + Object.Scale / 2);
+            var llPos = control.Client.GameToScreen(inGamePos - Object.Scale / 2);
+            var urPos = control.Client.GameToScreen(inGamePos + Object.Scale / 2);
             var tex = control.EditorContent.Circle;
             var c = canPlace(inGamePos) ? Color.Blue : Color.Red;
 

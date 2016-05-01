@@ -20,18 +20,12 @@ namespace ScenarioLib
     internal class ScenarioCompiler
     {
         #region Static and const members
-        public const string _OutputFileName = "scenario.dll";
-        public const string _ScenarioSubDir = "scenarios/";
+        public const string OutputFileName = "scenario.dll";
+        public const string OutputDirectory = "scenarios/";
 
-        public const string _OutputFilePath = _ScenarioSubDir + _OutputFileName;
-        public const string _OutputPdbPath = _OutputFilePath + ".pdb";
+        public const string OutputFilePath = OutputDirectory + OutputFileName;
+        public const string OutputPdbPath = OutputFilePath + ".pdb";
 
-
-        //TODO: gotta sign the exe...
-        static readonly SecurityPermissionFlag[] scenarioPermissions = 
-        {
-            SecurityPermissionFlag.Execution,
-        };
 
         /// <summary>
         /// The system assemblies used to compile scenarios. 
@@ -86,20 +80,9 @@ namespace ScenarioLib
         /// </summary>
         static ScenarioCompiler()
         {
-            //apply the permissions
-            var permissions = new PermissionSet(PermissionState.None);
-            foreach (var p in scenarioPermissions)
-                permissions.AddPermission(new SecurityPermission(p));
-
-            var policyLevel = PolicyLevel.CreateAppDomainLevel();
-            policyLevel.RootCodeGroup.PolicyStatement = new PolicyStatement(permissions);
+            Sandboxer.Init(Path.GetFullPath(OutputDirectory));
         }
 
-        public ScenarioCompiler()
-        {
-            //setup the sandboxed app domain for custom-made scenarios  
-
-        }
 
         public ScenarioCompiler(string scenarioDir)
         {
@@ -119,11 +102,13 @@ namespace ScenarioLib
 
             try
             {
-                var rawAssembly = File.ReadAllBytes(_OutputFilePath);
-                var rawSymbols = File.ReadAllBytes(_OutputPdbPath);
+                Sandboxer.Init();
+                var rawAssembly = File.ReadAllBytes(OutputFilePath);
+                var rawSymbols = File.ReadAllBytes(OutputPdbPath);
 
-                //TODO: Load in a sandbox!
-                Assembly = AppDomain.CurrentDomain.Load(rawAssembly, rawSymbols);
+                var sandbox = Sandboxer.Create();
+
+                Assembly = Assembly.Load(rawAssembly, rawSymbols);
             }
             catch (Exception e)
             {
@@ -145,7 +130,7 @@ namespace ScenarioLib
                 throw new InvalidOperationException("Please select a Scenario directory first!");
 
             var files = Directory.EnumerateFiles(ScenarioDir, "*.cs", SearchOption.AllDirectories);
-            var compilationResult = compile(files, Path.GetFullPath(_OutputFilePath));
+            var compilationResult = compile(files, Path.GetFullPath(OutputFilePath));
 
             IsCompiled = compilationResult.Success;
             if (IsCompiled)
@@ -171,7 +156,7 @@ namespace ScenarioLib
             var customRefs = customAssemblies
                 .Select(s => MetadataReference.CreateFromFile(getLocalDir(s)));
             var compilation = CSharpCompilation.Create(
-                assemblyName: "scenario.dll",
+                assemblyName: OutputFileName,
                 options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
                     optimizationLevel: OptimizationLevel.Debug),
                     syntaxTrees: syntaxTrees,
@@ -179,13 +164,13 @@ namespace ScenarioLib
                 );
 
             //create directory
-            if (!Directory.Exists(_ScenarioSubDir))
-                Directory.CreateDirectory(_ScenarioSubDir);
+            if (!Directory.Exists(OutputDirectory))
+                Directory.CreateDirectory(OutputDirectory);
 
             //compile
             EmitResult result;
-            using (var pdbStream = new FileStream(_OutputPdbPath, FileMode.Create))
-            using (var outStream = new FileStream(_OutputFilePath, FileMode.Create))
+            using (var pdbStream = new FileStream(OutputPdbPath, FileMode.Create))
+            using (var outStream = new FileStream(OutputFilePath, FileMode.Create))
                 result = compilation.Emit(outStream, pdbStream: pdbStream);
 
             return result;

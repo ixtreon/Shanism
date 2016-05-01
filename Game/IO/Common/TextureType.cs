@@ -19,15 +19,14 @@ namespace IO
         Terrain = 3,
     }
 
-    [Obsolete]
     public static class TextureTypeExt
     {
         public static readonly string[] dirs = 
         {
-            @"Icons",
-            @"Objects",
-            @"Ui",
-            @"Terrain",
+            @"icons",
+            @"objects",
+            @"ui",
+            @"terrain",
         };
 
         public static string GetDirectory(this TextureType t, string name)

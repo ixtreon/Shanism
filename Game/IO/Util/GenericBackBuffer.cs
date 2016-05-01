@@ -15,19 +15,18 @@ namespace IO.Util
     public class GenericBuffer<T>
         where T : new()
     {
-        readonly T[] arr = new T[2];
 
-        int _visibleId = 0;
+        T temp;
 
         /// <summary>
         /// Gets the primary (front) value. 
         /// </summary>
-        public T Front => arr[_visibleId];
+        public T Front { get; private set; }
 
         /// <summary>
         /// Gets the secondary (back) value. 
         /// </summary>
-        public T Back => arr[1 - _visibleId];
+        public T Back { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GenericBuffer{T}"/> class.
@@ -45,8 +44,8 @@ namespace IO.Util
         /// <param name="b">The b.</param>
         public GenericBuffer(T a, T b)
         {
-            arr[0] = a;
-            arr[1] = b;
+            Front = a;
+            Back = b;
         }
 
         /// <summary>
@@ -54,7 +53,9 @@ namespace IO.Util
         /// </summary>
         public virtual void SwapBuffers()
         {
-            _visibleId = 1 - _visibleId;
+            temp = Front;
+            Front = Back;
+            Back = temp;
         }
     }
 }

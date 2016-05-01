@@ -225,7 +225,6 @@ namespace Engine
         /// <summary>
         /// Writes the map data for the given rectangle in the given array. 
         /// </summary>
-        /// <param name="tileMap"></param>
         public void GetTiles(IReceptor pl, ref TerrainType[] tileMap, MapChunkId chunk)
         {
             //TODO: check if chunk is valid for player pl
@@ -253,7 +252,7 @@ namespace Engine
                     Pluses = (int)(kvp.Value * perfBarLength / totalTimeTaken),
                     Name = kvp.Key,
                 })
-                .Select(n => "{0}{1}   {2}".F(new string('+', n.Pluses), new string('-', perfBarLength - n.Pluses), n.Name))
+                .Select(n => "{0}{1}   {2}".F(new string('+', n.Pluses), new string('_', perfBarLength - n.Pluses), n.Name))
                 .Aggregate("", (a, b) => a + '\n' + b);
 
             return text;

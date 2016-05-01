@@ -26,5 +26,7 @@ namespace Engine.Systems.Orders
             u.movement.Stop();
             return true;
         }
+
+        public override string ToString() => "Stand";
     }
 }

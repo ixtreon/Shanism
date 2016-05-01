@@ -95,5 +95,6 @@ namespace Engine.Systems.Orders
         {
             return base.GetHashCode();
         }
+        public override string ToString() => $"Move to {TargetUnit}";
     }
 }

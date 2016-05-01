@@ -36,7 +36,7 @@ namespace Engine.Events
         /// </summary>
         public double BaseDamage { get; set; }
 
-        public UnitDamagingArgs(Unit attacker, Unit receiver, DamageType type, DamageFlags flags, double baseDamage)
+        internal UnitDamagingArgs(Unit attacker, Unit receiver, DamageType type, DamageFlags flags, double baseDamage)
         {
             DamagingUnit = attacker;
             DamagedUnit = receiver;

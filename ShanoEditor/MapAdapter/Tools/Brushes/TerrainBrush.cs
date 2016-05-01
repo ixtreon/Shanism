@@ -93,8 +93,8 @@ namespace ShanoEditor.MapAdapter
             var blankTex = control.EditorContent.Blank;
             foreach (var p in GetShape(inGamePos))
             {
-                var ll = control.Engine.GameToScreen(p);
-                var ur = control.Engine.GameToScreen(p + 1);
+                var ll = control.Client.GameToScreen(p);
+                var ur = control.Client.GameToScreen(p + 1);
 
                 control.SpriteBatch.ShanoDraw(blankTex, ll, ur - ll, Color.Blue.SetAlpha(100));
             }

@@ -39,10 +39,10 @@ namespace IxLog
 
         /// <summary>
         /// Gets or sets the messages that will be output to the file. 
-        /// Has a value of <see cref="LogLevel.Info"/> by default. 
+        /// Has a value of <see cref="LogLevel.Debug"/> (the highest) by default. 
         /// Set to <see cref="LogLevel.None"/> to disable file logging. 
         /// </summary>
-        public LogLevel FileLogLevel { get; set; } = LogLevel.Info;
+        public LogLevel FileLogLevel { get; set; } = LogLevel.Debug;
 
         /// <summary>
         /// Gets or sets the name of the log. 
@@ -68,14 +68,16 @@ namespace IxLog
         {
             var postfix = DateTime.Now.ToString(DateTimeFormat);
             LogFileName = $"{prefix}_{postfix}.txt";
-
             Name = prefix;
+
+            ConsoleLogLevel = consoleLogLevel;
+            FileLogLevel = fileLogLevel;
 
             //get the shared lock object for this file, or make a new one
             var fullPath = Path.GetFullPath(LogFileName);
             lock(_writerLocks)
                 if (!_writerLocks.TryGetValue(fullPath, out _writerLock))
-                    _writerLocks[fullPath] = _writerLock = new object();
+                    _writerLocks[fullPath] = (_writerLock = new object());
         }
 
 

@@ -27,6 +27,7 @@ namespace Client.UI
         /// </summary>
         public event Action AbilityChanged;
 
+
         public IAbility Ability
         {
             get { return ability; }

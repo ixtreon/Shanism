@@ -156,7 +156,7 @@ namespace IO
         }
 
         /// <summary>
-        /// Gets the element that scores the highest according to the given function. 
+        /// Gets the elements that score the highest according to a given function. 
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="e">The enumerable whose elements are searched.</param>
@@ -167,13 +167,50 @@ namespace IO
             if (!e.Any())
                 return Enumerable.Empty<T>();
 
-            return e
-                .Select(i => new { Key = func(i), Val = i })
-                .GroupBy(z => z.Key)
-                .Aggregate((ga, gb) => (ga.Key > gb.Key) ? ga : gb)
-                .Select(z => z.Val);
+            return e.GroupBy(elem => func(elem))
+                .ArgMax(g => g.Key);
         }
 
+        static TSrc argMax<TSrc, TArg>(this IEnumerable<TSrc> ie, Func<TSrc, TArg> func, Func<TArg, TArg, int> comparer)
+        {
+            var e = ie.GetEnumerator();
+            if (!e.MoveNext())
+                throw new InvalidOperationException("Sequence has no elements.");
+
+            TSrc maxElem = e.Current;
+            TArg maxVal = func(maxElem);
+            if (!e.MoveNext())
+                return maxElem;
+
+            TSrc curElemm;
+            TArg curVal;
+            do
+            {
+                curElemm = e.Current;
+                curVal = func(curElemm);
+                if (comparer(curVal, maxVal) > 0)
+                {
+                    maxElem = curElemm;
+                    maxVal = curVal;
+                }
+            }
+            while (e.MoveNext());
+
+            return maxElem;
+        }
+
+        public static TSrc ArgMax<TSrc, TArg>(this IEnumerable<TSrc> ie, Func<TSrc, TArg> func) where TArg : IComparable<TArg>
+            => ie.argMax(func, argMaxHelper);
+
+        public static TSrc ArgMin<TSrc, TArg>(this IEnumerable<TSrc> ie, Func<TSrc, TArg> func) where TArg : IComparable<TArg>
+            => ie.argMax(func, argMinHelper);
+
+
+        static int argMaxHelper<T>(T a, T b) where T : IComparable<T>
+            => a.CompareTo(b);
+
+        static int argMinHelper<T>(T a, T b) where T : IComparable<T>
+            => b.CompareTo(a);
         #endregion
 
     }

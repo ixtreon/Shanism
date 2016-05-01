@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace IO
 {
     /// <summary>
-    /// A game receptor as exposed by the engine to all clients. 
+    /// A game receptor as exposed by a <see cref="IShanoEngine"/> to all clients. 
     /// 
     /// Event based for simplicity.  
     /// </summary>

@@ -7,7 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Maps
+namespace IO.Util.Hash
 {
     /// <summary>
     /// Contains methods for hashing integers and object types. 
@@ -21,17 +21,17 @@ namespace Engine.Maps
             hashGuy.Initialize();
         }
 
-        public static int GetInt(params int[] ints)
-        {
-            return getHash(BitConverter.GetBytes, ints);
-        }
+        public static int GetInt(params int[] vals)
+            => getHash(BitConverter.GetBytes, vals);
 
-        public static int GetInt(params uint[] uints)
-        {
-            return getHash(BitConverter.GetBytes, uints);
-        }
+        //public static int GetInt(params uint[] vals)
+        //    => getHash(BitConverter.GetBytes, vals);
 
-        public static int getHash<T>(Func<T, byte[]> f, params T[] vals)
+        public static double GetDouble(params int[] ints)
+            => (double)Math.Abs(GetInt(ints)) / int.MaxValue;
+
+
+        static int getHash<T>(Func<T, byte[]> f, params T[] vals)
         {
             if (vals.Length == 0)
                 throw new ArgumentNullException();
@@ -51,16 +51,6 @@ namespace Engine.Maps
             var hashCode = hashGuy.ComputeHash(buffer);
             var val = BitConverter.ToInt32(hashCode, 0);
             return val;
-        }
-
-        public static double GetDouble(params int[] ints)
-        {
-            return (double)Math.Abs(GetInt(ints)) / int.MaxValue;
-        }
-
-        public static int GetIntInRage(int range, params int[] ints)
-        {
-            return (int)(GetDouble(ints) * range);
         }
     }
 }

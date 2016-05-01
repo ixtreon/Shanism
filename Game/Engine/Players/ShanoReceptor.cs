@@ -60,13 +60,12 @@ namespace Engine.Players
             InputDevice.MapRequested += inputDevice_MapRequested;
             InputDevice.MovementStateChanged += inputDevice_MovementStateChanged;
             InputDevice.HandshakeInit += inputDevice_HandshakeInit;
-
         }
 
         #region Player listeners
         void onPlayerObjectUnseen(Entity obj)
         {
-            SendMessage(new ObjectUnseenMessage(obj.Id));
+            SendMessage(new ObjectUnseenMessage(obj.Id, obj.IsDestroyed));
         }
 
         void onPlayerHeroChange(Hero h)
@@ -105,17 +104,14 @@ namespace Engine.Players
             if (newState.IsMoving)
                 MainHero.SetOrder(new PlayerMoveOrder(msg.Direction));
             else
-                MainHero.ClearOrder();
+                MainHero.Clear();
         }
 
         async void inputDevice_MapRequested(MapRequestMessage msg)
         {
             var chunk = msg.Chunk;
             var chunkData = new TerrainType[chunk.Span.Area];
-            await Task.Run(() =>
-            {
-                Engine.GetTiles(this, ref chunkData, chunk);
-            });
+            await Task.Run(() => Engine.GetTiles(this, ref chunkData, chunk));
 
             SendMessage(new MapDataMessage(chunk.Span, chunkData));
         }

@@ -37,6 +37,8 @@ namespace Engine.Objects.Entities
         public Monster(int level, bool isElite = false)
             : base(Player.NeutralAggressive, level)
         {
+            ModelName = "units/devilkin";
+
             IsElite = isElite;
             if(isElite)
             {

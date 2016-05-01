@@ -133,7 +133,7 @@
     <Compile Include="MapAdapter\EditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MapAdapter\EditorEngine.cs" />
+    <Compile Include="MapAdapter\EditorController.cs" />
     <Compile Include="MapAdapter\GLTestControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -141,7 +141,7 @@
     <Compile Include="MapAdapter\IEditorEngine.cs" />
     <Compile Include="MapAdapter\IMapControl.cs" />
     <Compile Include="MapAdapter\MapTool.cs" />
-    <Compile Include="MapAdapter\Tools\Brushes\ObjectBrush.cs" />
+    <Compile Include="MapAdapter\Tools\Brushes\ObjectConstructorBrush.cs" />
     <Compile Include="MapAdapter\Tools\Brushes\TerrainBrush.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -263,6 +263,9 @@
     <Compile Include="ShanoFormFileActions.cs">
       <SubType>Form</SubType>
     </Compile>
+    <EmbeddedResource Include="MapAdapter\EditorControl.resx">
+      <DependentUpon>EditorControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\Content\AnimationTree.resx">
       <DependentUpon>AnimationTree.cs</DependentUpon>
     </EmbeddedResource>

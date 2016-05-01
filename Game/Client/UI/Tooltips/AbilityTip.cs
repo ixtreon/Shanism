@@ -30,19 +30,26 @@ namespace Client.UI.Tooltips
         {
             Font = Content.Fonts.NormalFont;
             BackColor = Color.Black.SetAlpha(25);
+            Size = BaseSize;
+            CanHover = false;
 
             txtName = new Label
             {
+
                 Location = new Vector(Padding),
                 Text = "lalalala",
-
+                
+                CanHover = false,
                 Font = Content.Fonts.FancyFont,
+                TextColor = Color.Goldenrod,
             };
 
             txtStuff = new Label
             {
                 Location = new Vector(Padding, txtName.Bottom),
                 Text = "lalalal",
+
+                CanHover = false,
                 Font = Content.Fonts.NormalFont,
                 TextColor = Color.White,
             };
@@ -68,15 +75,15 @@ namespace Client.UI.Tooltips
             txtStuff.Text = $"MC: {ability.ManaCost} " 
                 + $"R: {ability.CastRange} "
                 + $"CD: {(ability.Cooldown / 1000.0).ToString("0.0")}s "
-                + $"CT: {(ability.CastTime / 1000.0).ToString("0.0")}s";
+                + $"CT: {(ability.CastTime / 1000.0).ToString("0.0")}s"; 
 
-            var descriptionMaxWidth = BaseSize.X - Padding * 4;
-            var desc = Font.MeasureStringUi(ability.Description, descriptionMaxWidth);
+            var headerSz = Math.Max(txtName.Font.MeasureStringUi(txtName.Text).X, txtStuff.Font.MeasureStringUi(txtStuff.Text).X) + 2 * Padding;
+            var descriptionMaxWidth = Size.X - Padding * 2;
+            var descSz = Font.MeasureStringUi(ability.Description, descriptionMaxWidth);
+            var screenPos = (mouseState.Position.ToPoint() + new Point(14, 26))
+                .Clamp(Point.Zero, Screen.Size - ScreenSize);
 
-            Size = new Vector(Math.Max(BaseSize.X, desc.X), BaseSize.Y + 4 * Padding + desc.Y);
-            var screenPos =
-                (mouseState.Position.ToPoint() + new Point(14, 26))
-                .Clamp(Point.Zero, Screen.ScreenSize - this.ScreenSize);
+            Size = new Vector(Math.Max(headerSz, descSz.X) + 2 * Padding, BaseSize.Y + 4 * Padding + descSz.Y);
             AbsolutePosition = Screen.ScreenToUi(screenPos);
 
             BringToFront();
@@ -90,7 +97,7 @@ namespace Client.UI.Tooltips
                 g.Draw(Content.Textures.Blank, Vector.Zero, Size, Color.Black.SetAlpha(150));
 
                 //text
-                g.DrawString(Font, Ability?.Description, Color.White, new Vector(Padding, txtStuff.Bottom + Padding) , 0, 0, txtMaxWidth: BaseSize.X - 2 * Padding);
+                g.DrawString(Font, Ability?.Description, Color.White, new Vector(Padding, txtStuff.Bottom + Padding) , 0, 0, txtMaxWidth: Size.X - 2 * Padding);
             }
         }
     }

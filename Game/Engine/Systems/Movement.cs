@@ -45,7 +45,8 @@ namespace Engine.Systems
 
         internal override void Update(int msElapsed)
         {
-            if (!_isMoving) return;
+            if (!_isMoving || Owner.States.HasFlag(UnitFlags.Stunned))
+                return;
 
             //get the suggested move position
             var speed = _moveSlowly ? Owner.WalkSpeed : Owner.MoveSpeed;
@@ -87,7 +88,7 @@ namespace Engine.Systems
 
             //fix objects
             var nearbyObjects = Owner.Map
-                .GetObjectsInRange(Owner.Position, dist + IO.Constants.Engine.MaximumObjectSize)
+                .GetObjectsInRange(suggestedPos, (Owner.Scale + IO.Constants.Engine.MaximumObjectSize) / 2)
                 .Where(u => u != Owner && u.HasCollision);
 
             foreach(var obj in nearbyObjects)

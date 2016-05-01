@@ -19,6 +19,9 @@ namespace ShanoEditor.MapAdapter
 
         HashSet<Entity> selectedObjects = new HashSet<Entity>();
 
+
+        public event Action<IEnumerable<Entity>> SelectionChanged;
+
         public SelectionTool(IEditorEngine e) : base(e)
         {
 
@@ -46,7 +49,8 @@ namespace ShanoEditor.MapAdapter
             if (btn != MouseButtons.Left) return;
 
             isSelecting = false;
-            selectionRect = new RectangleF(selectionRect.Position, inGamePos - selectionRect.Position);
+            selectionRect = new RectangleF(selectionRect.Position, inGamePos - selectionRect.Position)
+                .MakePositive();
 
             //de-tint old selection
             foreach (var obj in selectedObjects)
@@ -58,6 +62,8 @@ namespace ShanoEditor.MapAdapter
             //tint new selection
             foreach (var obj in selectedObjects)
                 obj.CurrentTint = ShanoColor.Blue;
+
+            SelectionChanged?.Invoke(selectedObjects);
         }
 
         public override void Dispose()
@@ -72,8 +78,9 @@ namespace ShanoEditor.MapAdapter
 
             if (isSelecting)
             {
-                var objStart = control.Engine.GameToScreen(selectionRect.Position);
-                var objEnd = control.Engine.GameToScreen(selectionRect.FarPosition);
+                var selection = selectionRect.MakePositive();
+                var objStart = control.Client.GameToScreen(selection.Position);
+                var objEnd = control.Client.GameToScreen(selection.FarPosition);
 
                 control.SpriteBatch.ShanoDraw(control.EditorContent.Blank, objStart, objEnd - objStart, selectionColor.SetAlpha(100));
             }

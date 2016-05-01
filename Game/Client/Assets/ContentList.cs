@@ -12,7 +12,7 @@ namespace Client.Assets
     /// <summary>
     /// Lists all models and textures used in a game. 
     /// </summary>
-    class ContentList
+    public class ContentList
     {
         /// <summary>
         /// Gets the dictionary that contains all textures keyed by their name. 

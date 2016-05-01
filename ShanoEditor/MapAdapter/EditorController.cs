@@ -21,19 +21,11 @@ using Engine.Common;
 
 namespace ShanoEditor.MapAdapter
 {
-    enum BrushType
+
+    class EditorController : IReceptor, IEditorEngine
     {
-        None, Terrain, Object
-    }
 
-
-    /// <summary>
-    ///  
-    /// </summary>
-    class EditorEngine : IReceptor, IEditorEngine
-    {
-        Vector inGameSize = Constants.Client.WindowSize;
-
+        Vector inGameWindowSize = Constants.Client.WindowSize;
 
         /// <summary>
         /// Whether the map is currently being dragged around
@@ -45,20 +37,22 @@ namespace ShanoEditor.MapAdapter
         /// </summary>
         Vector mapPanningStart;
 
-        MapTool _currentTool;
+        MapTool currentTool;
 
-        Vector _mousePositionInGame = Vector.Zero;
+        Vector mousePositionInGame = Vector.Zero;
+
+        ObjectCreator Creator;
 
         readonly HashSet<Entity> _startupObjects = new HashSet<Entity>();
 
-        readonly EditorControl Client;
+        readonly EditorControl Control;
+
+        readonly SelectionTool selectionTool;
 
         /// <summary>
         /// The unit that is always at the center of the screen. 
         /// </summary>
         readonly HeroStub God;
-
-        ObjectCreator Creator;
 
         public ScenarioViewModel ScenarioView { get; private set; }
 
@@ -66,27 +60,39 @@ namespace ShanoEditor.MapAdapter
         public event Action MapChanged;
 
 
-        IClientEngine Engine => Client.Engine;
+        IClientEngine Client => Control.Client;
 
         ScenarioConfig config => ScenarioView.Scenario.Config;
 
         MapConfig map => config.Map;
 
-        public MapTool CurrentTool => _currentTool;
+        public MapTool CurrentTool => currentTool;
 
         public IEnumerable<Entity> StartupObjects => _startupObjects;
 
-
-        public EditorEngine(EditorControl c)
+        public event Action<IEnumerable<Entity>> SelectionChanged
         {
-            setTool(new SelectionTool(this));
+            add { selectionTool.SelectionChanged += value; }
+            remove { selectionTool.SelectionChanged -= value; }
+        }
+
+        public EditorController(EditorControl c)
+        {
+            selectionTool = new SelectionTool(this);
+
+            setTool(selectionTool);
+
 
             God = new HeroStub { Id = 100 };
 
-            Client = c;
-            Client.Resize += onClientResize;
-            Client.KeyDown += onClientKeyDown;
-            onClientResize(null, null);
+            Control = c;
+            Control.Resize += updateClientSize;
+            Control.KeyDown += onClientKeyDown;
+            Control.ClientLoaded += () =>
+            {
+                Client.SetWindowSize(Control.Size.ToPoint());
+                updateClientSize(null, null);
+            };
 
             initMapPanScroll();
             initMapTools();
@@ -97,7 +103,7 @@ namespace ShanoEditor.MapAdapter
             ScenarioView = sc;
 
             //Start the client
-            Client.Engine.SetServer(this);
+            Control.Client.SetServer(this);
 
             //send the scenario datas
             var scData = config.GetBytes();
@@ -131,21 +137,20 @@ namespace ShanoEditor.MapAdapter
         }
 
         /// <summary>
-        /// Creates the entity specified in the given ObjectConstructor. 
+        /// Creates the entity specified in the given <see cref="ObjectConstructor"/>. 
+        /// Saves the <see cref="ObjectConstructor"/> in the <see cref="Entity.Data"/> field. 
         /// </summary>
-        /// <param name="oc"></param>
-        /// <returns></returns>
         public Entity CreateObject(ObjectConstructor oc)
         {
-            return Creator.CreateObject(oc);
+            var e = Creator.CreateObject(oc);
+            e.Data = oc;
+            return e;
         }
 
         /// <summary>
         /// Adds the given object to the <see cref="_startupObjects"/> list
         /// and sends an <see cref="ObjectSeenMessage"/> message to the game client. 
         /// </summary>
-        /// <param name="oc"></param>
-        /// <returns></returns>
         public bool AddObject(Entity o)
         {
             if (_startupObjects.Add(o))
@@ -160,7 +165,7 @@ namespace ShanoEditor.MapAdapter
         {
             if (_startupObjects.Remove(o))
             {
-                MessageSent(new ObjectUnseenMessage(o.Id));
+                MessageSent(new ObjectUnseenMessage(o.Id, true));
                 return true;
             }
 
@@ -170,9 +175,9 @@ namespace ShanoEditor.MapAdapter
 
         void setTool(MapTool newTool)
         {
-            _currentTool?.Dispose();
-            _currentTool = newTool;
-            _currentTool.MessageSent += onMessageSent;
+            currentTool?.Dispose();
+            currentTool = newTool;
+            currentTool.MessageSent += onMessageSent;
         }
 
         void onMessageSent(IOMessage msg)
@@ -186,7 +191,7 @@ namespace ShanoEditor.MapAdapter
             switch (e.KeyCode)
             {
                 case Keys.Escape:
-                    setTool(new SelectionTool(this));
+                    setTool(selectionTool);
                     break;
                 default:
                     CurrentTool.OnKeyPress(e);
@@ -194,18 +199,18 @@ namespace ShanoEditor.MapAdapter
             }
         }
 
-        void onClientResize(object sender, EventArgs e)
+        void updateClientSize(object sender, EventArgs e)
         {
-            var area = inGameSize.X * inGameSize.Y;
+            var area = inGameWindowSize.X * inGameWindowSize.Y;
 
-            if (Client.Width * Client.Height == 0)
+            if (Control.Width * Control.Height == 0)
                 return;
 
-            var ratio = (double)Client.Width / Client.Height;
+            var ratio = (double)Control.Width / Control.Height;
             var h = Math.Sqrt(area / ratio);
             var w = h * ratio;
-            inGameSize = new Vector(w, h);
-            Engine?.SetCameraParams(null, God, inGameSize);
+            inGameWindowSize = new Vector(w, h);
+            Client?.SetCameraParams(null, God, inGameWindowSize);
         }
 
         public void ResizeMap(Point newSize)
@@ -272,64 +277,64 @@ namespace ShanoEditor.MapAdapter
             const double zoomFactor = 0.05;
 
             //drag-to-move
-            Client.MouseDown += (o, e) =>
+            Control.MouseDown += (o, e) =>
             {
                 if (e.Button != MouseButtons.Right) return;
-                Client.Cursor = Cursors.NoMove2D;
+                Control.Cursor = Cursors.NoMove2D;
 
                 isPanningMap = true;
-                mapPanningStart = _mousePositionInGame;
+                mapPanningStart = mousePositionInGame;
             };
 
-            Client.MouseMove += (o, e) =>
+            Control.MouseMove += (o, e) =>
             {
                 if (isPanningMap)
                 {
-                    var d = mapPanningStart - _mousePositionInGame;
+                    var d = mapPanningStart - mousePositionInGame;
+                    var newPos = (God.Position + d).Clamp(Vector.Zero, map.Size);
 
-                    God.Position += d;
-
+                    God.Position = newPos;
                 }
             };
 
-            Client.MouseUp += (o, e) =>
+            Control.MouseUp += (o, e) =>
             {
                 if (e.Button != MouseButtons.Right) return;
-                Client.Cursor = Cursors.Arrow;
+                Control.Cursor = Cursors.Arrow;
 
                 isPanningMap = false;
             };
 
             //zoom in/out
-            Client.MouseWheel += (o, e) =>
+            Control.MouseWheel += (o, e) =>
             {
                 var ratio = (1 - (double)e.Delta / 120 * zoomFactor);
-                inGameSize *= ratio;
-                Engine.SetCameraParams(null, God, inGameSize);
+                inGameWindowSize *= ratio;
+                Client.SetCameraParams(null, God, inGameWindowSize);
             };
         }
 
 
         void initMapTools()
         {
-            Client.MouseDown += (o, e) =>
+            Control.MouseDown += (o, e) =>
             {
-                _mousePositionInGame = Engine.ScreenToGame(new Vector(e.X, e.Y));
-                CurrentTool.OnMouseDown(e.Button, _mousePositionInGame);
+                mousePositionInGame = Client.ScreenToGame(new Vector(e.X, e.Y));
+                CurrentTool.OnMouseDown(e.Button, mousePositionInGame);
             };
-            Client.MouseMove += (o, e) =>
+            Control.MouseMove += (o, e) =>
             {
-                _mousePositionInGame = Engine.ScreenToGame(new Vector(e.X, e.Y));
-                CurrentTool.OnMouseMove(e.Button, _mousePositionInGame);
+                mousePositionInGame = Client.ScreenToGame(new Vector(e.X, e.Y));
+                CurrentTool.OnMouseMove(e.Button, mousePositionInGame);
             };
-            Client.MouseUp += (o, e) =>
+            Control.MouseUp += (o, e) =>
             {
-                CurrentTool.OnMouseUp(e.Button, _mousePositionInGame);
+                CurrentTool.OnMouseUp(e.Button, mousePositionInGame);
             };
 
-            Client.OnDraw += () =>
+            Control.OnDraw += () =>
             {
-                CurrentTool?.OnDraw(Client, _mousePositionInGame);
+                CurrentTool?.OnDraw(Control, mousePositionInGame);
             };
         }
 

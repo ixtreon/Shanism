@@ -15,7 +15,7 @@ namespace Client.UI.Common
 
         public XpBar()
         {
-            this.ShowText = false;
+            ShowText = true;
             ForeColor = Color.Purple;
             BackColor = Color.Black.SetAlpha(200);
         }
@@ -27,8 +27,10 @@ namespace Client.UI.Common
             {
                 Value = Target.Experience;
                 MaxValue = Target.ExperienceNeeded;
-                ToolTip = "Level {0}\n{1}/{2}".F(Target.Level, Target.Experience, Target.ExperienceNeeded);
+                ToolTip = $"Level {Target.Level}\n{Target.Experience}/{Target.ExperienceNeeded}";
             }
+
+            base.OnUpdate(msElapsed);
         }
     }
 }

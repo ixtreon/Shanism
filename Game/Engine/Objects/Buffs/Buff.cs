@@ -20,9 +20,6 @@ namespace Engine.Objects.Buffs
         /// <summary>
         /// Gets the type of the object.
         /// </summary>
-        /// <value>
-        /// The type of the object.
-        /// </value>
         public override ObjectType ObjectType {  get { return ObjectType.BuffInstance; } }
 
 
@@ -69,6 +66,16 @@ namespace Engine.Objects.Buffs
         /// Gets or sets the mana modifier of this buff. 
         /// </summary>
         public double Mana { get; set; }
+
+        /// <summary>
+        /// Gets or sets the life regen modifier of this buff. 
+        /// </summary>
+        public double LifeRegen { get; set; }
+
+        /// <summary>
+        /// Gets or sets the mana regen modifier of this buff. 
+        /// </summary>
+        public double ManaRegen { get; set; }
 
         /// <summary>
         /// Gets or sets the defense provided by this buff. 
@@ -138,7 +145,7 @@ namespace Engine.Objects.Buffs
         /// Gets or sets the total duration of the buff, in miliseconds. 
         /// If this value is nonpositive the buff lasts indefinitely. 
         /// </summary>
-        public int FullDuration { get; set; } = 5000;
+        public int FullDuration { get; set; }
 
         /// <summary>
         /// Gets or sets the maximum number of stacks of this buff 

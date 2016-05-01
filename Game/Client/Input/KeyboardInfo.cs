@@ -17,10 +17,6 @@ namespace Client.Input
         static HashSet<Keys> oldKeysDown = new HashSet<Keys>();
         static HashSet<Keys> newKeysDown = new HashSet<Keys>();
 
-        
-
-        public static ChatProvider ChatProvider { get; private set; }
-
 
         public static IEnumerable<Keys> JustPressedKeys { get; private set; }
 
@@ -28,29 +24,10 @@ namespace Client.Input
 
         public static IEnumerable<GameAction> JustActivatedActions { get; private set; }
 
-        //static IEnumerable<GameAction> JustReleasedActions { get; private set; }
-
-        /// <summary>
-        /// Gets whether the Control key is down. 
-        /// </summary>
-        public static bool IsControlDown => oldKeysDown.Contains(Keys.LeftControl) || newKeysDown.Contains(Keys.RightControl);
-
-        /// <summary>
-        /// Gets whether the Alt key is down. 
-        /// </summary>
-        public static bool IsAltDown => oldKeysDown.Contains(Keys.LeftAlt) || newKeysDown.Contains(Keys.RightAlt);
-
-        /// <summary>
-        /// Gets whether the Shift key is down. 
-        /// </summary>
-        public static bool IsShiftDown => oldKeysDown.Contains(Keys.LeftShift) || newKeysDown.Contains(Keys.RightShift);
+        public static ModifierKeys Modifiers { get; private set; }
 
 
 
-        static KeyboardInfo()
-        {
-            ChatProvider = new ChatProvider();
-        }
 
         /// <summary>
         /// Updates the available keyboard and chat info. 
@@ -61,28 +38,27 @@ namespace Client.Input
             oldKeysDown = newKeysDown;
             newKeysDown = new HashSet<Keys>(Keyboard.GetState().GetPressedKeys());
 
+            Modifiers = (isShiftDown() ? ModifierKeys.Shift : ModifierKeys.None)
+                | (isControlDown() ? ModifierKeys.Control : ModifierKeys.None)
+                | (isAltDown() ? ModifierKeys.Alt : ModifierKeys.None);
+
             JustPressedKeys = newKeysDown.Except(oldKeysDown).ToList();
             JustReleasedKeys = oldKeysDown.Except(newKeysDown).ToList();
 
-            JustActivatedActions = Enum<GameAction>.Values
-                .Where(isJustActivated).ToList();
-
-            //inform the chat provider
-            ChatProvider.Update(msElapsed, JustPressedKeys);
+            JustActivatedActions = Settings.Current.Keybinds.BoundActions
+                .Where(kvp => IsActivated(kvp.Value))
+                .Select(kvp => kvp.Key)
+                .ToList();
         }
 
+        static bool isControlDown()
+            => newKeysDown.Contains(Keys.LeftControl) || newKeysDown.Contains(Keys.RightControl);
 
-        static bool isJustActivated(GameAction ga)
-        {
-            var kb = ShanoSettings.Current.Keybinds[ga];
-            if (!checkModifiers(kb.Modifiers))
-                return false;
+        static bool isAltDown()
+            => newKeysDown.Contains(Keys.LeftAlt) || newKeysDown.Contains(Keys.RightAlt);
 
-            var k = kb.Key;
-            if (ShanoSettings.Current.QuickButtonPress)
-                return !oldKeysDown.Contains(k) && newKeysDown.Contains(k);
-            return oldKeysDown.Contains(k) && !newKeysDown.Contains(k);
-        }
+        static bool isShiftDown()
+            => newKeysDown.Contains(Keys.LeftShift) || newKeysDown.Contains(Keys.RightShift);
 
         /// <summary>
         /// Gets whether a key is down. 
@@ -98,7 +74,7 @@ namespace Client.Input
         /// </summary>
         public static bool IsActivated(Keys k)
         {
-            if (ShanoSettings.Current.QuickButtonPress)
+            if (Settings.Current.QuickButtonPress)
                 return !oldKeysDown.Contains(k) && newKeysDown.Contains(k);
 
             return oldKeysDown.Contains(k) && !newKeysDown.Contains(k);
@@ -112,14 +88,13 @@ namespace Client.Input
         /// <returns>Whether the key is currently down. </returns>
         public static bool IsDown(GameAction a)
         {
-            var kb = ShanoSettings.Current.Keybinds[a];
+            var kb = Settings.Current.Keybinds[a];
             return checkModifiers(kb.Modifiers) && IsDown(kb.Key);    //TODO: fix for modifiers
         }
 
-        public static bool IsActivated(GameAction a)
+        public static bool IsDown(Keybind kb)
         {
-            var k = ShanoSettings.Current.Keybinds[a];
-            return IsActivated(k);
+            return checkModifiers(kb.Modifiers) && IsDown(kb.Key);
         }
 
         /// <summary>
@@ -133,14 +108,7 @@ namespace Client.Input
 
         static bool checkModifiers(ModifierKeys mods)
         {
-            if (mods == ModifierKeys.None)
-                return true;
-
-            var isCtrlOk = !mods.HasFlag(ModifierKeys.Control) || IsControlDown;
-            var isAltOk = !mods.HasFlag(ModifierKeys.Alt) || IsAltDown;
-            var isShiftOk = !mods.HasFlag(ModifierKeys.Shift) || IsShiftDown;
-
-            return isCtrlOk && isAltOk && isShiftOk;
+            return (~Modifiers & mods) == 0;
         }
 
     }

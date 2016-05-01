@@ -72,7 +72,7 @@ namespace Client.UI
 
                 g.DrawString(Font, ed.Text, c, new Vector(Size.X / 2, y), 0.5f, 0f);
 
-                y += Font.UiHeight;
+                y += Font.HeightUi;
             }
         }
 

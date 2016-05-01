@@ -26,7 +26,7 @@ namespace Client.UI.Menus.Keybinds
         {
             var allKeyButtons = Enum<GameAction>.Values
                 .Where(a => a != GameAction.ToggleMenus)
-                .Where(a => a < GameAction.ActionBar)
+                .Where(a => a < GameAction.ActionBar_0_0)
                 .Select(a => new KeyBoxLabel(a))
                 .ToList();
 

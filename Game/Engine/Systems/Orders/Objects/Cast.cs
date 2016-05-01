@@ -14,16 +14,14 @@ namespace Engine.Systems.Orders
     /// </summary>
     struct CastOrder : IOrder
     {
+        public OrderType Type => OrderType.Casting;
+
         public readonly Ability Ability;
 
         public readonly object Target;
 
         public int Progress { get; private set; }
 
-        public OrderType Type
-        {
-            get { return OrderType.Casting; }
-        }
 
         public CastOrder(Ability ability, object target)
         {
@@ -71,5 +69,7 @@ namespace Engine.Systems.Orders
         {
             return base.GetHashCode();
         }
+
+        public override string ToString() => $"Cast {Ability}";
     }
 }

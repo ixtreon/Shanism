@@ -30,11 +30,13 @@
         {
             this.components = new System.ComponentModel.Container();
             this.pModelsView = new System.Windows.Forms.SplitContainer();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.btnReload = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnStripAnimAdd = new System.Windows.Forms.ToolStripButton();
+            this.btnStripAnimRenamee = new System.Windows.Forms.ToolStripButton();
+            this.btnStripAnimDelete = new System.Windows.Forms.ToolStripButton();
             this.animTree = new ShanoEditor.Views.Content.AnimationTree();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.btnAddAnim = new System.Windows.Forms.Button();
-            this.btnRename = new System.Windows.Forms.Button();
-            this.btnDelete = new System.Windows.Forms.Button();
             this.animView = new ShanoEditor.Views.Models.AnimationView();
             this.lblDescription = new System.Windows.Forms.Label();
             this.rootRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -51,7 +53,7 @@
             this.pModelsView.Panel1.SuspendLayout();
             this.pModelsView.Panel2.SuspendLayout();
             this.pModelsView.SuspendLayout();
-            this.flowLayoutPanel1.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.animRightClick.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -64,8 +66,8 @@
             // 
             // pModelsView.Panel1
             // 
+            this.pModelsView.Panel1.Controls.Add(this.toolStrip1);
             this.pModelsView.Panel1.Controls.Add(this.animTree);
-            this.pModelsView.Panel1.Controls.Add(this.flowLayoutPanel1);
             // 
             // pModelsView.Panel2
             // 
@@ -74,6 +76,66 @@
             this.pModelsView.Size = new System.Drawing.Size(1036, 508);
             this.pModelsView.SplitterDistance = 170;
             this.pModelsView.TabIndex = 1;
+            // 
+            // toolStrip1
+            // 
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnReload,
+            this.toolStripSeparator1,
+            this.btnStripAnimAdd,
+            this.btnStripAnimRenamee,
+            this.btnStripAnimDelete});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(170, 25);
+            this.toolStrip1.TabIndex = 4;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
+            // btnReload
+            // 
+            this.btnReload.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnReload.Image = global::ShanoEditor.Properties.Resources.refresh_16xLG;
+            this.btnReload.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnReload.Name = "btnReload";
+            this.btnReload.Size = new System.Drawing.Size(23, 22);
+            this.btnReload.Text = "toolStripButton1";
+            this.btnReload.ToolTipText = "Reload Textures";
+            this.btnReload.Click += new System.EventHandler(this.btnReload_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // btnStripAnimAdd
+            // 
+            this.btnStripAnimAdd.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnStripAnimAdd.Image = global::ShanoEditor.Properties.Resources.ActionEvent;
+            this.btnStripAnimAdd.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnStripAnimAdd.Name = "btnStripAnimAdd";
+            this.btnStripAnimAdd.Size = new System.Drawing.Size(23, 22);
+            this.btnStripAnimAdd.Text = "toolStripButton1";
+            this.btnStripAnimAdd.Click += new System.EventHandler(this.btnStripAnimAdd_Click);
+            // 
+            // btnStripAnimRenamee
+            // 
+            this.btnStripAnimRenamee.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnStripAnimRenamee.Image = global::ShanoEditor.Properties.Resources.ActionRename;
+            this.btnStripAnimRenamee.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnStripAnimRenamee.Name = "btnStripAnimRenamee";
+            this.btnStripAnimRenamee.Size = new System.Drawing.Size(23, 22);
+            this.btnStripAnimRenamee.Text = "toolStripButton2";
+            this.btnStripAnimRenamee.Click += new System.EventHandler(this.btnStripAnimRename_Click);
+            // 
+            // btnStripAnimDelete
+            // 
+            this.btnStripAnimDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnStripAnimDelete.Image = global::ShanoEditor.Properties.Resources.ActionCancel;
+            this.btnStripAnimDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnStripAnimDelete.Name = "btnStripAnimDelete";
+            this.btnStripAnimDelete.Size = new System.Drawing.Size(23, 22);
+            this.btnStripAnimDelete.Text = "toolStripButton3";
+            this.btnStripAnimDelete.Click += new System.EventHandler(this.btnStripAnimDelete_Click);
             // 
             // animTree
             // 
@@ -84,62 +146,14 @@
             this.animTree.HideSelection = false;
             this.animTree.ImageIndex = 0;
             this.animTree.LabelEdit = true;
-            this.animTree.Location = new System.Drawing.Point(0, 26);
+            this.animTree.Location = new System.Drawing.Point(0, 25);
             this.animTree.Margin = new System.Windows.Forms.Padding(0);
             this.animTree.Name = "animTree";
             this.animTree.PathSeparator = "/";
+            this.animTree.ReadOnly = false;
             this.animTree.SelectedImageIndex = 0;
-            this.animTree.Size = new System.Drawing.Size(170, 482);
+            this.animTree.Size = new System.Drawing.Size(170, 483);
             this.animTree.TabIndex = 2;
-            // 
-            // flowLayoutPanel1
-            // 
-            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.flowLayoutPanel1.Controls.Add(this.btnAddAnim);
-            this.flowLayoutPanel1.Controls.Add(this.btnRename);
-            this.flowLayoutPanel1.Controls.Add(this.btnDelete);
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(170, 26);
-            this.flowLayoutPanel1.TabIndex = 1;
-            // 
-            // btnAddAnim
-            // 
-            this.btnAddAnim.Image = global::ShanoEditor.Properties.Resources.ActionEvent;
-            this.btnAddAnim.Location = new System.Drawing.Point(0, 0);
-            this.btnAddAnim.Margin = new System.Windows.Forms.Padding(0);
-            this.btnAddAnim.Name = "btnAddAnim";
-            this.btnAddAnim.Size = new System.Drawing.Size(26, 26);
-            this.btnAddAnim.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.btnAddAnim, "Add an animation");
-            this.btnAddAnim.UseVisualStyleBackColor = true;
-            this.btnAddAnim.Click += new System.EventHandler(this.btnAddAnim_Click);
-            // 
-            // btnRename
-            // 
-            this.btnRename.Image = global::ShanoEditor.Properties.Resources.ActionRename;
-            this.btnRename.Location = new System.Drawing.Point(26, 0);
-            this.btnRename.Margin = new System.Windows.Forms.Padding(0);
-            this.btnRename.Name = "btnRename";
-            this.btnRename.Size = new System.Drawing.Size(26, 26);
-            this.btnRename.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.btnRename, "Rename");
-            this.btnRename.UseVisualStyleBackColor = true;
-            this.btnRename.Click += new System.EventHandler(this.btnRename_Click);
-            // 
-            // btnDelete
-            // 
-            this.btnDelete.Image = global::ShanoEditor.Properties.Resources.ActionCancel;
-            this.btnDelete.Location = new System.Drawing.Point(52, 0);
-            this.btnDelete.Margin = new System.Windows.Forms.Padding(0);
-            this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(26, 26);
-            this.btnDelete.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnDelete, "Delete");
-            this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // animView
             // 
@@ -164,7 +178,7 @@
             // rootRightClick
             // 
             this.rootRightClick.Name = "rootRightClick";
-            this.rootRightClick.Size = new System.Drawing.Size(153, 26);
+            this.rootRightClick.Size = new System.Drawing.Size(61, 4);
             // 
             // animRightClick
             // 
@@ -181,7 +195,7 @@
             this.btnAnimRename.Name = "btnAnimRename";
             this.btnAnimRename.Size = new System.Drawing.Size(134, 22);
             this.btnAnimRename.Text = "Rename";
-            this.btnAnimRename.Click += new System.EventHandler(this.btnRename_Click);
+            this.btnAnimRename.Click += new System.EventHandler(this.btnStripAnimRename_Click);
             // 
             // setAsToolStripMenuItem
             // 
@@ -229,7 +243,7 @@
             this.btnAnimDelete.Name = "btnAnimDelete";
             this.btnAnimDelete.Size = new System.Drawing.Size(134, 22);
             this.btnAnimDelete.Text = "Delete";
-            this.btnAnimDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            this.btnAnimDelete.Click += new System.EventHandler(this.btnStripAnimDelete_Click);
             // 
             // toolTip1
             // 
@@ -246,10 +260,12 @@
             this.Name = "AnimationsView";
             this.Size = new System.Drawing.Size(1036, 508);
             this.pModelsView.Panel1.ResumeLayout(false);
+            this.pModelsView.Panel1.PerformLayout();
             this.pModelsView.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pModelsView)).EndInit();
             this.pModelsView.ResumeLayout(false);
-            this.flowLayoutPanel1.ResumeLayout(false);
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.animRightClick.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -267,12 +283,14 @@
         private System.Windows.Forms.ToolStripMenuItem castToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem standToolStripMenuItem;
         private Models.AnimationView animView;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.Button btnAddAnim;
-        private System.Windows.Forms.Button btnRename;
-        private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Label lblDescription;
         private Content.AnimationTree animTree;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton btnReload;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton btnStripAnimAdd;
+        private System.Windows.Forms.ToolStripButton btnStripAnimRenamee;
+        private System.Windows.Forms.ToolStripButton btnStripAnimDelete;
     }
 }

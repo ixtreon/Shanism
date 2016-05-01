@@ -21,13 +21,15 @@ namespace Engine.Events
         /// </summary>
         public readonly Unit DamagedUnit;
 
-
         /// <summary>
         /// Gets the <see cref="DamageType"/> of the attack. 
         /// </summary>
         public readonly DamageType DamageType;
 
-
+        /// <summary>
+        /// Gets the <see cref="DamageFlags"/> flags that specify 
+        /// the extra rules when handling the damage instance. 
+        /// </summary>
         public readonly DamageFlags DamageFlags;
 
         /// <summary>
@@ -36,13 +38,12 @@ namespace Engine.Events
         /// </summary>
         public readonly double BaseDamage;
 
-
         /// <summary>
         /// Gets the amount of damage ultimately received by the target. 
         /// </summary>
         public readonly double FinalDamage;
 
-        public UnitDamagedArgs(Unit attacker, Unit receiver, DamageType type, DamageFlags flags, double baseAmount, double finalAmount)
+        internal UnitDamagedArgs(Unit attacker, Unit receiver, DamageType type, DamageFlags flags, double baseAmount, double finalAmount)
         {
             BaseDamage = baseAmount;
             FinalDamage = finalAmount;

@@ -28,6 +28,18 @@ namespace Client.UI.Common
             set { lblValue.Text = value; }
         }
 
+        public object TextToolTip
+        {
+            get { return lblText.ToolTip; }
+            set { lblText.ToolTip = value; }
+        }
+
+        public object ValueToolTip
+        {
+            get { return lblValue.ToolTip; }
+            set { lblValue.ToolTip = value; }
+        }
+
         public TextureFont TextFont
         {
             get { return lblText.Font; }
@@ -40,27 +52,35 @@ namespace Client.UI.Common
             set { lblValue.Font = value; }
         }
 
+        public new Color BackColor
+        {
+            get { return lblText.BackColor; }
+            set { lblText.BackColor = lblValue.BackColor = value; }
+        }
+
         public ValueLabel()
         {
+            const double ValueWidth = 0.2;
+            Size = new Vector(0.5, 0.10);
             lblText = new Label
             {
                 AutoSize = false,
                 Location = Vector.Zero,
                 Size = Size,
-                ParentAnchor = AnchorMode.Top | AnchorMode.Bottom | AnchorMode.Left,
+                ParentAnchor = AnchorMode.All,
 
-                CanHover = false,
+                CanHover = true,
                 TextXAlign = 0,
             };
 
             lblValue = new Label
             {
                 AutoSize = false,
-                Location = Vector.Zero,
-                Size = Size,
-                ParentAnchor = AnchorMode.Top | AnchorMode.Bottom | AnchorMode.Right,
+                Location = new Vector(Size.X - ValueWidth, 0),
+                Size = new Vector(ValueWidth, Size.Y),
+                ParentAnchor = AnchorMode.Top | AnchorMode.Right | AnchorMode.Bottom,
 
-                CanHover = false,
+                CanHover = true,
                 TextXAlign = 1,
             };
 

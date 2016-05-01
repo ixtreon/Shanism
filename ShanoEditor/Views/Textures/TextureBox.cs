@@ -16,18 +16,19 @@ namespace ShanoEditor.Views.Models
         /// <summary>
         /// Gets the current model of this control. 
         /// </summary>
-        public TextureViewModel Model { get; private set; }
+        public TextureViewModel Texture { get; private set; }
 
         /// <summary>
         /// Gets or sets whether the user can select parts of the texture. 
         /// </summary>
         public bool CanSelectLogical { get; set; }
 
+        public bool StickySelection { get; set; } = true;
+
         /// <summary>
-        /// Gets the current selection.
+        /// Gets the current in-texture selection.
         /// </summary>
-        public IO.Common.Rectangle Selection { get; private set; }
-            = new IO.Common.Rectangle(0, 0, 1, 1);
+        public IO.Common.Rectangle Selection { get; private set; } = IO.Common.Rectangle.Empty;
 
         /// <summary>
         /// Raised whenever the user selection is changed. 
@@ -43,11 +44,11 @@ namespace ShanoEditor.Views.Models
 
 
         #region Property Shortcuts
-        Image Image { get { return Model.Image; } }
+        Image Image { get { return Texture.Image; } }
 
-        int LogicalWidth { get { return Model.Data.Splits.X; } }
+        int LogicalWidth { get { return Texture.Data.Splits.X; } }
 
-        int LogicalHeight { get { return Model.Data.Splits.Y; } }
+        int LogicalHeight { get { return Texture.Data.Splits.Y; } }
 
         #endregion
 
@@ -61,28 +62,27 @@ namespace ShanoEditor.Views.Models
 
         public void SetTexture(TextureViewModel modelView)
         {
-            Model = modelView;
+            Texture = modelView;
 
             Invalidate();
         }
 
-        public void SetTextureSpan(AnimationViewModel anim)
+        public void SetAnimation(AnimationViewModel anim)
         {
-            Model = anim?.Texture;
+            Texture = anim?.Texture;
             if (anim != null)
                 SetSelection(anim.Span, false);
         }
 
         internal void Reset()
         {
-            Model = null;
+            Texture = null;
             SetSelection(new IO.Common.Rectangle(0, 0, 1, 1), false);
         }
 
 
         public void SetSelection(IO.Common.Rectangle rect, bool raiseEvent = true)
         {
-
             Selection = rect;
 
             if(raiseEvent)
@@ -95,7 +95,7 @@ namespace ShanoEditor.Views.Models
         {
             var cursorGamePos = (cursorPos.ToPoint() - ImagePos) / ImageCellSize;
             var cellPos = cursorGamePos.Floor();
-            clampedPos = cellPos.Clamp(IO.Common.Point.Zero, Model.Data.Splits - 1);
+            clampedPos = cellPos.Clamp(IO.Common.Point.Zero, Texture.Data.Splits - 1);
 
             return (cellPos == clampedPos);
         }
@@ -111,6 +111,12 @@ namespace ShanoEditor.Views.Models
             if (isSelecting)
             {
                 rawSelection = new IO.Common.Rectangle(cellPos, IO.Common.Point.One);
+                Invalidate();
+            }
+            else if (!StickySelection)
+            {
+                Selection = IO.Common.Rectangle.Empty;
+                SelectionChanged?.Invoke();
                 Invalidate();
             }
         }
@@ -131,7 +137,7 @@ namespace ShanoEditor.Views.Models
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            if (!CanSelectLogical || e.Button != MouseButtons.Left || Model == null)
+            if (!CanSelectLogical || e.Button != MouseButtons.Left || Texture == null)
                 return;
 
             startSelect(e.Location);
@@ -141,7 +147,7 @@ namespace ShanoEditor.Views.Models
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            if (!CanSelectLogical || e.Button != MouseButtons.Left || Model == null)
+            if (!CanSelectLogical || e.Button != MouseButtons.Left || Texture == null)
                 return;
 
             if(isSelecting)
@@ -152,11 +158,11 @@ namespace ShanoEditor.Views.Models
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            if (!CanSelectLogical || e.Button != MouseButtons.Left || Model == null)
+            if (!CanSelectLogical || e.Button != MouseButtons.Left || Texture == null)
                 return;
 
             // Extend and finalise the selection 
-            if(isSelecting)
+            if (isSelecting)
             {
                 extendSelect(e.Location);
 
@@ -172,7 +178,7 @@ namespace ShanoEditor.Views.Models
             var g = e.Graphics;
             g.Clear(Color.Black);
 
-            if (Model == null)
+            if (Texture == null)
                 return;
 
 
@@ -186,7 +192,7 @@ namespace ShanoEditor.Views.Models
 
             ImagePos = (Size.ToPoint() - ImageSize) / 2;
 
-            ImageCellSize = (IO.Common.Vector)ImageSize / Model.Data.Splits; 
+            ImageCellSize = (IO.Common.Vector)ImageSize / Texture.Data.Splits; 
 
             g.DrawImage(Image, ImagePos.X, ImagePos.Y, ImageSize.X, ImageSize.Y);
             

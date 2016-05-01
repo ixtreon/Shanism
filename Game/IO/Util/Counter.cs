@@ -27,8 +27,6 @@ namespace IO
         /// <param name="maxValue">The maximum value this counter can reach. </param>
         public Counter(int maxValue)
         {
-            if (maxValue < 0) throw new ArgumentException("{0} ({1}) must be a non-negative integer!".F(nameof(maxValue), maxValue));
-
             MaxValue = Math.Max(1, maxValue);
         }
 

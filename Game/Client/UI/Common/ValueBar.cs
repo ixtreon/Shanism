@@ -10,17 +10,13 @@ using IO.Common;
 namespace Client.UI.Common
 {
     /// <summary>
-    /// Displays a bar representing the current value of a property relative to the maximum value of that property. 
+    /// A progress bar representing the current value of a property relative to the maximum value of that property. 
     /// </summary>
-    class ValueBar : Control
+    class ValueBar : ProgressBar
     {
-        public bool ShowText = false;
-
         public double Value;
 
         public double MaxValue;
-
-        public Color ForeColor = Color.Azure;
 
         public ValueBar()
         {
@@ -28,29 +24,17 @@ namespace Client.UI.Common
             CanHover = true;
         }
 
-        public override void OnDraw(Graphics g)
+        protected override void OnUpdate(int msElapsed)
         {
-            var hasText = ShowText && MaxValue > 0;
-            var text = hasText ? (Value.ToString("0") + "/" + MaxValue.ToString("0")) : string.Empty;
-
-            //background
-            g.Draw(Content.Textures.Blank, Vector.Zero, Size, BackColor);
-
-            //value
-            if(MaxValue > 0)
+            if (MaxValue > 0)
             {
-                var borderSize = new Vector(Size.Y / 10);
-                var fullSize = Size - borderSize * 2;
-                var valSize = fullSize * new Vector(Value / MaxValue, 1);
-
-                g.Draw(Content.Textures.Blank, borderSize, valSize, ForeColor);
+                Text = $"{Value:0}/{MaxValue:0}";
+                Progress = Value / MaxValue;
             }
-
-            //text
-            if(!string.IsNullOrEmpty(text))
+            else
             {
-                var textPos = Size / 2;
-                g.DrawString(Content.Fonts.NormalFont, text, Color.White, textPos, 0.5f, 0.5f);
+                Text = string.Empty;
+                Progress = 0;
             }
         }
     }

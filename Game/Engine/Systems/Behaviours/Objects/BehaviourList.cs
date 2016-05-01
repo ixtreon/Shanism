@@ -57,5 +57,7 @@ namespace Engine.Systems.Behaviours
         {
             return Behaviours.GetEnumerator();
         }
+
+        public override string ToString() => CurrentBehaviour?.ToString() ?? "<none>";
     }
 }

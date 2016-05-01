@@ -32,57 +32,56 @@ namespace Engine.Objects
         public override ObjectType ObjectType => ObjectType.Unit;
 
 
-        #region Base Stats
+        #region Base (Combat) Stats
         /// <summary>
         /// Gets or sets the base hit points (life) of the unit. 
         /// </summary>
-        public double BaseLife { get; set; }
+        public double BaseLife { get; set; } = 100;
 
         /// <summary>
         /// Gets or sets the base mana of the unit. 
         /// </summary>
-        public double BaseMana { get; set; }
+        public double BaseMana { get; set; } = 0;
 
         /// <summary>
         /// Gets or sets the base dodge chance of the unit. 
         /// </summary>
-        public double BaseDodgeChance { get; set; }
+        public double BaseDodgeChance { get; set; } = 0;
 
         /// <summary>
         /// Gets or sets the base chance of dealing a critical strike for this unit. 
         /// </summary>
-        public double BaseCritChance { get; set; }
+        public double BaseCritChance { get; set; } = 0;
 
         /// <summary>
         /// Gets or sets the base defense of the unit. 
         /// </summary>
-        public double BaseDefense { get; set; }
+        public double BaseDefense { get; set; } = 0;
 
         /// <summary>
         /// Gets or sets the base magic damage of the unit. 
         /// </summary>
-        public double BaseMagicDamage { get; set; }
+        public double BaseMagicDamage { get; set; } = 0;
 
         /// <summary>
         /// Gets or sets the base movement speed of the units in squares per second. 
-        /// TODO: add buff modifier
         /// </summary>
-        public double BaseMoveSpeed { get; set; }
+        public double BaseMoveSpeed { get; set; } = 10;
 
         /// <summary>
         /// Gets or sets the base minimum damage inflicted by the unit. 
         /// </summary>
-        public double BaseMinDamage { get; set; }
+        public double BaseMinDamage { get; set; } = 0;
 
         /// <summary>
         /// Gets or sets the base maximum damage inflicted by the unit. 
         /// </summary>
-        public double BaseMaxDamage { get; set; }
+        public double BaseMaxDamage { get; set; } = 2;
 
         /// <summary>
         /// Gets or sets the base rate of attack of the unit measured in attacks per second. 
         /// </summary>
-        public double BaseAttacksPerSecond { get; set; }
+        public double BaseAttacksPerSecond { get; set; } = 0.75;
 
 
         #endregion
@@ -94,13 +93,13 @@ namespace Engine.Objects
         /// Gets or sets the life percentage of this unit
         /// as a number between 0 and 1. 
         /// </summary>
-        public double LifePercentage { get; set; }
+        public double LifePercentage { get; set; } = 1;
 
         /// <summary>
         /// Gets or sets the mana percentage of this unit
         /// as a number between 0 and 1. 
         /// </summary>
-        public double ManaPercentage { get; set; }
+        public double ManaPercentage { get; set; } = 1;
 
 
         /// <summary>
@@ -304,10 +303,24 @@ namespace Engine.Objects
         /// Initializes a new instance of the <see cref="Unit"/> class.
         /// </summary>
         protected Unit()
+            : this(Player.NeutralAggressive, 1)
         {
-            BaseLife = 5;
-            LifePercentage = 1;
-            ManaPercentage = 1;
+            Scale = Constants.Units.DefaultUnitSize;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Unit"/> class.
+        /// </summary>
+        /// <param name="owner">The owner.</param>
+        /// <param name="level">The level.</param>
+        protected Unit(Player owner, int level = 1)
+        {
+            Level = level;
+
+            //TODO: fix owner controlled units when owner changes
+            Owner = owner;
+            Owner?.AddControlledUnit(this);
+
 
             Systems.Add(buffs = new BuffSystem(this));
             Systems.Add(abilities = new AbilitySystem(this));
@@ -317,32 +330,6 @@ namespace Engine.Objects
             Systems.Add(orders = new OrdersSystem(this));
             Systems.Add(behaviour = new BehaviourSystem(this));
             Systems.Add(combat = new CombatSystem(this));
-
-            Owner = Player.NeutralAggressive;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Unit"/> class.
-        /// </summary>
-        /// <param name="owner">The owner.</param>
-        /// <param name="level">The level.</param>
-        protected Unit(Player owner, int level = 1)
-            : this()
-        {
-            Owner = owner;
-            Level = level;
-
-            Scale = Constants.Units.DefaultUnitSize;
-            BaseAttacksPerSecond = 0.6;
-            BaseMinDamage = 0;
-            BaseMaxDamage = 2;
-            BaseMoveSpeed = 10;
-            BaseDefense = 0;
-            BaseDodgeChance = 5;
-
-            VisionRange = 20;
-
-            Owner?.AddControlledUnit(this);
         }
 
         /// <summary>

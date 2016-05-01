@@ -140,6 +140,8 @@ namespace Engine.Maps
         public void Update(int msElapsed)
         {
             this.msElapsed = msElapsed;
+            //foreach (var b in binDict)
+            //    b.Value.Update(msElapsed);
             Parallel.ForEach(binDict, loopBinItem);
         }
 
@@ -148,9 +150,11 @@ namespace Engine.Maps
             item.Value.Update(msElapsed);
         }
 
-        public IEnumerator<TVal> GetEnumerator() => binDict.SelectMany(b => b.Value.Objects).GetEnumerator();
+        public IEnumerator<TVal> GetEnumerator() => 
+            binDict.SelectMany(b => b.Value.Objects).GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => 
+            GetEnumerator();
 
         internal class HashBin
         {
@@ -235,6 +239,11 @@ namespace Engine.Maps
             }
 
             public override string ToString() => $"HashBin @ {Id} ({objects.Count} items)";
+
+            public override bool Equals(object obj) =>
+                (obj is HashBin) && ((HashBin)obj).Id.Equals(Id);
+
+            public override int GetHashCode() => Id.GetHashCode();
         }
     }
 
@@ -253,6 +262,7 @@ namespace Engine.Maps
         /// <summary>
         /// Updates the custom state of an object based on the time elapsed since the last update. 
         /// </summary>
+        /// <param name="obj">The object that is to be updated. </param>
         /// <param name="msElapsed">The time elapsed since the last update, in milliseconds. </param>
         void Update(TVal obj, int msElapsed);
 

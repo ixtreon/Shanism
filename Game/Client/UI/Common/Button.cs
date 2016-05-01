@@ -74,7 +74,7 @@ namespace Client.UI.Common
             Text = text;
             Texture = texture;
 
-            BackColor = Color.White.Darken(40);
+            BackColor = Color.YellowGreen;
 
             MouseDown += Button_MouseDown;
         }
@@ -109,7 +109,7 @@ namespace Client.UI.Common
             //draw border
             if (HasBorder)
             {
-                var border = Content.Textures.TryGetIcon("border_hover");// : Content.Textures.TryGetIcon("border");
+                var border = Content.Textures.TryGetIcon("border_hover");
                 var tint = MouseOver ? Color.White : new Color(32, 32, 32);
                 tint = (IsSelected && CanSelect) ? Color.Gold.Brighten(20) : tint;
 

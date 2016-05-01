@@ -11,7 +11,7 @@ namespace Engine.Systems.Buffs
         /// </summary>
         /// <param name="caster">The caster of the buff. Can be null. </param>
         /// <param name="b">The buff to apply. </param>
-        BuffInstance Apply(Unit caster, Buff b);
+        BuffInstance TryApply(Unit caster, Buff b);
 
         /// <summary>
         /// Purges all buffs from this unit. 

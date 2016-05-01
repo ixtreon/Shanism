@@ -37,7 +37,7 @@ namespace ScenarioLib
         public IEnumerable<IEntity> DefinedEntities { get; private set; }
 
 
-        public IEnumerable<Type> DefinedEntityTypes => DefinedEntities.Select(e => e.GetType());
+        public IEnumerable<Type> DefinedEntityTypes => DefinedEntities?.Select(e => e.GetType()) ?? Enumerable.Empty<Type>();
 
         [JsonConstructor]
         public CompiledScenario() { }

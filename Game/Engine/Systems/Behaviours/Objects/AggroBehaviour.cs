@@ -21,28 +21,31 @@ namespace Engine.Systems.Behaviours
 
         ConcurrentDictionary<Unit, double> aggroTable = new ConcurrentDictionary<Unit, double>();
 
-        protected FollowBehaviour FollowBehaviour;
-        protected SpamBehaviour SpamBehaviour;
-        protected ReturnBehaviour ReturnBehaviour;
+        protected ReturnBehaviour ForceReturnBehaviour;     // forces the unit to the origin if it leaves its aggro zone
+        protected SpamBehaviour SpamBehaviour;              // forces the unit to continuously cast its spammable abilities, if it can
+        protected FollowBehaviour FollowBehaviour;          // forces the unit to chase enemy units in its vision range
+        protected ReturnBehaviour FreeReturnBehaviour;      // makes the unit return to the origin if nothing else is to be done
 
-        public Unit Target { get; internal set; }
+        public Unit CurrentTarget { get; internal set; }
 
         public AggroBehaviour(Unit u)
             : base(u)
         {
-            FollowBehaviour = new FollowBehaviour(this);
+            ForceReturnBehaviour = new ReturnBehaviour(this, u.Position, u.VisionRange * 2);
             SpamBehaviour = new SpamBehaviour(this);
-            ReturnBehaviour = new ReturnBehaviour(this, u.Position, u.VisionRange * 2);
+            FollowBehaviour = new FollowBehaviour(this);
+            FreeReturnBehaviour = new ReturnBehaviour(this, u.Position, 0.5);
 
             AddRange(new Behaviour[]
             {
-                ReturnBehaviour,
+                ForceReturnBehaviour,
                 SpamBehaviour,
                 FollowBehaviour,
+                FreeReturnBehaviour,
             });
 
-            ReturnBehaviour.OnReturnStarted += ReturnBehaviour_OnReturnStarted;
-            ReturnBehaviour.OnReturnFinished += ReturnBehaviour_OnReturnFinished;
+            ForceReturnBehaviour.OnReturnStarted += ReturnBehaviour_OnReturnStarted;
+            ForceReturnBehaviour.OnReturnFinished += ReturnBehaviour_OnReturnFinished;
         }
 
         private void ReturnBehaviour_OnReturnFinished()
@@ -54,6 +57,8 @@ namespace Engine.Systems.Behaviours
         {
             //clear the aggro table
             aggroTable.Clear();
+
+            Owner.Life = Owner.MaxLife;
         }
 
 
@@ -63,20 +68,22 @@ namespace Engine.Systems.Behaviours
         /// <returns></returns>
         Unit pickTarget()
         {
-            // remove stale entries
+            if (!aggroTable.Any())
+                return null;
+
+            // remove dead or non-existing targets. 
             var toRemove = aggroTable.Where(kvp => kvp.Key == null || kvp.Key.IsDead);
             double outVal;
             foreach (var kvp in toRemove)
                 aggroTable.TryRemove(kvp.Key, out outVal);
 
-            if (!aggroTable.Any())
-                return null;
-
             // target the max-aggro guy
             var maxAggroGuy = aggroTable
-                .ArgMaxList(a => a.Value)
-                .ArgMaxList(a => -a.Key.Position.DistanceToSquared(Owner.Position))
-                .FirstOrDefault().Key;
+                .ArgMaxList(kvp => kvp.Value)   // get unit(s) with the most aggro
+                .Select(kvp => kvp.Key)
+                .ArgMaxList(u => -u.Position.DistanceToSquared(Owner.Position)) //if more than 1 such unit, target the closest one
+                .FirstOrDefault();
+
             return maxAggroGuy;
         }
 
@@ -86,15 +93,11 @@ namespace Engine.Systems.Behaviours
         /// <param name="args"></param>
         protected override void OnDamageReceived(UnitDamagedArgs args)
         {
-            if (ReturnBehaviour.Returning)
-                return;
-            //get the source
+            //add or update the damage source's entry in the table
             var damageSource = args.DamagingUnit;
+            var dmgAmount = args.FinalDamage;
 
-            //update his aggro in the table
-            double aggro = 0;
-            aggroTable.TryGetValue(damageSource, out aggro);
-            aggroTable[damageSource] = aggro + args.FinalDamage;
+            aggroTable.AddOrUpdate(damageSource, dmgAmount, (_, aggro) => aggro + dmgAmount);
         }
 
         /// <summary>
@@ -102,42 +105,45 @@ namespace Engine.Systems.Behaviours
         /// </summary>
         protected override void OnUnitInVisionRange(Unit unit)
         {
-            if (ReturnBehaviour.Returning)
+            if (ForceReturnBehaviour.Returning)
                 return;
 
-
             //add it to the aggro table if it's a hero
-            if (unit.Owner.IsEnemyOf(Owner) && !aggroTable.ContainsKey(unit))
-                aggroTable[unit] = 0;
+            if (unit.Owner.IsEnemyOf(Owner))
+                aggroTable.TryAdd(unit, 0);
         }
 
-        /// <summary>
-        /// The behaviour takes control only if there's a valid enemy target around. 
-        /// </summary>
-        /// <param name="msElapsed"></param>
-        /// <returns></returns>
-        public override bool TakeControl(int msElapsed)
+        Vector ReturnPosition
         {
-            return pickTarget() != null;
+            get { return FreeReturnBehaviour.OriginPosition; }
+            set
+            {
+                ForceReturnBehaviour.OriginPosition =
+                FreeReturnBehaviour.OriginPosition = value;
+            }
         }
 
         public override void Update(int msElapsed)
         {
             FollowBehaviour.Distance = SpamBehaviour.Ability?.CastRange ?? 1;
-            var newTarget = pickTarget();
 
-
-            if (newTarget != Target)
+            //update return locations in peaceful times
+            if (CurrentTarget == null 
+                && CurrentBehaviour == null 
+                && ReturnPosition.DistanceTo(Owner.Position) > 2 * FreeReturnBehaviour.MaxDistance)
             {
-                //change target
+                ForceReturnBehaviour.OriginPosition =
+                FreeReturnBehaviour.OriginPosition = Owner.Position;
+            }
+
+            //keep track of most aggressive targets
+            var newTarget = pickTarget();
+            if (newTarget != CurrentTarget)
+            {
                 SpamBehaviour.TargetUnit = newTarget;
                 FollowBehaviour.Target = newTarget;
 
-                // if there was no target before, save where we currently are
-                if (Target == null)
-                    ReturnBehaviour.OriginPosition = Unit.Position;
-
-                Target = newTarget;
+                CurrentTarget = newTarget;
             }
 
             base.Update(msElapsed);

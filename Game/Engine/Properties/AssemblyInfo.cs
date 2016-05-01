@@ -16,9 +16,9 @@ using System.Runtime.InteropServices;
 
 // Make visible to testing projects. 
 // Poses a security risk if running custom scenarios. 
-# if DEBUG
-[assembly: InternalsVisibleTo("UnitTests")]
-# endif
+//# if (DEBUG || TEST)
+//[assembly: InternalsVisibleTo("UnitTests")]
+//# endif
 
 
 // Setting ComVisible to false makes the types in this assembly not visible 

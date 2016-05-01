@@ -105,16 +105,12 @@ namespace IO.Common
             }
         }
 
+
         /// <summary>
         /// Gets the angle from origin (also <see cref="Vector.Zero"/>) to this point. 
         /// </summary>
-        public double Angle
-        {
-            get
-            {
-                return Zero.AngleTo(this);
-            }
-        }
+        public double Angle => Math.Atan2(Y, X);
+
 
         /// <summary>
         /// Creates a new vector with both its X and Y coordinates set to the given value. 
@@ -166,12 +162,18 @@ namespace IO.Common
         {
             return new Vector(a.X * b.X, a.Y * b.Y);
         }
-
+        
+        /// <summary>
+        /// Performs an element-wise comparison of the two vectors. 
+        /// </summary>
         public static bool operator ==(Vector a, Vector b)
         {
             return a.X.Equals(b.X) && a.Y.Equals(b.Y);
         }
 
+        /// <summary>
+        /// Performs an element-wise negated comparison of the two vectors. 
+        /// </summary>
         public static bool operator !=(Vector a, Vector b)
         {
             return !a.X.Equals(b.X) || !a.Y.Equals(b.Y);
@@ -203,96 +205,77 @@ namespace IO.Common
             return new Vector(a.X / mult, a.Y / mult);
         }
 
-
-        public static implicit operator Vector(Point p)
-        {
-            return new Vector(p.X, p.Y);
-        }
+        public static implicit operator Vector(Point p) => 
+            new Vector(p.X, p.Y);
         #endregion
 
 
         #region Unary ops
 
-
-        public static Vector operator -(Vector a)
-        {
-            return new Vector(-a.X, -a.Y);
-        }
+        /// <summary>
+        /// Returns a vector with both of its components negated. 
+        /// </summary>
+        public static Vector operator -(Vector a) => 
+            new Vector(-a.X, -a.Y);
 
 
         /// <summary>
         /// Returns whether any of the components of this vector is <see cref="double.NaN"/>. 
         /// </summary>
-        /// <returns></returns>
-        public bool IsNan()
-        {
-            return double.IsNaN(X) || double.IsNaN(Y);
-        }
+        public bool IsNan() => 
+            double.IsNaN(X) || double.IsNaN(Y);
 
 
         /// <summary>
         /// Returns the squared length (L2 norm) of this vector. 
         /// </summary>
-        public double LengthSquared()
-        {
-            return X * X + Y * Y;
-        }
+        public double LengthSquared() => 
+            X * X + Y * Y;
 
         /// <summary>
         /// Returns the length (L2 norm) of this vector. 
         /// </summary>
-        public double Length()
-        {
-            return Math.Sqrt(LengthSquared());
-        }
+        public double Length() => 
+            Math.Sqrt(LengthSquared());
 
         /// <summary>
         /// Returns a new vector of the same angle as this one, and length one. 
         /// </summary>
         public Vector Normalize()
         {
-            var l = Length();
-            if (l.Equals(0))
-                return this;
-            return this / l;
+            if (X == 0 && Y == 0)
+                return new Vector(1, 0);
+            return this / Length();
         }
 
         /// <summary>
-        /// Uses raw conversion to <see cref="int"/> to convert this vector to a point. 
+        /// Uses explicit conversion to <see cref="int"/> to convert this vector to a point. 
         /// </summary>
-        public Point ToPoint()
-        {
-            return new Point((int)X, (int)Y);
-        }
+        public Point ToPoint() => 
+            new Point((int)X, (int)Y);
 
         /// <summary>
         /// Uses <see cref="Math.Round(double)"/> to convert this vector to a point. 
         /// </summary>
-        public Point Round()
-        {
-            return new Point((int)Math.Round(X), (int)Math.Round(Y));
-        }
+        public Point Round() => 
+            new Point((int)Math.Round(X), (int)Math.Round(Y));
 
         /// <summary>
         /// Uses <see cref="Math.Floor(double)"/> to convert this vector to a point. 
         /// </summary>
-        public Point Floor()
-        {
-            return new Point((int)Math.Floor(X), (int)Math.Floor(Y));
-        }
+        public Point Floor() => 
+            new Point((int)Math.Floor(X), (int)Math.Floor(Y));
 
         /// <summary>
         /// Uses <see cref="Math.Ceiling(double)"/> to convert this vector to a point. 
         /// </summary>
-        public Point Ceiling()
-        {
-            return new Point((int)Math.Ceiling(X), (int)Math.Ceiling(Y));
-        }
+        public Point Ceiling() => 
+            new Point((int)Math.Ceiling(X), (int)Math.Ceiling(Y));
 
         #endregion
 
 
-        #region Binary ops
+        #region Binary Methods
 
         /// <summary>
         /// Returns the squared distance between this point and the given point. 
@@ -316,9 +299,7 @@ namespace IO.Common
         /// Returns the angle between this point and the given point. 
         /// </summary>
         public double AngleTo(Vector pos)
-        {
-            return Math.Atan2(pos.Y - Y, pos.X - X);
-        }
+            => (pos - this).Angle;
 
         #endregion
 
@@ -386,20 +367,16 @@ namespace IO.Common
         /// </returns>
         public override bool Equals(object obj)
         {
-            if (!(obj is Vector))
-                return false;
-            return (Vector)obj == this;
+            return (obj is Vector) && (Vector)obj == this;
         }
+
         /// <summary>
         /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <returns>
         /// A <see cref="string" /> that represents this instance.
         /// </returns>
-        public override string ToString()
-        {
-            return ToString("0.00");
-        }
+        public override string ToString() => ToString("0.00");
 
         /// <summary>
         /// Returns a <see cref="string" /> that represents this instance.
@@ -408,10 +385,8 @@ namespace IO.Common
         /// <returns>
         /// A <see cref="string" /> that represents this instance.
         /// </returns>
-        public string ToString(string format)
-        {
-            return string.Format("[{0}, {1}]", X.ToString(format), Y.ToString(format));
-        }
+        public string ToString(string format) => 
+            $"[{X.ToString(format)}, {Y.ToString(format)}]";
 
         #endregion
 

@@ -46,6 +46,10 @@ namespace IO.Objects
 
         public double Mana { get; private set; }
 
+        public double LifeRegen { get; private set; }
+
+        public double ManaRegen { get; private set; }
+
         public double MaxDamage { get; private set; }
 
         public double MinDamage { get; private set; }

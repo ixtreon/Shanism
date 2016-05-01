@@ -52,7 +52,7 @@ namespace Engine.Objects.Entities
             get { return _experience; }
             set
             {
-                if (value < 0 || value < _experience)
+                if (value < _experience)
                     throw new Exception("You must supply an experience value higher than the previous one!");
                 _experience = value;
                 while (_experience > ExperienceNeeded)
@@ -106,18 +106,7 @@ namespace Engine.Objects.Entities
         /// Gets the movement state of this hero, if it is moving. 
         /// </summary>
         public MovementState MoveState
-        {
-            get { return (OrderType == OrderType.Move) ? ((PlayerMoveOrder)Order).State : MovementState.Stand; }
-        }
-
-        internal Hero()
-        {
-            BaseMoveSpeed = 12;
-
-            BaseLife = 100;
-            BaseMana = 5;
-        }
-
+            => (Order as PlayerMoveOrder?)?.State ?? MovementState.Stand;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Hero"/> class.
@@ -126,6 +115,12 @@ namespace Engine.Objects.Entities
         public Hero(Player owner)
             : base(owner)
         {
+            ModelName = "units/hero";
+
+            BaseMoveSpeed = 12;
+
+            BaseLife = 100;
+            BaseMana = 5;
         }
 
 

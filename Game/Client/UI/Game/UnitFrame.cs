@@ -18,6 +18,8 @@ namespace Client.UI
     /// </summary>
     class UnitFrame : Control
     {
+        public static readonly Vector DefaultSize = new Vector(0.6f, 0.2f);
+
         const double largePadding = Padding * 2;
 
         const double hpBarHeight = Padding * 4;
@@ -30,28 +32,22 @@ namespace Client.UI
         readonly ManaBar manaBar;
         readonly BuffBar buffBar;
         readonly Label nameLabel;
-        readonly Label xpLabel;
+        readonly Label lvlLabel;
 
         /// <summary>
         /// The size of the unit sprite that is drawn. 
         /// </summary>
-        public double SpriteSize
-        {
-            get { return Size.Y - 2 * largePadding; }
-        }
+        double SpriteSize =>  Size.Y - 2 * largePadding;
 
         /// <summary>
         /// The size of the sprite + the border around it. 
         /// </summary>
-        public double SpriteBoxSize
-        {
-            get { return SpriteSize + 2 * largePadding; }
-        }
+        double SpriteBoxSize => SpriteSize + 2 * largePadding;
 
 
         public UnitFrame()
         {
-            Size = new Vector(0.6f, 0.2f);
+            Size = DefaultSize;
             BackColor = Color.Black.SetAlpha(100);
 
             var nameFont = Content.Fonts.FancyFont;
@@ -61,7 +57,7 @@ namespace Client.UI
             {
                 ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
                 Location = new Vector(SpriteBoxSize, largePadding),
-                Size = new Vector(labelLength, nameFont.UiHeight),
+                Size = new Vector(labelLength, nameFont.HeightUi),
                 AutoSize = false,
 
                 //BackColor = Color.Green,
@@ -72,22 +68,18 @@ namespace Client.UI
                 TextXAlign = 0.5f,
             };
 
-            var xpFont = Content.Fonts.SmallFont;
-            xpLabel = new Label
+            var lvlFont = Content.Fonts.SmallFont;
+            lvlLabel = new Label
             {
                 ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
                 Location = new Vector(SpriteBoxSize, nameLabel.Bottom + Padding),
-                Size = new Vector(labelLength, xpFont.UiHeight),
+                Size = new Vector(labelLength, lvlFont.HeightUi),
                 AutoSize = false,
 
                 Font = Content.Fonts.SmallFont,
                 Text = "Level ???",
                 TextColor = Color.White,
                 TextXAlign = 0.5f,
-
-                //BackColor = Color.Blue,
-
-                ToolTip = "???/???",
             };
 
             manaBar = new ManaBar
@@ -119,7 +111,7 @@ namespace Client.UI
             };
 
 
-            Add(xpLabel);
+            Add(lvlLabel);
             Add(nameLabel);
             Add(manaBar);
             Add(healthBar);
@@ -132,18 +124,21 @@ namespace Client.UI
 
             IsVisible = (unitTarget != null);
 
-            healthBar.Target = unitTarget;
-            manaBar.Target = unitTarget;
-            buffBar.Target = unitTarget;
+            if (IsVisible)
+            {
+                healthBar.Target = unitTarget;
+                manaBar.Target = unitTarget;
+                buffBar.Target = unitTarget;
 
-            nameLabel.Text = unitTarget?.Name;
-            xpLabel.Text = "Level {0}".F(unitTarget?.Level ?? 0);
+                nameLabel.Text = unitTarget?.Name;
+                lvlLabel.Text = $"Level {unitTarget.Level}";
 
-            var heroTarget = unitTarget as IO.Objects.IHero;
-            if (heroTarget != null)
-                xpLabel.ToolTip = "{0}/{1} XP".F(heroTarget.Experience, heroTarget.ExperienceNeeded);
-            else
-                xpLabel.ToolTip = string.Empty;
+                var heroTarget = unitTarget as IO.Objects.IHero;
+                if (heroTarget != null)
+                    lvlLabel.ToolTip = $"{heroTarget.Experience}/{heroTarget.ExperienceNeeded} XP";
+                else
+                    lvlLabel.ToolTip = string.Empty;
+            }
 
         }
 

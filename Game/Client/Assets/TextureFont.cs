@@ -31,56 +31,41 @@ namespace Client.Assets
         readonly double _userScale;
 
 
+        public readonly Texture2D Texture;
 
-        /// <summary>
-        /// Gets the current height of the font in pixels. 
-        /// </summary>
-        public int ScreenHeight
-        {
-            get { return (int)(_baseHeight * Scale); }
-        }
-
-
-        /// <summary>
-        /// Gets the character spacing of the font in pixels. 
-        /// </summary>
-        public int ScreenSpacing
-        {
-            get { return (int)(_baseCharSpacing * Scale); }
-        }
-
-
-        /// <summary>
-        /// Gets the height of the font in UI units. 
-        /// </summary>
-        public double UiHeight
-        {
-            get { return ScreenHeight / Screen.UiScale; }
-        }
-
-        /// <summary>
-        /// Gets the char spacing of this font in UI units. 
-        /// </summary>
-        public double UiCharSpacing
-        {
-            get { return ScreenSpacing / Screen.UiScale; }
-        }
 
         /// <summary>
         /// Gets the current scaling factor based on the screen size and the user scaling. 
         /// </summary>
-        double Scale
-        {
-            get {  return _userScale * Screen.FontScale; }
-        }
+        double Scale => _userScale * Screen.FontScale;
 
-        public readonly Texture2D Texture;
+        /// <summary>
+        /// Gets the current height of the font in pixels. 
+        /// </summary>
+        public int HeightPx => (int)(_baseHeight * Scale);
+
+        /// <summary>
+        /// Gets the character spacing of the font in pixels. 
+        /// </summary>
+        public int CharSpacingPx => (int)(_baseCharSpacing * Scale);
+
+        /// <summary>
+        /// Gets the height of the font in UI units. 
+        /// </summary>
+        public double HeightUi => HeightPx / Screen.UiScale;
+
+
+        /// <summary>
+        /// Gets the char character of this font in UI units. 
+        /// </summary>
+        public double CharSpacingUi => CharSpacingPx / Screen.UiScale; 
+
 
         public TextureFont(ContentManager content, string name, double scale = 1f, double characterSpacing = 2)
         {
-            this._baseCharSpacing = characterSpacing;
-            this._userScale = scale;
-            this.Texture = content.Load<Texture2D>(name);
+            _baseCharSpacing = characterSpacing;
+            _userScale = scale;
+            Texture = content.Load<Texture2D>(name);
 
             var xmlSchema = new XmlDocument();
             xmlSchema.Load(Path.Combine(Content.DefaultContentDirectory, name + ".xml"));
@@ -110,7 +95,7 @@ namespace Client.Assets
             this._baseHeight = f._baseHeight;
             this._baseCharSpacing = f._baseCharSpacing;
 
-            this.keys = f.keys.Clone() as Rectangle[];
+            this.keys = (Rectangle[])f.keys.Clone();
         }
 
         /// <summary>
@@ -124,13 +109,13 @@ namespace Client.Assets
         /// <param name="yAnchor">The Y anchor of the text. 0 is top, 1 is bottom, 0.5 is middle. </param>
         /// <param name="maxWidth">The maximum width the string is allowed to be. </param>
         /// <returns>The height of the string, in pixels. </returns>
-        public int DrawString(SpriteBatch sb, string text, 
+        public int DrawStringUi(SpriteBatch sb, string text, 
             Color color, Vector pos, 
             float xAnchor, float yAnchor,
             double? maxValue = null)
         {
             var screenPos = Screen.UiToScreen(pos);
-            return DrawStringScreen(sb, text, color, screenPos, xAnchor, yAnchor, (int?)(maxValue * Screen.UiScale));
+            return DrawStringPx(sb, text, color, screenPos, xAnchor, yAnchor, (maxValue * Screen.UiScale));
         }
 
         /// <summary>
@@ -144,74 +129,84 @@ namespace Client.Assets
         /// <param name="yAnchor">The Y anchor of the text. </param>
         /// <param name="maxWidth">The maximum width the string is allowed to be. </param>
         /// <returns>The height of the string, in pixels. </returns>
-        public int DrawStringScreen(SpriteBatch sb, string text, 
+        public int DrawStringPx(SpriteBatch sb, string text, 
             Color color, Vector p, 
             float xAnchor, float yAnchor,
-            int? maxWidth = null)
+            double? maxWidth = null)
         {
             if (string.IsNullOrEmpty(text))
                 return 0;
 
             //split the string into lines, and anchor vertically
-            var lines = getLines(text, maxWidth ?? int.MaxValue).ToArray();
-            var y = p.Y - (int)(ScreenHeight * yAnchor * lines.Length);
+            var lines = getLines(text, maxWidth ?? double.MaxValue).ToArray();
+            var y = p.Y - (HeightPx * yAnchor * lines.Length);
 
             foreach (var ln in lines)
             {
                 // get the line width and anchor horizontally
-                var lnWidth = getWidth(ln);
-                var x = p.X - (int)(lnWidth * xAnchor);
+                var lnWidth = getLineWidth(ln);
+                var x = p.X - (lnWidth * xAnchor);
 
                 // draw the lines
                 foreach (var c in ln.Where(c => c > 0 && c < 256))
                 {
-                    DrawChar(sb, c, color, new Vector(x, y));
-                    x += ScreenSpacing + (int)(keys[c].Width * Scale);
+                    drawChar(sb, c, color, new Vector(x, y));
+                    x += CharSpacingPx + (keys[c].Width * Scale);
                 }
 
                 // move to a new line
-                y += ScreenHeight;
+                y += HeightPx;
             }
             return 0;
         }
 
-        public Point MeasureString(string text, int maxWidth = int.MaxValue)
-        {
-            if (string.IsNullOrEmpty(text))
-                return Point.Zero;
-            var lines = getLines(text, maxWidth);
-            var w = lines.Any() ? lines.Max(l => getWidth(l)) : 0;
-            var h = ScreenHeight * lines.Count();
-            return new Point(w, h);
-        }
-
         public Vector MeasureStringUi(string text = "WOW LOOK AT THAT STRING! gj fi dat!", double maxWidth = 5000)
         {
-            var p = MeasureString(text, (int)(maxWidth * Screen.UiScale));
-            return new Vector(Screen.ScreenToUi(p.X), Screen.ScreenToUi(p.Y));
+            var p = MeasureString(text, (maxWidth * Screen.UiScale));
+            return new Vector(p.X / Screen.UiScale, p.Y / Screen.UiScale);
+        }
+
+        public Vector MeasureString(string text, double maxWidth = double.MaxValue)
+        {
+            if (string.IsNullOrEmpty(text))
+                return Vector.Zero;
+            var lines = getLines(text, maxWidth);
+            var w = lines.Any() ? lines.Max(l => getLineWidth(l)) : 0;
+            var h = HeightPx * lines.Count();
+            return new Vector(w, h);
         }
 
         /// <summary>
         /// Gets the width of the given one-line (!) string in pixels. 
         /// </summary>
         /// <param name="s"></param>
-        int getWidth(string s)
+        double getLineWidth(string s)
         {
-            return (int)(s
-                .Where(c => c < 256)
-                .Sum(c => keys[c].Width) * Scale + ScreenSpacing * (s.Length - 1));
+            return (s.Sum(c => keys[c].Width) * Scale) + (CharSpacingPx * (s.Length - 1));
         }
 
-        
-        public double[] GetLengthsUi(string s)
+
+        public double[] GetLineCharsPx(string s)
         {
             if (string.IsNullOrEmpty(s))
                 return new[] { 0.0 };
 
             var ws = new double[s.Length + 1];
             ws[0] = 0;
-            for (int i = 0; i < s.Length; i++)
-                ws[i + 1] = ws[i] + Screen.ScreenToUi(ScreenSpacing + (int)(Scale * keys[s[i]].Width));
+            ws[1] = Scale * keys[s[0]].Width;
+
+            for (int i = 1; i < s.Length; i++)
+                ws[i + 1] = ws[i] + CharSpacingPx + (Scale * keys[s[i]].Width);
+
+            return ws;
+        }
+
+        public double[] GetLineCharsUi(string s)
+        {
+            var ws = GetLineCharsPx(s);
+
+            for (int i = 1; i < ws.Length; i++)
+                ws[i] = Screen.ScreenToUi(ws[i]);
 
             return ws;
         }
@@ -223,36 +218,35 @@ namespace Client.Assets
         /// </summary>
         /// <param name="text"></param>
         /// <param name="maxWidth"></param>
-        IEnumerable<string> getLines(string text, int maxWidth = int.MaxValue)
-        {
-            foreach (var ln in text.Split('\n'))
-                foreach (var ln2 in getLinesNoBreak(ln, maxWidth))
-                    yield return ln2;
-        }
-        IEnumerable<string> getLinesNoBreak(string text, int maxWidth)
+        IEnumerable<string> getLines(string text, double maxWidth = double.MaxValue)
         {
             if (!string.IsNullOrEmpty(text))
             {
-                var currentWidth = 0.0;
-                var lastCut = 0;
-                var lastSpacebar = 0;
+                var curChar = text[0];
+                var charWidth = getCharSize(curChar).X;
+                var currentWidth = charWidth;
+                var newWidth = currentWidth;
 
-                for (int i = 0; i < text.Length; i++)
+                var lastCut = 0;
+                var lastWordBreak = 0;
+
+                for (int i = 1; i < text.Length; i++)
                 {
                     //grab the char and its width
-                    var c = text[i];
-                    var charWidth = getCharSize(c).X;
-                    var newWidth = currentWidth + ScreenSpacing + charWidth;
+                    curChar = text[i];
+                    charWidth = getCharSize(curChar).X;
+                    newWidth = currentWidth + CharSpacingPx + charWidth;
 
                     //save spacebars
-                    if (c == ' ')
-                        lastSpacebar = i;
+                    if (char.IsWhiteSpace(curChar))
+                        lastWordBreak = i;
 
                     //determine whether to go to a new line
-                    if (newWidth > maxWidth && lastSpacebar > lastCut)
+                    //always write at least one word though
+                    if (curChar == '\n' || (newWidth > maxWidth && lastWordBreak > lastCut))
                     {
-                        yield return text.Substring(lastCut, lastSpacebar - lastCut);
-                        lastCut = lastSpacebar + 1;
+                        yield return text.Substring(lastCut, lastWordBreak - lastCut);
+                        lastCut = lastWordBreak + 1;
 
                         currentWidth = charWidth;
                     }
@@ -263,12 +257,12 @@ namespace Client.Assets
             }
         }
         
-        public void DrawChar(SpriteBatch sb, char c, Color col, Vector pos)
+        void drawChar(SpriteBatch sb, char c, Color col, Vector pos)
         {
-            var sz = getCharSize(c);
-
             if (c < 0 || c > 255)
                 return;
+
+            var sz = getCharSize(c);
 
             sb.ShanoDraw(Texture, keys[c], pos, sz, col);
         }
@@ -288,7 +282,7 @@ namespace Client.Assets
 
         private int parseInt(string i)
         {
-            int id = -1;
+            var id = -1;
             int.TryParse(i, out id);
             return id;
         }

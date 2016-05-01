@@ -44,8 +44,7 @@ namespace ShanoEditor
             if (dialog.ShowDialog() != DialogResult.OK)
                 return;
 
-            var filePath = Path.GetDirectoryName(dialog.FileName);
-            var sc = new CompiledScenario(filePath);
+            var sc = new CompiledScenario(dialog.FileName);
 
             await open(sc);
 

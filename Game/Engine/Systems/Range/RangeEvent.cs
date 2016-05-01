@@ -43,8 +43,9 @@ namespace Engine.Systems.Range
         /// <param name="range">The distance at which this cosntraint is triggered. </param>
         public RangeEvent(double range)
         {
-            if (range < 0 || range > Constants.RangeEvents.MaxRangeUnits)
+            if (range <= 0 || range > Constants.RangeEvents.MaxRangeUnits)
                 throw new ArgumentOutOfRangeException("Distance must be between 0 and {0}".F(Constants.RangeEvents.MaxRangeUnits));
+
             Range = range;
             RangeSquared = range * range;
         }
@@ -61,18 +62,31 @@ namespace Engine.Systems.Range
         }
 
 
-        internal void Check(Entity target, double newDistSq, double oldDistSq)
+        internal bool Check(Entity target, double newDistSq, double oldDistSq)
         {
-            if ((Target == null || Target == target) 
+            if ((Target == null || Target == target)
                 && (newDistSq < RangeSquared)
                 && (oldDistSq >= RangeSquared || double.IsNaN(oldDistSq)))
+            {
                 Triggered?.Invoke(target);
+                return true;
+            }
+            return false;
         }
 
 
+        /// <summary>
+        /// Compares the current object with another object of the same type.
+        /// </summary>
+        /// <param name="other">An object to compare with this object.</param>
+        /// <returns>
+        /// A value that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero This object is less than the <paramref name="other" /> parameter.Zero This object is equal to <paramref name="other" />. Greater than zero This object is greater than <paramref name="other" />.
+        /// </returns>
         public int CompareTo(RangeEvent other)
         {
-            return Range.CompareTo(other.Range);
+            if(Target == other.Target)
+                return Range.CompareTo(other.Range);
+            return (Target?.Id ?? 0).CompareTo(other.Target?.Id ?? 0);
         }
     }
 }

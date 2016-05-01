@@ -91,7 +91,9 @@ namespace Client
 
         Vector getClampedScreenSize(Vector pos, Vector size)
         {
-            size = size.Clamp(Vector.Zero, Size - pos);
+            size = size.Clamp(Vector.Zero, (Size - pos));
+            if (size.X < 0 || size.Y < 0)
+                return Vector.Zero;
             return size * Screen.UiScale;
         }
 
@@ -116,7 +118,7 @@ namespace Client
         {
             txtPos = txtPos.Clamp(Vector.Zero, Size);
 
-            return f.DrawString(SpriteBatch, text, color, Position + txtPos, xAnchor, yAnchor, txtMaxWidth);
+            return f.DrawStringUi(SpriteBatch, text, color, Position + txtPos, xAnchor, yAnchor, txtMaxWidth);
         }
 
         public override string ToString()

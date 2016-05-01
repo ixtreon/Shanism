@@ -49,11 +49,11 @@ namespace ShanoEditor.Views
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.pTerrain = new ShanoEditor.Views.Maps.TerrainList();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.pObjects = new ShanoEditor.Views.Maps.GameObjectList();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.propPanel = new ShanoEditor.Views.Maps.PropPanel();
-            this.btnMaxTools = new System.Windows.Forms.Button();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.pObjects = new ShanoEditor.Views.Maps.GameObjectList();
+            this.selectionWindow1 = new ShanoEditor.Views.Maps.SelectionWindow();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.nWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nHeight)).BeginInit();
@@ -68,8 +68,8 @@ namespace ShanoEditor.Views
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
-            this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // chkInfinite
@@ -277,7 +277,7 @@ namespace ShanoEditor.Views
             // 
             // mapSplitter.Panel2
             // 
-            this.mapSplitter.Panel2.Controls.Add(this.btnMaxTools);
+            this.mapSplitter.Panel2.Controls.Add(this.selectionWindow1);
             this.mapSplitter.Size = new System.Drawing.Size(928, 585);
             this.mapSplitter.SplitterDistance = 232;
             this.mapSplitter.TabIndex = 1;
@@ -286,8 +286,8 @@ namespace ShanoEditor.Views
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage4);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
@@ -328,27 +328,6 @@ namespace ShanoEditor.Views
             this.pTerrain.TabIndex = 17;
             this.pTerrain.TerrainBrushChanged += new System.Action(this.onTerrainBrushChanged);
             // 
-            // tabPage3
-            // 
-            this.tabPage3.Controls.Add(this.pObjects);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(222, 557);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Objects";
-            this.tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // pObjects
-            // 
-            this.pObjects.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.pObjects.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pObjects.Location = new System.Drawing.Point(3, 3);
-            this.pObjects.Name = "pObjects";
-            this.pObjects.Size = new System.Drawing.Size(216, 551);
-            this.pObjects.TabIndex = 0;
-            this.pObjects.ObjectSelected += new System.Action<IO.Objects.IEntity>(this.pObjects_ObjectSelected);
-            // 
             // tabPage4
             // 
             this.tabPage4.Controls.Add(this.propPanel);
@@ -370,23 +349,37 @@ namespace ShanoEditor.Views
             this.propPanel.TabIndex = 0;
             this.propPanel.BrushChanged += new System.Action<ScenarioLib.ObjectConstructor>(this.propPanel_BrushChanged);
             // 
-            // btnMaxTools
+            // tabPage3
             // 
-            this.btnMaxTools.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.btnMaxTools.FlatAppearance.BorderSize = 0;
-            this.btnMaxTools.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.btnMaxTools.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.btnMaxTools.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnMaxTools.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnMaxTools.Location = new System.Drawing.Point(1, 1);
-            this.btnMaxTools.Margin = new System.Windows.Forms.Padding(1, 1, 3, 3);
-            this.btnMaxTools.Name = "btnMaxTools";
-            this.btnMaxTools.Size = new System.Drawing.Size(24, 24);
-            this.btnMaxTools.TabIndex = 2;
-            this.btnMaxTools.Text = "◀";
-            this.toolTip1.SetToolTip(this.btnMaxTools, "Show/Hide side panel. ");
-            this.btnMaxTools.UseVisualStyleBackColor = false;
-            this.btnMaxTools.Click += new System.EventHandler(this.btnMaxTools_Click);
+            this.tabPage3.Controls.Add(this.pObjects);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(222, 557);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Objects";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // pObjects
+            // 
+            this.pObjects.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.pObjects.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pObjects.Location = new System.Drawing.Point(3, 3);
+            this.pObjects.Name = "pObjects";
+            this.pObjects.Size = new System.Drawing.Size(216, 551);
+            this.pObjects.TabIndex = 0;
+            this.pObjects.ObjectSelected += new System.Action<IO.Objects.IEntity>(this.pObjects_ObjectSelected);
+            // 
+            // selectionWindow1
+            // 
+            this.selectionWindow1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.selectionWindow1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.selectionWindow1.Location = new System.Drawing.Point(0, -1);
+            this.selectionWindow1.Margin = new System.Windows.Forms.Padding(0);
+            this.selectionWindow1.Name = "selectionWindow1";
+            this.selectionWindow1.Size = new System.Drawing.Size(177, 135);
+            this.selectionWindow1.TabIndex = 0;
+            this.selectionWindow1.Visible = false;
             // 
             // MapView
             // 
@@ -412,8 +405,8 @@ namespace ShanoEditor.Views
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
-            this.tabPage3.ResumeLayout(false);
             this.tabPage4.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -429,7 +422,6 @@ namespace ShanoEditor.Views
         private System.Windows.Forms.GroupBox pFiniteSettings;
         private System.Windows.Forms.Panel pMapSettings;
         private System.Windows.Forms.SplitContainer mapSplitter;
-        private System.Windows.Forms.Button btnMaxTools;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.GroupBox pInfiniteSettings;
         private System.Windows.Forms.CheckBox chkFixedSeed;
@@ -443,5 +435,6 @@ namespace ShanoEditor.Views
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.TabPage tabPage4;
         private Maps.PropPanel propPanel;
+        private Maps.SelectionWindow selectionWindow1;
     }
 }

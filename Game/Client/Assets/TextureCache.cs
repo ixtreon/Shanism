@@ -14,9 +14,9 @@ using System.Text.RegularExpressions;
 
 namespace Client.Textures
 {
-    class TextureCache
+    public class TextureCache
     {
-        Dictionary<string, Texture2D> textures { get; }  = new Dictionary<string, Texture2D>();
+        readonly Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
 
         public Texture2D Blank { get; private set; }
 
@@ -43,7 +43,7 @@ namespace Client.Textures
             Blank = TryGetRaw("1");
             DefaultIcon = TryGetIcon("default");
         }
-        
+
 
         void loadTexture(ContentManager content, TextureDef texDef)
         {
@@ -79,16 +79,6 @@ namespace Client.Textures
         public Texture2D TryGetIcon(string iconName)
         {
             return TryGetRaw(TextureType.Icon.GetDirectory(iconName));
-        }
-
-        /// <summary>
-        /// Tries to get the texture with the given name relative to the Objects folder. See <see cref="TextureType"/>. 
-        /// </summary>
-        /// <param name="objName">The name of the texture relative to the Objects folder. </param>
-        /// <returns>The texture with that name, or null if no such texture was found. </returns>
-        public Texture2D TryGetObject(string objName)
-        {
-            return TryGetRaw(TextureType.Model.GetDirectory(objName));
         }
 
         /// <summary>

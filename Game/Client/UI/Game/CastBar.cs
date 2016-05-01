@@ -22,37 +22,29 @@ namespace Client.UI
             set { Size = new Vector(value, Size.Y); }
         }
 
-        private ValueBar Bar = new ValueBar();
+        double barFillValue;
+        double secondsLeft;
 
         public CastBar()
         {
-            BackColor = new Color(15, 15, 15, 200);
-            Bar.ForeColor = Color.Gold;
+            BackColor = Color.Black.SetAlpha(75);
 
-            this.Size = new Vector(0.5f, 0.08f);
-            this.Add(Bar);
+            Size = new Vector(0.5f, 0.08f);
         }
 
         protected override void OnUpdate(int msElapsed)
         {
-            this.IsVisible = (Target != null && Target.OrderType == OrderType.Casting && Target.TotalCastingTime > 0);
+            IsVisible = Target != null 
+                && Target.OrderType == OrderType.Casting 
+                && Target.TotalCastingTime > 0;
 
-            if (this.IsVisible)
+            if (IsVisible)
             {
-                Bar.Value = Target.CastingProgress;
-                Bar.MaxValue = Target.TotalCastingTime;
-                Bar.Size = this.Size;
+                barFillValue = (double)Target.CastingProgress / Target.TotalCastingTime;
+                secondsLeft = (Target.TotalCastingTime - Target.CastingProgress) / 1000.0;
             }
+
             base.OnUpdate(msElapsed);
-        }
-
-        public double castTimeLeft
-        {
-            get
-            {
-                var timeLeft = (Target?.TotalCastingTime - Target?.CastingProgress) ?? 0;
-                return timeLeft / 1000.0;
-            }
         }
 
         public override void OnDraw(Graphics g)
@@ -60,8 +52,15 @@ namespace Client.UI
             base.OnDraw(g);
 
             if (IsVisible)
-                g.DrawString(Content.Fonts.NormalFont, "- {0:0.0}s".F(castTimeLeft), Color.White,
-                    Location + new Vector(Size.X, Size.Y / 2), 1, 0.5f);
+            {
+                var borderSize = Padding;
+                var fullSize = Size - borderSize * 2;
+                var valSize = fullSize * new Vector(barFillValue, 1);
+
+                g.Draw(Content.Textures.Blank, new Vector(Padding), valSize, Color.Goldenrod);
+
+                g.DrawString(Content.Fonts.NormalFont, $"-{secondsLeft:0.0}s", Color.White, new Vector(2 * Padding, Size.Y / 2), 0, 0.5f);
+            }
         }
     }
 }

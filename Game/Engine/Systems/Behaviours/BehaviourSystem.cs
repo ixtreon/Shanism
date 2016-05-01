@@ -26,7 +26,10 @@ namespace Engine.Systems
             //update behaviour
             Owner.Behaviour.Update(msElapsed);
 
-            if (Owner.CustomOrder || Owner.Behaviour.CurrentOrder == Owner.Order)
+            // if custom order, or behaviour's order hasn't changed
+            // return
+            if (Owner.CustomOrder
+                || Owner.Behaviour.CurrentOrder == Owner.Order)
                 return;
 
             //apply behaviour

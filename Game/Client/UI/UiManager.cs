@@ -12,12 +12,14 @@ using IO.Objects;
 using IO.Common;
 using Color = Microsoft.Xna.Framework.Color;
 using Client.UI.CombatText;
+using Client.UI.Chat;
 
 namespace Client.UI
 {
     class UiManager : Control
     {
         public FloatingTextProvider FloatingText { get; } = new FloatingTextProvider();
+        public RangeIndicator RangeIndicator { get; } = new RangeIndicator();
 
 
         readonly UnitFrame heroFrame;
@@ -26,6 +28,7 @@ namespace Client.UI
         readonly SpellBar abilityBar;
         readonly MenuBar menus;
         readonly CastBar castBar;
+        readonly ChatBar chatBar;
         readonly ChatBox chatBox;
         readonly BuffBar heroBuffBar;
         readonly ErrorTextControl errors;
@@ -41,7 +44,7 @@ namespace Client.UI
             get { return _mainHeroControl; }
             set
             {
-                if(_mainHeroControl != value)
+                if (_mainHeroControl != value)
                 {
                     _mainHeroControl = value;
 
@@ -82,19 +85,19 @@ namespace Client.UI
             CanHover = false;
             GameActionActivated += onActionActivated;
 
-            var castBarSize = new Vector(0.5f, 0.08f);
-
+            var unitFrameXOffset = 0.25;
             heroFrame = new UnitFrame
             {
                 ParentAnchor = AnchorMode.Top,
-                Location = new Vector(1 - 0.25 - 0.6, 0),
+                Location = new Vector(1 - unitFrameXOffset - UnitFrame.DefaultSize.X, 0),
             };
             targetFrame = new UnitFrame
             {
                 ParentAnchor = AnchorMode.Top,
-                Location = new Vector(1 + 0.25, 0),
+                Location = new Vector(1 + unitFrameXOffset, 0),
             };
-            hoverFrame = new UnitHoverFrame
+
+            hoverFrame = new UnitHoverFrame(0.02, 0.02)
             {
                 ParentAnchor = AnchorMode.Top,
             };
@@ -104,44 +107,77 @@ namespace Client.UI
                 ParentAnchor = AnchorMode.Bottom,
                 Location = new Vector(0.6, 0.8),
             };
-            chatBox = new ChatBox();
+
+            var chatFont = Content.Fonts.NormalFont;
+            var chatSize = new Vector(abilityBar.Size.X, Content.Fonts.NormalFont.HeightUi + 2 * Padding);
+            chatBar = new ChatBar()
+            {
+                ParentAnchor = AnchorMode.Bottom,
+                Font = chatFont,
+                Size = chatSize,
+                Location = abilityBar.Location - new Vector(0, chatSize.Y),
+            };
+            chatBox = new ChatBox
+            {
+                Size = new Vector(chatSize.X, ChatBox.DefaultSize.Y),
+                Location = new Vector(2, 0) - new Vector(chatSize.X, 0),
+                ParentAnchor = AnchorMode.Right | AnchorMode.Top,
+            };
+            chatBox.SetProvider(chatBar);
+
+            var castBarSize = new Vector(0.5f, 0.08f);
             castBar = new CastBar
             {
-                BackColor = Color.Pink,
+                ParentAnchor = AnchorMode.Bottom,
+
                 Size = castBarSize,
-                Location = new Vector(-castBarSize.X / 2, 0.7),
+                Location = new Vector(1 - castBarSize.X / 2, 0.55),
             };
             heroBuffBar = new BuffBar
             {
                 AbsolutePosition = new Vector(0, 0),
             };
-            menus = new MenuBar(this);
 
-            //controls
+            /* add controls: order is important, unless ZValue is manually set. */
+
+            //game indicators
+            Add(FloatingText);
+            Add(RangeIndicator);
+            Add((errors = new ErrorTextControl()));
+
+            //game controls
             Add(heroFrame);
             Add(targetFrame);
             Add(hoverFrame);
             Add(abilityBar);
-            //Add(chatBox);
             Add(castBar);
-            //Add(HeroBuffs);
-            Add(menus);
 
-            //errors
-            Add((errors = new ErrorTextControl()));
+            //chat
+            Add(chatBar);
+            Add(chatBox);
+
+            //menus
+            Add((menus = new MenuBar(this)));
 
             //tooltips
             Add(new Tooltips.SimpleTip());
             Add(new Tooltips.AbilityTip());
-
-            Add(FloatingText);
 
             Maximize();
         }
 
         void onActionActivated(GameAction ga)
         {
-            menus.ActivateAction(ga);
+            switch (ga)
+            {
+                case GameAction.Chat:
+                    chatBar.SetFocus();
+                    break;
+                default:
+                    abilityBar.ActivateAction(ga);
+                    menus.ActivateAction(ga);
+                    break;
+            }
         }
 
         public void DisplayError(string msg)
@@ -149,13 +185,12 @@ namespace Client.UI
             errors.LogError(msg);
         }
 
-        public IAbility CurrentAbility
-        {
-            get { return SpellBarButton.CurrentSpellButton?.Ability; }
-        }
+        public IAbility CurrentAbility => SpellBarButton.CurrentSpellButton?.Ability;
 
         protected override void OnUpdate(int msElapsed)
         {
+            Maximize();
+
             Ticker.Default.Update(msElapsed);
 
             menus.OurHero = MainHero;

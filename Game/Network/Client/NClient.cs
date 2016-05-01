@@ -148,11 +148,11 @@ namespace Network.Client
             {
                 //TODO: initiate shutdown sequence
 
-                Log.Default.Info($"Connection was dropped. ");
+                Log.Default.Info($"Connection dropped. ");
                 return;
             }
 
-            Log.Default.Info($"Sent a {ioMsg.Type}. ");
+            Log.Default.Debug($"Sent a {ioMsg.Type}. ");
         }
 
         public void UpdateServer(int msElapsed)

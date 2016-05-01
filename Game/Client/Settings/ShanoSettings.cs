@@ -13,18 +13,18 @@ namespace Client
     /// This includes random stuff like button press, health bars n stuff. 
     /// Also keybinds. 
     /// </summary>
-    class ShanoSettings
+    class Settings
     {
         /// <summary>
         /// The file where settings are saved. 
         /// </summary>
         static readonly string DefaultSettingsFile = "config.json";
 
-        public static ShanoSettings Current { get; private set; }
+        public static Settings Current { get; private set; }
 
 
 
-        static ShanoSettings()
+        static Settings()
         {
             Reload();
         }
@@ -38,7 +38,7 @@ namespace Client
             try
             {
                 var fileData = File.ReadAllText(DefaultSettingsFile);
-                Current = JsonConvert.DeserializeObject<ShanoSettings>(fileData);
+                Current = JsonConvert.DeserializeObject<Settings>(fileData);
                 success = (Current != null);
             }
             catch { success = false; }
@@ -47,7 +47,7 @@ namespace Client
             if (!success)
             {
                 Console.WriteLine($"Unable to load proper settings data from the '{DefaultSettingsFile}' file. ");
-                Current = new ShanoSettings();
+                Current = new Settings();
                 Current.Save();
             }
 
@@ -66,7 +66,7 @@ namespace Client
 
         public KeybindSettings Keybinds { get; set; } = new KeybindSettings(true);
 
-        private ShanoSettings() { }
+        private Settings() { }
 
         /// <summary>
         /// Resets all keybindings to their default values and then saves the configuration file. 

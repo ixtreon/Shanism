@@ -24,7 +24,7 @@ namespace Client.UI.Common
         /// <summary>
         /// Gets the default size of a window. 
         /// </summary>
-        public static readonly Vector DefaultSize = new Vector(1.0, 1.2);
+        public static readonly Vector DefaultSize = new Vector(1.0, 1.3);
 
 
 
@@ -114,6 +114,10 @@ namespace Client.UI.Common
             titleBar.MouseMove += onTitleBarMouseMove;
             titleBar.MouseUp += onTitleBarMouseUp;
 
+            MouseDown += onMouseDown;
+            MouseMove += onMouseMove;
+            MouseUp += onMouseUp;
+
             CloseButton = new Button
             {
                 ParentAnchor = AnchorMode.Top | AnchorMode.Right,
@@ -132,23 +136,40 @@ namespace Client.UI.Common
 
         }
 
-        #region Drag to move
+        #region Drag to resize
+        Vector? sizeLoc;
 
-        Vector? dragLoc = null;
-
-        void onTitleBarMouseUp(MouseButtonArgs ev)
+        void onMouseDown(MouseButtonArgs ev)
         {
-            dragLoc = null;
-            Console.WriteLine("UP!");
+            var dFromCorner = (Size.X - ev.RelativePosition.X) + (Size.Y - ev.RelativePosition.Y);
+            if (dFromCorner < 3 * Padding)
+            {
+                sizeLoc = ev.RelativePosition;
+            }
         }
+
+        void onMouseMove(MouseArgs ev)
+        {
+            if (sizeLoc != null)
+            {
+                Size += ev.RelativePosition - sizeLoc.Value;
+                sizeLoc = ev.RelativePosition;
+            }
+        }
+
+        void onMouseUp(MouseButtonArgs ev)
+        {
+            sizeLoc = null;
+        }
+        #endregion
+
+        #region Drag to move
+        Vector? dragLoc = null;
 
         void onTitleBarMouseMove(MouseArgs ev)
         {
             if (dragLoc != null)
-            {
                 Location += ev.RelativePosition - dragLoc.Value;
-                Console.WriteLine("MOVE!");
-            }
         }
 
         void onTitleBarMouseDown(MouseButtonArgs ev)
@@ -156,8 +177,11 @@ namespace Client.UI.Common
             if (!Locked)
             {
                 dragLoc = ev.RelativePosition;
-                Console.WriteLine("DOWN!");
             }
+        }
+        void onTitleBarMouseUp(MouseButtonArgs ev)
+        {
+            dragLoc = null;
         }
         #endregion
 

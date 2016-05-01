@@ -1,4 +1,5 @@
 ﻿using Client;
+using Client.Textures;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,9 @@ namespace ShanoEditor.MapAdapter
 
         EditorContent EditorContent { get; }
 
-        IClientEngine Engine { get; }
+        TextureCache DefaultContent { get; }
+
+        IClientEngine Client { get; }
+
     }
 }

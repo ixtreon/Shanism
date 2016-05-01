@@ -32,10 +32,7 @@ namespace Engine.Systems.Orders
             return u.Position.PolarProjection(State.DirectionVector.Angle, u.MoveSpeed * 0.1);
         }
 
-        public OrderType Type
-        {
-            get { return OrderType.Move; }
-        }
+        public OrderType Type => OrderType.Move;
 
         public bool Update(Unit unit, int msElapsed)
         {
@@ -44,5 +41,7 @@ namespace Engine.Systems.Orders
 
             return true;
         }
+
+        public override string ToString() => $"Move @ {Direction}rad";
     }
 }

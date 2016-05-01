@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IO;
-using Engine.Events;
-using System.Diagnostics;
 using Engine.Systems.Range;
 using IO.Util;
 using IO.Message;
@@ -15,8 +13,9 @@ namespace Engine.Objects
     partial class Unit
     {
 
+        double _visionRange = 20;
 
-        double _visionRange;
+
 
         internal ConcurrentSet<Entity> visibleObjects { get; } = new ConcurrentSet<Entity>();
 

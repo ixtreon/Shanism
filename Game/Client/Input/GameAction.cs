@@ -45,7 +45,43 @@ namespace Client.Input
         
         /* Action Bars */
 
-        ActionBar,
+        ActionBar_0_0,
+        //ActionBar_0_1,
+        //ActionBar_0_2,
+        //ActionBar_0_3,
+        //ActionBar_0_4,
+        //ActionBar_0_5,
+        //ActionBar_0_6,
+        //ActionBar_0_7,
+        //ActionBar_0_8,
+        //ActionBar_0_9,
 
+        //ActionBar_1_0 = ActionBar_0_0 + AbilityGameAction.MaxButtonsPerBar,
+        //ActionBar_1_1,
+        //ActionBar_1_2,
+        //ActionBar_1_3,
+        //ActionBar_1_4,
+        //ActionBar_1_5,
+        //ActionBar_1_6,
+        //ActionBar_1_7,
+        //ActionBar_1_8,
+        //ActionBar_1_9,
+    }
+
+    static class AbilityGameAction
+    {
+        public const int MaxButtonsPerBar = 100;
+
+        public static GameAction FromId(int barId, int keyId) => 
+            GameAction.ActionBar_0_0 + barId * MaxButtonsPerBar + keyId;
+
+        public static bool IsBarAction(this GameAction act) =>
+            act >= GameAction.ActionBar_0_0;
+
+        public static int GetBarId(this GameAction act) =>
+            (act - GameAction.ActionBar_0_0) / MaxButtonsPerBar;
+
+        public static int GetButtonId(this GameAction act) =>
+            (act - GameAction.ActionBar_0_0) % MaxButtonsPerBar;
     }
 }

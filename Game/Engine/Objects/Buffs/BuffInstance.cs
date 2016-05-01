@@ -155,6 +155,16 @@ namespace Engine.Objects.Buffs
         /// </summary>
         public UnitFlags UnitStates => ((IBuff)Prototype).UnitStates;
 
+        /// <summary>
+        /// Gets the life regen modifier of this buff.
+        /// </summary>
+        public double LifeRegen => ((IBuff)Prototype).LifeRegen;
+
+        /// <summary>
+        /// Gets the mana regen modifier of this buff.
+        /// </summary>
+        public double ManaRegen => ((IBuff)Prototype).ManaRegen;
+
         #endregion
 
 
@@ -242,7 +252,7 @@ namespace Engine.Objects.Buffs
             {
                 int hash = 17;
                 hash = hash * 23 + Prototype.GetHashCode();
-                hash = hash * 23 + Caster.GetHashCode();
+                hash = hash * 23 + Caster?.GetHashCode() ?? 0;
                 hash = hash * 23 + Target.GetHashCode();
                 return hash;
             }

@@ -47,8 +47,21 @@ namespace Client.UI
 
             ButtonCount = 16;
             MaxButtonsPerRow = 8;
+
+            GameActionActivated += onActionActivated;
         }
 
+        private void onActionActivated(Input.GameAction act)
+        {
+            if (!act.IsBarAction() || act.GetBarId() != BarId)
+                return;
+
+            var btnId = act.GetButtonId();
+            if (btnId < 0 || btnId >= controls.Count)
+                return;
+
+            ((SpellBarButton)controls[btnId]).IsSelected = true;
+        }
 
         void updateButtonCount(int newCount)
         {
@@ -59,19 +72,22 @@ namespace Client.UI
             if (oldCount < newCount)
             {
                 foreach (var i in Enumerable.Range(oldCount, newCount - oldCount))
-                    Add(new SpellBarButton(BarId, i)
-                    {
-                        Size = new Vector(ButtonSize, ButtonSize),
-                    });
+                    addButton(i);
             }
             else
             {
                 foreach (var i in Enumerable.Range(newCount, oldCount - newCount))
-                    Remove(controls[i]);
+                    removeButton(i);
             }
 
             reflow();
         }
+
+        void addButton(int id) =>
+            Add(new SpellBarButton(BarId, id) { Size = new Vector(ButtonSize) });
+
+        void removeButton(int id) =>
+            Remove(controls[id]);
 
         void reflow()
         {

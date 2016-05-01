@@ -27,7 +27,7 @@ namespace Client.UI.Common
         public bool AutoSize { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets the position of the text. Recommended values are 0 (left), 0.5 (center) and 1 (right). 
+        /// Gets or sets the X-align of the text. Recommended values are 0 (left), 0.5 (center) and 1 (right). 
         /// </summary>
         public float TextXAlign { get; set; }
 
@@ -42,7 +42,7 @@ namespace Client.UI.Common
         protected override void OnUpdate(int msElapsed)
         {
             if(AutoSize)
-                Size = Font.MeasureStringUi(Text) + new Vector(Padding * 2);
+                Size = Font.MeasureStringUi(Text) + new Vector(Padding * 2) + 0.001;
 
             base.OnUpdate(msElapsed);
         }
@@ -50,8 +50,10 @@ namespace Client.UI.Common
         public override void OnDraw(Graphics g)
         {
 
-            var maxTextLen = Size.X;
+            var maxTextLen = Size.X - 2 * Padding;
             var textPos = new Vector(Padding + maxTextLen * TextXAlign, Size.Y / 2);
+
+            var maxTexLen2 = Font.MeasureStringUi(Text);
 
             g.Draw(Content.Textures.Blank, Vector.Zero, Size, BackColor);
             g.DrawString(Font, Text, TextColor, textPos, TextXAlign, 0.5f, maxTextLen);

@@ -7,6 +7,7 @@ using IO;
 using Microsoft.Xna.Framework.Graphics;
 using IO.Objects;
 using Client.Textures;
+using Microsoft.Xna.Framework.Input;
 
 namespace Client
 {
@@ -52,6 +53,12 @@ namespace Client
                 c.B + (255 - c.B) * perc / 100, c.A);
         }
         #endregion
+
+
+        public static bool IsModifier(this Keys k)
+            => k == Keys.LeftControl || k == Keys.RightControl
+            || k == Keys.LeftAlt || k == Keys.RightAlt
+            || k == Keys.LeftShift || k == Keys.RightShift;
 
 
         #region maths primitives transformations

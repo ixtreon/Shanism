@@ -17,7 +17,7 @@ namespace IO.Content
         /// <summary>
         /// A placeholder animation that is present in all games. Uses <see cref="TextureDef.Default"/> as its texture. 
         /// </summary>
-        public static readonly AnimationDef Default = new AnimationDef("dummy/stand", TextureDef.Default.Name, new Rectangle(Point.Zero, Point.One));
+        public static readonly AnimationDef Default = new AnimationDef("dummy", TextureDef.Default.Name, new Rectangle(Point.Zero, Point.One));
 
         /// <summary>
         /// Gets or sets the name of this animation. 
@@ -64,7 +64,7 @@ namespace IO.Content
         /// <summary>
         /// Gets the number of frames in this animation. 
         /// </summary>
-        public int Frames => IsDynamic ? Span.Area : 1;
+        public int FrameCount => IsDynamic ? Span.Area : 1;
 
         /// <summary>
         /// Returns the span of the n'th frame in this animation. 

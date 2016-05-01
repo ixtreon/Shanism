@@ -150,7 +150,8 @@ namespace Engine
         {
             var oneIsPlayer = (p.IsHuman || this.IsHuman);
             var oneIsAggressive = (p.IsNeutralAggressive || this.IsNeutralAggressive);
-            return (oneIsPlayer && oneIsAggressive);
+            var bothAreAggressive = (p.IsNeutralAggressive && this.IsNeutralAggressive);
+            return (oneIsPlayer && oneIsAggressive) || bothAreAggressive;
         }
 
         /// <summary>

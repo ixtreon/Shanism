@@ -10,17 +10,6 @@ namespace IO
 {
     public static class StringsExt
     {
-        public static string CutOut(this string s, int cutStart, int cutLength)
-        {
-            var cutEnd = cutStart + cutLength;
-            return s.Substring(0, cutStart) + s.Substring(cutEnd);
-        }
-
-        public static string Insert(this string s, int pos, string piece)
-        {
-            return s.Substring(0, pos) + piece + s.Substring(pos);
-        }
-
         /// <summary>
         /// Replaces the format item in a specified string with the string representation
         /// of a corresponding object in a specified array.

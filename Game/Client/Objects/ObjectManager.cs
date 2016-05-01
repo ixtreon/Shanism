@@ -69,7 +69,7 @@ namespace Client
         {
             get
             {
-                if(MainHeroGuid != (_mainHeroControl?.Hero.Id ?? NoHeroGuid))
+                if (MainHeroGuid != (_mainHeroControl?.Hero.Id ?? NoHeroGuid))
                     _mainHeroControl = objects.TryGet(MainHeroGuid) as HeroControl;
                 return _mainHeroControl;
             }
@@ -98,11 +98,12 @@ namespace Client
 
         protected override void OnUpdate(int msElapsed)
         {
+            Maximize();
         }
 
         public void HandleMessage(IOMessage ioMsg)
         {
-            switch(ioMsg.Type)
+            switch (ioMsg.Type)
             {
                 case MessageType.ObjectSeen:
                     AddObject(((ObjectSeenMessage)ioMsg).Object);
@@ -125,30 +126,32 @@ namespace Client
         /// <param name="o"></param>
         public void AddObject(IEntity o)
         {
-            if (objects.ContainsKey(o.Id))
+            var objControl = objects.TryGet(o.Id);
+
+            if (objControl == null)
             {
-                Console.WriteLine("An object with the guid of {0} already exists: {1}".F(o.Id, o.Name));
-                return;
+                //get the control constructor for this type of game object. 
+                var objType = o.GetType();
+                var mapping = gameObjectToControlMap
+                    .FirstOrDefault(kvp => kvp.Key.IsAssignableFrom(objType)).Value;
+
+                if (mapping == null)
+                    throw new Exception($"The object type `{objType.FullName}` cannot be mapped to an `{nameof(ObjectControl)}` type. !");
+
+                //create a new UI control
+                objControl = mapping(o);
+                objControl.MouseDown += gameObject_MouseDown;
+
+                //add to the dictionary
+                objects[o.Id] = objControl;
+
+                //add the UI control
+                Add(objControl);
             }
-
-            //get the control constructor for this type of game object. 
-            var mapping = gameObjectToControlMap
-                .Where(kvp => kvp.Key.IsAssignableFrom(o.GetType()))
-                .Select(kvp => kvp.Value)
-                .FirstOrDefault();
-
-            if(mapping == null)
-                throw new Exception("Some type of object we don't recognize yet!");
-
-            //create the UI control
-            var gameObject = mapping(o);
-            gameObject.MouseDown += gameObject_MouseDown;
-
-            //add to the dictionary
-            objects[o.Id] = gameObject;
-
-            //add the UI control
-            Add(gameObject);
+            else
+            {
+                //TODO: see if cached, uncache it
+            }
         }
 
         public IEntity TryGet(uint guid)
@@ -163,7 +166,7 @@ namespace Client
         public void RemoveObject(uint guid)
         {
             var objControl = objects.TryGet(guid);
-            if(objControl != null)
+            if (objControl != null && !(objControl is DoodadControl))
             {
                 Remove(objControl);
                 objects.Remove(guid);
@@ -189,7 +192,7 @@ namespace Client
         {
             var g = new Graphics(sb, Location, Size);
 
-            foreach(var c in Controls)
+            foreach (var c in Controls)
             {
                 if (c == MainHeroControl || !(c is ObjectControl))
                     continue;
@@ -200,6 +203,6 @@ namespace Client
                 oc.Draw(g);
             }
         }
-        
+
     }
 }

@@ -73,7 +73,7 @@ namespace Engine.Systems.Abilities
         /// <summary>
         /// Gets or sets the casting range of the ability in units. 
         /// </summary>
-        public double CastRange { get; set; } = 5;
+        public double CastRange { get; set; } = 15;
 
         /// <summary>
         /// Gets whether this ability is active (i.e. can be cast instantly or on a target). 

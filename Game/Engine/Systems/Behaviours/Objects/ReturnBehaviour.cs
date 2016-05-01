@@ -13,7 +13,7 @@ namespace Engine.Systems.Behaviours
     {
         public Vector OriginPosition { get; set; }
 
-        public double Distance { get; set; }
+        public double MaxDistance { get; set; }
 
         public bool Returning { get; private set; }
 
@@ -25,24 +25,23 @@ namespace Engine.Systems.Behaviours
         public event Action OnReturnFinished;
 
 
-        public ReturnBehaviour(Behaviour b, Vector origin, double distance) 
+        public ReturnBehaviour(Behaviour b, Vector origin, double maxDistance) 
             : base(b)
         {
             OriginPosition = origin;
-            Distance = distance;
+            MaxDistance = maxDistance;
         }
 
 
         public override bool TakeControl(int msElapsed)
         {
-            var pos = Unit.Position;
-            return Returning || pos.DistanceTo(OriginPosition) > Distance;
+            return Returning || Owner.Position.DistanceTo(OriginPosition) > MaxDistance;
         }
 
 
         public override void Update(int msElapsed)
         {
-            var returnOrder = new MoveLocation(OriginPosition);
+            var returnOrder = new MoveLocation(OriginPosition, 0.05);
 
             //issue the return order if needed
             if (!Returning)
@@ -53,11 +52,13 @@ namespace Engine.Systems.Behaviours
             }
 
             //if returning and back at the origin, say we are back. 
-            if (Unit.Position.DistanceTo(OriginPosition) < 0.05)
+            if (Owner.Position.DistanceTo(OriginPosition) < 0.1)
             {
                 Returning = false;
+                CurrentOrder = new Stand();
                 OnReturnFinished?.Invoke();
             }
         }
+        public override string ToString() => $"Return to {OriginPosition}";
     }
 }

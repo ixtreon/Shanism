@@ -9,10 +9,9 @@ using Engine.Objects.Entities;
 namespace Engine.Objects.Entities
 {
     /// <summary>
-    /// Represents an item which lies on the ground. 
-    /// NYI
+    /// Represents an item that lies on the ground. 
     /// </summary>
-    public class GameItem : Effect
+    class GameItem : Effect
     {
         /// <summary>
         /// Gets or sets the Item instance this GameItem contains. 

@@ -21,6 +21,8 @@ namespace Client
     // could be extended to containt mapmanager, too, even tho its not a control
     class GameManager : Control
     {
+        MovementState movementState;
+
         /// <summary>
         /// The main UI window. 
         /// </summary>
@@ -35,7 +37,11 @@ namespace Client
         public FloatingTextProvider FloatingText => Interface.FloatingText;
 
 
+
         public event Action<ActionMessage> ActionPerformed;
+
+
+        public event Action<MovementState> MovementStateChanged;
 
         public GameManager()
         {
@@ -54,6 +60,7 @@ namespace Client
             Interface.BringToFront();
         }
 
+
         public void ReloadUi()
         {
             Remove(Interface);
@@ -61,16 +68,41 @@ namespace Client
             Add(Interface);
         }
 
+        void updateMovement()
+        {
+            var newMovementState = MovementState.Stand;
+
+            if (HasFocus)
+            {
+                var dx = Convert.ToInt32(KeyboardInfo.IsDown(GameAction.MoveRight)) - Convert.ToInt32(KeyboardInfo.IsDown(GameAction.MoveLeft));
+                var dy = Convert.ToInt32(KeyboardInfo.IsDown(GameAction.MoveDown)) - Convert.ToInt32(KeyboardInfo.IsDown(GameAction.MoveUp));
+
+                newMovementState = new MovementState(dx, dy);
+            }
+
+            if (newMovementState != movementState)
+            {
+                movementState = newMovementState;
+
+                MovementStateChanged?.Invoke(newMovementState);
+                Console.WriteLine($"Move it {movementState}");
+            }
+        }
+
         void onActionActivated(GameAction ga)
         {
-            switch(ga)
+            switch (ga)
             {
+                case GameAction.ToggleDebugInfo:
+                    ClientEngine.ShowDebugStats = !ClientEngine.ShowDebugStats;
+                    break;
+
                 case GameAction.ReloadUi:
                     ReloadUi();
                     break;
 
                 case GameAction.ShowHealthBars:
-                    ShanoSettings.Current.AlwaysShowHealthBars = !ShanoSettings.Current.AlwaysShowHealthBars;
+                    Settings.Current.AlwaysShowHealthBars = !Settings.Current.AlwaysShowHealthBars;
                     break;
 
                 default:
@@ -97,14 +129,13 @@ namespace Client
 
         protected override void OnUpdate(int msElapsed)
         {
-            Interface.Maximize();
-            Objects.Maximize();
-
             // update the interface's main hero from the objects' main hero. 
             Interface.MainHeroControl = Objects.MainHeroControl;
             Interface.Hover = HoverControl as UnitControl;
 
             UpdateMain(msElapsed);
+
+            updateMovement();
 
             //cast abilities
             //do it here so it can be spammed, not just performed on click
@@ -120,7 +151,6 @@ namespace Client
             }
         }
 
-
         bool tryCastAbility(IAbility ab, bool displayErrors, out ActionMessage msg)
         {
             msg = null;
@@ -131,28 +161,31 @@ namespace Client
             if (mainHero == null || ab == null)
                 return false;
 
-            var justClicked = mouseState.RightButton == ButtonState.Pressed && mouseState.RightButton == ButtonState.Released;
+            var justClicked = mouseState.RightButton == ButtonState.Pressed && oldMouseState.RightButton == ButtonState.Released;
             if (ab.CurrentCooldown > 0 && justClicked)
             {
-                if(displayErrors)
-                    FloatingText.AddLabel(targetLoc, "Ability in cooldown", Color.Red, FloatingTextStyle.Top);
-                Interface.DisplayError("Ability in cooldown");
+                if (displayErrors)
+                    FloatingText.AddLabel(targetLoc, $"{ab.CurrentCooldown / 1000.0:0.0} sec!", Color.Red, FloatingTextStyle.Top);
+                //Interface.DisplayError("Ability in cooldown");
                 return false;
             }
 
             if (ab.TargetType != AbilityTargetType.NoTarget && targetLoc.DistanceTo(Objects.MainHero.Position) > ab.CastRange)
             {
-                if(displayErrors)
+                if (displayErrors)
+                {
                     FloatingText.AddLabel(targetLoc, "Out of range", Color.Red, FloatingTextStyle.Top);
-                Interface.DisplayError("Out of range");
+                    Interface.RangeIndicator.ShowRange(ab.CastRange, 1250, true);
+                }
+                //Interface.DisplayError("Out of range");
                 return false;
             }
 
             if (Objects.MainHero.Mana < ab.ManaCost)
             {
-                if(displayErrors)
+                if (displayErrors)
                     FloatingText.AddLabel(targetLoc, "Not enough mana", Color.Red, FloatingTextStyle.Top);
-                Interface.DisplayError("Not enough mana");
+                //Interface.DisplayError("Not enough mana");
                 return false;
             }
 

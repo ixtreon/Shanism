@@ -31,15 +31,17 @@ namespace Engine.Systems.Range
             var maxConstraintRange = Origin.RangeEvents.Max.Range;
             var maxRangeSq = maxConstraintRange * maxConstraintRange;
             var nearbyObjs = Origin.Map
-                .RawQuery(new RectangleF(originPos - maxConstraintRange, new Vector(2 * maxConstraintRange)))
-                .ToList();
+                .RawQuery(new RectangleF(originPos - maxConstraintRange, new Vector(2 * maxConstraintRange)));
 
             foreach (var otherObject in nearbyObjs)
             {
                 if (Origin == otherObject)
                     continue;
 
-                var oldDistSq = distBuffer.Front.TryGetVal(otherObject) ?? double.NaN;
+                double oldDistSq;
+                if (!distBuffer.Front.TryGetValue(otherObject, out oldDistSq))
+                    oldDistSq = double.NaN;
+
                 var nowDistSq = otherObject.Position.DistanceToSquared(originPos);
                 distBuffer.Back[otherObject] = nowDistSq;
 

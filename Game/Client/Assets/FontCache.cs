@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Client.Assets
 {
     /// <summary>
-    /// Contains a listing of some common fonts. 
+    /// Contains a listing of common fonts. 
     /// </summary>
     class FontCache
     {
@@ -41,8 +41,8 @@ namespace Client.Assets
         {
             content.RootDirectory = @"Content\";
             //load default fonts
-            FancyFont = new TextureFont(content, "Fonts\\UI", 0.5, 4);
-            NormalFont = new TextureFont(content, "Fonts\\ui-text", 0.5);
+            FancyFont = new TextureFont(content, "Fonts\\UI", 0.5, 3.5);
+            NormalFont = new TextureFont(content, "Fonts\\ui-text", 0.5, 2.5);
             SmallFont = new TextureFont(NormalFont, 0.8);
             LargeFont = new TextureFont(NormalFont, 1.6);
         }

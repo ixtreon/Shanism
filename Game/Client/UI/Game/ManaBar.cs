@@ -1,4 +1,5 @@
 ﻿using IO;
+using IO.Objects;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -8,33 +9,36 @@ using System.Threading.Tasks;
 
 namespace Client.UI.Common
 {
-    class ManaBar : HealthBar
+    class ManaBar : ValueBar
     {
-        public ManaBar()
+        public readonly Color[] ColorPalette =
         {
-            this.ColorPalette[0] = new Color(0, 0, 191);
-            this.ColorPalette[1] = new Color(50, 50, 223);
-            this.ColorPalette[2] = new Color(100, 100, 255);
-        }
+            new Color(0, 0, 191),
+            new Color(50, 50, 255),
+        };
+
+        public IUnit Target { get; set; }
 
         protected override void OnUpdate(int msElapsed)
         {
-            if (Target == null)
+            IsVisible = (Target != null);
+            if (!IsVisible)
                 return;
 
             if(Target.IsDead)
             {
-                ShowText = false;
                 MaxValue = Value = 0;
                 ToolTip = string.Empty;
             }
             else
             {
-                ShowText = true;
                 Value = Target.Mana;
                 MaxValue = Target.MaxMana;
+                ForeColor = Color.Lerp(ColorPalette[0], ColorPalette[1], (float)(MaxValue / Value).Clamp(0, 1));
                 ToolTip = "{0:+0.0;-0.0;0}/sec".F(Target.ManaRegen);
             }
+
+            base.OnUpdate(msElapsed);
         }
     }
 }

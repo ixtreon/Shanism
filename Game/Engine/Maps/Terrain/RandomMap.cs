@@ -8,6 +8,7 @@ using SharpNoise.Modules;
 using System.Diagnostics;
 using Engine.Objects.Entities;
 using Engine.Objects;
+using IO.Util.Hash;
 
 namespace Engine.Maps
 {

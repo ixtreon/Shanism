@@ -18,7 +18,14 @@ namespace Client
         {
             content.RootDirectory = "Shaders";
 
-            //effect = content.Load<Effect>("shader");
+            try
+            {
+                effect = content.Load<Effect>("shader");
+            }
+            catch
+            {
+                effect = null;
+            }
         }
     }
 }

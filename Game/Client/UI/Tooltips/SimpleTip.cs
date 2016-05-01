@@ -45,7 +45,7 @@ namespace Client.UI.Tooltips
             var screenPosRaw =
                 (mouseState.Position.ToPoint() + new Point(14, 26));
             var screenPos = screenPosRaw
-                .Clamp(Point.Zero, Screen.ScreenSize - ScreenSize);
+                .Clamp(Point.Zero, Screen.Size - ScreenSize);
             AbsolutePosition = Screen.ScreenToUi(screenPos);
 
             BringToFront();

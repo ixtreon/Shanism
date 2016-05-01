@@ -30,19 +30,20 @@ namespace Client.UI
             const double edgeAnchor = Padding * 3;
             var btnSize = new Vector(0.45, 0.14);
 
-            HasTitleBar = false;
+            HasTitleBar = true;
+            TitleText = "Menu";
+
+
             Location = new Vector(0.75, 0.6);
-            Size = new Vector(btnSize.X, NButtons * (btnSize.Y + Padding) - Padding) + 2 * edgeAnchor;
+            Size = new Vector(btnSize.X, TitleHeight + (Padding + btnSize.Y) * NButtons) + 2 * edgeAnchor;
             ParentAnchor = AnchorMode.None;
 
-            BackColor = Color.Black.SetAlpha(150);
             ToggleAction = GameAction.ToggleMenus;
-
 
             btnKeys = new Button("Keybinds")
             {
                 ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
-                Location = new Vector(edgeAnchor, edgeAnchor),
+                Location = new Vector(edgeAnchor, TitleHeight + Padding + edgeAnchor),
                 Size = btnSize,
             };
 
@@ -80,6 +81,7 @@ namespace Client.UI
             Hide();
 
             KeybindsClicked?.Invoke();
+
 
             if (Parent.Controls.OfType<KeybindsMenu>().Any()) return;
 

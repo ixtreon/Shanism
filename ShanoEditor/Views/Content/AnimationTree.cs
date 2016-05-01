@@ -151,7 +151,7 @@ namespace ShanoEditor.Views.Content
 
         void refreshNode(TreeNode n)
         {
-            var anim = n.Tag as AnimationViewModel;
+            var anim = n?.Tag as AnimationViewModel;
             if (anim == null)
                 return;
 

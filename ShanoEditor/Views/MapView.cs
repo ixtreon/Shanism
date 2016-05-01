@@ -9,18 +9,22 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ScenarioLib;
 using ShanoEditor.MapAdapter;
+using Engine.Objects;
 
 namespace ShanoEditor.Views
 {
     partial class MapView : ScenarioControl
     {
+
+        bool clientLoaded =false;
+
         public override ScenarioViewType ViewType { get; } = ScenarioViewType.Map;
 
         public MapConfig Map { get { return Model.Scenario.Config.Map; } }
 
 
-        EditorControl Client { get; }
-        EditorEngine Engine { get; set; }
+        EditorControl ClientControl { get; }
+        EditorController Engine { get; set; }
 
         protected override async Task LoadModel()
         {
@@ -33,6 +37,9 @@ namespace ShanoEditor.Views
 
             nWidth.Value = Map.Width;
             nHeight.Value = Map.Height;
+
+            if(clientLoaded)
+                Engine.LoadScenario(Model);
         }
 
 
@@ -54,16 +61,23 @@ namespace ShanoEditor.Views
 
             //shanoMap1.MapModified += ShanoMap1_MapRedrawn;
 
-            Client = new EditorControl { Dock = DockStyle.Fill };
-            Engine = new EditorEngine(Client);
+            ClientControl = new EditorControl { Dock = DockStyle.Fill };
+            Engine = new EditorController(ClientControl);
             Engine.MapChanged += onMapChanged;
+            Engine.SelectionChanged += onSelectionChanged;
 
-            Client.GameLoaded += () =>
+            ClientControl.ClientLoaded += () =>
             {
+                clientLoaded = true;
                 Engine.LoadScenario(Model);
             };
 
-            mapSplitter.Panel2.Controls.Add(Client);
+            mapSplitter.Panel2.Controls.Add(ClientControl);
+        }
+
+        void onSelectionChanged(IEnumerable<Entity> objs)
+        {
+            selectionWindow1.SetObjects(objs);
         }
 
         void onMapChanged()
@@ -118,20 +132,6 @@ namespace ShanoEditor.Views
             btnCancelMapResize.Enabled = false;
         }
 
-
-        private void btnMaxTools_Click(object sender, EventArgs e)
-        {
-            if (mapSplitter.Panel1Collapsed)
-            {
-                mapSplitter.Panel1Collapsed = false;
-                btnMaxTools.Text = "◀";
-            }
-            else
-            {
-                mapSplitter.Panel1Collapsed = true;
-                btnMaxTools.Text = "▶";
-            }
-        }
 
         private void chkFixedSeed_CheckedChanged(object sender, EventArgs e)
         {

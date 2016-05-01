@@ -37,19 +37,18 @@ namespace Client.Assets
         IEntity Object { get; }
 
 
-        public Texture2D Texture { get; protected set; }
+        public Texture2D Texture { get; private set; }
 
-        public Rectangle SourceRectangle { get; protected set; }
+        public Rectangle SourceRectangle { get; private set; }
 
 
-        string modelName;
         string animationName;
 
         AnimationDef animationDef;
 
+        TextureDef textureDef;
 
-        TextureDef textureDef => Content.Listing.Textures.TryGet(animationDef.Texture.ToLowerInvariant());
-
+        Vector textureFrameSize;
 
         public Sprite(ContentList content, IEntity obj)
         {
@@ -58,24 +57,13 @@ namespace Client.Assets
         }
 
         /// <summary>
-        /// Updates the sprite and returns whether it should be destroyed. 
-        /// </summary>
-        /// <param name="msElapsed"></param>
-        public void Update(int msElapsed)
-        {
-            //check if animation changed
-            updateAnimation(msElapsed);
-
-        }
-
-        /// <summary>
         /// Checks if the object's animation has changed and reloads its texture if needed. Also updates dynamic animations' frames. 
         /// <para>
-        ///     Tries to get <see cref="animationName"/>, then "stand", then any animation from the current model, in this order. 
-        ///     Falls back to the default model's animation if the current model has no animations. 
+        ///     Tries to get animation with the current <see cref="animationName"/>. 
+        ///     Falls back to the default animation if the current animation cannot be found. 
         /// </para>
         /// </summary>
-        void updateAnimation(int msElapsed)
+        public void Update(int msElapsed)
         {
             var _animName = (Object.AnimationName ?? string.Empty).ToLowerInvariant();
             if (_animName != animationName)
@@ -87,28 +75,25 @@ namespace Client.Assets
 
                 //reset counters
                 elapsedCounter.Reset(animationDef.Period);
-                frameCounter.Reset(animationDef.Frames);
+                frameCounter.Reset(animationDef.FrameCount);
 
                 //update source rect + texture
+                textureDef = Content.Listing.Textures.TryGet(animationDef.Texture.ToLowerInvariant())
+                    ?? TextureDef.Default;
                 Texture = Content.Textures[textureDef];
-                SourceRectangle =
-                    animationDef.GetFrame(frameCounter.Value) *
-                    (new Vector(Texture.Width, Texture.Height) / textureDef.Splits);
-            }
-            else if (animationDef.IsDynamic)    //update frames if dynamic
-            {
-                //but only if looping or not on the last frame
-                if (frameCounter.Value == animationDef.Frames - 1 && !animationDef.IsLooping)
-                    return;
+                textureFrameSize = new Vector(Texture.Width, Texture.Height) / textureDef.Splits;
 
-                //see if frame change is needed
-                var nextFrame = elapsedCounter.Tick(msElapsed);
-                if (nextFrame)
-                {
-                    //if so, update source rect
-                    frameCounter.Tick();
-                    SourceRectangle = animationDef.GetFrame(frameCounter.Value) * (new Vector(Texture.Width, Texture.Height) / textureDef.Splits);
-                }
+                SourceRectangle = animationDef.GetFrame(0) * textureFrameSize;
+                return;
+            }
+
+            //update frames if dynamic
+            if (animationDef.IsDynamic
+                && (animationDef.IsLooping || frameCounter.Value < animationDef.FrameCount - 1)
+                && elapsedCounter.Tick(msElapsed))
+            {
+                frameCounter.Tick();
+                SourceRectangle = animationDef.GetFrame(frameCounter.Value) * textureFrameSize;
             }
         }
     }

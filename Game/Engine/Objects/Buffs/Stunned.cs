@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Engine.Objects.Buffs
 {
     /// <summary>
-    /// A buff that stuns its target for indefinite duration. 
+    /// A buff that stuns its target. By default lasts infinitely. 
     /// </summary>
     public class StunnedBuff : Buff
     {
@@ -21,6 +21,8 @@ namespace Engine.Objects.Buffs
             Name = "Stunned";
             Description = "This unit is stunned. It cannot take any actions. ";
             Type = BuffType.NonStacking;
+
+            FullDuration = 0;
 
             UnitStates = UnitFlags.Stunned;
         }

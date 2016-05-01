@@ -13,6 +13,8 @@ using System.Windows.Forms;
 
 using GameTime = Microsoft.Xna.Framework.GameTime;
 using Color = Microsoft.Xna.Framework.Color;
+using ShanoEditor.Views.Maps;
+using Client.Textures;
 
 namespace ShanoEditor.MapAdapter
 {
@@ -21,22 +23,20 @@ namespace ShanoEditor.MapAdapter
         static readonly string PlayerName = "WorldEdit";
 
 
-        IClientEngine _engine;
-
+        IClientEngine _client;
         SpriteBatch _spriteBatch;
-
         EditorContent _editorContent;
 
 
-
-        public event Action GameLoaded;
-
+        public event Action ClientLoaded;
         public event Action OnDraw;
 
 
         #region IEditorMapControl implementation
 
-        public IClientEngine Engine => _engine;
+        public IClientEngine Client => _client;
+
+        public TextureCache DefaultContent => _client.Textures;
 
         public EditorContent EditorContent => _editorContent;
 
@@ -52,12 +52,12 @@ namespace ShanoEditor.MapAdapter
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-            _engine?.WindowSizeChanged(new Rectangle(0, 0, Width, Height));
+            _client?.SetWindowSize(new Point(Width, Height));
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            _engine.Draw(gameTime);
+            _client.Draw(gameTime);
 
             _spriteBatch.Begin();
             OnDraw?.Invoke();
@@ -70,19 +70,33 @@ namespace ShanoEditor.MapAdapter
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _engine = ShanoGame.CreateClientEngine(PlayerName, GraphicsDeviceService, _editorContent);
-            _engine.LoadContent();
-            _engine.WindowSizeChanged(new Rectangle(0, 0, Width, Height));
-            _engine.ToggleUI(false);
+            //create the client, load its content
+            _client = ShanoGame.CreateClientEngine(PlayerName, GraphicsDeviceService, _editorContent);
+            _client.LoadContent();
+            _client.SetWindowSize(new Point(Width, Height));
+            _client.ToggleUI(false);
 
 
-            GameLoaded?.Invoke();
+            ClientLoaded?.Invoke();
         }
 
         protected override void Update(GameTime gameTime)
         {
-            _engine.Update(gameTime);
+            _client.Update(gameTime);
         }
         #endregion
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // EditorControl
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.Name = "EditorControl";
+            this.Size = new System.Drawing.Size(723, 421);
+            this.ResumeLayout(false);
+
+        }
     }
 }

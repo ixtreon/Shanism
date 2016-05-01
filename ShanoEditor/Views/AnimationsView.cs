@@ -66,24 +66,17 @@ namespace ShanoEditor.Views
         {
             animView.Visible = true;
             
-            btnRename.Enabled =
-            btnDelete.Enabled = anim != null;
+            btnAnimRename.Enabled =
+            btnAnimDelete.Enabled = anim != null;
 
             if (animView.Animation != anim)
-            {
-                animView.Load(Model.Content.Textures, anim);
-            }
+                animView.SetAnimation(Model.Content.Textures, anim);
         }
 
 
         #region event handlers
 
-        void btnRename_Click(object sender, EventArgs e)
-        {
-            animTree.RenameSelectedNode();
-        }
-
-        void btnAddAnim_Click(object sender, EventArgs e)
+        private void btnStripAnimAdd_Click(object sender, EventArgs e)
         {
             var n = animTree.SelectedNode;
             if (n == null)
@@ -107,10 +100,20 @@ namespace ShanoEditor.Views
             animTree.AddNewAnimation(animName, true);
         }
 
-        void btnDelete_Click(object sender, EventArgs e)
+        private void btnStripAnimRename_Click(object sender, EventArgs e)
+        {
+            animTree.RenameSelectedNode();
+        }
+
+        private void btnStripAnimDelete_Click(object sender, EventArgs e)
         {
             animTree.RemoveSelectedNode();
         }
         #endregion
+
+        private void btnReload_Click(object sender, EventArgs e)
+        {
+            animTree.Load(Model.Content.Animations);
+        }
     }
 }

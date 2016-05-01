@@ -42,8 +42,7 @@ float4 PixelShaderFunction(float2 TextureCoordinate : TEXCOORD0) : COLOR0
 	if (dist > SightRange)
 		return SHADOW;
 
-
-	return NONE;
+	return NONE + (SHADOW - NONE) * dist / SightRange * dist / SightRange;
 }
 //
 //////////////////////////////////////////////////////////////////////////////////

@@ -11,9 +11,10 @@ namespace Client.Input
     enum ModifierKeys
     {
         None = 0,
+
+        // order is important. 
         Control = 1,
         Alt = 2,
         Shift = 4,
     }
-
 }

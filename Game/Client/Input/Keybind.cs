@@ -19,6 +19,12 @@ namespace Client.Input
 
         public Keys Key { get; }
 
+        public bool Control => (Modifiers & ModifierKeys.Control) != 0;
+
+        public bool Alt => (Modifiers & ModifierKeys.Alt) != 0;
+
+        public bool Shift => (Modifiers & ModifierKeys.Shift) != 0;
+
         public Keybind(Keys key)
         {
             Modifiers = ModifierKeys.None;
@@ -28,6 +34,8 @@ namespace Client.Input
         [JsonConstructor]
         public Keybind(ModifierKeys modifiers, Keys key)
         {
+            if (key.IsModifier())
+                throw new InvalidOperationException($"Main key `{key}` is a modifier!");
             Modifiers = modifiers;
             Key = key;
         }
