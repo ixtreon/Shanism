@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace IxSerializer
 {
-    public class Diff2
+    public class DiffNew
     {
         public static void Diff(BinaryWriter writer, byte[] oldObject, byte[] newObject)
         {

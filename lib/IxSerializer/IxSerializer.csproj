@@ -54,7 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Diff.cs" />
-    <Compile Include="Diff2.cs" />
+    <Compile Include="DiffNew.cs" />
     <Compile Include="Ext.cs" />
     <Compile Include="DiffTool.cs" />
     <Compile Include="InterfaceSerializer.cs" />

@@ -13,6 +13,7 @@ namespace IxLog
     /// A simple simple log that can an output to the console, a file, or both. 
     /// Uses a shared lock to manage multiple writers to the same file. 
     /// </summary>
+    [Obsolete]
     public class ShanoLog
     {
         const string DateTimeFormat = "yy-MM-dd";
