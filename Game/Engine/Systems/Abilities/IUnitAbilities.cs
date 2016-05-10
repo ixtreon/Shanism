@@ -1,8 +1,8 @@
-﻿using Engine.Objects;
+﻿using Shanism.Engine.Objects;
 using System;
 using System.Collections.Generic;
 
-namespace Engine.Systems.Abilities
+namespace Shanism.Engine.Systems.Abilities
 {
     /// <summary>
     /// A collection of all the abilities of a unit.  

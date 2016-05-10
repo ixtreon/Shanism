@@ -1,16 +1,17 @@
-﻿using Client.Input;
-using Client.UI.Common;
-using Client.UI.Menus;
-using IO.Common;
+﻿using Shanism.Client.Input;
+using Shanism.Client.UI.Common;
+using Shanism.Client.UI.Menus;
+using Shanism.Common;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Color = Microsoft.Xna.Framework.Color;
 
-namespace Client.UI
+namespace Shanism.Client.UI
 {
     class MainMenu : Window
     {

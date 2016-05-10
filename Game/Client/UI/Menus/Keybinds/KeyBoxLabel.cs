@@ -1,15 +1,16 @@
-﻿using Client.Input;
-using Client.UI.Common;
-using IO.Common;
+﻿using Shanism.Client.Input;
+using Shanism.Client.UI.Common;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shanism.Common;
+
 using Color = Microsoft.Xna.Framework.Color;
 
-namespace Client.UI.Menus.Keybinds
+namespace Shanism.Client.UI.Menus.Keybinds
 {
     class KeyBoxLabel : Control
     {

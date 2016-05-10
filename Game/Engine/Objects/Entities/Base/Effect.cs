@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using IO.Common;
-using IO.Objects;
-using IO.Util;
+using Shanism.Common.Game;
+using Shanism.Common.Objects;
+using Shanism.Common.Util;
+using Shanism.Common;
 
-namespace Engine.Objects.Entities
+namespace Shanism.Engine.Objects.Entities
 {
     /// <summary>
     /// Represents an in-game special effect that has no life and can be attached to a GameObject. 

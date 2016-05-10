@@ -1,11 +1,11 @@
-﻿using ScenarioLib;
+﻿using Shanism.ScenarioLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Maps.Terrain
+namespace Shanism.Engine.Maps.Terrain
 {
     static class MapGod
     {

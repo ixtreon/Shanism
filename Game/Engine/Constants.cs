@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Engine
+namespace Shanism.Engine
 {
     static class Constants
     {
@@ -36,6 +36,9 @@ namespace Engine
             public const double MaxVisionRange = 10;
 
             public const double DefaultUnitSize = 2.5;
+
+
+            public const double MaximumObjectSize = 20;
 
             /// <summary>
             /// The damage reduction per point of defense. 

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IO;
-using Engine.Objects;
+using Shanism.Common;
+using Shanism.Engine.Objects;
 
-namespace Engine.Systems.Range
+namespace Shanism.Engine.Systems.Range
 {
     public class RangeEvent : IComparable<RangeEvent>
     {

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Engine.Objects.Buffs;
-using Engine.Systems.Abilities;
-using Engine.Systems.Item;
-using IO.Common;
+using Shanism.Engine.Objects.Buffs;
+using Shanism.Engine.Systems.Abilities;
+using Shanism.Engine.Systems.Item;
+using Shanism.Common.Game;
 
-namespace Engine.Objects
+namespace Shanism.Engine.Objects
 {
     //NYI
     class InventoryItem : GameObject

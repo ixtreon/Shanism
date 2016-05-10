@@ -1,13 +1,13 @@
-﻿using Client.Input;
-using Client.UI.Common;
-using IO.Objects;
+﻿using Shanism.Client.Input;
+using Shanism.Client.UI.Common;
+using Shanism.Common.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.UI.Menus
+namespace Shanism.Client.UI.Menus
 {
     /// <summary>
     /// A control that contains all the menus in the game, as well as a visualisation for 'em. 

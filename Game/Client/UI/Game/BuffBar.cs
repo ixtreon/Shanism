@@ -1,8 +1,8 @@
-﻿using Client.Textures;
-using Client.UI.Common;
-using IO;
-using IO.Common;
-using IO.Objects;
+﻿using Shanism.Client.Textures;
+using Shanism.Client.UI.Common;
+using Shanism.Common;
+using Shanism.Common.Game;
+using Shanism.Common.Objects;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Color = Microsoft.Xna.Framework.Color;
 
-namespace Client.UI
+namespace Shanism.Client.UI
 {
     class BuffBar : Control
     {

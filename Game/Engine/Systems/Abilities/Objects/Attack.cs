@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
-using Engine.Systems;
-using Engine.Objects;
-using Engine;
-using Engine.Common;
-using IO.Common;
-using Engine.Objects.Entities;
-using Engine.Events;
+using Shanism.Engine.Systems;
+using Shanism.Engine.Objects;
+using Shanism.Engine;
+using Shanism.Engine.Common;
+using Shanism.Common.Game;
+using Shanism.Engine.Objects.Entities;
+using Shanism.Engine.Events;
 
-namespace Engine.Systems.Abilities
+namespace Shanism.Engine.Systems.Abilities
 {
     /// <summary>
     /// A simple melee attack ability that mirrors its owner's attack range and cooldown. 

@@ -1,8 +1,8 @@
-﻿using Engine.Objects;
-using Engine.Objects.Entities;
-using IO;
-using IO.Common;
-using IO.Objects;
+﻿using Shanism.Engine.Objects;
+using Shanism.Engine.Objects.Entities;
+using Shanism.Common;
+using Shanism.Common.Game;
+using Shanism.Common.Objects;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ProtoBuf;
 using ProtoBuf.Meta;
@@ -125,7 +125,7 @@ namespace UnitTests
                     using (var ms = new MemoryStream())
                     {
                         using (var w = new BinaryWriter(ms))
-                            Engine.Serialization.ShanoReader.SerializeObject(w, go);
+                            Shanism.Engine.Serialization.ShanoReader.SerializeObject(w, go);
                         buffer2 = ms.ToArray();
                     }
                 }
@@ -152,7 +152,7 @@ namespace UnitTests
             using (var ms = new MemoryStream())
             {
                 using (var w = new BinaryWriter(ms))
-                    Engine.Serialization.ShanoReader.SerializeObject(w, go);
+                    Shanism.Engine.Serialization.ShanoReader.SerializeObject(w, go);
                 buffer2 = ms.ToArray();
             }
 

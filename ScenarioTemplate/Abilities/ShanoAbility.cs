@@ -1,6 +1,6 @@
-﻿using IO.Common;
-using Engine.Events;
-using Engine.Systems.Abilities;
+﻿using Shanism.Common.Game;
+using Shanism.Engine.Events;
+using Shanism.Engine.Systems.Abilities;
 
 class ShanoAbility : Ability
 {

@@ -1,7 +1,7 @@
-﻿using IO.Common;
-using IO.Interfaces.Engine;
+﻿using Shanism.Common.Game;
+using Shanism.Common.Interfaces.Engine;
 
-namespace Network.Client
+namespace Shanism.Network.Client
 {
     public interface IObjectCache
     {

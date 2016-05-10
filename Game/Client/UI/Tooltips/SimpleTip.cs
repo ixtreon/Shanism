@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
-using Client.Textures;
-using IO.Common;
+using Shanism.Client.Textures;
+using Shanism.Common.Game;
 using Color = Microsoft.Xna.Framework.Color;
-using Client.Assets;
+using Shanism.Client.Assets;
+using Shanism.Common;
 
-namespace Client.UI.Tooltips
+namespace Shanism.Client.UI.Tooltips
 {
     class SimpleTip : Control
     {

@@ -1,19 +1,19 @@
-﻿using Engine.Maps;
-using Engine.Systems;
-using IO;
-using IO.Common;
+﻿using Shanism.Engine.Maps;
+using Shanism.Engine.Systems;
+using Shanism.Common;
+using Shanism.Common.Game;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using IO.Performance;
-using IO.Util;
-using Engine.Network;
-using Engine.Players;
+using Shanism.Common.Performance;
+using Shanism.Common.Util;
+using Shanism.Engine.Network;
+using Shanism.Engine.Players;
 
-namespace Engine
+namespace Shanism.Engine
 {
     /// <summary>
     /// The game engine lies here. 

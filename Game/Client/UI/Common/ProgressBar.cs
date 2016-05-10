@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using Color = Microsoft.Xna.Framework.Color;
-using IO.Common;
-using IO;
+using Shanism.Common.Game;
+using Shanism.Common;
 
-namespace Client.UI.Common
+namespace Shanism.Client.UI.Common
 {
     /// <summary>
     /// A progress bar that exposes a value between 0 and 1, and some text. 

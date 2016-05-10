@@ -1,12 +1,13 @@
-﻿using Client.UI;
-using IO.Common;
+﻿using Shanism.Client.UI;
+using Shanism.Common;
+using Shanism.Common.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.Input
+namespace Shanism.Client.Input
 {
     /// <summary>
     /// The event raised whenever the mouse does something. 

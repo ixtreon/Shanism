@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.Assets
+namespace Shanism.Client.Assets
 {
     class CircleDict
     {
@@ -14,44 +14,50 @@ namespace Client.Assets
 
         readonly Texture2D[] circles;
 
-        public int MinimumSize { get; }
-
+        /// <summary>
+        /// Gets the maximum diameter of a circle. 
+        /// </summary>
         public int MaximumSize { get; }
 
-
-        public CircleDict(int minSize, int maxSize, GraphicsDevice gd)
+        /// <summary>
+        /// Creates a new <see cref="CircleDict"/> that can draw and cache circles up to a specified size (diameter). 
+        /// 
+        /// </summary>
+        /// <param name="gd">The graphics device on which circle textures are to be created. </param>
+        /// <param name="maxSize">The maximum size (diameter) of a circle. 
+        /// If this value is not a power-of-two it is replaced with the closest power of two larger than it. </param>
+        public CircleDict(GraphicsDevice gd, int maxSize)
         {
             if (gd == null) throw new ArgumentNullException(nameof(gd));
-            if (minSize < 1) throw new ArgumentOutOfRangeException(nameof(minSize));
-            if (maxSize < minSize) throw new ArgumentOutOfRangeException(nameof(maxSize));
+            if (maxSize < 1) throw new ArgumentOutOfRangeException(nameof(maxSize));
+
+            var lastId = getId(maxSize);
+            MaximumSize = 1 << lastId;
 
             graphicsDevice = gd;
-
-            var minBytes = (int)Math.Log(minSize, 2);
-            var maxBytes = (int)Math.Log(maxSize, 2);
-
-            MinimumSize = 1 << minBytes;
-            MaximumSize = 1 << maxBytes;
-
-            circles = new Texture2D[maxBytes + 1];
+            circles = new Texture2D[lastId + 1];
         }
+
+        static int getId(int sz) => (int)Math.Round(Math.Log(sz, 2));
+
+        static int getSz(int id) => 1 << id;
 
         public Texture2D GetTexture(int sz)
         {
-            if (sz < MinimumSize) throw new ArgumentOutOfRangeException(nameof(sz), $"Size must be greater than or equal to {MinimumSize}");
-            if (sz > MaximumSize) throw new ArgumentOutOfRangeException(nameof(sz), $"Size must be less than or equal to {MaximumSize}");
+            if (sz < 1 || sz > MaximumSize)
+                throw new ArgumentOutOfRangeException(nameof(sz), $"Size must be between 1 and {nameof(MaximumSize)} ({MaximumSize}). ");
 
-            var id = (int)Math.Round(Math.Log(sz, 2));
+            var id = getId(sz);
             if (circles[id] == null)
-            {
-                var pow2sz = 1 << id;
-                circles[id] = drawCircle(pow2sz);
-            }
+                circles[id] = drawCircle(id);
+
             return circles[id];
         }
 
-        Texture2D drawCircle(int texSz)
+        Texture2D drawCircle(int id)
         {
+            var texSz = getSz(id);
+
             var radius = texSz / 2 - 1;
             var data = new Color[texSz * texSz];
             var texture = new Texture2D(graphicsDevice, texSz, texSz);

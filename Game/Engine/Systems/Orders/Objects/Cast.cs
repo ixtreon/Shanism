@@ -1,13 +1,13 @@
-﻿using Engine.Objects;
+﻿using Shanism.Engine.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using IO.Common;
-using Engine.Objects.Entities;
-using Engine.Systems.Behaviours;
-using Engine.Systems.Abilities;
+using Shanism.Common.Game;
+using Shanism.Engine.Objects.Entities;
+using Shanism.Engine.Systems.Behaviours;
+using Shanism.Engine.Systems.Abilities;
 
-namespace Engine.Systems.Orders
+namespace Shanism.Engine.Systems.Orders
 {
     /// <summary>
     /// Casts an ability. 

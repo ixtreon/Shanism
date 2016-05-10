@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.UI.Chat
+namespace Shanism.Client.UI.Chat
 {
     interface IChatProvider
     {

@@ -8,8 +8,8 @@
     <ProjectGuid>{0B2E9F70-7046-470A-8E5D-EBD47F030DDC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Engine</RootNamespace>
-    <AssemblyName>Engine</AssemblyName>
+    <RootNamespace>Shanism.Engine</RootNamespace>
+    <AssemblyName>Shanism.Engine</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -23,7 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <DocumentationFile>bin\Debug\Engine.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\Shanism.Engine.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -236,13 +236,13 @@
       <Project>{41be9dd9-644c-4a90-8d47-667b4323df7a}</Project>
       <Name>IxSerializer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ScenarioLib\ScenarioLib.csproj">
+    <ProjectReference Include="..\ScenarioLib\ScenarioLib.csproj">
       <Project>{bada50f2-93bc-4eba-949a-bf892ae4b7e5}</Project>
       <Name>ScenarioLib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\IO\IO.csproj">
+    <ProjectReference Include="..\Common\Common.csproj">
       <Project>{dc89987d-5817-4f1d-95ca-80c024c8d6bb}</Project>
-      <Name>IO</Name>
+      <Name>Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Network\Network.csproj">
       <Project>{d2fa8685-b964-498d-a34f-d191be2cba6b}</Project>

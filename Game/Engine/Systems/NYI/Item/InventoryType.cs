@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Systems.Item
+namespace Shanism.Engine.Systems.Item
 {
     public struct InventoryType
     {

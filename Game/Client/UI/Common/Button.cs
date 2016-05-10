@@ -5,12 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Client.Textures;
+using Shanism.Client.Textures;
 using Color = Microsoft.Xna.Framework.Color;
-using IO.Common;
-using Client.Assets;
+using Shanism.Common.Game;
+using Shanism.Client.Assets;
+using Shanism.Common;
 
-namespace Client.UI.Common
+namespace Shanism.Client.UI.Common
 {
     /// <summary>
     /// A button that shows an image and/or text and can be clicked. 

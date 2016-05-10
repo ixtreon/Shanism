@@ -1,11 +1,11 @@
-﻿using Engine.Objects.Entities;
+﻿using Shanism.Engine.Objects.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Objects
+namespace Shanism.Engine.Objects
 {
     public static class UnitHelper
     {

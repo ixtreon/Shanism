@@ -31,16 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Engine">
-      <HintPath>..\Engine.dll</HintPath>
-      <HintPath>..\bin\Engine.dll</HintPath>
-      <HintPath>..\..\bin\Engine.dll</HintPath>
-    </Reference>
-    <Reference Include="IO">
-      <HintPath>..\IO.dll</HintPath>
-      <HintPath>..\bin\IO.dll</HintPath>
-      <HintPath>..\..\bin\IO.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -61,6 +51,16 @@
     <Folder Include="Properties\" />
     <Folder Include="Scripts\" />
     <Folder Include="Units\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Game\Engine\Engine.csproj">
+      <Project>{0b2e9f70-7046-470a-8e5d-ebd47f030ddc}</Project>
+      <Name>Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Game\Common\Common.csproj">
+      <Project>{dc89987d-5817-4f1d-95ca-80c024c8d6bb}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

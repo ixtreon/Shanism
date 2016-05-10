@@ -1,9 +1,9 @@
-﻿using Client.Textures;
-using IO;
-using IO.Common;
-using IO.Content;
-using IO.Objects;
-using IO.Util;
+﻿using Shanism.Client.Textures;
+using Shanism.Common;
+using Shanism.Common.Game;
+using Shanism.Common.Content;
+using Shanism.Common.Objects;
+using Shanism.Common.Util;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.Assets
+namespace Shanism.Client.Assets
 {
     /// <summary>
     /// The visual representation of a <see cref="IEntity"/>. 

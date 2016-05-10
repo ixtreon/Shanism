@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Objects;
-using IO.Common;
+using Shanism.Engine.Objects;
+using Shanism.Common.Game;
 
-namespace Engine.Systems.Orders
+namespace Shanism.Engine.Systems.Orders
 {
     /// <summary>
     /// Simply stands at a place. 

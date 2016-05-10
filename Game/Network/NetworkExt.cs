@@ -1,4 +1,4 @@
-﻿using IO.Message;
+﻿using Shanism.Common.Message;
 using Lidgren.Network;
 using ProtoBuf;
 using System;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 // The header type used throughout. 
 using HeaderType = System.Int32;
 
-namespace Network
+namespace Shanism.Network
 {
     static class NetworkExt
     {

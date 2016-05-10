@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Objects;
-using IO.Common;
+using Shanism.Engine.Objects;
+using Shanism.Common.Game;
+using Shanism.Common;
 
-namespace Engine.Systems.Orders
+namespace Shanism.Engine.Systems.Orders
 {
     /// <summary>
     /// An order that instructs the given unit to obey a <see cref="MovementState"/>. 

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Maps;
-using IO.Common;
-using Engine.Objects.Entities;
-using IO;
+using Shanism.Engine.Maps;
+using Shanism.Common.Game;
+using Shanism.Engine.Objects.Entities;
+using Shanism.Common;
 
-namespace Engine.Objects.Entities
+namespace Shanism.Engine.Objects.Entities
 {
     /// <summary>
     /// A projectile is a special type of effect that travels in a straight line
@@ -98,7 +98,7 @@ namespace Engine.Objects.Entities
 
             //get valid targets
             var units = Map
-                .GetUnitsInRange(Position, (Scale + IO.Constants.Engine.MaximumObjectSize) / 2 )
+                .GetUnitsInRange(Position, (Scale + Constants.Units.MaximumObjectSize) / 2 )
                 .Where(u => !u.IsDead
                     && u.Owner.IsEnemyOf(Owner)
                     && !unitsHit.Contains(u)

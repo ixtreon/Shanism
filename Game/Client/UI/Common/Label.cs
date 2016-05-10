@@ -1,5 +1,5 @@
-﻿using Client.Assets;
-using IO.Common;
+﻿using Shanism.Client.Assets;
+using Shanism.Common.Game;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -7,8 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Color = Microsoft.Xna.Framework.Color;
+using Shanism.Common;
 
-namespace Client.UI.Common
+namespace Shanism.Client.UI.Common
 {
     /// <summary>
     /// Displays a simple label. 

@@ -1,15 +1,15 @@
-﻿using IO.Common;
+﻿using Shanism.Common.Game;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Client;
+using Shanism.Client;
 using System.Threading;
-using IO;
+using Shanism.Common;
 
-namespace Client.Map
+namespace Shanism.Client.Map
 {
     /// <summary>
     /// Contains the data for a chunk, including an array of the tiles 

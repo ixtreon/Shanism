@@ -1,13 +1,14 @@
-﻿using Engine.Objects;
-using IO.Common;
-using IO.Objects;
+﻿using Shanism.Engine.Objects;
+using Shanism.Common.Game;
+using Shanism.Common.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shanism.Common;
 
-namespace Engine.Maps
+namespace Shanism.Engine.Maps
 {
     class ObjectMap : HashMap<Point, Entity>
     {

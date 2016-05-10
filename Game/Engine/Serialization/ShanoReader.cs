@@ -1,12 +1,12 @@
-﻿using Engine.Objects;
-using Engine.Objects.Buffs;
-using Engine.Objects.Entities;
-using Engine.Systems.Abilities;
-using IO;
-using IO.Common;
-using IO.Message.Network;
-using IO.Objects;
-using IO.Serialization;
+﻿using Shanism.Engine.Objects;
+using Shanism.Engine.Objects.Buffs;
+using Shanism.Engine.Objects.Entities;
+using Shanism.Engine.Systems.Abilities;
+using Shanism.Common;
+using Shanism.Common.Game;
+using Shanism.Common.Message.Network;
+using Shanism.Common.Objects;
+using Shanism.Common.Serialization;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Serialization
+namespace Shanism.Engine.Serialization
 {
     public static class ShanoReader
     {

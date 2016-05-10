@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Objects.Entities;
-using IO.Common;
-using Engine.Objects;
+using Shanism.Engine.Objects.Entities;
+using Shanism.Common.Game;
+using Shanism.Engine.Objects;
+using Shanism.Common;
 
-namespace Engine.Maps
+namespace Shanism.Engine.Maps
 {
     /// <summary>
     /// A map of a fixed size and terrain. 

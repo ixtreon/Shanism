@@ -1,13 +1,14 @@
-﻿using Engine.Objects;
-using Engine.Systems.Abilities;
-using IO.Common;
+﻿using Shanism.Engine.Objects;
+using Shanism.Engine.Systems.Abilities;
+using Shanism.Common.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shanism.Common;
 
-namespace Engine.Events
+namespace Shanism.Engine.Events
 {
     /// <summary>
     /// The arguments passed whenever an ability is being cast. 

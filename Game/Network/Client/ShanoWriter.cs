@@ -1,9 +1,9 @@
-﻿using IO;
-using IO.Common;
-using IO.Interfaces.Engine;
-using IO.Message.Network;
-using IO.Objects;
-using IO.Serialization;
+﻿using Shanism.Common;
+using Shanism.Common.Game;
+using Shanism.Common.Interfaces.Engine;
+using Shanism.Common.Message.Network;
+using Shanism.Common.Objects;
+using Shanism.Common.Serialization;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace Network.Client
+namespace Shanism.Network.Client
 {
     public static class ShanoWriter
     {

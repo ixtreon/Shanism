@@ -1,16 +1,16 @@
-﻿using IO;
+﻿using Shanism.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using IO.Common;
+using Shanism.Common.Game;
 using SharpNoise.Modules;
 using System.Diagnostics;
-using Engine.Objects.Entities;
-using Engine.Objects;
-using IO.Util.Hash;
+using Shanism.Engine.Objects.Entities;
+using Shanism.Engine.Objects;
+using Shanism.Common.Util.Hash;
 
-namespace Engine.Maps
+namespace Shanism.Engine.Maps
 {
     public enum RandomObject
     {
@@ -73,7 +73,7 @@ namespace Engine.Maps
         public void GetMap(Rectangle rect, ref TerrainType[] outMap)
         {
             foreach (var p in rect.Iterate())
-                outMap[(p.X - rect.X) + IO.Constants.Terrain.ChunkSize * (p.Y - rect.Y)] = GetTerrainAt(p);
+                outMap[(p.X - rect.X) + Shanism.Common.Constants.Terrain.ChunkSize * (p.Y - rect.Y)] = GetTerrainAt(p);
         }
 
         /// <summary>

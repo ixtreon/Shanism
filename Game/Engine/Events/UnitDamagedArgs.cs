@@ -1,10 +1,10 @@
-﻿using Engine.Common;
-using Engine.Objects;
-using Engine.Objects.Entities;
-using IO.Common;
+﻿using Shanism.Engine.Common;
+using Shanism.Engine.Objects;
+using Shanism.Engine.Objects.Entities;
+using Shanism.Common.Game;
 using System;
 
-namespace Engine.Events
+namespace Shanism.Engine.Events
 {
     /// <summary>
     /// The arguments passeed whenever a unit was just damaged.  

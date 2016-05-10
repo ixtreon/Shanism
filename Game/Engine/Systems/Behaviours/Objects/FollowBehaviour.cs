@@ -1,12 +1,12 @@
-﻿using Engine.Objects;
-using Engine.Systems.Orders;
+﻿using Shanism.Engine.Objects;
+using Shanism.Engine.Systems.Orders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Systems.Behaviours
+namespace Shanism.Engine.Systems.Behaviours
 {
     /// <summary>
     /// A behaviour that makes the controlled unit follow the specified target unit. 

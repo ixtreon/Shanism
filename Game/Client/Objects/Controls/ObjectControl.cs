@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IO;
+using Shanism.Common;
 using Microsoft.Xna.Framework.Graphics;
-using Client.UI;
-using IO.Content;
-using IO.Objects;
-using IO.Common;
-using Client.Assets;
+using Shanism.Client.UI;
+using Shanism.Common.Content;
+using Shanism.Common.Objects;
+using Shanism.Common.Game;
+using Shanism.Client.Assets;
 
-namespace Client.Objects
+namespace Shanism.Client.Objects
 {
     /// <summary>
     /// The in-game control for any in-game object. 

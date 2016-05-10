@@ -1,11 +1,11 @@
-﻿using IO.Message;
+﻿using Shanism.Common.Message;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client
+namespace Shanism.Client
 {
     /// <summary>
     /// A system for the client engine. 

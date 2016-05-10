@@ -1,14 +1,14 @@
-﻿using Engine.Events;
-using Engine.Objects;
-using Engine.Objects.Entities;
-using IO.Common;
+﻿using Shanism.Engine.Events;
+using Shanism.Engine.Objects;
+using Shanism.Engine.Objects.Entities;
+using Shanism.Common.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using IO;
+using Shanism.Common;
 using System.Collections.Concurrent;
 
-namespace Engine.Systems.Behaviours
+namespace Shanism.Engine.Systems.Behaviours
 {
     /// <summary>
     /// A compound aggro behaviour which keeps an aggro table for a unit 

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Objects;
-using Engine.Objects.Entities;
-using IO.Common;
-using ScenarioLib;
+using Shanism.Engine.Objects;
+using Shanism.Engine.Objects.Entities;
+using Shanism.Common.Game;
+using Shanism.ScenarioLib;
 
-namespace Engine.Systems
+namespace Shanism.Engine.Systems
 {
     /// <summary>
     /// A base for the creation of custom game scripts. 

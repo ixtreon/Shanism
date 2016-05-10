@@ -1,17 +1,17 @@
-﻿using Engine.Objects.Entities;
-using Engine.Systems.Abilities;
-using Engine.Systems.Behaviours;
-using Engine.Systems.Orders;
-using IO;
-using IO.Common;
-using IO.Message.Client;
+﻿using Shanism.Engine.Objects.Entities;
+using Shanism.Engine.Systems.Abilities;
+using Shanism.Engine.Systems.Behaviours;
+using Shanism.Engine.Systems.Orders;
+using Shanism.Common;
+using Shanism.Common.Game;
+using Shanism.Common.Message.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Objects
+namespace Shanism.Engine.Objects
 {
     //The part of the unit class which deals with order handling, such as moving and attacking. 
     partial class Unit

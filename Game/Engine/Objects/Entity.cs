@@ -1,9 +1,9 @@
-﻿using Engine.Objects.Entities;
-using IO;
-using IO.Common;
-using IO.Content;
-using IO.Objects;
-using IO.Util;
+﻿using Shanism.Engine.Objects.Entities;
+using Shanism.Common;
+using Shanism.Common.Game;
+using Shanism.Common.Content;
+using Shanism.Common.Objects;
+using Shanism.Common.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Engine.Objects
+namespace Shanism.Engine.Objects
 {
     /// <summary>
     /// A base class for all objects that show on the game map. 
@@ -50,7 +50,7 @@ namespace Engine.Objects
             get { return _scale; }
             set
             {
-                _scale = value.Clamp(0, IO.Constants.Engine.MaximumObjectSize);
+                _scale = value.Clamp(0, Constants.Units.MaximumObjectSize);
             }
         }
 
@@ -135,7 +135,7 @@ namespace Engine.Objects
         /// Resets this entity's current animation to the default animation name. 
         /// </summary>
         public void ResetAnimation() =>
-            AnimationSuffix = IO.Constants.Content.DefaultValues.Animation;
+            AnimationSuffix = Shanism.Common.Constants.Content.DefaultValues.Animation;
 
 
         /// <summary>

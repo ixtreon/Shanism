@@ -1,12 +1,12 @@
-﻿using Engine.Objects;
-using IO.Common;
+﻿using Shanism.Engine.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shanism.Common;
 
-namespace Engine.Maps
+namespace Shanism.Engine.Maps
 {
     /// <summary>
     /// Maps instances of <see cref="Entity"/> to bins of type <see cref="Point"/>. 

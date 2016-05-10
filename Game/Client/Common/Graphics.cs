@@ -1,6 +1,6 @@
-﻿using Client.Assets;
-using IO;
-using IO.Common;
+﻿using Shanism.Client.Assets;
+using Shanism.Common;
+using Shanism.Common.Game;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Color = Microsoft.Xna.Framework.Color;
 
-namespace Client
+namespace Shanism.Client
 {
     /// <summary>
     /// A graphics object used to draw on top of some or all the MonoGame SpriteBatch. 

@@ -1,13 +1,13 @@
-﻿using IO.Objects;
+﻿using Shanism.Common.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IO.Common;
-using IO.Interfaces.Engine;
+using Shanism.Common.Game;
+using Shanism.Common.Interfaces.Engine;
 
-namespace Network.Client
+namespace Shanism.Network.Client
 {
     /// <summary>
     /// Holds all GameObjects sent by the server and performs RangeQueries for the client. 

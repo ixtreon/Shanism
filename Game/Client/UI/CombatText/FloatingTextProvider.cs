@@ -1,12 +1,13 @@
-﻿using IO.Common;
-using IO.Message.Server;
+﻿using Shanism.Common;
+using Shanism.Common.Game;
+using Shanism.Common.Message.Server;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Color = Microsoft.Xna.Framework.Color;
-namespace Client.UI.CombatText
+namespace Shanism.Client.UI.CombatText
 {
     enum FloatingTextStyle
     {

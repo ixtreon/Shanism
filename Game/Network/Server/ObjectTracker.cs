@@ -1,6 +1,6 @@
-﻿using IO.Common;
-using IO.Objects;
-using IO.Serialization;
+﻿using Shanism.Common.Game;
+using Shanism.Common.Objects;
+using Shanism.Common.Serialization;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Network.Server
+namespace Shanism.Network.Server
 {
     /// <summary>
     /// Provides up-to-date, cached serialized versions of GameObjects. 

@@ -1,14 +1,13 @@
-﻿using Client.Assets;
-using Client.UI.Common;
-using IO.Common;
+﻿using Shanism.Client.Assets;
+using Shanism.Client.UI.Common;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using Shanism.Common;
 
-namespace Client.UI.Menus.Character
+namespace Shanism.Client.UI.Menus.Character
 {
     class StatBox : Control
     {

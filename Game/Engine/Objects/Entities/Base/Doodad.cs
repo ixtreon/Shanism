@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IO.Objects;
-using IO.Common;
-using IO;
-using IO.Util;
+using Shanism.Common.Objects;
+using Shanism.Common.Game;
+using Shanism.Common;
+using Shanism.Common.Util;
 
-namespace Engine.Objects.Entities
+namespace Shanism.Engine.Objects.Entities
 {
     /// <summary>
     /// Represents all in-game objects which are not units but have collision. 

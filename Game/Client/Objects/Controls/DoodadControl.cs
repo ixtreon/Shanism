@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IO.Objects;
-using IO.Common;
+using Shanism.Common.Objects;
+using Shanism.Common.Game;
+using Shanism.Common;
 
-namespace Client.Objects
+namespace Shanism.Client.Objects
 {
     /// <summary>
     /// Represents the in-game control of a specific doodad. 

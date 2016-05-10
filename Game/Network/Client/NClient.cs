@@ -1,4 +1,4 @@
-﻿using IO;
+﻿using Shanism.Common;
 using Lidgren.Network;
 using System;
 using System.Collections.Generic;
@@ -6,13 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using IO.Message.Client;
-using IO.Message;
-using IO.Message.Server;
-using IO.Objects;
-using IO.Message.Network;
+using Shanism.Common.Message.Client;
+using Shanism.Common.Message;
+using Shanism.Common.Message.Server;
+using Shanism.Common.Objects;
+using Shanism.Common.Message.Network;
 
-namespace Network.Client
+namespace Shanism.Network.Client
 {
     /// <summary>
     /// The code for a network client using Lidgren.Network. 

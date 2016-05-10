@@ -4,14 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
-using Client.Objects;
-using Client.Textures;
-using IO;
-using IO.Common;
-using Client.UI.Common;
+using Shanism.Client.Objects;
+using Shanism.Client.Textures;
+using Shanism.Common;
+using Shanism.Common.Game;
+using Shanism.Client.UI.Common;
 using Color = Microsoft.Xna.Framework.Color;
+using Shanism.Common.Objects;
 
-namespace Client.UI
+namespace Shanism.Client.UI
 {
     /// <summary>
     /// Displays information about a given unit such as its name, level, life and mana. 
@@ -105,7 +106,7 @@ namespace Client.UI
                 nameLabel.Text = unitTarget.Name;
                 lvlLabel.Text = $"Level {unitTarget.Level}";
 
-                var heroTarget = unitTarget as IO.Objects.IHero;
+                var heroTarget = unitTarget as IHero;
                 if (heroTarget != null)
                     lvlLabel.ToolTip = $"{heroTarget.Experience}/{heroTarget.ExperienceNeeded} XP";
                 else

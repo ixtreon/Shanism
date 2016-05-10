@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Xna.Framework.Graphics;
-using System.Diagnostics;
-using IO.Common;
+using Shanism.Common;
+
 using Color = Microsoft.Xna.Framework.Color;
 
-
-namespace Client.UI
+namespace Shanism.Client.UI
 {
     class SpellBar : Control
     {

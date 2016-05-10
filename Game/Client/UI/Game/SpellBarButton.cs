@@ -1,5 +1,5 @@
-﻿using Client.Input;
-using IO.Common;
+﻿using Shanism.Client.Input;
+using Shanism.Common.Game;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -8,8 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Color = Microsoft.Xna.Framework.Color;
+using Shanism.Common;
 
-namespace Client.UI
+namespace Shanism.Client.UI
 {
     /// <summary>
     /// A selectable, keybindable spell button as placed in a bar. 

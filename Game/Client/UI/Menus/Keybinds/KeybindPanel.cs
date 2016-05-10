@@ -1,6 +1,6 @@
-﻿using Client.Input;
-using IO;
-using IO.Common;
+﻿using Shanism.Client.Input;
+using Shanism.Common;
+using Shanism.Common.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Color = Microsoft.Xna.Framework.Color;
 
-namespace Client.UI.Menus.Keybinds
+namespace Shanism.Client.UI.Menus.Keybinds
 {
     /// <summary>
     /// Lists all standard keybinds (exluding actionbars). 

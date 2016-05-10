@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.Input
+namespace Shanism.Client.Input
 {
     /// <summary>
     /// The enumeration of user actions that can be performed in-game. 

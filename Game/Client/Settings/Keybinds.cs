@@ -1,5 +1,5 @@
-﻿using Client.Input;
-using IO;
+﻿using Shanism.Client.Input;
+using Shanism.Common;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 using System;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client
+namespace Shanism.Client
 {
     //unused
     class KeybindSettings

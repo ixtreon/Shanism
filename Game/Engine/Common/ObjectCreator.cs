@@ -1,14 +1,14 @@
-﻿using Engine.Objects;
-using Engine.Objects.Entities;
-using IO;
-using ScenarioLib;
+﻿using Shanism.Engine.Objects;
+using Shanism.Engine.Objects.Entities;
+using Shanism.Common;
+using Shanism.ScenarioLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Common
+namespace Shanism.Engine.Common
 {
     public class ObjectCreator
     {

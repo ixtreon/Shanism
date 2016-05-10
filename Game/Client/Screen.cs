@@ -1,13 +1,13 @@
-﻿using IO;
-using IO.Common;
-using IO.Objects;
+﻿using Shanism.Common;
+using Shanism.Common.Game;
+using Shanism.Common.Objects;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Client
+namespace Shanism.Client
 {
     /// <summary>
     /// Contains information about the current camera, screen and UI parameters. 

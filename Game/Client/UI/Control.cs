@@ -4,12 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using IO;
-using IO.Common;
+using Shanism.Common;
+using Shanism.Common.Game;
 using Color = Microsoft.Xna.Framework.Color;
-using Client.Input;
+using Shanism.Client.Input;
 
-namespace Client.UI
+namespace Shanism.Client.UI
 {
     [Flags]
     public enum AnchorMode

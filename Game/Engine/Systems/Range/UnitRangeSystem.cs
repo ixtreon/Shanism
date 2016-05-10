@@ -1,14 +1,14 @@
-﻿using Engine.Objects;
-using IO;
-using IO.Common;
-using IO.Util;
+﻿using Shanism.Engine.Objects;
+using Shanism.Common;
+using Shanism.Common.Game;
+using Shanism.Common.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Systems.Range
+namespace Shanism.Engine.Systems.Range
 {
     class UnitRangeSystem : UnitSystem
     {

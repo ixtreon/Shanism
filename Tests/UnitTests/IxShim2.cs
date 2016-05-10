@@ -1,10 +1,11 @@
-﻿using Engine.Objects.Entities;
-using IO.Common;
-using IO.Objects;
+﻿using Shanism.Engine.Objects.Entities;
+using Shanism.Common.Game;
+using Shanism.Common.Objects;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;
 using System.IO;
+using Shanism.Common;
 
 namespace UnitTests
 {

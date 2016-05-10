@@ -1,12 +1,12 @@
-﻿using Client.Input;
-using Client.Objects;
-using Client.UI;
-using Client.UI.CombatText;
-using IO;
-using IO.Common;
-using IO.Message;
-using IO.Message.Server;
-using IO.Objects;
+﻿using Shanism.Client.Input;
+using Shanism.Client.Objects;
+using Shanism.Client.UI;
+using Shanism.Client.UI.CombatText;
+using Shanism.Common;
+using Shanism.Common.Game;
+using Shanism.Common.Message;
+using Shanism.Common.Message.Server;
+using Shanism.Common.Objects;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client
+namespace Shanism.Client
 {
     class ObjectManager : Control, IClientSystem
     {

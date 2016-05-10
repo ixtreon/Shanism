@@ -1,4 +1,4 @@
-﻿using IO;
+﻿using Shanism.Common;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client
+namespace Shanism.Client
 {
     public static class ShanoGame
     {

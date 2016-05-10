@@ -1,13 +1,13 @@
-﻿using Engine.Objects;
-using Engine.Objects.Entities;
-using IO.Common;
+﻿using Shanism.Engine.Objects;
+using Shanism.Common.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shanism.Common;
 
-namespace Engine.Maps
+namespace Shanism.Engine.Maps
 {
     public interface ITerrainMap
     {

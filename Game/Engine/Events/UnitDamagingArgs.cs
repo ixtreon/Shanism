@@ -1,9 +1,9 @@
-﻿using Engine.Common;
-using Engine.Objects;
-using IO.Common;
+﻿using Shanism.Engine.Common;
+using Shanism.Engine.Objects;
+using Shanism.Common.Game;
 using System;
 
-namespace Engine.Events
+namespace Shanism.Engine.Events
 {
     /// <summary>
     /// The arguments passed whenever a unit is about to get damaged by some other unit. 

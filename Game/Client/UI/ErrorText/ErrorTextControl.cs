@@ -1,13 +1,14 @@
-﻿using Client.Assets;
-using IO.Common;
+﻿using Shanism.Client.Assets;
+using Shanism.Common.Game;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shanism.Common;
 
-namespace Client.UI
+namespace Shanism.Client.UI
 {
     class ErrorTextControl : Control
     {

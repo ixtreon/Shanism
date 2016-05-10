@@ -1,5 +1,5 @@
-﻿using IO;
-using IO.Objects;
+﻿using Shanism.Common;
+using Shanism.Common.Objects;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.UI.Common
+namespace Shanism.Client.UI.Common
 {
     class ManaBar : ValueBar
     {

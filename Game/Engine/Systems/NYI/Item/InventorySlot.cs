@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-namespace Engine.Systems.Item
+namespace Shanism.Engine.Systems.Item
 {
     /* supports up to 32 (64) slots */
 

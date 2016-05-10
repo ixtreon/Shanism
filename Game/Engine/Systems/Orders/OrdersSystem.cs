@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Objects;
-using IO.Message;
-using IO.Common;
+using Shanism.Engine.Objects;
+using Shanism.Common.Message;
+using Shanism.Common.Game;
 
-namespace Engine.Systems
+namespace Shanism.Engine.Systems
 {
     class OrdersSystem : UnitSystem
     {

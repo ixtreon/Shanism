@@ -1,12 +1,12 @@
-﻿using Engine.Objects;
-using IO.Message;
+﻿using Shanism.Engine.Objects;
+using Shanism.Common.Message;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Systems
+namespace Shanism.Engine.Systems
 {
 
     public abstract class UnitSystem

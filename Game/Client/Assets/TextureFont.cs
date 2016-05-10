@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using Microsoft.Xna.Framework.Content;
-using IO.Common;
 using Color = Microsoft.Xna.Framework.Color;
 using System.IO;
+using Shanism.Common;
 
-namespace Client.Assets
+namespace Shanism.Client.Assets
 {
     class TextureFont
     {

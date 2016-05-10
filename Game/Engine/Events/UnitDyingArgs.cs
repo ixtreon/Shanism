@@ -1,9 +1,9 @@
-﻿using Engine.Objects;
-using Engine.Objects.Entities;
+﻿using Shanism.Engine.Objects;
+using Shanism.Engine.Objects.Entities;
 using System;
 using System.Linq;
 
-namespace Engine.Events
+namespace Shanism.Engine.Events
 {
     /// <summary>
     /// The arguments passed whenever a unit dies. 

@@ -1,21 +1,12 @@
-﻿using Client.Input;
-using Client.Map;
-using Client.UI;
-using IO;
-using IO.Message;
-using IO.Message.Client;
-using IO.Message.Server;
-using IO.Objects;
+﻿using Shanism.Common;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using ScenarioLib;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Client
+namespace Shanism.Client
 {
     /// <summary>
     /// The main game class that starts the client engine. 
@@ -27,7 +18,7 @@ namespace Client
         GraphicsDeviceManager graphics;
 
 
-        Rectangle _windowSize;
+        Microsoft.Xna.Framework.Rectangle _windowSize;
         bool _stopResizeRecurse;
         bool _isLoaded;
 

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Objects;
-using Engine.Objects.Entities;
-using Engine.Systems.Orders;
-using Engine.Systems.Abilities;
-using IO.Common;
+using Shanism.Engine.Objects;
+using Shanism.Engine.Objects.Entities;
+using Shanism.Engine.Systems.Orders;
+using Shanism.Engine.Systems.Abilities;
+using Shanism.Common.Game;
 
-namespace Engine.Systems.Behaviours
+namespace Shanism.Engine.Systems.Behaviours
 {
     /// <summary>
     /// A behaviour that casts spammable abilities on the specified target, if that is possible. 

@@ -1,20 +1,20 @@
-﻿using IO;
-using IO.Objects;
+﻿using Shanism.Common;
+using Shanism.Common.Objects;
 using Lidgren.Network;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IO.Common;
-using IO.Message.Network;
-using IO.Message;
-using IO.Message.Server;
-using IO.Serialization;
-using IO.Interfaces.Engine;
+using Shanism.Common.Game;
+using Shanism.Common.Message.Network;
+using Shanism.Common.Message;
+using Shanism.Common.Message.Server;
+using Shanism.Common.Serialization;
+using Shanism.Common.Interfaces.Engine;
 using System.IO;
 
-namespace Network.Client
+namespace Shanism.Network.Client
 {
     /// <summary>
     /// Holds all GameObjects sent by the server and performs RangeQueries for the client. 

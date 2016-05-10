@@ -1,12 +1,12 @@
-﻿using IO;
-using Network;
+﻿using Shanism.Common;
+using Shanism.Network;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Network
+namespace Shanism.Engine.Network
 {
     class NetworkSystem : GameSystem
     {

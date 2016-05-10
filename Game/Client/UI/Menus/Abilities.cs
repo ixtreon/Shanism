@@ -1,4 +1,4 @@
-﻿using IO;
+﻿using Shanism.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,12 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using IO.Common;
-using Client.Input;
-using Client.UI.Common;
-using IO.Objects;
+using Shanism.Common.Game;
+using Shanism.Client.Input;
+using Shanism.Client.UI.Common;
+using Shanism.Common.Objects;
 
-namespace Client.UI
+namespace Shanism.Client.UI
 {
     class SpellBook : Window
     {

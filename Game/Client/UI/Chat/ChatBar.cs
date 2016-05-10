@@ -1,17 +1,17 @@
-﻿using Client.Input;
-using Client.Textures;
+﻿using Shanism.Client.Input;
+using Shanism.Client.Textures;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IO;
-using IO.Common;
+using Shanism.Common;
+using Shanism.Common.Game;
 using Color = Microsoft.Xna.Framework.Color;
-using Client.Assets;
+using Shanism.Client.Assets;
 
-namespace Client.UI.Chat
+namespace Shanism.Client.UI.Chat
 {
     class ChatBar : Control, IChatProvider
     {

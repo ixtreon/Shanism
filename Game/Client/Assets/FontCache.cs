@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.Assets
+namespace Shanism.Client.Assets
 {
     /// <summary>
     /// Contains a listing of common fonts. 

@@ -1,15 +1,15 @@
-﻿using Engine.Objects.Entities;
-using Engine.Systems.Abilities;
-using Engine.Systems.Behaviours;
-using Engine.Systems.Orders;
-using IO.Common;
+﻿using Shanism.Engine.Objects.Entities;
+using Shanism.Engine.Systems.Abilities;
+using Shanism.Engine.Systems.Behaviours;
+using Shanism.Engine.Systems.Orders;
+using Shanism.Common.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Objects.Entities
+namespace Shanism.Engine.Objects.Entities
 {
     /// <summary>
     /// A simple type of unit that has prepopulated values for all attributes 

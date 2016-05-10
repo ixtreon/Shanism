@@ -1,14 +1,14 @@
-﻿using Engine.Objects;
+﻿using Shanism.Engine.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
-using IO;
+using Shanism.Common;
 using System.Collections.Concurrent;
 
-namespace Engine.Systems.Abilities
+namespace Shanism.Engine.Systems.Abilities
 {
     class AbilitySystem : UnitSystem, IUnitAbilities
     {

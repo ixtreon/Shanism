@@ -1,21 +1,21 @@
-﻿using IO;
+﻿using Shanism.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IO.Message;
-using IO.Message.Network;
-using IO.Message.Server;
-using IO.Util;
-using Engine.Objects;
-using IO.Message.Client;
-using Engine.Systems.Orders;
-using IO.Common;
-using IO.Objects;
-using Engine.Objects.Entities;
+using Shanism.Common.Message;
+using Shanism.Common.Message.Network;
+using Shanism.Common.Message.Server;
+using Shanism.Common.Util;
+using Shanism.Engine.Objects;
+using Shanism.Common.Message.Client;
+using Shanism.Engine.Systems.Orders;
+using Shanism.Common.Game;
+using Shanism.Common.Objects;
+using Shanism.Engine.Objects.Entities;
 
-namespace Engine.Players
+namespace Shanism.Engine.Players
 {
     /// <summary>
     /// Represents a human player connected to the engine. 

@@ -1,5 +1,5 @@
-﻿using IO;
-using IO.Objects;
+﻿using Shanism.Common;
+using Shanism.Common.Objects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.UI.Common
+namespace Shanism.Client.UI.Common
 {
     class HealthBar : ValueBar
     {

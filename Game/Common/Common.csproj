@@ -1,0 +1,224 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DC89987D-5817-4F1D-95CA-80C024C8D6BB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Shanism.Common</RootNamespace>
+    <AssemblyName>Shanism.Common</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>bin\Debug\Shanism.Common.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Network|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Network\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Editor|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Editor\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Network|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Network\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Editor|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Editor\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="protobuf-net, Version=2.0.0.668, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Util\Color.cs" />
+    <Compile Include="Game\DamageResult.cs" />
+    <Compile Include="Content\AnimationDef.cs" />
+    <Compile Include="Content\TextureDef.cs" />
+    <Compile Include="Ext\Collections.cs" />
+    <Compile Include="Ext\Enum.cs" />
+    <Compile Include="Ext\IO.cs" />
+    <Compile Include="Ext\Math.cs" />
+    <Compile Include="Ext\Strings.cs" />
+    <Compile Include="Game\BuffType.cs" />
+    <Compile Include="Game\DamageType.cs" />
+    <Compile Include="Game\Faction.cs" />
+    <Compile Include="Interfaces\Engine\INetReceptor.cs" />
+    <Compile Include="Interfaces\Objects\IGameObject.cs" />
+    <Compile Include="Math\RectangleF.cs" />
+    <Compile Include="Message\Network\ObjectData.cs" />
+    <Compile Include="Message\Network\GameFrame.cs" />
+    <Compile Include="Message\Server\ObjectUnseen.cs" />
+    <Compile Include="Objects\AbilityStub.cs" />
+    <Compile Include="Objects\BuffStub.cs" />
+    <Compile Include="Objects\Entities\DoodadStub.cs" />
+    <Compile Include="Objects\Entities\EffectStub.cs" />
+    <Compile Include="Objects\Entities\HeroStub.cs" />
+    <Compile Include="Objects\Entities\UnitStub.cs" />
+    <Compile Include="Objects\EntityStub.cs" />
+    <Compile Include="Objects\ObjectStub.cs" />
+    <Compile Include="Performance\IPerformanceStats.cs" />
+    <Compile Include="Performance\PerfCounter.cs" />
+    <Compile Include="Serialization\PropertyCaller - Copy.cs" />
+    <Compile Include="Serialization\PropertyCaller.cs" />
+    <Compile Include="Util\AnimPath.cs" />
+    <Compile Include="Util\CloningPlant.cs" />
+    <Compile Include="Util\ConcurrentSet.cs" />
+    <Compile Include="Util\GenericBackBuffer.cs" />
+    <Compile Include="Util\GenericEqualityComparer.cs" />
+    <Compile Include="Maps\MapChunkDef.cs" />
+    <Compile Include="Game\ObjectType.cs" />
+    <Compile Include="Game\OrderType.cs" />
+    <Compile Include="Interfaces\Engine\IReceptor.cs" />
+    <Compile Include="Message\Server\ObjectAnimation.cs" />
+    <Compile Include="Interfaces\Objects\Game\Other\IBuff.cs" />
+    <Compile Include="Interfaces\Objects\Game\Objects\IEffect.cs" />
+    <Compile Include="ShadowCalc\ShadowGuy.cs" />
+    <Compile Include="Content\TextureType.cs" />
+    <Compile Include="Game\UnitFlags.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Ext\General.cs" />
+    <Compile Include="Util\GenericComparer.cs" />
+    <Compile Include="Game\AbilityType.cs" />
+    <Compile Include="Math\Point.cs" />
+    <Compile Include="Math\Rectangle.cs" />
+    <Compile Include="Math\Vector.cs" />
+    <Compile Include="Message\Client\Action.cs" />
+    <Compile Include="Message\Server\Chat.cs" />
+    <Compile Include="Message\Client\HandshakeInit.cs" />
+    <Compile Include="Message\Client\MapRequest.cs" />
+    <Compile Include="Message\Client\Move.cs" />
+    <Compile Include="Message\IOMessage.cs" />
+    <Compile Include="Message\MessageType.cs" />
+    <Compile Include="Message\Server\HandshakeReply.cs" />
+    <Compile Include="Message\Server\MapData.cs" />
+    <Compile Include="Message\Server\ObjectSeen.cs" />
+    <Compile Include="Message\Server\PlayerStatus.cs" />
+    <Compile Include="Message\Server\DamageEvent.cs" />
+    <Compile Include="Interfaces\Objects\Game\Other\IAbility.cs" />
+    <Compile Include="Interfaces\Objects\Game\Other\IBuffInstance.cs" />
+    <Compile Include="Interfaces\Objects\Game\Objects\IDoodad.cs" />
+    <Compile Include="Interfaces\Engine\IShanoEngine.cs" />
+    <Compile Include="Interfaces\Objects\Game\IEntity.cs" />
+    <Compile Include="Interfaces\Objects\Game\Other\IPlayer.cs" />
+    <Compile Include="Interfaces\Objects\Game\Objects\IUnit.cs" />
+    <Compile Include="Interfaces\Objects\Game\Objects\IHero.cs" />
+    <Compile Include="Maps\TerrainType.cs" />
+    <Compile Include="Interfaces\Client\IShanoClient.cs" />
+    <Compile Include="Game\MovementState.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\Counter.cs" />
+    <Compile Include="Util\GenericId.cs" />
+    <Compile Include="Util\Hash.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="key.snk" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Interfaces\Network\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\IxSerializer\IxSerializer.csproj">
+      <Project>{41be9dd9-644c-4a90-8d47-667b4323df7a}</Project>
+      <Name>IxSerializer</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

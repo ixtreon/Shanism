@@ -1,24 +1,24 @@
-﻿using Engine.Common;
-using Engine.Events;
-using Engine.Objects.Entities;
-using Engine.Systems;
-using Engine.Systems.Abilities;
-using Engine.Objects.Buffs;
-using Engine.Systems.Orders;
-using Engine.Systems.Range;
-using IO;
-using IO.Common;
-using IO.Objects;
+﻿using Shanism.Engine.Common;
+using Shanism.Engine.Events;
+using Shanism.Engine.Objects.Entities;
+using Shanism.Engine.Systems;
+using Shanism.Engine.Systems.Abilities;
+using Shanism.Engine.Objects.Buffs;
+using Shanism.Engine.Systems.Orders;
+using Shanism.Engine.Systems.Range;
+using Shanism.Common;
+using Shanism.Common.Game;
+using Shanism.Common.Objects;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
-using IO.Util;
+using Shanism.Common.Util;
 using System.Reflection;
-using Engine.Systems.Buffs;
+using Shanism.Engine.Systems.Buffs;
 
-namespace Engine.Objects
+namespace Shanism.Engine.Objects
 {
     /// <summary>
     /// Represents an in-game unit. This includes NPCs, heroes, buildings. 

@@ -6,13 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.IO;
-using IO;
-using IO.Content;
-using IO.Common;
-using ScenarioLib;
+using Shanism.Common;
+using Shanism.Common.Content;
+using Shanism.Common.Game;
+using Shanism.ScenarioLib;
 using System.Text.RegularExpressions;
 
-namespace Client.Textures
+namespace Shanism.Client.Textures
 {
     public class TextureCache
     {

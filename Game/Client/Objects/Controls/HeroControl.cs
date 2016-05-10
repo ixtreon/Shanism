@@ -1,12 +1,12 @@
-﻿using IO;
-using IO.Objects;
+﻿using Shanism.Common;
+using Shanism.Common.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.Objects
+namespace Shanism.Client.Objects
 {
     class HeroControl : UnitControl
     {

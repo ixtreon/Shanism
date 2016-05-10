@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IO;
+using Shanism.Common;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using IO.Content;
-using Client.Textures;
-using IO.Common;
-using IO.Objects;
+using Shanism.Common.Content;
+using Shanism.Client.Textures;
+using Shanism.Common.Game;
+using Shanism.Common.Objects;
 using System.Runtime.CompilerServices;
-using ScenarioLib;
+using Shanism.ScenarioLib;
 
-namespace Client.Assets
+namespace Shanism.Client.Assets
 {
     /// <summary>
     /// Manages the creation and handling of sprites for game objects. 

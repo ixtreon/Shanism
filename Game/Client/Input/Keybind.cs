@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.Input
+namespace Shanism.Client.Input
 {
     /// <summary>
     /// A keybind that consists of a main key and zero or more modifier keys. 

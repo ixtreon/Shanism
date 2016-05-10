@@ -1,11 +1,11 @@
-﻿using IO.Common;
+﻿using Shanism.Common.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Objects
+namespace Shanism.Engine.Objects
 {
     partial class Unit
     {

@@ -1,15 +1,14 @@
-﻿using Client.Input;
-using Client.UI.Common;
-using Client.UI.Menus.Keybinds;
-using IO.Common;
-using Microsoft.Xna.Framework;
+﻿using Shanism.Client.Input;
+using Shanism.Client.UI.Common;
+using Shanism.Client.UI.Menus.Keybinds;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shanism.Common;
 
-namespace Client.UI.Menus
+namespace Shanism.Client.UI.Menus
 {
     class KeybindsMenu : Window
     {

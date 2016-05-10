@@ -1,8 +1,8 @@
-﻿using Engine.Objects;
-using Engine.Objects.Buffs;
-using Engine.Objects.Entities;
-using Engine.Systems;
-using IO.Util;
+﻿using Shanism.Engine.Objects;
+using Shanism.Engine.Objects.Buffs;
+using Shanism.Engine.Objects.Entities;
+using Shanism.Engine.Systems;
+using Shanism.Common.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Systems.Buffs
+namespace Shanism.Engine.Systems.Buffs
 {
     /// <summary>
     /// Keeps hold of all buffs currently applied on a target unit

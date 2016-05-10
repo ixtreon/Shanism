@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IO.Common;
-using Engine.Objects.Entities;
+using Shanism.Common;
 
-namespace Engine.Objects.Entities
+namespace Shanism.Engine.Objects.Entities
 {
     /// <summary>
     /// Represents an item that lies on the ground. 

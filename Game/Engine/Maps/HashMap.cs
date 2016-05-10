@@ -1,5 +1,5 @@
-﻿using Engine.Objects.Entities;
-using IO;
+﻿using Shanism.Engine.Objects.Entities;
+using Shanism.Common;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
 
-namespace Engine.Maps
+namespace Shanism.Engine.Maps
 {
     /// <summary>
     /// Maps objects of type <typeparamref name="TVal"/> to bins of type <typeparamref name="TKey"/>. 

@@ -1,11 +1,11 @@
-﻿using IO.Objects;
+﻿using Shanism.Common.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.UI
+namespace Shanism.Client.UI
 {
     class BuffComparer : IComparer<IBuff>
     {

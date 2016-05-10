@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IO;
-using Engine.Systems.Range;
-using IO.Util;
-using IO.Message;
+using Shanism.Common;
+using Shanism.Engine.Systems.Range;
+using Shanism.Common.Util;
+using Shanism.Common.Message;
 
-namespace Engine.Objects
+namespace Shanism.Engine.Objects
 {
     partial class Unit
     {

@@ -1,17 +1,17 @@
-﻿using Client.Input;
-using Client.Map;
-using Client.Textures;
-using Client.UI;
-using IO;
-using IO.Common;
-using IO.Message;
-using IO.Message.Client;
-using IO.Message.Server;
-using IO.Objects;
+﻿using Shanism.Client.Input;
+using Shanism.Client.Map;
+using Shanism.Client.Textures;
+using Shanism.Client.UI;
+using Shanism.Common;
+using Shanism.Common.Game;
+using Shanism.Common.Message;
+using Shanism.Common.Message.Client;
+using Shanism.Common.Message.Server;
+using Shanism.Common.Objects;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using ScenarioLib;
+using Shanism.ScenarioLib;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ using System.Linq;
 using Color = Microsoft.Xna.Framework.Color;
 using GameTime = Microsoft.Xna.Framework.GameTime;
 
-namespace Client
+namespace Shanism.Client
 {
     /// <summary>
     /// Contains all the drawing and update logic of the client. 
@@ -326,7 +326,7 @@ namespace Client
         void drawConnectingScreen()
         {
             var txt = "Connecting...";
-            var font = Client.Content.Fonts.LargeFont;
+            var font = Shanism.Client.Content.Fonts.LargeFont;
             var pos = new Point(Screen.Size.X / 10);
 
             graphicsDevice.SetRenderTarget(null);

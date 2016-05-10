@@ -1,13 +1,13 @@
-﻿using IO.Content;
-using IO.Util;
-using ScenarioLib;
+﻿using Shanism.Common.Content;
+using Shanism.Common.Util;
+using Shanism.ScenarioLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.Assets
+namespace Shanism.Client.Assets
 {
     /// <summary>
     /// Lists all models and textures used in a game. 

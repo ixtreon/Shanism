@@ -5,14 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using IO;
-using Client.Textures;
-using Client.UI.Common;
-using IO.Objects;
+using Shanism.Common;
+using Shanism.Client.Textures;
+using Shanism.Client.UI.Common;
+using Shanism.Common.Objects;
 using Color = Microsoft.Xna.Framework.Color;
-using IO.Common;
+using Shanism.Common.Game;
 
-namespace Client.UI
+namespace Shanism.Client.UI
 {
     /// <summary>
     /// A simple button that displays an ability's icon and a tooltip. 

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Common;
-using IO.Common;
-using Engine.Objects;
-using Engine.Objects.Entities;
-using IO;
+using Shanism.Engine.Common;
+using Shanism.Common.Game;
+using Shanism.Engine.Objects;
+using Shanism.Engine.Objects.Entities;
+using Shanism.Common;
 
-namespace Engine.Systems.Item
+namespace Shanism.Engine.Systems.Item
 {
     //NYI
     class InventorySystem : UnitSystem

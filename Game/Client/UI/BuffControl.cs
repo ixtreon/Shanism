@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
-using IO.Objects;
-using Client.Textures;
+using Shanism.Common.Objects;
+using Shanism.Client.Textures;
 using Microsoft.Xna.Framework;
-using IO.Common;
+using Shanism.Common.Game;
+using Shanism.Common;
 
-namespace Client.UI.Common
+namespace Shanism.Client.UI.Common
 {
     class BuffControl : Control
     {

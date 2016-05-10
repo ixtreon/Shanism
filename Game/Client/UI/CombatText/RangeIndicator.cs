@@ -1,12 +1,13 @@
-﻿using IO.Common;
+﻿using Shanism.Common.Game;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shanism.Common;
 
-namespace Client.UI.CombatText
+namespace Shanism.Client.UI.CombatText
 {
     class RangeIndicator : Control
     {
@@ -58,14 +59,12 @@ namespace Client.UI.CombatText
                 var rekt = new RectangleF(llPx, urPx - llPx);
 
                 var circleSz = (int)Math.Max(rekt.Width, rekt.Height) / 5;
-                if (circleSz <= Content.Circles.MaximumSize)
+                if (circleSz < Content.Circles.MaximumSize)
                 {
                     var circle = Content.Circles.GetTexture(circleSz);
 
                     g.SpriteBatch.ShanoDraw(circle, rekt, Color.LimeGreen);
                 }
-
-                //g.Draw(Content.Textures.Blank, Vector.Zero, rekt.Size, Color.Pink);
             }
         }
     }

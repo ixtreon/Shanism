@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Maps;
-using IO;
+using Shanism.Engine.Maps;
+using Shanism.Common;
 using ProtoBuf;
-using Engine.Objects;
-using IO.Performance;
+using Shanism.Engine.Objects;
+using Shanism.Common.Performance;
 using System.Reflection;
 using System.Collections.Concurrent;
-using IO.Common;
-using IO.Interfaces.Engine;
+using Shanism.Common.Game;
+using Shanism.Common.Interfaces.Engine;
 
-namespace Engine
+namespace Shanism.Engine
 {
     /// <summary>
     /// Represents all things that belong to a game world. 
@@ -81,7 +81,7 @@ namespace Engine
         /// </summary>
         protected GameObject()
         {
-            Id = IO.Util.GenericId<GameObject>.GetNew();
+            Id = Shanism.Common.Util.GenericId<GameObject>.GetNew();
             idDict[Id] = this;
         }
 

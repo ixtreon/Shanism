@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Systems.Abilities
+namespace Shanism.Engine.Systems.Abilities
 {
     /// <summary>
     /// Specifies that an ability is meant to be constantly spammed towards one's opponent. 

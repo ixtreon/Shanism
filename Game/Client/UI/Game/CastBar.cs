@@ -1,16 +1,16 @@
-﻿using IO;
+﻿using Shanism.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
-using IO.Common;
-using Client.UI.Common;
-using IO.Objects;
+using Shanism.Common.Game;
+using Shanism.Client.UI.Common;
+using Shanism.Common.Objects;
 using Color = Microsoft.Xna.Framework.Color;
 
-namespace Client.UI
+namespace Shanism.Client.UI
 {
     class CastBar : Control
     {

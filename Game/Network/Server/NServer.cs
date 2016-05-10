@@ -1,12 +1,12 @@
-﻿using IO;
-using IO.Message;
-using IO.Message.Client;
-using IO.Message.Server;
-using IO.Objects;
-using IO.Serialization;
+﻿using Shanism.Common;
+using Shanism.Common.Message;
+using Shanism.Common.Message.Client;
+using Shanism.Common.Message.Server;
+using Shanism.Common.Objects;
+using Shanism.Common.Serialization;
 using IxLog;
 using Lidgren.Network;
-using Network.Server;
+using Shanism.Network.Server;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,7 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Network
+namespace Shanism.Network
 {
     /// <summary>
     /// Lidgren.Network server

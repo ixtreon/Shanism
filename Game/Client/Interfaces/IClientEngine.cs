@@ -1,7 +1,7 @@
-﻿using Client.Textures;
-using IO;
-using IO.Common;
-using IO.Objects;
+﻿using Shanism.Client.Textures;
+using Shanism.Common;
+using Shanism.Common.Game;
+using Shanism.Common.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 using GameTime = Microsoft.Xna.Framework.GameTime;
 
-namespace Client
+namespace Shanism.Client
 {
     /// <summary>
     /// An instance of the game client engine. 

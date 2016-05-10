@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using Color = Microsoft.Xna.Framework.Color;
-using IO.Common;
+using Shanism.Common.Game;
 
-namespace Client.UI.Common
+namespace Shanism.Client.UI.Common
 {
     /// <summary>
     /// A progress bar representing the current value of a property relative to the maximum value of that property. 

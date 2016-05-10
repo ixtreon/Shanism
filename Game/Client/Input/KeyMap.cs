@@ -1,4 +1,4 @@
-﻿using IO;
+﻿using Shanism.Common;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.Input
+namespace Shanism.Client.Input
 {
     /// <summary>
     /// Provides mapping from <see cref="Keys"/> objects to the characters that show on the keyboard. 

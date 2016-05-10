@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.Input
+namespace Shanism.Client.Input
 {
     [Flags]
     enum ModifierKeys

@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Engine.Systems;
-using IO.Objects;
-using IO.Common;
-using IO;
-using IO.Util;
+using Shanism.Engine.Systems;
+using Shanism.Common.Objects;
+using Shanism.Common.Game;
+using Shanism.Common;
+using Shanism.Common.Util;
 
-namespace Engine.Objects.Buffs
+namespace Shanism.Engine.Objects.Buffs
 {
 
     /// <summary>
@@ -30,7 +30,7 @@ namespace Engine.Objects.Buffs
         /// <summary>
         /// Gets or sets icon of the buff. 
         /// </summary>
-        public string Icon { get; set; } = IO.Constants.Content.DefaultValues.Icon;
+        public string Icon { get; set; } = Shanism.Common.Constants.Content.DefaultValues.Icon;
 
         /// <summary>
         /// Gets or sets the name of the buff. 

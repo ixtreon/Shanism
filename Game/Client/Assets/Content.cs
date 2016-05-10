@@ -1,17 +1,17 @@
-﻿using Client.Assets;
-using Client.Textures;
-using IO;
-using IO.Content;
-using IO.Message.Server;
+﻿using Shanism.Client.Assets;
+using Shanism.Client.Textures;
+using Shanism.Common;
+using Shanism.Common.Content;
+using Shanism.Common.Message.Server;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using ScenarioLib;
+using Shanism.ScenarioLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Client
+namespace Shanism.Client
 {
     /// <summary>
     /// A singleton class that loads the content (mainly textures) needed to play the game. 
@@ -45,8 +45,7 @@ namespace Client
 
         public static void LoadDefaultContent(GraphicsDevice graphics, ContentManager content)
         {
-            Circles = new CircleDict(32, 16384, graphics);
-
+            Circles = new CircleDict(graphics, 20000);
 
             var textures = Directory.EnumerateFiles(DefaultContentDirectory, "*.png", SearchOption.AllDirectories)
                 .Select(fn => fn
@@ -82,7 +81,7 @@ namespace Client
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Unable to read the received scenario. The error was: {e.Message}. ");
+                Console.WriteLine($"Unable to read the received scenarCommon. The error was: {e.Message}. ");
                 return false;
             }
 

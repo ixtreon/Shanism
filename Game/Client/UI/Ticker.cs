@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.UI
+namespace Shanism.Client.UI
 {
     /// <summary>
     /// Provides a value between 0 and 1 that is continuous in time and changes at a rate defined by <see cref="Period"/>. 

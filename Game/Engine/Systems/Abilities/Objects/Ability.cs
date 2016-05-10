@@ -4,21 +4,21 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Maps;
-using Engine.Objects;
-using IO;
-using IO.Common;
-using Engine.Events;
-using IO.Objects;
+using Shanism.Engine.Maps;
+using Shanism.Engine.Objects;
+using Shanism.Common;
+using Shanism.Common.Game;
+using Shanism.Engine.Events;
+using Shanism.Common.Objects;
 using ProtoBuf;
-using IO.Util;
+using Shanism.Common.Util;
 
-namespace Engine.Systems.Abilities
+namespace Shanism.Engine.Systems.Abilities
 {
     /// <summary>
     /// Represents a passive or active ability that belongs to a single <see cref="Entity"/>. 
     /// </summary>
-    /// <seealso cref="Engine.GameObject" />
+    /// <seealso cref="Shanism.Engine.GameObject" />
     /// <seealso cref="IO.Objects.IAbility" />
     public abstract class Ability : GameObject, IAbility
     {
@@ -48,7 +48,7 @@ namespace Engine.Systems.Abilities
         /// <summary>
         /// Gets or sets the icon of this ability. 
         /// </summary>
-        public string Icon { get; set; } = IO.Constants.Content.DefaultValues.Icon;
+        public string Icon { get; set; } = Shanism.Common.Constants.Content.DefaultValues.Icon;
 
         /// <summary>
         /// Gets the currently remaining cooldown of this ability. 

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using Engine.Objects;
-using IO.Common;
+using Shanism.Engine.Objects;
+using Shanism.Common;
 
-namespace Engine.Maps
+namespace Shanism.Engine.Maps
 {
     /// <summary>
     /// Represents the in-game map in a ShanoRPG scenario. 

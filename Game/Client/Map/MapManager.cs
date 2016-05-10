@@ -1,8 +1,8 @@
-﻿using Client;
-using IO;
-using IO.Common;
-using IO.Message;
-using IO.Message.Server;
+﻿using Shanism.Client;
+using Shanism.Common;
+using Shanism.Common.Game;
+using Shanism.Common.Message;
+using Shanism.Common.Message.Server;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Concurrent;
@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Client.Map
+namespace Shanism.Client.Map
 {
     /// <summary>
     /// Handles map communication with the server. 

@@ -1,21 +1,21 @@
-﻿using Engine.Systems;
-using IO;
+﻿using Shanism.Engine.Systems;
+using Shanism.Common;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using IO.Common;
-using Engine.Common;
-using Engine.Objects.Entities;
-using Engine.Systems.Orders;
-using IO.Message.Client;
-using IO.Objects;
-using Engine.Systems.Abilities;
-using IO.Util;
+using Shanism.Common.Game;
+using Shanism.Engine.Common;
+using Shanism.Engine.Objects.Entities;
+using Shanism.Engine.Systems.Orders;
+using Shanism.Common.Message.Client;
+using Shanism.Common.Objects;
+using Shanism.Engine.Systems.Abilities;
+using Shanism.Common.Util;
 
-namespace Engine.Objects.Entities
+namespace Shanism.Engine.Objects.Entities
 {
     /// <summary>
     /// A type of unit that can gather experience points and has a number of attributes 

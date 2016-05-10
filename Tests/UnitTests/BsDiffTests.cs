@@ -1,5 +1,5 @@
-﻿using Engine.Objects;
-using Engine.Objects.Entities;
+﻿using Shanism.Engine.Objects;
+using Shanism.Engine.Objects.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -22,8 +22,8 @@ namespace UnitTests
             var oa = new Monster { Name = "Goshko", Life = 420, Mana = 420, ModelName = "lala", AnimationSuffix = "blala" };
             var ob = new Monster { Name = "Troshko", Life = 420, Mana = 420, ModelName = "lala", AnimationSuffix = "blala" };
 
-            var da = Enumerable.Range(0, 100).SelectMany(_ => Engine.Serialization.ShanoReader.QuickSerialize(oa)).ToArray();
-            var db = Enumerable.Range(0, 100).SelectMany(_ => Engine.Serialization.ShanoReader.QuickSerialize(ob)).ToArray();
+            var da = Enumerable.Range(0, 100).SelectMany(_ => Shanism.Engine.Serialization.ShanoReader.QuickSerialize(oa)).ToArray();
+            var db = Enumerable.Range(0, 100).SelectMany(_ => Shanism.Engine.Serialization.ShanoReader.QuickSerialize(ob)).ToArray();
 
             var sw = Stopwatch.StartNew();
             byte[] datas = new byte[0];

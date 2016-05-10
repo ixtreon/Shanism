@@ -1,13 +1,13 @@
-﻿using Engine.Objects;
-using IO;
-using IO.Common;
+﻿using Shanism.Engine.Objects;
+using Shanism.Common;
+using Shanism.Common.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Systems
+namespace Shanism.Engine.Systems
 {
     /// <summary>
     /// Provides a common way to order units moving around. 
@@ -88,7 +88,7 @@ namespace Engine.Systems
 
             //fix objects
             var nearbyObjects = Owner.Map
-                .GetObjectsInRange(suggestedPos, (Owner.Scale + IO.Constants.Engine.MaximumObjectSize) / 2)
+                .GetObjectsInRange(suggestedPos, (Owner.Scale + Constants.Units.MaximumObjectSize) / 2)
                 .Where(u => u != Owner && u.HasCollision);
 
             foreach(var obj in nearbyObjects)

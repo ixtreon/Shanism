@@ -1,10 +1,10 @@
-﻿using IO;
-using IO.Common;
-using IO.Content;
-using IO.Message;
-using IO.Message.Client;
-using IO.Message.Server;
-using IO.Objects;
+﻿using Shanism.Common;
+using Shanism.Common.Game;
+using Shanism.Common.Content;
+using Shanism.Common.Message;
+using Shanism.Common.Message.Client;
+using Shanism.Common.Message.Server;
+using Shanism.Common.Objects;
 using IxLog;
 using Lidgren.Network;
 using System;
@@ -14,9 +14,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ProtoBuf;
-using IO.Message.Network;
+using Shanism.Common.Message.Network;
 
-namespace Network.Server
+namespace Shanism.Network.Server
 {
     /// <summary>
     /// Represents a client connected over the network module. 

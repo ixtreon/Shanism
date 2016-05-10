@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using IO;
-using Client.Objects;
+using Shanism.Common;
+using Shanism.Client.Objects;
 using Microsoft.Xna.Framework.Input;
-using Client.Input;
-using Client.UI.Menus;
-using IO.Message.Client;
-using IO.Objects;
-using IO.Common;
+using Shanism.Client.Input;
+using Shanism.Client.UI.Menus;
+using Shanism.Common.Message.Client;
+using Shanism.Common.Objects;
+using Shanism.Common.Game;
 using Color = Microsoft.Xna.Framework.Color;
-using Client.UI.CombatText;
-using Client.UI.Chat;
+using Shanism.Client.UI.CombatText;
+using Shanism.Client.UI.Chat;
 
-namespace Client.UI
+namespace Shanism.Client.UI
 {
     class UiManager : Control
     {

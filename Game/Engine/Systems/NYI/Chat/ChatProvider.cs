@@ -1,11 +1,11 @@
-﻿using Engine.Objects;
+﻿using Shanism.Engine.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Systems.Chat
+namespace Shanism.Engine.Systems.Chat
 {
     class ChatProvider
     {

@@ -8,8 +8,8 @@
     <ProjectGuid>{418F2CBD-5DB3-47D4-BEE1-2C69AA6D1914}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Client</RootNamespace>
-    <AssemblyName>Client</AssemblyName>
+    <RootNamespace>Shanism.Client</RootNamespace>
+    <AssemblyName>Shanism.Client</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <TargetFrameworkProfile />
@@ -262,18 +262,17 @@
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ScenarioLib\ScenarioLib.csproj">
+    <ProjectReference Include="..\ScenarioLib\ScenarioLib.csproj">
       <Project>{bada50f2-93bc-4eba-949a-bf892ae4b7e5}</Project>
       <Name>ScenarioLib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\IO\IO.csproj">
+    <ProjectReference Include="..\Common\Common.csproj">
       <Project>{dc89987d-5817-4f1d-95ca-80c024c8d6bb}</Project>
-      <Name>IO</Name>
+      <Name>Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="ClassDiagram1.cd" />
     <None Include="ClientContent.mgcb" />
     <None Include="packages.config" />
     <None Include="Shaders\shader.fx" />

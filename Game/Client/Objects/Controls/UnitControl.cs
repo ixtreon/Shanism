@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IO;
+using Shanism.Common;
 using Microsoft.Xna.Framework.Graphics;
-using Client.UI;
-using Client.UI.Common;
-using IO.Objects;
+using Shanism.Client.UI;
+using Shanism.Client.UI.Common;
+using Shanism.Common.Objects;
 using Color = Microsoft.Xna.Framework.Color;
-using IO.Common;
+using Shanism.Common.Game;
 
-namespace Client.Objects
+namespace Shanism.Client.Objects
 {
     class UnitControl : ObjectControl
     {

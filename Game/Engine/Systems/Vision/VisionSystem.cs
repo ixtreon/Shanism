@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Objects;
-using Engine.Systems.Range;
+using Shanism.Engine.Objects;
+using Shanism.Engine.Systems.Range;
 
-namespace Engine.Systems
+namespace Shanism.Engine.Systems
 {
     /// <summary>
     /// </summary>

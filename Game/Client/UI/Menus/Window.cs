@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
-using Client.Input;
+using Shanism.Client.Input;
 using Color = Microsoft.Xna.Framework.Color;
-using IO.Common;
+using Shanism.Common.Game;
 using Microsoft.Xna.Framework.Input;
+using Shanism.Common;
 
-namespace Client.UI.Common
+namespace Shanism.Client.UI.Common
 {
     /// <summary>
     /// A basic window-like control with a title, close box and a hotkey. 

@@ -1,13 +1,13 @@
-﻿using IO.Common;
-using IO.Objects;
-using IO.Util;
+﻿using Shanism.Common.Game;
+using Shanism.Common.Objects;
+using Shanism.Common.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Objects.Buffs
+namespace Shanism.Engine.Objects.Buffs
 {
     /// <summary>
     /// Represents one or more instances of a given <see cref="Buff"/> applied by a given <see cref="Unit"/> to a single target unit. 

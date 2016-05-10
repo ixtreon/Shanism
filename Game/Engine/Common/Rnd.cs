@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IO.Common;
+using Shanism.Common.Game;
+using Shanism.Common;
 
-namespace Engine
+namespace Shanism.Engine
 {
     /// <summary>
     /// Represents a static instance of a (simple) pseudo-random number generator, 

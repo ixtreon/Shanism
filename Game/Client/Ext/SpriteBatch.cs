@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using IO;
+using Shanism.Common;
 using Microsoft.Xna.Framework.Graphics;
-using IO.Objects;
-using Client.Textures;
+using Shanism.Common.Objects;
+using Shanism.Client.Textures;
 using Color = Microsoft.Xna.Framework.Color;
-using IO.Common;
+using Shanism.Common.Game;
 
-namespace Client
+namespace Shanism.Client
 {
 
     public static class SpriteBatchExt

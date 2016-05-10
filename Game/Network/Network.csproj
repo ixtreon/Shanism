@@ -7,8 +7,8 @@
     <ProjectGuid>{D2FA8685-B964-498D-A34F-D191BE2CBA6B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Network</RootNamespace>
-    <AssemblyName>Network</AssemblyName>
+    <RootNamespace>Shanism.Network</RootNamespace>
+    <AssemblyName>Shanism.Network</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -132,9 +132,9 @@
       <Project>{41be9dd9-644c-4a90-8d47-667b4323df7a}</Project>
       <Name>IxSerializer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\IO\IO.csproj">
+    <ProjectReference Include="..\Common\Common.csproj">
       <Project>{dc89987d-5817-4f1d-95ca-80c024c8d6bb}</Project>
-      <Name>IO</Name>
+      <Name>Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

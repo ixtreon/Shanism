@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
-using Client.Textures;
-using IO.Common;
+using Shanism.Client.Textures;
+using Shanism.Common.Game;
 using Color = Microsoft.Xna.Framework.Color;
-using IO.Objects;
-using Client.UI.Common;
-using IO;
-using Client.Assets;
+using Shanism.Common.Objects;
+using Shanism.Client.UI.Common;
+using Shanism.Common;
+using Shanism.Client.Assets;
 
-namespace Client.UI.Tooltips
+namespace Shanism.Client.UI.Tooltips
 {
     class AbilityTip : Control
     {

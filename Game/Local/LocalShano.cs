@@ -4,17 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Engine;
-using Engine.Objects;
-using IO;
-using IO.Common;
-using Client;
-using Engine.Objects.Entities;
-using IO.Message;
-using IO.Message.Client;
+using Shanism.Engine;
+using Shanism.Engine.Objects;
+using Shanism.Common;
+using Shanism.Common.Game;
+using Shanism.Client;
+using Shanism.Engine.Objects.Entities;
+using Shanism.Common.Message;
+using Shanism.Common.Message.Client;
 using System.IO;
 
-namespace Local
+namespace Shanism.Local
 {
     /// <summary>
     /// Represents a locally played game. 

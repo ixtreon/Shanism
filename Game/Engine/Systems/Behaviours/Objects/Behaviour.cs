@@ -1,13 +1,13 @@
-﻿using Engine.Objects;
-using Engine.Systems.Orders;
+﻿using Shanism.Engine.Objects;
+using Shanism.Engine.Systems.Orders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Engine.Events;
-using IO;
-using IO.Objects;
+using Shanism.Engine.Events;
+using Shanism.Common;
+using Shanism.Common.Objects;
 
-namespace Engine.Systems.Behaviours
+namespace Shanism.Engine.Systems.Behaviours
 {
     /// <summary>
     /// Represents a base class for the creation of unit behaviours. 

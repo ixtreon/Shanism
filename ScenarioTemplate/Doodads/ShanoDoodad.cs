@@ -1,7 +1,7 @@
-﻿using IO.Common;
-using Engine.Events;
-using Engine.Systems.Abilities;
-using Engine.Objects.Entities;
+﻿using Shanism.Common.Game;
+using Shanism.Engine.Events;
+using Shanism.Engine.Systems.Abilities;
+using Shanism.Engine.Objects.Entities;
 
 class ShanoDoodad : Doodad
 {

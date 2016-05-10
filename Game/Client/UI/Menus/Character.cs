@@ -1,16 +1,16 @@
-﻿using Client.Input;
-using Client.UI.Common;
-using IO;
+﻿using Shanism.Client.Input;
+using Shanism.Client.UI.Common;
+using Shanism.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IO.Common;
-using IO.Objects;
-using Client.UI.Menus.Character;
+using Shanism.Common.Game;
+using Shanism.Common.Objects;
+using Shanism.Client.UI.Menus.Character;
 
-namespace Client.UI.Menus
+namespace Shanism.Client.UI.Menus
 {
     class CharacterMenu : Window
     {

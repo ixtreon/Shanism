@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Objects;
-using IO.Common;
-using Engine.Objects.Entities;
+using Shanism.Engine.Objects;
+using Shanism.Common.Game;
+using Shanism.Engine.Objects.Entities;
 using System.Diagnostics;
 using System.Collections;
-using Engine.Systems;
-using Engine.Systems.Range;
+using Shanism.Engine.Systems;
+using Shanism.Engine.Systems.Range;
 using System.Collections.Concurrent;
-using IO;
-using ScenarioLib;
+using Shanism.Common;
+using Shanism.ScenarioLib;
 
-namespace Engine.Maps
+namespace Shanism.Engine.Maps
 {
     /// <summary>
     /// Contains all entities (such as units, doodads and effects) currently in the game.  

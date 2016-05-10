@@ -1,22 +1,21 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShanoRPGWin", "ShanoRPGWin\ShanoRPGWin.csproj", "{1690E344-3BBC-4F04-9C72-1AD90DE19EDF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Launcher", "Launcher\Launcher.csproj", "{1690E344-3BBC-4F04-9C72-1AD90DE19EDF}"
 	ProjectSection(ProjectDependencies) = postProject
 		{418F2CBD-5DB3-47D4-BEE1-2C69AA6D1914} = {418F2CBD-5DB3-47D4-BEE1-2C69AA6D1914}
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Game", "Game", "{5918AABB-A5DE-4195-83E0-7919263532DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShanoServer", "ShanoServer\ShanoServer.csproj", "{4746B339-5C00-4965-BEA9-43E9D79D4693}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{4746B339-5C00-4965-BEA9-43E9D79D4693}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Game\Client\Client.csproj", "{418F2CBD-5DB3-47D4-BEE1-2C69AA6D1914}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine", "Game\Engine\Engine.csproj", "{0B2E9F70-7046-470A-8E5D-EBD47F030DDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IO", "Game\IO\IO.csproj", "{DC89987D-5817-4F1D-95CA-80C024C8D6BB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Game\Common\Common.csproj", "{DC89987D-5817-4F1D-95CA-80C024C8D6BB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Local", "Game\Local\Local.csproj", "{5778ED3F-48BA-46F3-AA71-801FB00865CC}"
 EndProject
@@ -25,7 +24,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{88C39322-1174-4C9E-A198-2A64F43C84BB}"
 	ProjectSection(SolutionItems) = preProject
 		ATTRIBUTIONS.md = ATTRIBUTIONS.md
-		Performance1.psess = Performance1.psess
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -33,17 +31,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScenarioTemplate", "Scenari
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C7338702-1752-40EA-83C1-C4EB6002C43A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkTests", "Tests\NetworkTests\NetworkTests.csproj", "{D527CE3C-EECF-45EF-AE6E-E88DE37D3708}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Network.Tests", "Tests\NetworkTests\Network.Tests.csproj", "{D527CE3C-EECF-45EF-AE6E-E88DE37D3708}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scenarios", "Scenarios", "{6246A47B-B83D-41C3-B156-8A4E29F60E84}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScenarioLib", "ScenarioLib\ScenarioLib.csproj", "{BADA50F2-93BC-4EBA-949A-BF892AE4B7E5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScenarioLib", "Game\ScenarioLib\ScenarioLib.csproj", "{BADA50F2-93BC-4EBA-949A-BF892AE4B7E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScenarioLib.Tests", "ScenarioLib.Tests\ScenarioLib.Tests.csproj", "{8B398427-3D4E-4CB8-B0F0-CFA35E2E66A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScenarioLib.Tests", "Tests\ScenarioLib.Tests\ScenarioLib.Tests.csproj", "{8B398427-3D4E-4CB8-B0F0-CFA35E2E66A4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{8B9AE201-2519-479A-872B-9EC9CBFEC7FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShanoEditor", "ShanoEditor\ShanoEditor.csproj", "{2587E0B9-0242-4142-882F-6D893EC45F89}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Editor", "Editor\Editor.csproj", "{2587E0B9-0242-4142-882F-6D893EC45F89}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "Tests\UnitTests\UnitTests.csproj", "{A6C88306-63DC-4E60-95BB-112E3BC202F5}"
 EndProject
@@ -58,9 +56,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DefaultScenario", "..\Scenarios\DefaultScenario\DefaultScenario.csproj", "{960444F7-E932-4773-B798-DF92EA58A0C3}"
 EndProject
 Global
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -1185,6 +1180,8 @@ Global
 		{D2FA8685-B964-498D-A34F-D191BE2CBA6B} = {5918AABB-A5DE-4195-83E0-7919263532DA}
 		{73DA95FC-147C-40E6-9D23-8C13ACA4A737} = {6246A47B-B83D-41C3-B156-8A4E29F60E84}
 		{D527CE3C-EECF-45EF-AE6E-E88DE37D3708} = {C7338702-1752-40EA-83C1-C4EB6002C43A}
+		{BADA50F2-93BC-4EBA-949A-BF892AE4B7E5} = {5918AABB-A5DE-4195-83E0-7919263532DA}
+		{8B398427-3D4E-4CB8-B0F0-CFA35E2E66A4} = {C7338702-1752-40EA-83C1-C4EB6002C43A}
 		{A6C88306-63DC-4E60-95BB-112E3BC202F5} = {C7338702-1752-40EA-83C1-C4EB6002C43A}
 		{85BD604A-C94D-4058-94BE-6977C97A1291} = {8B9AE201-2519-479A-872B-9EC9CBFEC7FE}
 		{41BE9DD9-644C-4A90-8D47-667B4323DF7A} = {8B9AE201-2519-479A-872B-9EC9CBFEC7FE}

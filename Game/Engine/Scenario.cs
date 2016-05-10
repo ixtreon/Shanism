@@ -4,17 +4,17 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Engine.Objects;
-using IO.Common;
+using Shanism.Engine.Objects;
+using Shanism.Common.Game;
 using System.IO;
-using Engine.Objects.Entities;
-using IO;
-using Engine.Systems;
-using ScenarioLib;
-using Engine.Maps;
-using Engine.Common;
+using Shanism.Engine.Objects.Entities;
+using Shanism.Common;
+using Shanism.Engine.Systems;
+using Shanism.ScenarioLib;
+using Shanism.Engine.Maps;
+using Shanism.Engine.Common;
 
-namespace Engine
+namespace Shanism.Engine
 {
     public class Scenario : CompiledScenario
     {
@@ -65,6 +65,7 @@ namespace Engine
             var oc = new ObjectCreator(this);
             var entities = Config.Map.Objects
                 .Select(oc.CreateObject)
+                .Where(o => o != null)
                 .ToList();
 
             foreach (var e in entities)

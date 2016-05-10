@@ -1,8 +1,7 @@
-﻿using Engine.Objects.Buffs;
-using IO.Common;
-using IO.Objects;
-using IO.Serialization;
-using IO.Util;
+﻿using Shanism.Engine.Objects.Buffs;
+using Shanism.Common.Objects;
+using Shanism.Common.Serialization;
+using Shanism.Common.Util;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -11,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Shanism.Common;
 
 namespace UnitTests
 {

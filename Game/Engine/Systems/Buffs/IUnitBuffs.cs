@@ -1,8 +1,8 @@
-﻿using Engine.Objects;
-using Engine.Objects.Buffs;
+﻿using Shanism.Engine.Objects;
+using Shanism.Engine.Objects.Buffs;
 using System.Collections.Generic;
 
-namespace Engine.Systems.Buffs
+namespace Shanism.Engine.Systems.Buffs
 {
     public interface IUnitBuffs : IEnumerable<BuffInstance>
     {

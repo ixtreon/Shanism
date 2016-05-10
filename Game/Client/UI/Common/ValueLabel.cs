@@ -1,7 +1,8 @@
-﻿using Client.Assets;
-using Client.Input;
-using Client.UI.Common;
-using IO.Common;
+﻿using Shanism.Client.Assets;
+using Shanism.Client.Input;
+using Shanism.Client.UI.Common;
+using Shanism.Common;
+using Shanism.Common.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Color = Microsoft.Xna.Framework.Color;
 
-namespace Client.UI.Common
+namespace Shanism.Client.UI.Common
 {
     class ValueLabel : Control
     {
@@ -76,7 +77,8 @@ namespace Client.UI.Common
             lblValue = new Label
             {
                 AutoSize = false,
-                Location = new Vector(Size.X - ValueWidth, 0),
+                Location = new 
+                Vector(Size.X - ValueWidth, 0),
                 Size = new Vector(ValueWidth, Size.Y),
                 ParentAnchor = AnchorMode.Top | AnchorMode.Right | AnchorMode.Bottom,
 

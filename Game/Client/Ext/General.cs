@@ -3,13 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using IO;
 using Microsoft.Xna.Framework.Graphics;
-using IO.Objects;
-using Client.Textures;
+using Shanism.Common.Objects;
+using Shanism.Client.Textures;
 using Microsoft.Xna.Framework.Input;
 
-namespace Client
+namespace Shanism.Client
 {
     public static class GeneralExt
     {
@@ -62,40 +61,40 @@ namespace Client
 
 
         #region maths primitives transformations
-        public static Vector2 ToVector2(this IO.Common.Vector v)
+        public static Vector2 ToVector2(this Common.Vector v)
         {
             return new Vector2((float)v.X, (float)v.Y);
         }
 
         /// <summary>
-        /// Converts this <see cref="IO.Common.Vector"/>
+        /// Converts this <see cref="Common.Game.Vector"/>
         /// </summary>
         /// <param name="v"></param>
         /// <returns></returns>
-        public static Vector3 ToVector3(this IO.Common.Vector v)
+        public static Vector3 ToVector3(this Common.Vector v)
         {
             return new Vector3((float)v.X, (float)v.Y, 0);
         }
 
-        public static IO.Common.Point ToPoint(this Point p)
+        public static Common.Point ToPoint(this Point p)
         {
-            return new IO.Common.Point(p.X, p.Y);
+            return new Common.Point(p.X, p.Y);
         }
 
 
-        public static Rectangle ToXnaRect(this IO.Common.Rectangle r)
+        public static Rectangle ToXnaRect(this Common.Rectangle r)
         {
             return new Rectangle(r.X, r.Y, r.Width, r.Height);
         }
 
-        public static IO.Common.Rectangle ToRect(this Rectangle r)
+        public static Common.Rectangle ToRect(this Rectangle r)
         {
-            return new IO.Common.Rectangle(r.X, r.Y, r.Width, r.Height);
+            return new Common.Rectangle(r.X, r.Y, r.Width, r.Height);
         }
         #endregion
 
 
-        public static Color ToColor(this IO.Common.ShanoColor c)
+        public static Color ToColor(this Shanism.Common.Util.ShanoColor c)
         {
             return new Color(c.R, c.G, c.B, c.A);
         }

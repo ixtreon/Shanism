@@ -1,15 +1,15 @@
-﻿using Engine.Objects;
-using Engine.Objects.Entities;
-using Engine.Players;
-using Engine.Systems.Orders;
-using IO;
-using IO.Common;
-using IO.Message;
-using IO.Message.Client;
-using IO.Message.Network;
-using IO.Message.Server;
-using IO.Objects;
-using IO.Util;
+﻿using Shanism.Engine.Objects;
+using Shanism.Engine.Objects.Entities;
+using Shanism.Engine.Players;
+using Shanism.Engine.Systems.Orders;
+using Shanism.Common;
+using Shanism.Common.Game;
+using Shanism.Common.Message;
+using Shanism.Common.Message.Client;
+using Shanism.Common.Message.Network;
+using Shanism.Common.Message.Server;
+using Shanism.Common.Objects;
+using Shanism.Common.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +17,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Engine
+namespace Shanism.Engine
 {
     /// <summary>
     /// Represents a player connected to the game

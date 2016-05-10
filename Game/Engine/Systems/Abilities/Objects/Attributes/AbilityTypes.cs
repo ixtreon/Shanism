@@ -1,12 +1,12 @@
-﻿using Engine.Objects;
-using Engine.Objects.Entities;
+﻿using Shanism.Engine.Objects;
+using Shanism.Engine.Objects.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Systems.Abilities
+namespace Shanism.Engine.Systems.Abilities
 {
     static class AbilityTypes
     {
