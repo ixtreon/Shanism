@@ -10,7 +10,7 @@ namespace IxSerializer.Util
     public static class New
     {
         static Dictionary<Type, Func<object>> invokes = new Dictionary<Type, Func<object>>();
-        public static object GetInstance(Type ty)
+        public static object CreateInstance(Type ty)
         {
             Func<object> f;
             if (!invokes.TryGetValue(ty, out f))
@@ -26,13 +26,10 @@ namespace IxSerializer.Util
         }
 
     }
+
     public static class New<T> where T : new()
     {
-        public static readonly Func<T> Instance = Expression.Lambda<Func<T>>(Expression.New(typeof(T))).Compile();
 
-        public static object CreateInstance()
-        {
-            return Instance();
-        }
+        public static object CreateInstance() => new T();
     }
 }

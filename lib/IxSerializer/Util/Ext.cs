@@ -9,11 +9,11 @@ namespace IxSerializer
 {
     static class Ext
     {
-        public static int[] GetDimensions(this Array arr)
+        public static List<int> GetDimensions(this Array arr)
         {
             return Enumerable.Range(0, arr.Rank)
                 .Select(i => arr.GetLength(i))
-                .ToArray();
+                .ToList();
         }
 
         public static IEnumerable<int[]> EnumIndices(this Array arr)

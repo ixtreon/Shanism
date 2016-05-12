@@ -53,11 +53,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Diff.cs" />
-    <Compile Include="DiffNew.cs" />
-    <Compile Include="Ext.cs" />
-    <Compile Include="DiffTool.cs" />
-    <Compile Include="InterfaceSerializer.cs" />
+    <Compile Include="Diff\Diff.cs" />
+    <Compile Include="Diff\DiffNew.cs" />
+    <Compile Include="Util\Ext.cs" />
+    <Compile Include="Diff\DiffTool.cs" />
     <Compile Include="Modules\Array1D.cs" />
     <Compile Include="Modules\Interface.cs" />
     <Compile Include="SerializerModule.cs" />
@@ -71,6 +70,7 @@
   <ItemGroup>
     <None Include="key.snk" />
     <None Include="packages.config" />
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

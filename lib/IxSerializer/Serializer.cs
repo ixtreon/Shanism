@@ -28,7 +28,7 @@ namespace IxSerializer
         /// <summary>
         /// Gets all the modules that are currently in use. 
         /// </summary>
-        public static IEnumerable<SerializerModule> ModulesInUse { get { return modulesInUse; } }
+        public static IEnumerable<SerializerModule> ModulesInUse => modulesInUse;
 
         public static void Initialize()
         {
