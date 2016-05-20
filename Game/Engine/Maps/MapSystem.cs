@@ -106,8 +106,10 @@ namespace Shanism.Engine.Maps
             var window = new RectangleF(pos - range, new Vector(range * 2));
             var rangeSq = range * range;
 
-            return GetUnitsInRect(window, aliveOnly)
-                .Where(u => u.Position.DistanceToSquared(pos) <= rangeSq);
+            return Map.RawRangeQuery(window)
+                .OfType<Unit>()
+                .Where(u => (!aliveOnly || !u.IsDead) 
+                    && u.Position.DistanceToSquared(pos) <= rangeSq);
         }
 
         /// <summary>
@@ -124,7 +126,7 @@ namespace Shanism.Engine.Maps
             var window = new RectangleF(pos - range, new Vector(range * 2));
             var rangeSq = range * range;
 
-            return GetObjectsInRect(window)
+            return Map.RawRangeQuery(window)
                 .Where(u => u.Position.DistanceToSquared(pos) <= rangeSq);
         }
 
@@ -136,7 +138,7 @@ namespace Shanism.Engine.Maps
         /// <returns></returns>
         public IEnumerable<Entity> RawQuery(RectangleF rect)
         {
-            return Map.RawQuery(rect);
+            return Map.RawRangeQuery(rect);
         }
 
         /// <summary>

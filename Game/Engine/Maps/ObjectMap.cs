@@ -34,9 +34,10 @@ namespace Shanism.Engine.Maps
         /// <returns>An enumeration of all objects within the rectangle. </returns>
         public IEnumerable<Entity> RangeQuery(RectangleF rect)
         {
-            return RawQuery(rect)
+            return RawRangeQuery(rect)
                 .Where(obj => rect.Contains(obj.Position));
         }
+
 
         /// <summary>
         /// Executes a fast range query for all objects lying inside or around the given rectangle. 
@@ -44,7 +45,7 @@ namespace Shanism.Engine.Maps
         /// </summary>
         /// <param name="rect"></param>
         /// <returns></returns>
-        public IEnumerable<Entity> RawQuery(RectangleF rect)
+        public IEnumerable<Entity> RawRangeQuery(RectangleF rect)
         {
             if (rect.Width <= 0 || rect.Height <= 0)
                 return Enumerable.Empty<Entity>();
@@ -52,28 +53,19 @@ namespace Shanism.Engine.Maps
             var start = DefaultMapper.GetBinId(rect.Position);
             var end = DefaultMapper.GetBinId(rect.FarPosition);
 
-            return BinQuery(start, end);
+            return RawQuery(start, end);
         }
 
-        /// <summary>
-        /// Returns all objects in the bins in a given range from a specified center bin. 
-        /// </summary>
-        /// <param name="centerBin">The map bin at the center of the area. </param>
-        /// <param name="binRange">The range, in map bins, to select units. </param>
-        /// <returns>All objects lying inside the center bin or a bin in the specified range from it. </returns>
-        public IEnumerable<Entity> BinQuery(Point centerBin, int binRange)
+        public IEnumerable<Entity> RawQuery(Point lowerLeftBin, Point upperRightBin)
         {
-            var start = centerBin - new Point(binRange);
-            var end = centerBin + new Point(binRange);
+            var entities = new HashSet<Entity>();
 
-            return BinQuery(start, end);
-        }
+            for (int ix = lowerLeftBin.X; ix <= upperRightBin.X; ix++)
+                for (int iy = lowerLeftBin.Y; iy <= upperRightBin.Y; iy++)
+                    foreach (var e in BinQuery(new Point(ix, iy)))
+                        entities.Add(e);
 
-        public IEnumerable<Entity> BinQuery(Point lowerLeftBin, Point upperRightBin)
-        {
-            return lowerLeftBin.IterateToInclusive(upperRightBin)
-                .SelectMany(p => BinQuery(p))
-                .Distinct();
+            return entities;
         }
     }
 
