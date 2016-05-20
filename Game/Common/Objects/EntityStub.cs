@@ -19,6 +19,8 @@ namespace Shanism.Common.Objects
 
         public double Scale { get; set; }
 
+        public double Orientation { get; set; }
+
 
 
         public string AnimationName { get; set; }

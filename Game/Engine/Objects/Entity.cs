@@ -55,6 +55,11 @@ namespace Shanism.Engine.Objects
         }
 
         /// <summary>
+        /// Gets the orientation of the object. 
+        /// </summary>
+        public double Orientation { get; set; }
+
+        /// <summary>
         /// Gets a value indicating whether this collides with other entities on the map. 
         /// </summary>
         public abstract bool HasCollision { get; }
@@ -113,6 +118,11 @@ namespace Shanism.Engine.Objects
             => ModelName + "/" + AnimationSuffix;
 
         /// <summary>
+        /// The event raised whenever the entity is updated by the engine. 
+        /// </summary>
+        public event Action<Entity, int> Updated;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Entity"/> class.
         /// </summary>
         protected Entity() { }
@@ -152,8 +162,12 @@ namespace Shanism.Engine.Objects
             IsDestroyed = true;
         }
 
+        /// <summary>
+        /// Raises the <see cref="Updated"/> event. 
+        /// </summary>
         internal override void Update(int msElapsed)
         {
+            Updated?.Invoke(this, msElapsed);
         }
 
 

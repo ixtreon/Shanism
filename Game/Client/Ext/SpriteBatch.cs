@@ -25,13 +25,19 @@ namespace Shanism.Client
         /// <param name="c">The tint color.</param>
         /// <param name="depth">The depth. NYI.</param>
         public static void ShanoDraw(this SpriteBatch sb, Texture2D tex,
-            Rectangle sourceRect, Vector destPos, Vector destSz, Color c, float depth = 0)
+            Rectangle sourceRect, Vector destPos, Vector destSz, Color c, 
+            float depth = 0,
+            float rotation = 0)
         {
+            var srcOrigin = ((Vector)sourceRect.Size / 2).ToVector2();
+            var destOrigin = (destSz / 2).ToVector2();
             sb.Draw(tex,
+                destPos.ToVector2() + destOrigin,
                 sourceRectangle: sourceRect.ToXnaRect(),
-                position: destPos.ToVector2(),
+                color: c,
                 scale: (destSz / sourceRect.Size).ToVector2(),
-                color: c);
+                rotation: rotation,
+                origin: srcOrigin);
         }
 
         /// <summary>

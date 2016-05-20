@@ -132,7 +132,8 @@ namespace Shanism.Editor.MapAdapter
             foreach (var oc in ScenarioView.Scenario.Config.Map.Objects)   //LMAOOOO
             {
                 var o = CreateObject(oc);
-                AddObject(o);
+                if(o != null)
+                    AddObject(o);
             }
         }
 
@@ -143,6 +144,9 @@ namespace Shanism.Editor.MapAdapter
         public Entity CreateObject(ObjectConstructor oc)
         {
             var e = Creator.CreateObject(oc);
+            if (e == null)
+                return null;
+
             e.Data = oc;
             return e;
         }

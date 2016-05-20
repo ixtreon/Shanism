@@ -41,6 +41,7 @@ namespace Shanism.Client.Assets
 
         public Rectangle SourceRectangle { get; private set; }
 
+        public double Orientation => Object.Orientation;
 
         string animationName;
 

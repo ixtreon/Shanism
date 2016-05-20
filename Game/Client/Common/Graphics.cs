@@ -80,7 +80,10 @@ namespace Shanism.Client
             var screenPos = getClampedScreenPos(sPos);
             var screenSz = getClampedScreenSize(sPos, sSize);
 
-            SpriteBatch.ShanoDraw(s.Texture, s.SourceRectangle, screenPos, screenSz, color ?? Color.White, depth);
+            
+
+            SpriteBatch.ShanoDraw(s.Texture, s.SourceRectangle, screenPos, screenSz, 
+                color ?? Color.White, depth, (float)s.Orientation);
         }
 
         Vector getClampedScreenPos(Vector pos)

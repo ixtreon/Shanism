@@ -28,6 +28,11 @@ namespace Shanism.Common.Objects
         string AnimationName { get; }
 
         /// <summary>
+        /// Gets the orientation of the object's animation. 
+        /// </summary>
+        double Orientation { get; }
+
+        /// <summary>
         /// Gets the scale of this entity, also the size of its texture. 
         /// The size is always positive and no larger than <see cref="Common.Constants.Engine.MaximumObjectSize"/>. 
         /// </summary>

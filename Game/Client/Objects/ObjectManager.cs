@@ -166,7 +166,7 @@ namespace Shanism.Client
         public void RemoveObject(uint guid)
         {
             var objControl = objects.TryGet(guid);
-            if (objControl != null && !(objControl is DoodadControl))
+            if (objControl != null)
             {
                 Remove(objControl);
                 objects.Remove(guid);
