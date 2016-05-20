@@ -14,7 +14,8 @@ namespace IxLog.Tests
         [TestMethod]
         public void TestWriteMsgs()
         {
-            var log = new ShanoLog("woop");
+            var log = new Log("ixlog");
+
             if (File.Exists(log.FilePath))
                 File.Delete(log.FilePath);
 
@@ -23,24 +24,22 @@ namespace IxLog.Tests
             log.Warning("Some event just happened!");
             log.Error("Some event just happened!");
 
-            log.Close();
-
             var lines = File.ReadAllText(log.FilePath);
             Assert.IsFalse(string.IsNullOrWhiteSpace(lines));
         }
 
+
         [TestMethod]
-        public void ConcurrentWrites()
+        public void TestConcurrentWWrites()
         {
-            var log = new ShanoLog("multi-woop");
+            var log = new Log("ixlog");
 
             if (File.Exists(log.FilePath))
                 File.Delete(log.FilePath);
 
-            Parallel.For(0, 1000, (i) => log.Warning("lala" + i.ToString()));
+            Parallel.For(0, 10000, (i) => log.Warning("lala "+ i));
 
-            log.Close();
-
+            Assert.IsTrue(File.ReadAllLines(log.FilePath).All(l => l.StartsWith("[")));
         }
     }
 }
