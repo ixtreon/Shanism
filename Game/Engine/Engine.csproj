@@ -176,7 +176,7 @@
     <Compile Include="Systems\Abilities\Objects\Attributes\SpamAbility.cs" />
     <Compile Include="Objects\Buffs\Buff.cs" />
     <Compile Include="Objects\Entities\Base\Doodad.cs" />
-    <Compile Include="Objects\GameItem.cs" />
+    <Compile Include="Objects\Entities\GameItem.cs" />
     <Compile Include="Objects\Entity.cs" />
     <Compile Include="Systems\Buffs\BuffSystem.cs" />
     <Compile Include="Objects\Entities\UnitPartials\Orders.cs" />
