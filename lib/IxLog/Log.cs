@@ -24,11 +24,11 @@ namespace IxLog
     public class Log
     {
 
-        const string DateTimeFormat = "yy-MM-dd";
+        public const string DateTimeFormat = "yy-MM-dd";
         //0 is name, 1 is formatted year
-        const string FileNameFormat = "{0}_{1}.txt";
+        public const string FileNameFormat = "{0}_{1}.txt";
         //0 is timestamp, 1 is log level, 2 is message. 
-        const string LogMessageFormat = "[{0}][{1}] {2}";
+        public const string LogMessageFormat = "[{0}][{1}] {2}";
 
         /// <summary>
         /// Gets or sets the messages that will be output to the console. 
@@ -52,7 +52,10 @@ namespace IxLog
         /// <summary>
         /// Gets the file name of the log which also contains the log <see cref="Name"/> as well as the date stamp. 
         /// </summary>
-        public string LogFileName { get; private set; }
+        public string FileName => $"{Name}_{DateTime.Now.ToString(DateTimeFormat)}.txt";
+
+
+        public string FilePath => Path.GetFullPath(FileName);
 
         /// <summary>
         /// The object used to lock the file we write to. 
@@ -62,22 +65,19 @@ namespace IxLog
 
         static readonly Dictionary<string, object> _writerLocks = new Dictionary<string, object>();
 
-        public Log(string prefix = "log", 
+        public Log(string name = "log", 
             LogLevel consoleLogLevel = LogLevel.Info, 
             LogLevel fileLogLevel = LogLevel.Debug)
         {
-            var postfix = DateTime.Now.ToString(DateTimeFormat);
-            LogFileName = $"{prefix}_{postfix}.txt";
-            Name = prefix;
+            Name = name;
 
             ConsoleLogLevel = consoleLogLevel;
             FileLogLevel = fileLogLevel;
 
             //get the shared lock object for this file, or make a new one
-            var fullPath = Path.GetFullPath(LogFileName);
             lock(_writerLocks)
-                if (!_writerLocks.TryGetValue(fullPath, out _writerLock))
-                    _writerLocks[fullPath] = (_writerLock = new object());
+                if (!_writerLocks.TryGetValue(FilePath, out _writerLock))
+                    _writerLocks[FilePath] = (_writerLock = new object());
         }
 
 
@@ -115,7 +115,7 @@ namespace IxLog
                 Console.WriteLine(text);
 
             if (FileLogLevel >= msgLogLevel)
-                writeToFile(LogFileName, text + Environment.NewLine);
+                writeToFile(FileName, text + Environment.NewLine);
         }
 
         void writeToFile(string fn, string text)
