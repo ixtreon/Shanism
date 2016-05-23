@@ -12,7 +12,7 @@ namespace Shanism.Engine.Systems.Orders
     /// <summary>
     /// An order that instructs the given unit to obey a <see cref="MovementState"/>. 
     /// </summary>
-    struct PlayerMoveOrder : IMoveOrder
+    class PlayerMoveOrder : IMoveOrder
     {
         public readonly MovementState State;
 

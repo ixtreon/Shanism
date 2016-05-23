@@ -18,9 +18,8 @@ namespace ScenarioTemplate.Abilities
 
             Icon = Constants.Content.DefaultValues.Icon;
 
-            Type = BuffType.NonStacking;
+            MaxStacks = 0;
             FullDuration = 5000;
-            
         }
 
         public override void OnApplied(BuffInstance buff)

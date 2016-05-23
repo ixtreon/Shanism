@@ -106,7 +106,7 @@ namespace Shanism.Engine.Objects.Entities
         /// Gets the movement state of this hero, if it is moving. 
         /// </summary>
         public MovementState MoveState
-            => (Order as PlayerMoveOrder?)?.State ?? MovementState.Stand;
+            => (Order as PlayerMoveOrder)?.State ?? MovementState.Stand;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Hero"/> class.

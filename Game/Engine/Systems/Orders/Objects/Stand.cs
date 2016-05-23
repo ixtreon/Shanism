@@ -13,13 +13,8 @@ namespace Shanism.Engine.Systems.Orders
     /// </summary>
     struct Stand : IOrder
     {
-        public OrderType Type
-        {
-            get
-            {
-                return OrderType.Stand;
-            }
-        }
+        public OrderType Type => OrderType.Stand;
+
 
         public bool Update(Unit u, int msElapsed)
         {

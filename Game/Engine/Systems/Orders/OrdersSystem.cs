@@ -21,18 +21,13 @@ namespace Shanism.Engine.Systems
         internal override void Update(int msElapsed)
         {
             //dead units have no orders
-            if (Owner.IsDead)
-                return;
-
-            //stunned units are useless
-            if (Owner.States.HasFlag(UnitFlags.Stunned))
-                return;
-
-            if (Owner.Order == null)
+            if (Owner.IsDead
+                || Owner.Order == null
+                || Owner.States.HasFlag(UnitFlags.Stunned))
                 return;
 
             if (!Owner.Order.Update(Owner, msElapsed))
-                Owner.Clear();
+                Owner.ClearOrder();
         }
     }
 }

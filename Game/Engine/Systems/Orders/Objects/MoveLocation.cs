@@ -10,7 +10,7 @@ namespace Shanism.Engine.Systems.Orders
     /// <summary>
     /// Moves to a specified target position. 
     /// </summary>
-    struct MoveLocation : IMoveOrder
+    class MoveLocation : IMoveOrder
     {
         public OrderType Type => OrderType.Move;
 

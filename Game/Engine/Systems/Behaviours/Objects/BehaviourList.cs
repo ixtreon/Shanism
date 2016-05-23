@@ -41,11 +41,14 @@ namespace Shanism.Engine.Systems.Behaviours
             var newBehaviour = Behaviours.FirstOrDefault(b => b.TakeControl(msElapsed));
             CurrentBehaviour = newBehaviour;
 
-            //update it
-            CurrentBehaviour?.Update(msElapsed);
+            if (CurrentBehaviour == null)
+            {
+                CurrentOrder = null;
+                return;
+            }
 
-            //propagate the order
-            CurrentOrder = CurrentBehaviour?.CurrentOrder;
+            CurrentBehaviour.Update(msElapsed);
+            CurrentOrder = CurrentBehaviour.CurrentOrder;
         }
 
         public IEnumerator<Behaviour> GetEnumerator()

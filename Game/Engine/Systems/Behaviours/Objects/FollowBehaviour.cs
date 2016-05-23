@@ -17,6 +17,8 @@ namespace Shanism.Engine.Systems.Behaviours
 
         public double Distance { get; set; }
 
+        double DistanceSquared => Distance * Distance;
+
         public FollowBehaviour(Behaviour b) : base(b)
         {
         }
@@ -26,7 +28,7 @@ namespace Shanism.Engine.Systems.Behaviours
             if (Target == null)
                 return false;
 
-            return Owner.Position.DistanceTo(Target.Position) > Distance;
+            return Owner.Position.DistanceToSquared(Target.Position) > DistanceSquared;
         }
 
         public override void Update(int msElapsed)

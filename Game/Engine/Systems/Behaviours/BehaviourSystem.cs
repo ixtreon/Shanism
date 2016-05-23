@@ -20,20 +20,15 @@ namespace Shanism.Engine.Systems
 
         internal override void Update(int msElapsed)
         {
-            if (Owner.IsDead || Owner.States.HasFlag(UnitFlags.Stunned) || Owner.Behaviour == null)
+            if (Owner.IsDead 
+                || Owner.Behaviour == null 
+                || Owner.States.HasFlag(UnitFlags.Stunned))
                 return;
 
-            //update behaviour
             Owner.Behaviour.Update(msElapsed);
 
-            // if custom order, or behaviour's order hasn't changed
-            // return
-            if (Owner.CustomOrder
-                || Owner.Behaviour.CurrentOrder == Owner.Order)
-                return;
-
-            //apply behaviour
-            Owner.SetOrder(Owner.Behaviour.CurrentOrder, false);
+            if (!Owner.CustomOrder && Owner.Behaviour.CurrentOrder != Owner.Order)
+                Owner.SetOrder(Owner.Behaviour.CurrentOrder, false);
         }
     }
 }

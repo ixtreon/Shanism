@@ -10,20 +10,14 @@ namespace Shanism.Engine.Systems.Orders
     /// <summary>
     /// Moves to or starts following a given unit. 
     /// </summary>
-    struct MoveUnit : IMoveOrder
+    class MoveUnit : IMoveOrder
     {
         /// <summary>
         /// Gets or sets the distance from the target to stop at. 
         /// </summary>
         public double DistanceThrehsold { get; set; }
 
-        public OrderType Type
-        {
-            get
-            {
-                return OrderType.Move;
-            }
-        }
+        public OrderType Type => OrderType.Move;
 
 
         public readonly Unit TargetUnit;

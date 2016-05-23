@@ -204,7 +204,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Systems\Abilities\Objects\Ability.cs" />
-    <Compile Include="Systems\Orders\Objects\Cast.cs" />
     <Compile Include="Systems\Orders\Objects\MoveLocation.cs" />
     <Compile Include="Systems\Orders\Objects\MoveUnit.cs" />
     <Compile Include="Systems\Orders\Objects\PlayerMove.cs" />

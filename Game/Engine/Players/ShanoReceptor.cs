@@ -104,7 +104,7 @@ namespace Shanism.Engine.Players
             if (newState.IsMoving)
                 MainHero.SetOrder(new PlayerMoveOrder(msg.Direction));
             else
-                MainHero.Clear();
+                MainHero.ClearOrder();
         }
 
         async void inputDevice_MapRequested(MapRequestMessage msg)

@@ -33,7 +33,7 @@ namespace Shanism.Engine.Systems.Behaviours
                 return false;
 
             Ability = Owner
-                .GetAbilitiesOfType(AbilityType.Spammable)
+                .GetAbilitiesOfType(AbilityTypeFlags.Spammable)
                 .FirstOrDefault(a => a.CanCast(TargetUnit));
 
             return Ability != null;
@@ -41,7 +41,7 @@ namespace Shanism.Engine.Systems.Behaviours
 
         public override void Update(int msElapsed)
         {
-            CurrentOrder = new CastOrder(Ability, TargetUnit);
+            Owner.CastAbility(Ability, TargetUnit);
         }
 
         public override string ToString() => $"Cast {Ability}";
