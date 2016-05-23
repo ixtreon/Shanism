@@ -43,7 +43,7 @@ namespace Shanism.Client.UI.Common
             if(buffTexture != null)
                 g.Draw(buffTexture, Vector.Zero, base.Size, Color.White);
 
-            if(Buff.Type != BuffType.Aura)
+            if(Buff.FullDuration > 0)
             {
                 var shSize = base.Size * new Vector(1, (double)Buff.DurationLeft / Buff.FullDuration);
                 var shPos = base.Size - shSize;

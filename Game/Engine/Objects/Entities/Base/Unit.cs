@@ -261,19 +261,19 @@ namespace Shanism.Engine.Objects
         public IEnumerable<uint> BuffIds => Buffs.Select(bi => bi.Id).ToList();
 
         /// <summary>
-        /// Gets the ability this unit is currently casting or null otherwise.
+        /// Gets the ability this unit is currently casting.
         /// </summary>
-        public uint CastingAbilityId => (Order as CastOrder?)?.Ability?.Id ?? 0;
+        public uint? CastingAbilityId => abilities.CastingAbility?.Id;
 
         /// <summary>
-        /// Gets the progress of the ability the unit is currently casting.
+        /// Gets the progress of the ability the unit is currently casting or -1 if no ability is being cast. 
         /// </summary>
-        public int CastingProgress => (Order as CastOrder?)?.Progress ?? -1;
+        public int CastingProgress => abilities.CastingProgress;
 
         /// <summary>
-        /// Gets the progress of the ability the unit is currently casting.
+        /// Gets the progress of the ability the unit is currently casting or -1 if no ability is being cast. 
         /// </summary>
-        public int TotalCastingTime => (Order as CastOrder?)?.Ability?.CastTime ?? -1;
+        public int TotalCastingTime => abilities.CastingAbility?.CastTime ?? -1;
 
         /// <summary>
         /// Gets whether this unit is invulnerable.

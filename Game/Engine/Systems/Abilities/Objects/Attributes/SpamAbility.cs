@@ -12,9 +12,9 @@ namespace Shanism.Engine.Systems.Abilities
     [AttributeUsage(AttributeTargets.Class)]
     class AbilityTypeAttribute : Attribute
     {
-        public readonly AbilityType Type;
+        public readonly AbilityTypeFlags Type;
 
-        public AbilityTypeAttribute(AbilityType type)
+        public AbilityTypeAttribute(AbilityTypeFlags type)
         {
             this.Type = type;
         }

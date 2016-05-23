@@ -11,12 +11,12 @@ namespace Shanism.Engine.Systems.Abilities
     static class AbilityTypes
     {
         /// <summary>
-        /// Returns all abilities of this unit that are of the given <see cref="AbilityType"/>. 
+        /// Returns all abilities of this unit that are of the given <see cref="AbilityTypeFlags"/>. 
         /// </summary>
         /// <param name="u"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static IEnumerable<Ability> GetAbilitiesOfType(this Unit u, AbilityType type)
+        public static IEnumerable<Ability> GetAbilitiesOfType(this Unit u, AbilityTypeFlags type)
         {
             return u.Abilities
                 .Where(a => a.GetType()
@@ -27,7 +27,7 @@ namespace Shanism.Engine.Systems.Abilities
     }
 
     [Flags]
-    public enum AbilityType
+    public enum AbilityTypeFlags
     {
         /// <summary>
         /// Indicates that an ability is to be spammed. 

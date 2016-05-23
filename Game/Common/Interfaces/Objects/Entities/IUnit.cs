@@ -46,7 +46,7 @@ namespace Shanism.Common.Objects
         /// <summary>
         /// Gets the ability this unit is currently casting or null otherwise. 
         /// </summary>
-        uint CastingAbilityId { get; }
+        uint? CastingAbilityId { get; }
 
 
 
@@ -161,7 +161,7 @@ namespace Shanism.Common.Objects
         int CastingProgress { get; }
 
         /// <summary>
-        /// Gets the progress of the ability the unit is currently casting.  
+        /// Gets the total casting time of the ability the unit is currently casting.  
         /// </summary>
         int TotalCastingTime { get; }
 

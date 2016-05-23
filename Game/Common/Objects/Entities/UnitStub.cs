@@ -27,7 +27,7 @@ namespace Shanism.Common.Objects
         public uint OwnerId { get; set; }
         public IEnumerable<uint> BuffIds { get; set; }
         public IEnumerable<uint> AbilityIds { get; set; }
-        public uint CastingAbilityId { get; set; }
+        public uint? CastingAbilityId { get; set; }
 
 
 

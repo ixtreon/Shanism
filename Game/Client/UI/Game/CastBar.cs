@@ -34,8 +34,8 @@ namespace Shanism.Client.UI
 
         protected override void OnUpdate(int msElapsed)
         {
-            IsVisible = Target != null 
-                && Target.OrderType == OrderType.Casting 
+            IsVisible = Target != null
+                && Target.CastingAbilityId.HasValue
                 && Target.TotalCastingTime > 0;
 
             if (IsVisible)

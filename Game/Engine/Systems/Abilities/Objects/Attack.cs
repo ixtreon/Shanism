@@ -13,7 +13,7 @@ namespace Shanism.Engine.Systems.Abilities
     /// <summary>
     /// A simple melee attack ability that mirrors its owner's attack range and cooldown. 
     /// </summary>
-    [AbilityType(AbilityType.Spammable)]
+    [AbilityType(AbilityTypeFlags.Spammable)]
     public class Attack : Ability
     {
 

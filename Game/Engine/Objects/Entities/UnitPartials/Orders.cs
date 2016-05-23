@@ -74,13 +74,7 @@ namespace Shanism.Engine.Objects
         /// </summary>
         /// <param name="ability"></param>
         /// <param name="target"></param>
-        public void CastAbility(Ability ability, object target)
-        {
-            var newOrder = new CastOrder(ability, target);
-
-            if(!newOrder.Equals(Order))
-                Order = newOrder;
-        }
+        public void CastAbility(Ability ability, object target) => abilities.CastAbility(ability, target);
 
         internal void TryCastAbility(ActionMessage msg)
         {
@@ -110,7 +104,7 @@ namespace Shanism.Engine.Objects
 
                     break;
             }
-            CastAbility(ability, target);
+            abilities.CastAbility(ability, target);
         }
 
 
@@ -125,7 +119,7 @@ namespace Shanism.Engine.Objects
         /// <summary>
         /// Clears the current order of the unit. 
         /// </summary>
-        public void Clear() => SetOrder(new Stand(), false);
+        public void ClearOrder() => SetOrder(new Stand(), false);
 
         //public void OrderMove(Vector target)
         //{

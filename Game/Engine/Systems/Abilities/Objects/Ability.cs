@@ -116,6 +116,9 @@ namespace Shanism.Engine.Systems.Abilities
             return e;
         }
 
+        /// <summary>
+        /// Permanently sets the owner of this ability. 
+        /// </summary>
         internal void SetOwner(Unit owner)
         {
             if (Owner != null) throw new InvalidOperationException("This spell already has an owner!");
