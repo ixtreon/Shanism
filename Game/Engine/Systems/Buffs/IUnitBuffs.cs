@@ -11,7 +11,7 @@ namespace Shanism.Engine.Systems.Buffs
         /// </summary>
         /// <param name="caster">The caster of the buff. Can be null. </param>
         /// <param name="b">The buff to apply. </param>
-        BuffInstance TryApply(Unit caster, Buff b);
+        BuffInstance Apply(Unit caster, Buff b);
 
         /// <summary>
         /// Purges all buffs from this unit. 
@@ -36,5 +36,7 @@ namespace Shanism.Engine.Systems.Buffs
         /// <param name="buffType">The buff prototype to remove instances of. </param>
         /// <param name="nStacks">The maximum number of stacks of this buff to remove. </param>
         void Remove(Buff buffType, int nStacks);
+
+        bool Contains(BuffInstance b);
     }
 }

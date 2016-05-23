@@ -13,7 +13,7 @@ namespace Shanism.Engine.Objects.Buffs
     /// Represents one or more instances of a given <see cref="Buff"/> applied by a given <see cref="Unit"/> to a single target unit. 
     /// Implements the <see cref="IBuff"/> interface via the <see cref="Prototype"/> member. 
     /// </summary>
-    public class BuffInstance : GameObject, IBuffInstance, IBuff
+    public class BuffInstance : GameObject, IBuffInstance
     {
 
         /// <summary>
@@ -47,8 +47,7 @@ namespace Shanism.Engine.Objects.Buffs
         /// <summary>
         /// Gets whether this buff should be removed from its target unit. 
         /// </summary>
-        public bool ShouldDestroy
-            => Prototype.IsTimed && DurationLeft <= 0;
+        public bool HasExpired => Prototype.IsTimed && DurationLeft <= 0;
 
 
         #region IBuff Implementation
@@ -77,7 +76,7 @@ namespace Shanism.Engine.Objects.Buffs
         /// <summary>
         /// Gets the type of this buff.
         /// </summary>
-        public BuffType Type => ((IBuff)Prototype).Type;
+        public BuffStackType StackType => ((IBuff)Prototype).StackType;
 
         /// <summary>
         /// Gets the life modifier of this buff.
@@ -201,7 +200,7 @@ namespace Shanism.Engine.Objects.Buffs
             if (Prototype.IsTimed)
             {
                 DurationLeft -= msElapsed;
-                if (ShouldDestroy)
+                if (HasExpired)
                 {
                     Prototype.OnExpired(this);
                     return;

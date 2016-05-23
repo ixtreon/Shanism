@@ -62,7 +62,7 @@ namespace Shanism.Common.Objects
 
         public double Strength { get; private set; }
 
-        public BuffType Type { get; private set; }
+        public BuffStackType StackType { get; private set; }
 
         public bool HasIcon { get; private set; }
 

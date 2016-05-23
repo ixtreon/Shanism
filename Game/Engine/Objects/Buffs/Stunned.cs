@@ -16,13 +16,13 @@ namespace Shanism.Engine.Objects.Buffs
         /// <summary>
         /// Initializes a new instance of the <see cref="StunnedBuff"/> class.
         /// </summary>
-        public StunnedBuff()
+        public StunnedBuff(int msDuration = 0)
         {
             Name = "Stunned";
             Description = "This unit is stunned. It cannot take any actions. ";
-            Type = BuffType.NonStacking;
 
-            FullDuration = 0;
+            MaxStacks = 0;
+            FullDuration = msDuration;
 
             UnitStates = UnitFlags.Stunned;
         }

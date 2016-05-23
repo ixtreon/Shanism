@@ -20,7 +20,7 @@ namespace Shanism.Engine.Objects.Buffs
         /// <summary>
         /// Gets the type of the object.
         /// </summary>
-        public override ObjectType ObjectType {  get { return ObjectType.BuffInstance; } }
+        public override ObjectType ObjectType => ObjectType.Buff;
 
 
         int _moveSpeed;
@@ -158,7 +158,7 @@ namespace Shanism.Engine.Objects.Buffs
         /// <summary>
         /// Gets or sets the type of this buff. 
         /// </summary>
-        public BuffType Type { get; set; } = BuffType.NonStacking;
+        public BuffStackType StackType { get; set; }
 
         /// <summary>
         /// Gets or sets whether this buff has an icon and shows in the default buff bar. 
@@ -231,8 +231,12 @@ namespace Shanism.Engine.Objects.Buffs
         ///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
         public override bool Equals(object obj)
-        {
-            return (obj is Buff) && ((Buff)obj).Id == Id;
-        }
+            => (obj is Buff) && ((Buff)obj).Id == Id;
+
+
+        public static bool operator == (Buff a, Buff b) => a?.Id == b?.Id;
+
+        public static bool operator != (Buff a, Buff b) => a?.Id != b?.Id;
+
     }
 }

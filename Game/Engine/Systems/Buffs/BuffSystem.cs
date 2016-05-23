@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shanism.Common.Game;
 
 namespace Shanism.Engine.Systems.Buffs
 {
@@ -27,18 +28,21 @@ namespace Shanism.Engine.Systems.Buffs
             Target = target;
         }
 
+
+        //used exclusively by the update() method
+        readonly List<BuffInstance> buffsToRemove = new List<BuffInstance>();
+
         internal override void Update(int msElapsed)
         {
-            var toRemove = new List<BuffInstance>();
-
+            buffsToRemove.Clear();
             foreach (var b in buffs)
             {
                 b.Update(msElapsed);
-                if (b.ShouldDestroy)
-                    toRemove.Add(b);
+                if (b.HasExpired)
+                    buffsToRemove.Add(b);
             }
 
-            foreach (var b in toRemove)
+            foreach (var b in buffsToRemove)
                 buffs.TryRemove(b);
 
             updateStats(Target);
@@ -155,11 +159,8 @@ namespace Shanism.Engine.Systems.Buffs
         /// </summary>
         /// <param name="buff">The buff to apply. </param>
         /// <param name="caster">The caster of the buff. </param>
-        public BuffInstance TryApply(Unit caster, Buff buff)
+        public BuffInstance Apply(Unit caster, Buff buff)
         {
-            if (Target.IsDead)
-                return null;
-
             var newBuff = new BuffInstance(buff, caster, Target);
             buffs.TryAdd(newBuff);
 
@@ -171,6 +172,10 @@ namespace Shanism.Engine.Systems.Buffs
             //remove a stack if need be
             if (buff.MaxStacks > 0 && existingBuffs.Count >= buff.MaxStacks)
                 buffs.TryRemove(existingBuffs.First());
+
+            if (buff.StackType == BuffStackType.Refresh)
+                foreach (var bi in existingBuffs)
+                    bi.RefreshDuration();
 
             return newBuff;
         }
@@ -222,6 +227,8 @@ namespace Shanism.Engine.Systems.Buffs
         {
             buffs.Clear();
         }
+
+        public bool Contains(BuffInstance buff) => buffs.Contains(buff);
 
 
         #region IEnumerable<Buff> Implementation

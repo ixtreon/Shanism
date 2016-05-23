@@ -40,7 +40,7 @@ namespace Shanism.Common.Objects
         /// <summary>
         /// Gets the type of this buff. 
         /// </summary>
-        BuffType Type { get; }
+        BuffStackType StackType { get; }
 
         /// <summary>
         /// Gets the life modifier of this buff. 

@@ -32,7 +32,10 @@ namespace Shanism.Common.Game
         /// </summary>
         Hero,
 
-
+        /// <summary>
+        /// An object of type buff. 
+        /// </summary>
+        Buff,
         /// <summary>
         /// An object of type buff instance. 
         /// </summary>
