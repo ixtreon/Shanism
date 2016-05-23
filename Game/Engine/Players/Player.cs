@@ -189,12 +189,20 @@ namespace Shanism.Engine
             //register events
             unit.ObjectSeen += ownedUnit_ObjectSeen;
             unit.ObjectUnseen += ownedUnit_ObjectUnseen;
+            unit.Death += ownedUnit_Death;
+        }
+
+        void ownedUnit_Death(Events.UnitDyingArgs e)
+        {
+            foreach(var obj in objectsSeen)
+                if(!obj.SeenBy.Any(u => u.Owner == this && u != e.DyingUnit) && objectsSeen.TryRemove(obj))
+                    ObjectUnseen?.Invoke(obj);
         }
 
         void ownedUnit_ObjectUnseen(Entity obj)
         {
             //if noone else can see this unit, remove it
-            if (!obj.SeenBy.Any(u => u.Owner == this) && objectsSeen.TryRemove(obj))
+            if ((obj as Unit)?.Owner != this && !obj.SeenBy.Any(u => u.Owner == this) && objectsSeen.TryRemove(obj))
                     ObjectUnseen?.Invoke(obj);
         }
 
