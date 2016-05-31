@@ -1,5 +1,5 @@
 ﻿using Shanism.Engine.Objects;
-using Shanism.Engine.Objects.Entities;
+using Shanism.Engine.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;

@@ -99,7 +99,7 @@ namespace Shanism.Network
                 return;
             }
 
-            client.HandleMessage(ioMsg);
+            client.handleClientMessage(ioMsg);
         }
 
 

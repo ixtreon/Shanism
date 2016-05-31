@@ -1,4 +1,5 @@
-﻿using Shanism.Common;
+﻿using Shanism.Client.Systems;
+using Shanism.Common;
 using Shanism.Common.Game;
 using Shanism.Common.Message.Server;
 using System;
@@ -61,19 +62,22 @@ namespace Shanism.Client.UI.CombatText
 
         int rainbowXDirection = 1;
 
+        readonly Systems.ObjectSystem ObjectManager;
         readonly HashSet<TextData> labels = new HashSet<TextData>();
 
-
-        public FloatingTextProvider()
+        public FloatingTextProvider(Systems.ObjectSystem mgr)
         {
+            if (mgr == null) throw new ArgumentNullException(nameof(mgr));
+
             CanHover = false;
+            ObjectManager = mgr;
         }
 
 
         public void AddDamageLabel(DamageEventMessage msg)
         {
             //get unit position
-            var unit = ObjectManager.Default.TryGet(msg.UnitId);
+            var unit = ObjectManager.TryGet(msg.UnitId);
             if (unit == null)
                 return;
 

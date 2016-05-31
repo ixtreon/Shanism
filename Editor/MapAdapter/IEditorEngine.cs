@@ -1,7 +1,6 @@
-﻿using Shanism.Engine.Objects;
-using Shanism.Common.Objects;
+﻿using Shanism.Editor.ViewModels;
+using Shanism.Engine;
 using Shanism.ScenarioLib;
-using Shanism.Editor.ViewModels;
 using System.Collections.Generic;
 
 namespace Shanism.Editor.MapAdapter

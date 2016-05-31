@@ -45,10 +45,14 @@ namespace Shanism.Common
         }
 
 
-        public static bool AlmostEqualTo(this double a, double b, double epsilon = 1E-6)
-        {
-            return Math.Abs(a - b) <= epsilon;
-        }
+        public static bool AlmostEqualTo(this double a, double b, double epsilon = 1E-5)
+            => Math.Abs(a - b) <= epsilon;
+
+
+        public static bool AlmostEqualTo(this float a, float b, float epsilon = 1E-5f)
+            => Math.Abs(a - b) <= epsilon;
+
+
 
         #region System.Random Extensions
         public static double NextGaussian(this Random r, double mu = 0, double sigma = 1)

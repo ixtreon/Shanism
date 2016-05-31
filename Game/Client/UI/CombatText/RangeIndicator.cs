@@ -58,12 +58,12 @@ namespace Shanism.Client.UI.CombatText
                 var urPx = Screen.GameToScreen(urGame);
                 var rekt = new RectangleF(llPx, urPx - llPx);
 
-                var circleSz = (int)Math.Max(rekt.Width, rekt.Height) / 5;
+                var circleSz = (int)Math.Max(rekt.Width, rekt.Height) * 2;
                 if (circleSz < Content.Circles.MaximumSize)
                 {
                     var circle = Content.Circles.GetTexture(circleSz);
 
-                    g.SpriteBatch.ShanoDraw(circle, rekt, Color.LimeGreen);
+                    g.SpriteBatch.ShanoDraw(circle, rekt, Color.LimeGreen.SetAlpha(100));
                 }
             }
         }

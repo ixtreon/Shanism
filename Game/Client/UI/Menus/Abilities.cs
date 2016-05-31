@@ -55,7 +55,7 @@ namespace Shanism.Client.UI
         public SpellBook()
             : base(AnchorMode.Right)
         {
-            this.ToggleAction = GameAction.ToggleAbilityMenu;
+            this.ToggleAction = ClientAction.ToggleAbilityMenu;
             this.TitleText = "Abilities";
             this.IsVisible = false;
             this.VisibleChanged += SpellBook_VisibleChanged;

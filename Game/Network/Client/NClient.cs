@@ -59,11 +59,7 @@ namespace Shanism.Network.Client
             this.GameClient = client;
 
             //event handling lol
-            client.ActionActivated += SendMessage;
-            client.ChatMessageSent += SendMessage;
-            client.MapRequested += SendMessage;
-            client.MovementStateChanged += SendMessage;
-            client.HandshakeInit += () => { };
+            client.MessageSent += SendMessage;
         }
 
 
@@ -136,6 +132,9 @@ namespace Shanism.Network.Client
 
         void SendMessage(IOMessage ioMsg)
         {
+            if (ioMsg.Type == MessageType.HandshakeInit)
+                return; //TODO: figure out why?!?!?!
+
             SendMessage(ioMsg, NetDeliveryMethod.ReliableUnordered);
         }
 

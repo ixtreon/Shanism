@@ -74,11 +74,11 @@ namespace Shanism.Client.UI.Menus
             ExitHelper.Exit();
         }
 
-        void onActionActivated(GameAction ga)
+        void onActionActivated(ClientAction ga)
         {
             switch (ga)
             {
-                case GameAction.ToggleMenus:
+                case ClientAction.ToggleMenus:
                     if (menus.Any(m => m.IsVisible))
                         foreach (var m in menus)
                             m.Hide();

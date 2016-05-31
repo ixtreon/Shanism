@@ -1,5 +1,5 @@
 ﻿using Shanism.Engine.Objects;
-using Shanism.Engine.Objects.Entities;
+using Shanism.Engine.Entities;
 using Shanism.Engine.Players;
 using Shanism.Engine.Systems.Orders;
 using Shanism.Common;
@@ -195,14 +195,14 @@ namespace Shanism.Engine
         void ownedUnit_Death(Events.UnitDyingArgs e)
         {
             foreach(var obj in objectsSeen)
-                if(!obj.SeenBy.Any(u => u.Owner == this && u != e.DyingUnit) && objectsSeen.TryRemove(obj))
+                if(!obj.seenByUnits.Any(u => u.Owner == this && u != e.DyingUnit) && objectsSeen.TryRemove(obj))
                     ObjectUnseen?.Invoke(obj);
         }
 
         void ownedUnit_ObjectUnseen(Entity obj)
         {
             //if noone else can see this unit, remove it
-            if ((obj as Unit)?.Owner != this && !obj.SeenBy.Any(u => u.Owner == this) && objectsSeen.TryRemove(obj))
+            if ((obj as Unit)?.Owner != this && !obj.seenByUnits.Any(u => u.Owner == this) && objectsSeen.TryRemove(obj))
                     ObjectUnseen?.Invoke(obj);
         }
 

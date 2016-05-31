@@ -14,102 +14,110 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shanism.Common;
+using Shanism.Client.Systems;
+using Shanism.Client.Map;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Shanism.Client
 {
 
-    // A top level control, contains uimanager, objectmanager
-    // could be extended to containt mapmanager, too, even tho its not a control
+    // A top level control, contains all the client systems
     class GameManager : Control
     {
-        MovementState movementState;
+
+
+        #region Systems
+
+        readonly List<ClientSystem> systems = new List<ClientSystem>();
+
+        readonly ActionSystem actions;
+        readonly MoveSystem movement;
+        readonly ChatSystem chat;
+        readonly ObjectSystem objects;
+
+        /// <summary>
+        /// Manages chunks and sends requests for new ones. 
+        /// </summary>
+        readonly MapSystem map;
+
+        UiSystem @interface;
+
+        #endregion
+
 
         /// <summary>
         /// The main UI window. 
         /// </summary>
-        public UiManager Interface { get; private set; }
+        public UiSystem Interface => @interface;
 
         /// <summary>
         /// The guy that handles objects. 
         /// </summary>
-        public ObjectManager Objects { get { return ObjectManager.Default; } }
+        public ObjectSystem Objects => objects;
+
+        public MapSystem Map => map;
 
 
         public FloatingTextProvider FloatingText => Interface.FloatingText;
 
 
+        public event Action<IOMessage> MessageSent;
 
-        public event Action<ActionMessage> ActionPerformed;
 
-
-        public event Action<MovementState> MovementStateChanged;
-
-        public GameManager()
+        public GameManager(GraphicsDevice graphicsDevice)
         {
             AbsolutePosition = Vector.Zero;
             CanFocus = true;
+
             GameActionActivated += onActionActivated;
 
-            Interface = new UiManager();
+            //add systems n controls
+            systems.Add(movement = new MoveSystem());
+            systems.Add(chat = new ChatSystem());
+            systems.Add(objects = new ObjectSystem());
+            systems.Add(@interface = new UiSystem(Objects));
+            systems.Add(actions = new ActionSystem(Interface));
+            systems.Add(map = new MapSystem(graphicsDevice));
 
             Objects.ObjectClicked += onObjectClicked;
             Objects.TerrainClicked += onGroundClicked;
 
-            Add(Interface);
-            Add(Objects);
+            foreach (var sys in systems)
+                sys.MessageSent += (m) => MessageSent?.Invoke(m);
 
-            Interface.BringToFront();
+            Add(Objects.Root);
+            Add(Interface.Root);
         }
 
 
         public void ReloadUi()
         {
-            Remove(Interface);
-            Interface = new UiManager();
-            Add(Interface);
+            Remove(Interface.Root);
+            @interface = new UiSystem(Objects);
+            Add(Interface.Root);
         }
 
-        void updateMovement()
-        {
-            var newMovementState = MovementState.Stand;
 
-            if (HasFocus)
-            {
-                var dx = Convert.ToInt32(KeyboardInfo.IsDown(GameAction.MoveRight)) - Convert.ToInt32(KeyboardInfo.IsDown(GameAction.MoveLeft));
-                var dy = Convert.ToInt32(KeyboardInfo.IsDown(GameAction.MoveDown)) - Convert.ToInt32(KeyboardInfo.IsDown(GameAction.MoveUp));
-
-                newMovementState = new MovementState(dx, dy);
-            }
-
-            if (newMovementState != movementState)
-            {
-                movementState = newMovementState;
-
-                MovementStateChanged?.Invoke(newMovementState);
-                Console.WriteLine($"Move it {movementState}");
-            }
-        }
-
-        void onActionActivated(GameAction ga)
+        void onActionActivated(ClientAction ga)
         {
             switch (ga)
             {
-                case GameAction.ToggleDebugInfo:
+                case ClientAction.ToggleDebugInfo:
                     ClientEngine.ShowDebugStats = !ClientEngine.ShowDebugStats;
                     break;
 
-                case GameAction.ReloadUi:
+                case ClientAction.ReloadUi:
                     ReloadUi();
                     break;
 
-                case GameAction.ShowHealthBars:
+                case ClientAction.ShowHealthBars:
                     Settings.Current.AlwaysShowHealthBars = !Settings.Current.AlwaysShowHealthBars;
                     break;
 
                 default:
-                    //propagate to both interface and objects, let them handle it
-                    Interface.ActivateAction(ga);
-                    Objects.ActivateAction(ga);
+                    //propagate to *both* interface and objects, let them handle it
+                    Interface.Root.ActivateAction(ga);
+                    Objects.Root.ActivateAction(ga);
                     break;
             }
         }
@@ -134,64 +142,13 @@ namespace Shanism.Client
             Interface.MainHeroControl = Objects.MainHeroControl;
             Interface.Hover = HoverControl as UnitControl;
 
+            actions.Hero = Objects.MainHero;
+
             UpdateMain(msElapsed);
 
-            updateMovement();
 
-            //cast abilities
-            //do it here so it can be spammed, not just performed on click
-            if (mouseState.RightButton == ButtonState.Pressed)
-            {
-                var targetGuid = (HoverControl as ObjectControl)?.Object.Id ?? 0;
-                var targetLoc = Screen.ScreenToGame(mouseState.Position.ToPoint());
-                var justPressedKey = (oldMouseState.RightButton == ButtonState.Released);
-
-                ActionMessage msg;
-                if (tryCastAbility(Interface.CurrentAbility, justPressedKey, out msg))
-                    ActionPerformed?.Invoke(msg);
-            }
-        }
-
-        bool tryCastAbility(IAbility ab, bool displayErrors, out ActionMessage msg)
-        {
-            msg = null;
-            var targetGuid = (HoverControl as ObjectControl)?.Object.Id ?? 0;
-            var targetLoc = Screen.ScreenToGame(mouseState.Position.ToPoint());
-            var mainHero = Objects.MainHero;
-
-            if (mainHero == null || ab == null)
-                return false;
-
-            var justClicked = mouseState.RightButton == ButtonState.Pressed && oldMouseState.RightButton == ButtonState.Released;
-            if (ab.CurrentCooldown > 0 && justClicked)
-            {
-                if (displayErrors)
-                    FloatingText.AddLabel(targetLoc, $"{ab.CurrentCooldown / 1000.0:0.0} sec!", Color.Red, FloatingTextStyle.Top);
-                //Interface.DisplayError("Ability in cooldown");
-                return false;
-            }
-
-            if (ab.TargetType != AbilityTargetType.NoTarget && targetLoc.DistanceTo(Objects.MainHero.Position) > ab.CastRange)
-            {
-                if (displayErrors)
-                {
-                    FloatingText.AddLabel(targetLoc, "Out of range", Color.Red, FloatingTextStyle.Top);
-                    Interface.RangeIndicator.ShowRange(ab.CastRange, 1250, true);
-                }
-                //Interface.DisplayError("Out of range");
-                return false;
-            }
-
-            if (Objects.MainHero.Mana < ab.ManaCost)
-            {
-                if (displayErrors)
-                    FloatingText.AddLabel(targetLoc, "Not enough mana", Color.Red, FloatingTextStyle.Top);
-                //Interface.DisplayError("Not enough mana");
-                return false;
-            }
-
-            msg = new ActionMessage(ab.Id, targetGuid, targetLoc);
-            return true;
+            foreach (var sys in systems)
+                sys.Update(msElapsed);
         }
 
     }

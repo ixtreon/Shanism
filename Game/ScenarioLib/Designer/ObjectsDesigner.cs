@@ -12,7 +12,7 @@ namespace Shanism.ScenarioLib.Designer
     /// </summary>
     class ObjectsDesigner
     {
-        public ObjectsDesigner(CompiledScenario sc)
+        public ObjectsDesigner(Scenario sc)
         {
 
         }

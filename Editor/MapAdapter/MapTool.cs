@@ -19,7 +19,7 @@ namespace Shanism.Editor.MapAdapter
 
         protected IEditorEngine Engine { get; }
 
-        protected CompiledScenario Scenario => Engine.ScenarioView.Scenario;
+        protected Scenario Scenario => Engine.ScenarioView.Scenario;
 
         protected MapConfig Map => Scenario.Config.Map;
 

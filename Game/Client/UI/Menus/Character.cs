@@ -28,7 +28,7 @@ namespace Shanism.Client.UI.Menus
              : base(AnchorMode.Left)
         {
             TitleText = "Character";
-            ToggleAction = GameAction.ToggleCharacterMenu;
+            ToggleAction = ClientAction.ToggleCharacterMenu;
             VisibleChanged += onVisibleChanged;
 
 

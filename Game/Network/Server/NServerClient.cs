@@ -30,13 +30,17 @@ namespace Shanism.Network.Server
         /// <summary>
         /// Gets the underlying NetConnection. 
         /// </summary>
-        NetConnection ConnectionHandle { get; }
+        readonly NetConnection ConnectionHandle;
 
         /// <summary>
         /// Gets the underlying network server. 
         /// </summary>
-        NetServer Server { get; }
+        readonly NetServer Server;
 
+        /// <summary>
+        /// The receptor serving this connection
+        /// </summary>
+        INetReceptor gameReceptor;
 
         /// <summary>
         /// Gets the name of the client. 
@@ -44,27 +48,13 @@ namespace Shanism.Network.Server
         public string Name { get; }
 
 
-        /// <summary>
-        /// The receptor serving this connection
-        /// </summary>
-        INetReceptor gameReceptor;
-
-        bool hasDiconnected = false;
-
-
-        #region IShanoClient implementation
-        public event Action<MoveMessage> MovementStateChanged;
-        public event Action<ActionMessage> ActionActivated;
-        public event Action<ChatMessage> ChatMessageSent;
-        public event Action<MapRequestMessage> MapRequested;
-        public event Action HandshakeInit;
-        #endregion
+        public event Action<IOMessage> MessageSent;
 
 
         /// <summary>
         /// Gets whether the client is currently connected to a game server instance. 
         /// </summary>
-        public bool IsPlaying { get { return gameReceptor != null; } }
+        public bool IsPlaying => gameReceptor != null;
 
 
         public NServerClient(NetServer serv, NetConnection conn, string name)
@@ -127,31 +117,12 @@ namespace Shanism.Network.Server
             }
             sendMessage(msg);
         }
-
-        void GameReceptor_AnyUnitAction(IUnit obj, string actionId)
-        {
-            throw new NotImplementedException();
-        }
         #endregion
 
 
-        internal void HandleMessage(IOMessage msg)
+        internal void handleClientMessage(IOMessage msg)
         {
-            switch (msg.Type)
-            {
-                case MessageType.MapRequest:    // client wants map chunks
-                    MapRequested((MapRequestMessage)msg);
-                    break;
-                case MessageType.MoveUpdate:    // client wants to move
-                    MovementStateChanged((MoveMessage)msg);
-                    break;
-                case MessageType.SendChat:      // client wants to chat
-                    ChatMessageSent((ChatMessage)msg);
-                    break;
-                case MessageType.Action:        // client wants to do stuff
-                    ActionActivated((ActionMessage)msg);
-                    break;
-            }
+            MessageSent?.Invoke(msg);
         }
 
 

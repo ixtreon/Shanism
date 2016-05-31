@@ -9,23 +9,23 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Shanism.ScenarioLib;
 using Shanism.Editor.MapAdapter;
-using Shanism.Engine.Objects;
 using Shanism.Common.Objects;
+using Shanism.Engine;
 
 namespace Shanism.Editor.Views
 {
     partial class MapView : ScenarioControl
     {
 
-        bool clientLoaded =false;
 
         public override ScenarioViewType ViewType { get; } = ScenarioViewType.Map;
 
-        public MapConfig Map { get { return Model.Scenario.Config.Map; } }
-
+        bool clientLoaded = false;
 
         EditorControl ClientControl { get; }
         EditorController Engine { get; set; }
+
+        public MapConfig Map => Model.Scenario.Config.Map;
 
         protected override async Task LoadModel()
         {

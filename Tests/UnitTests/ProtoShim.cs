@@ -1,5 +1,5 @@
 ﻿using Shanism.Engine.Objects;
-using Shanism.Engine.Objects.Entities;
+using Shanism.Engine.Entities;
 using Shanism.Common;
 using Shanism.Common.Game;
 using Shanism.Common.Objects;

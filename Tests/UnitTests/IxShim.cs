@@ -1,16 +1,11 @@
-﻿using Shanism.Engine.Objects.Entities;
-using Shanism.Engine.Serialization;
-using Shanism.Common.Game;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Shanism.Common;
 using Shanism.Common.Objects;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Shanism.Engine.Entities;
+using Shanism.Engine.Serialization;
 using Shanism.Network.Client;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Shanism.Common;
 
 namespace UnitTests
 {

@@ -39,7 +39,7 @@ namespace Shanism.Client.UI
             Size = new Vector(btnSize.X, TitleHeight + (Padding + btnSize.Y) * NButtons) + 2 * edgeAnchor;
             ParentAnchor = AnchorMode.None;
 
-            ToggleAction = GameAction.ToggleMenus;
+            ToggleAction = ClientAction.ToggleMenus;
 
             btnKeys = new Button("Keybinds")
             {

@@ -1,16 +1,14 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Shanism.Client;
+using Shanism.Common;
+using Shanism.Common.Util;
+using Shanism.Engine;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common.Game;
 using System.Windows.Forms;
-using Shanism.Engine.Objects;
-using Microsoft.Xna.Framework;
-using Shanism.Client;
-using Shanism.Common.Message.Server;
-using Shanism.Common.Util;
-using Shanism.Common;
 
 namespace Shanism.Editor.MapAdapter
 {

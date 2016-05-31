@@ -11,7 +11,7 @@ using Shanism.Client;
 using Shanism.Common.Message;
 using Shanism.Engine;
 using Shanism.Engine.Objects;
-using Shanism.Engine.Objects.Entities;
+using Shanism.Engine.Entities;
 using Shanism.Common.Message.Server;
 using Shanism.Common;
 

@@ -31,39 +31,50 @@ float2 getPointOffset(float2 pt, float ratio)
 // requested point
 float4 PixelShaderFunction(float2 TextureCoordinate : TEXCOORD0) : COLOR0
 {
-	float2 p = TextureCoordinate;		//convert from -1,1 to 0,1, reverse y
-	p.x = (p.x + 1) / 2;
-	p.y = (1 - p.y) / 2;
+	return float4(1, 0, 0, 0);
 
-	float4 c = tex2D(TextureSampler, p);
+	//float2 p = TextureCoordinate;		//convert from -1,1 to 0,1, reverse y
+	//p.x = (p.x + 1) / 2;
+	//p.y = (1 - p.y) / 2;
 
-	float2 cp = p - CENTER;
-	float dist = length(cp * TexSize);
-	if (dist > SightRange)
-		return SHADOW;
+	//float4 c = tex2D(TextureSampler, p);
 
-	return NONE + (SHADOW - NONE) * dist / SightRange * dist / SightRange;
+	//float2 cp = p - CENTER;
+	//float dist = length(cp * TexSize);
+	//if (dist > SightRange)
+	//	return SHADOW;
+
+	//return NONE + (SHADOW - NONE) * dist / SightRange * dist / SightRange;
 }
-//
+
+
 //////////////////////////////////////////////////////////////////////////////////
 //// Vertex Shader
 //////////////////////////////////////////////////////////////////////////////////
-//float4 ColorVertexShader(float4 position)
-//{
-//	float4 output;
-//
-//	float4 worldPosition = mul(position, World);
-//	float4 viewPosition = mul(worldPosition, View);
-//	output = mul(viewPosition, Projection);
-//
-//	return output;
-//}
+
+struct VertexShaderInput
+{
+	float4 Color: COLOR0;
+	float2 TexCoord : TEXCOORD0;
+	float4 Position : SV_Position0;
+};
+
+VertexShaderInput ColorVertexShader(VertexShaderInput i)
+{
+	VertexShaderInput o;
+
+	o.Color = i.Color;
+	o.TexCoord = i.TexCoord;
+	o.Position = i.Position;
+
+	return o;
+}
 
 technique Technique1
 {
 	pass Pass1
 	{
-		PixelShader = compile ps_5_0 PixelShaderFunction();
-		//VertexShader = compile vs_4_0_level_9_3 ColorVertexShader();
+		PixelShader = compile ps_4_0_level_9_3 PixelShaderFunction();
+		VertexShader = compile vs_4_0_level_9_3 ColorVertexShader();
 	}
 }

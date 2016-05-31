@@ -11,13 +11,15 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Shanism.Client.Systems;
+using Shanism.Common.Message.Client;
 
 namespace Shanism.Client.Map
 {
     /// <summary>
     /// Handles map communication with the server. 
     /// </summary>
-    class MapManager : IClientSystem
+    class MapSystem : ClientSystem
     {
         /// <summary>
         /// The time before an uncompleted chunk request is re-sent. 
@@ -41,13 +43,12 @@ namespace Shanism.Client.Map
 
         readonly BasicEffect effect;
 
-        public event Action<MapChunkId> ChunkRequested;
+        public Vector CameraPosition => Screen.InGameCenter;
 
-        public Vector CameraPosition { get { return Screen.InGameCenter; } }
 
         readonly GraphicsDevice _device;
 
-        public MapManager(GraphicsDevice device)
+        public MapSystem(GraphicsDevice device)
         {
             _device = device;
             effect = new BasicEffect(device)
@@ -56,16 +57,16 @@ namespace Shanism.Client.Map
             };
         }
 
-        public void Update(int msElapsed)
+        public override void Update(int msElapsed)
         {
             //request nearby chunks
             foreach (var c in EnumerateNearbyChunks(1))
-                requestChunk(c);
+                tryRequestChunk(c);
 
             cleanupChunks();
         }
 
-        public void HandleMessage(IOMessage ioMsg)
+        public override void HandleMessage(IOMessage ioMsg)
         {
             //only handle MapReply
             var msg = ioMsg as MapDataMessage;
@@ -118,23 +119,21 @@ namespace Shanism.Client.Map
         /// <summary>
         /// Sends a request to the server for the given chunk. 
         /// </summary>
-        /// <param name="chunkId"></param>
-        void requestChunk(MapChunkId chunk)
+        bool tryRequestChunk(MapChunkId chunk)
         {
             if (ChunksAvailable.ContainsKey(chunk))
-                return;
-
-            //get last request timestamp
-            var lastRequest = chunkRequests.TryGetVal(chunk) ?? long.MinValue;
+                return false;
 
             //make sure we don't spam the server
+            var lastRequest = chunkRequests.TryGetVal(chunk) ?? long.MinValue;
             var timeNow = Environment.TickCount;
             if (timeNow - SpamInterval < lastRequest)
-                return;
+                return false;
 
             //make the request and set last timestamp
             chunkRequests[chunk] = timeNow;
-            ChunkRequested(chunk);
+            SendMessage(new MapRequestMessage(chunk));
+            return true;
         }
 
         void cleanupChunks()
@@ -149,7 +148,6 @@ namespace Shanism.Client.Map
                     var chunk = ChunksAvailable[id];
                     ChunksAvailable.Remove(id);
                     chunkRequests.Remove(id);
-                    //chunk.Dispose();
                 }
                 Console.WriteLine("Remove chunks!");
             }
@@ -163,7 +161,7 @@ namespace Shanism.Client.Map
             //setup texturestuff
             effect.Set2DMatrices();
             effect.World = Microsoft.Xna.Framework.Matrix.CreateTranslation((float)-CameraPosition.X, (float)-CameraPosition.Y, 0);
-            effect.Projection = Microsoft.Xna.Framework.Matrix.CreateOrthographic((float)Screen.InGameSize.X, (float)Screen.InGameSize.Y, -5, 5);
+            effect.Projection = Microsoft.Xna.Framework.Matrix.CreateOrthographic((float)Screen.GameSize.X, (float)Screen.GameSize.Y, -5, 5);
             effect.VertexColorEnabled = false;
             effect.TextureEnabled = true;
             effect.Texture = Content.Terrain.Texture;
@@ -188,8 +186,8 @@ namespace Shanism.Client.Map
 
         IEnumerable<MapChunkId> EnumerateNearbyChunks(int bonusRange = 0)
         {
-            var lowLeft = CameraPosition - Screen.InGameSize / 2 - MapChunkId.ChunkSize * bonusRange;
-            var upRight = CameraPosition + Screen.InGameSize / 2 + MapChunkId.ChunkSize * bonusRange;
+            var lowLeft = CameraPosition - Screen.GameSize / 2 - MapChunkId.ChunkSize * bonusRange;
+            var upRight = CameraPosition + Screen.GameSize / 2 + MapChunkId.ChunkSize * bonusRange;
 
             var chunks = MapChunkId.ChunksBetween(lowLeft, upRight).ToArray();
             return chunks;

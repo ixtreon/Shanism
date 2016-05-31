@@ -20,9 +20,9 @@ namespace Shanism.Client
     /// </summary>
     static class Content
     {
-        public const string DefaultContentDirectory = @"Content\";
+        public const string DefaultContentDirectory = @"Content/";
 
-        public const string ScenarioContentDirectory = @"Scenario\";
+        public const string ScenarioContentDirectory = @"Scenario/Content";
 
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Shanism.Client
 
         public static void LoadDefaultContent(GraphicsDevice graphics, ContentManager content)
         {
-            Circles = new CircleDict(graphics, 20000);
+            Circles = new CircleDict(graphics, 65600, 0.02);
 
             var textures = Directory.EnumerateFiles(DefaultContentDirectory, "*.png", SearchOption.AllDirectories)
                 .Select(fn => fn

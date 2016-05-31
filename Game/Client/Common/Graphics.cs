@@ -29,12 +29,12 @@ namespace Shanism.Client
         /// <summary>
         /// Gets the position of the drawing area. 
         /// </summary>
-        public Vector Position { get { return Bounds.Position; } }
+        public Vector Position => Bounds.Position;
 
         /// <summary>
         /// Gets the size of the drawing area. 
         /// </summary>
-        public Vector Size { get { return Bounds.Size; } }
+        public Vector Size => Bounds.Size;
 
         /// <summary>
         /// Creates a new graphics object that spans the whole sprite batch. 

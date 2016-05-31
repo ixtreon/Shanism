@@ -1,6 +1,7 @@
 ﻿using Shanism.Common.Game;
 using Shanism.Common.Objects;
 using Shanism.Common.Util;
+using Shanism.Engine.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

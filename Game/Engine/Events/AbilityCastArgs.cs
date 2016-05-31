@@ -1,4 +1,4 @@
-﻿using Shanism.Engine.Objects;
+﻿using Shanism.Engine.Entities;
 using Shanism.Engine.Systems.Abilities;
 using Shanism.Common.Game;
 using System;

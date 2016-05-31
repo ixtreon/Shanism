@@ -30,14 +30,9 @@ namespace Shanism.Client
         readonly ConcurrentQueue<IOMessage> pendingMessages = new ConcurrentQueue<IOMessage>();
         
         /// <summary>
-        /// Contains the UI, ObjectGod objects. 
+        /// Contains all systems. 
         /// </summary>
         GameManager Game;
-
-        /// <summary>
-        /// Manages chunks and sends requests for new ones. 
-        /// </summary>
-        MapManager MapManager;
 
 
         /// <summary>
@@ -76,11 +71,7 @@ namespace Shanism.Client
         #region IShanoClient Implementation
         string IShanoClient.Name => playerName;
 
-        public event Action<MoveMessage> MovementStateChanged;
-        public event Action<ActionMessage> ActionActivated;
-        public event Action<ChatMessage> ChatMessageSent;
-        public event Action<MapRequestMessage> MapRequested;
-        public event Action HandshakeInit;
+        public event Action<IOMessage> MessageSent;
         #endregion
 
 
@@ -125,16 +116,13 @@ namespace Shanism.Client
                 CullMode = CullMode.None,
             };
 
-            //MapManager
-            MapManager = new MapManager(graphicsDevice);
-            MapManager.ChunkRequested += 
-                (chunkId) => MapRequested?.Invoke(new MapRequestMessage(chunkId));
-
             //game manager
-            Game = new GameManager();
-            Game.MovementStateChanged += (ms) => MovementStateChanged(new MoveMessage(ms));
-            Game.ActionPerformed += (act) => ActionActivated(act);
+            Game = new GameManager(graphicsDevice);
+            Game.MessageSent += sendMessage;
         }
+
+        void sendMessage(IOMessage msg) => MessageSent?.Invoke(msg);
+
 
         void IClientEngine.Update(GameTime gameTime)
         {
@@ -149,20 +137,19 @@ namespace Shanism.Client
             while (pendingMessages.TryDequeue(out msg))
                 parseMessage(msg);
 
-            if (!IsConnected)
-                return;
+            if (IsConnected)
+            {
+                //keyboard
+                KeyboardInfo.Update(msElapsed);
 
-            //keyboard
-            KeyboardInfo.Update(msElapsed);
+                //camera
+                Screen.SetCamera(null, cameraCenter: Game.Objects.MainHero?.Position);
 
-            //camera
-            Screen.SetCamera(null, Game.Objects.MainHero?.Position);
+                //ui, objects
+                Game.Update(msElapsed);
 
-            //ui, objects
-            Game.Update(msElapsed);
-
-            //terrain
-            MapManager.Update(msElapsed);
+                writeDebugStats(msElapsed);
+            }
         }
 
         void IClientEngine.Draw(GameTime gameTime)
@@ -177,34 +164,38 @@ namespace Shanism.Client
 
             if (server != null)
             {
-                // 1. draw terrain
-                graphicsDevice.SetRenderTarget(terrainTexture);
                 graphicsDevice.Clear(Color.Transparent);
-                graphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
-                MapManager.DrawTerrain();
+                // 1. draw terrain
+                {
+                    graphicsDevice.SetRenderTarget(terrainTexture);
+                    graphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
+                    Game.Map.DrawTerrain();
+                }
 
                 // 2. draw gameobjects
                 startDrawing(spriteBatch, objectsTexture,
                     clearColor: Color.Transparent,
                     drawCode: () =>
                     {
-                        Game.Objects.Draw(spriteBatch);
+                        //if (false)
+                            Game.Objects.Root.Draw(spriteBatch);
                     });
 
                 // 3. draw shadow layer
                 if (Shaders.effect != null)
                 {
-                    Shaders.effect.Parameters["TexSize"].SetValue(Screen.InGameSize.ToVector2());
-                    Shaders.effect.Parameters["SightRange"].SetValue((float)(Game.Objects.MainHero?.VisionRange ?? 10000));
+                    //Shaders.effect.Parameters["TexSize"].SetValue(Screen.GameSize.ToVector2());
+                    //Shaders.effect.Parameters["SightRange"].SetValue((float)(Game.Objects.MainHero?.VisionRange ?? 10000));
                     startDrawing(spriteBatch, shadowTextureA,
                         clearColor: Color.Transparent,
                         blend: BlendState.AlphaBlend,
                         shader: Shaders.effect,
                         drawCode: () =>
                         {
-                            spriteBatch.Draw(Content.Textures.Blank, new Microsoft.Xna.Framework.Rectangle(0, 0, Screen.Size.X, Screen.Size.Y), Color.Red);
+                            //if (false)
+                                spriteBatch.Draw(Content.Textures.Blank, new Microsoft.Xna.Framework.Rectangle(0, 0, Screen.Size.X, Screen.Size.Y), Color.Red);
                         });
                 }
 
@@ -214,9 +205,9 @@ namespace Shanism.Client
                     blend: BlendState.AlphaBlend,
                     drawCode: () =>
                     {
-                        Game.Interface.Draw(spriteBatch);
-                        if(ShowDebugStats)
-                            drawDebugStats(spriteBatch, gameTime.ElapsedGameTime.TotalMilliseconds);
+                        Game.Interface.Root.Draw(spriteBatch);
+                        if (ShowDebugStats)
+                            drawDebugStats(spriteBatch);
                     });
 
 
@@ -246,10 +237,10 @@ namespace Shanism.Client
         }
 
         void IClientEngine.SetCameraParams(Vector? cameraPos, IEntity lockedEntity, Vector? windowSz)
-            => Screen.SetCamera(null, cameraPos, lockedEntity, windowSz);
+            => Screen.SetCamera(null, windowSz, cameraPos, lockedEntity);
 
         void IClientEngine.ToggleUI(bool visible)
-            => Game.Interface.IsVisible = visible;
+            => Game.Interface.Root.IsVisible = visible;
 
         Vector IClientEngine.GameToScreen(Vector gamePos)
             => Screen.GameToScreen(gamePos);
@@ -270,7 +261,7 @@ namespace Shanism.Client
 
         void parseMessage(IOMessage msg)
         {
-            MapManager.HandleMessage(msg);
+            Game.Map.HandleMessage(msg);
             Game.Objects.HandleMessage(msg);
 
             switch (msg.Type)
@@ -334,35 +325,42 @@ namespace Shanism.Client
             font.DrawStringPx(spriteBatch, txt, Color.DarkRed, pos, 0f, 0f);
             spriteBatch.End();
         }
+        #endregion
 
-        void drawDebugStats(SpriteBatch sb, double msElapsed)
+        #region Debug Stats
+
+        string debugString;
+
+        void writeDebugStats(int msElapsed)
         {
-            const double frameConst = 0.1;
+            const double frameConst = 0.5;
 
             // FPS
-            timeToRender = timeToRender * (1 - frameConst) + msElapsed * frameConst;
-            var sFps = "FPS: {0:00}".F(1000 / timeToRender);
+            timeToRender = (1 - frameConst) * timeToRender + frameConst * msElapsed;
+            var sFps = $"FPS: {1000 / timeToRender:00}";
             // mouse
             var mpUi = Screen.ScreenToUi(Mouse.GetState().Position.ToPoint());
             var mpGame = Screen.ScreenToGame(Mouse.GetState().Position.ToPoint());
 
 
-            var debugString = new[]
+            debugString = new[]
             {
                 "FPS: {0:00}".F(1000 / timeToRender),
                 "UI X/Y: {0:0.00}".F(mpUi),
                 "Hero X/Y: {0:0.00}".F(Game.Objects.MainHero?.Position),
                 "Game X/Y: {0:0.00}".F(mpGame),
-                "{0} objects".F(Game.Objects.Controls.Count()),
+                //"{0} objects".F(Game.Objects.Controls.Count()),
                 "Hover: " + Control.HoverControl.GetType().Name,
                 "Focus: " + Control.FocusControl?.GetType().Name,
                 server.GetPerfData(),
 
             }.Aggregate((a, b) => a + '\n' + b);
+        }
 
+        void drawDebugStats(SpriteBatch sb)
+        {
             Content.Fonts.NormalFont.DrawStringPx(sb, debugString, Color.Goldenrod,
                 new Point(24, 18), 0, 0);
-
         }
 
         #endregion

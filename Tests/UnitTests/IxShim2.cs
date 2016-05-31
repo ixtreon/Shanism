@@ -1,4 +1,4 @@
-﻿using Shanism.Engine.Objects.Entities;
+﻿using Shanism.Engine.Entities;
 using Shanism.Common.Game;
 using Shanism.Common.Objects;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

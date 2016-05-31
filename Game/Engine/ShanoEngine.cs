@@ -12,6 +12,9 @@ using Shanism.Common.Performance;
 using Shanism.Common.Util;
 using Shanism.Engine.Network;
 using Shanism.Engine.Players;
+using Shanism.Engine.Scripting;
+using Shanism.Engine.Common;
+using Shanism.ScenarioLib;
 
 namespace Shanism.Engine
 {
@@ -41,7 +44,7 @@ namespace Shanism.Engine
         /// <summary>
         /// Gets the scenario this engine is playing. 
         /// </summary>
-        internal Scenario Scenario { get; }
+        internal Scenario Scenario { get; private set; }
 
 
         /// <summary>
@@ -68,50 +71,84 @@ namespace Shanism.Engine
 
         #region Systems
 
-        /// <summary>
-        /// The current game map containing unit/doodad/sfx info. 
-        /// </summary>
-        internal MapSystem map { get; } = new MapSystem();
+        readonly MapSystem map;
 
-        NetworkSystem network { get; } = new NetworkSystem();
+        readonly NetworkSystem network;
+
+        readonly ScriptRunner scripts;
 
 
         List<GameSystem> systems { get; } = new List<GameSystem>();
+
         #endregion
 
+        /// <summary>
+        /// The current game map containing unit/doodad/sfx info. 
+        /// </summary>
+        internal IGameMap Map => map;
+
+        internal IScriptRunner Scripts => scripts;
+
+
+        public ShanoEngine()
+        {
+            scripts = new ScriptRunner(Thread.CurrentThread);
+            map = new MapSystem();
+            network = new NetworkSystem();
+
+            systems.Add(scripts);
+            systems.Add(map);
+            systems.Add(network);
+        }
 
         public ShanoEngine(int mapSeed, string scenarioDir)
+            : this()
+        {
+            startPlaying(mapSeed, scenarioDir);
+        }
+
+
+        void startPlaying(int mapSeed, string scenarioDir)
         {
             //compile the scenario
             string scenarioCompileErrors;
-            Scenario = Scenario.Load<Scenario>(Path.GetFullPath(scenarioDir), out scenarioCompileErrors);
+            Scenario = Scenario.Load(Path.GetFullPath(scenarioDir), out scenarioCompileErrors);
             if (Scenario == null)
                 throw new FileLoadException($"Unable to load the scenario: \n\n{scenarioCompileErrors}");
 
             //register the server as the parent of all objects. 
             GameObject.SetEngine(this);
 
-            //create the terrain, object map from the scenario. 
+            //initialize terrain, objects, scripts.  
             TerrainMap = Maps.Terrain.MapGod.Create(Scenario.Config.Map, mapSeed);
+            createStartupObjects(map);
+            scripts.ReloadScripts(Scenario.Assembly);
 
-            //create all subsystems
-            systems.Add((map = new MapSystem()));
-            systems.Add(network = new NetworkSystem());
-
-            //add startup units n doodads
-            Scenario.CreateStartupObjects(map);
-
-            //run scripts
-            Scenario.RunScripts(cs => cs.OnGameStart());
+            //fire the OnGameStart script event
+            Scripts.Run(cs => cs.OnGameStart());
         }
+
+        void createStartupObjects(MapSystem map)
+        {
+            var oc = new ObjectCreator(Scenario);
+            var entities = Scenario.Config.Map.Objects
+                .Select(oc.CreateObject)
+                .Where(o => o != null)
+                .ToList();
+
+            foreach (var e in entities)
+                map.Add(e);
+        }
+
 
         #region IEngine implementation
 
         public INetReceptor AcceptClient(IShanoClient c)
         {
+            var pl = new ShanoReceptor(this, c);
+
             // TODO: do some checks on player join?x
 
-            var pl = new ShanoReceptor(this, c);
             return pl;
         }
 
@@ -119,12 +156,12 @@ namespace Shanism.Engine
         {
             var pl = rec as ShanoReceptor;
             if (pl == null)
-                throw new ArgumentException(nameof(rec), "You should supply a {0} of type {1} as returned by this engine!".F(nameof(IReceptor), nameof(ShanoReceptor)));
-
+                throw new ArgumentException(nameof(rec), $"The receptor must be of type `{nameof(ShanoReceptor)}` as returned by this engine!");
             pl.SendHandshake(true);
 
             AddPlayer(pl);
         }
+
         #endregion
 
         #region Server Controls
@@ -166,6 +203,28 @@ namespace Shanism.Engine
         {
             network.Start(this);
         }
+
+
+        /// <summary>
+        /// Runs the game loop. 
+        /// </summary>
+        void mainLoop()
+        {
+            int frameStart, frameEnd = 0;
+            while (IsRunning)
+            {
+                var toSleep = 1000 / FPS - frameEnd;    //to sleep
+                var isThrottled = toSleep < 0;          //or not to sleep?
+
+                if (!isThrottled)
+                    Thread.Sleep(toSleep);
+
+                frameStart = Environment.TickCount;
+                Update(1000 / FPS);
+                frameEnd = Environment.TickCount - frameStart;
+            }
+        }
+
         #endregion
 
         /// <summary>
@@ -176,30 +235,7 @@ namespace Shanism.Engine
         {
             Players.Add(pl);
 
-            Scenario.RunScripts(s => s.OnPlayerJoined(pl.Player));
-        }
-
-
-        /// <summary>
-        /// Runs the game loop. 
-        /// </summary>
-        void mainLoop()
-        {
-            int frameStartTime, drawTime = 0;
-            while (IsRunning)
-            {
-                var toSleep = 1000 / FPS - drawTime;    //to sleep
-                var isThrottled = toSleep < 0;          //or not to sleep?
-
-                if (!isThrottled)
-                    Thread.Sleep(toSleep);
-                //else
-                //    Console.Write("T");
-
-                frameStartTime = Environment.TickCount;
-                this.Update(1000 / FPS);
-                drawTime = Environment.TickCount - frameStartTime;
-            }
+            Scripts.Run(s => s.OnPlayerJoined(pl.Player));
         }
 
         /// <summary>
@@ -214,10 +250,6 @@ namespace Shanism.Engine
             //update systems
             foreach (var sys in systems)
                 sys.Update(msElapsed);
-
-            ////update players
-            //foreach (var p in Players)
-            //    p.Update(msElapsed);
 
         }
 
@@ -239,6 +271,7 @@ namespace Shanism.Engine
         }
 
         const int perfBarLength = 20;
+
         public string GetPerfData()
         {
             //return string.Empty;

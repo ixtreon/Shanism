@@ -32,7 +32,7 @@ namespace Shanism.Client.UI.Common
         /// <summary>
         /// Gets or sets the game action that toggles this window. 
         /// </summary>
-        public GameAction? ToggleAction { get; set; }
+        public ClientAction? ToggleAction { get; set; }
 
         /// <summary>
         /// Gets or sets whether this window can be moved around. 
@@ -194,9 +194,9 @@ namespace Shanism.Client.UI.Common
                 ClearFocus();
         }
 
-        void onActionActivated(GameAction ga)
+        void onActionActivated(ClientAction ga)
         {
-            if (ga == ToggleAction || ga == GameAction.ToggleMenus)
+            if (ga == ToggleAction || ga == ClientAction.ToggleMenus)
                 IsVisible = !IsVisible;
         }
 

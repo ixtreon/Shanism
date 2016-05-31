@@ -26,7 +26,7 @@ namespace Shanism.Editor.ViewModels
         public AnimationsViewModel Animations { get; private set; }
 
 
-        public async Task Load(CompiledScenario sc)
+        public async Task Load(Scenario sc)
         {
             ScenarioDirectory = sc.Config.BaseDirectory;
             Content = sc.Config.Content;

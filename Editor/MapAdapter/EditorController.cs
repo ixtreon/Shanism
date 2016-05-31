@@ -14,7 +14,7 @@ using Shanism.ScenarioLib;
 using System.Windows.Forms;
 using Shanism.Common.Objects;
 using Shanism.Engine;
-using Shanism.Engine.Objects.Entities;
+using Shanism.Engine.Entities;
 
 using Color = Microsoft.Xna.Framework.Color;
 using Shanism.Engine.Common;

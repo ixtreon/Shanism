@@ -7,8 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Shanism.Engine.Objects;
 using Shanism.ScenarioLib;
+using Shanism.Engine;
 
 namespace Shanism.Editor.Views.Maps
 {

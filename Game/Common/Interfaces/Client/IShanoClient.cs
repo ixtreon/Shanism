@@ -24,28 +24,9 @@ namespace Shanism.Common
         string Name { get; }
 
         /// <summary>
-        /// The event raised when a client wants to move. 
+        /// The event raised when a client wants to do something. 
         /// </summary>
-        event Action<MoveMessage> MovementStateChanged;
+        event Action<IOMessage> MessageSent;
 
-        /// <summary>
-        /// The event raised when a client wants to do stuff. 
-        /// </summary>
-        event Action<ActionMessage> ActionActivated;
-
-        /// <summary>
-        /// The event raised when a client wants to chat. 
-        /// </summary>
-        event Action<ChatMessage> ChatMessageSent;
-
-        /// <summary>
-        /// The event raised when a client wants a map chunk. 
-        /// </summary>
-        event Action<MapRequestMessage> MapRequested;
-
-        /// <summary>
-        /// The event raised when a client asks to start playing. 
-        /// </summary>
-        event Action HandshakeInit;
     }
 }

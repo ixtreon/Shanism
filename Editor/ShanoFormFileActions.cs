@@ -44,7 +44,7 @@ namespace Shanism.Editor
             if (dialog.ShowDialog() != DialogResult.OK)
                 return;
 
-            var sc = new CompiledScenario(dialog.FileName);
+            var sc = new Scenario(dialog.FileName);
 
             await open(sc);
 
@@ -85,7 +85,7 @@ namespace Shanism.Editor
             Model = null;
 
             string scenarioLoadErrors = string.Empty;
-            var scenario = await Task.Run(() => CompiledScenario.Load<CompiledScenario>(filePath, out scenarioLoadErrors));
+            var scenario = await Task.Run(() => Scenario.Load(filePath, out scenarioLoadErrors));
             if (scenario == null)
             {
                 MessageBox.Show($"Unable to load a scenario from `{filePath}`. The error returned was: \n {scenarioLoadErrors}", "ShanoEditor", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -101,7 +101,7 @@ namespace Shanism.Editor
             StatusLoading = false;
         }
 
-        async Task open(CompiledScenario scenario)
+        async Task open(Scenario scenario)
         {
             //create the viewmodel
             Model = new ScenarioViewModel(scenario);

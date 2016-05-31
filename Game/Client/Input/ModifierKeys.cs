@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Shanism.Client.Input
 {
     [Flags]
-    enum ModifierKeys
+    enum ModifierKeys : byte
     {
         None = 0,
 

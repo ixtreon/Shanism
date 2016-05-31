@@ -1,4 +1,4 @@
-﻿using Shanism.Engine.Objects.Entities;
+﻿using Shanism.Engine.Entities;
 using Shanism.Common;
 using Shanism.Common.Game;
 using Shanism.Common.Content;
@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Shanism.Engine.Objects
+namespace Shanism.Engine
 {
     /// <summary>
     /// A base class for all objects that show on the game map. 
@@ -28,12 +28,12 @@ namespace Shanism.Engine.Objects
         /// </summary>
         double _scale = Constants.Units.DefaultUnitSize;
 
-
-        //circulars ...        
+        
         /// <summary>
         /// Gets the list of units that see this entity. 
         /// </summary>
-        protected internal readonly ConcurrentSet<Unit> SeenBy = new ConcurrentSet<Unit>();
+        protected internal readonly ConcurrentSet<Unit> seenByUnits = new ConcurrentSet<Unit>();
+
 
 
         /// <summary>

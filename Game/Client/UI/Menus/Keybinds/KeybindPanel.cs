@@ -24,9 +24,9 @@ namespace Shanism.Client.UI.Menus.Keybinds
 
         public void InitKeybindLabels()
         {
-            var allKeyButtons = Enum<GameAction>.Values
-                .Where(a => a != GameAction.ToggleMenus)
-                .Where(a => a < GameAction.ActionBar_0_0)
+            var allKeyButtons = Enum<ClientAction>.Values
+                .Where(a => a != ClientAction.ToggleMenus)
+                .Where(a => a < ClientAction.ActionBar_0_0)
                 .Select(a => new KeyBoxLabel(a))
                 .ToList();
 

@@ -19,6 +19,8 @@ namespace Shanism.Client.Assets
         /// </summary>
         public int MaximumSize { get; }
 
+        double CircleWidth = 0.05;
+
         /// <summary>
         /// Creates a new <see cref="CircleDict"/> that can draw and cache circles up to a specified size (diameter). 
         /// 
@@ -26,10 +28,12 @@ namespace Shanism.Client.Assets
         /// <param name="gd">The graphics device on which circle textures are to be created. </param>
         /// <param name="maxSize">The maximum size (diameter) of a circle. 
         /// If this value is not a power-of-two it is replaced with the closest power of two larger than it. </param>
-        public CircleDict(GraphicsDevice gd, int maxSize)
+        public CircleDict(GraphicsDevice gd, int maxSize, double circleWidth)
         {
             if (gd == null) throw new ArgumentNullException(nameof(gd));
             if (maxSize < 1) throw new ArgumentOutOfRangeException(nameof(maxSize));
+
+            CircleWidth = circleWidth;
 
             var lastId = getId(maxSize);
             MaximumSize = 1 << lastId;
@@ -49,37 +53,55 @@ namespace Shanism.Client.Assets
 
             var id = getId(sz);
             if (circles[id] == null)
-                circles[id] = drawCircle(id);
+            {
+                var rad = getSz(id) / 2;
+                var width = (int)(rad * CircleWidth);
+                circles[id] = drawCircle(rad, width);
+            }
 
             return circles[id];
         }
 
-        Texture2D drawCircle(int id)
+        Texture2D drawCircle(int rad, int w)
         {
-            var texSz = getSz(id);
+            var sz = rad * 2 + 1;
+            var data = new Color[sz * sz];
+            var texture = new Texture2D(graphicsDevice, sz, sz);
 
-            var radius = texSz / 2 - 1;
-            var data = new Color[texSz * texSz];
-            var texture = new Texture2D(graphicsDevice, texSz, texSz);
+            int xBig = 0, yBig = rad, dpBig = 1 - rad;
+            int xSmall = 0, ySmall = rad - w, dpSmall = 1 - (rad - w);
 
-            // Colour the entire texture transparent first.
-            for (int i = 0; i < data.Length; i++)
-                data[i] = Color.Transparent;
-
-            // Work out the minimum step necessary using trigonometry + sine approximation.
-            var angleStep = 1.0 / radius;
-
-            for (double angle = 0; angle < Math.PI * 2; angle += angleStep)
+            do
             {
-                // Use the parametric definition of a circle: http://en.wikipedia.org/wiki/Circle#Cartesian_coordinates
-                int x = (int)Math.Round(radius + radius * Math.Cos(angle));
-                int y = (int)Math.Round(radius + radius * Math.Sin(angle));
+                for(int iy = ySmall; iy <= yBig; iy++)
+                    putPixel(data, xBig, iy, rad, sz);
 
-                data[y * texSz + x + 1] = Color.White;
-            }
+                circleStep(ref xBig, ref yBig, ref dpBig);
+                circleStep(ref xSmall, ref ySmall, ref dpSmall);
+            } while (xBig <= yBig);
 
             texture.SetData(data);
             return texture;
+        }
+
+        static void circleStep(ref int x, ref int y, ref int dp)
+        {
+            if (dp < 0)
+                dp = dp + 2 * (++x) + 3;
+            else
+                dp = dp + 2 * (++x) - 2 * (--y) + 5;
+        }
+
+        void putPixel(Color[] data, int x, int y, int offset, int sz)
+        {
+            data[(offset + x) * sz + (offset + y)] = Color.White;
+            data[(offset - x) * sz + (offset + y)] = Color.White;
+            data[(offset + x) * sz + (offset - y)] = Color.White;
+            data[(offset - x) * sz + (offset - y)] = Color.White;
+            data[(offset + y) * sz + (offset + x)] = Color.White;
+            data[(offset - y) * sz + (offset + x)] = Color.White;
+            data[(offset + y) * sz + (offset - x)] = Color.White;
+            data[(offset - y) * sz + (offset - x)] = Color.White;
         }
     }
 }

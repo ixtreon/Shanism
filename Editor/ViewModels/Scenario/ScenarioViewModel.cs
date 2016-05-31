@@ -9,7 +9,7 @@ namespace Shanism.Editor.ViewModels
 {
     class ScenarioViewModel : IViewModel
     {
-        public CompiledScenario Scenario { get; }
+        public Scenario Scenario { get; }
 
         public ContentViewModel Content { get; } = new ContentViewModel();
 
@@ -18,7 +18,7 @@ namespace Shanism.Editor.ViewModels
         /// </summary>
         public bool IsDirty { get; set; }
 
-        public ScenarioViewModel(CompiledScenario sc)
+        public ScenarioViewModel(Scenario sc)
         {
             Scenario = sc;
         }

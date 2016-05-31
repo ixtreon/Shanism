@@ -22,9 +22,9 @@ namespace Shanism.Client.UI.Menus.Keybinds
         /// <summary>
         /// Gets the gameaction this keybox can change the binding to. 
         /// </summary>
-        public GameAction Action { get; }
+        public ClientAction Action { get; }
 
-        public KeyBoxLabel(GameAction action)
+        public KeyBoxLabel(ClientAction action)
         {
             var labelFont = Content.Fonts.NormalFont;
 

@@ -1,5 +1,5 @@
 ﻿using Shanism.Engine.Objects;
-using Shanism.Engine.Objects.Entities;
+using Shanism.Engine.Entities;
 using Shanism.Common;
 using Shanism.ScenarioLib;
 using System;
@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace Shanism.Engine.Common
 {
+    /// <summary>
+    /// Creates game entities from <see cref="ObjectConstructor"/> objects in the context of a <see cref="Scenario"/>. 
+    /// </summary>
     public class ObjectCreator
     {
         static readonly HashSet<Type> baseTypes = new HashSet<Type>
@@ -20,12 +23,8 @@ namespace Shanism.Engine.Common
 
         readonly Dictionary<string, Type> recognizedTypes;
 
-        public IEnumerable<Type> CustomTypes => recognizedTypes.Values.Except(baseTypes);
 
-        public IEnumerable<Type> BaseTypes => baseTypes;
-
-
-        public ObjectCreator(CompiledScenario sc)
+        public ObjectCreator(Scenario sc)
         {
             recognizedTypes = baseTypes
                 .Concat(sc.DefinedEntityTypes)

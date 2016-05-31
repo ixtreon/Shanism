@@ -13,7 +13,7 @@ using Shanism.Common.Message.Client;
 using Shanism.Engine.Systems.Orders;
 using Shanism.Common.Game;
 using Shanism.Common.Objects;
-using Shanism.Engine.Objects.Entities;
+using Shanism.Engine.Entities;
 
 namespace Shanism.Engine.Players
 {
@@ -56,10 +56,7 @@ namespace Shanism.Engine.Players
             Player.ObjectUnseen += onPlayerObjectUnseen;
             Player.MainHeroChanged += onPlayerHeroChange;
 
-            InputDevice.ActionActivated += inputDevice_ActionActivated;
-            InputDevice.MapRequested += inputDevice_MapRequested;
-            InputDevice.MovementStateChanged += inputDevice_MovementStateChanged;
-            InputDevice.HandshakeInit += inputDevice_HandshakeInit;
+            InputDevice.MessageSent += parseClientMessage;
         }
 
         #region Player listeners
@@ -73,7 +70,7 @@ namespace Shanism.Engine.Players
             SendMessage(new PlayerStatusMessage(h.Id));
 
             //TODO: change to OnPlayerHeroChanged
-            Engine.Scenario.RunScripts(s => s.OnHeroSpawned(h));
+            Engine.Scripts.Run(s => s.OnHeroSpawned(h));
         }
 
         void onPlayerObjectSeen(Entity obj)
@@ -83,34 +80,42 @@ namespace Shanism.Engine.Players
         #endregion
 
         #region IShanoClient listeners
-        void inputDevice_ActionActivated(ActionMessage obj)
+
+        void parseClientMessage(IOMessage msg)
         {
-            if (MainHero == null)
-                return;
-            Player.MainHero.TryCastAbility(obj);
+            switch (msg.Type)
+            {
+                case MessageType.Action:
+                    Player.MainHero?.TryCastAbility((ActionMessage)msg);
+                    break;
+
+                case MessageType.MoveUpdate:
+                    updateHeroMovement((MoveMessage)msg);
+                    break;
+
+                case MessageType.MapRequest:
+                    parseMapRequest((MapRequestMessage)msg);
+                    break;
+            }
         }
 
-        void inputDevice_HandshakeInit()
+        void updateHeroMovement(MoveMessage msg)
         {
-            //run scripts?!?!?!?!?!?
+            if (MainHero != null)
+            {
+                var ms = msg.Direction;
+                if (ms.IsMoving)
+                    MainHero.SetOrder(new PlayerMoveOrder(ms));
+                else
+                    MainHero.ClearOrder();
+            }
         }
 
-        void inputDevice_MovementStateChanged(MoveMessage msg)
-        {
-            if (MainHero == null)
-                return;
-
-            var newState = msg.Direction;
-            if (newState.IsMoving)
-                MainHero.SetOrder(new PlayerMoveOrder(msg.Direction));
-            else
-                MainHero.ClearOrder();
-        }
-
-        async void inputDevice_MapRequested(MapRequestMessage msg)
+        async void parseMapRequest(MapRequestMessage msg)
         {
             var chunk = msg.Chunk;
             var chunkData = new TerrainType[chunk.Span.Area];
+
             await Task.Run(() => Engine.GetTiles(this, ref chunkData, chunk));
 
             SendMessage(new MapDataMessage(chunk.Span, chunkData));

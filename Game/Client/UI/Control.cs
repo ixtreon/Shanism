@@ -25,7 +25,7 @@ namespace Shanism.Client.UI
     /// <summary>
     /// Represents a user interface control. 
     /// </summary>
-    abstract class Control
+    class Control
     {
         #region Static/Const members
 
@@ -66,7 +66,7 @@ namespace Shanism.Client.UI
 
 
 
-        bool _isVisible;
+        bool _isVisible = true;
 
         Vector _size;
 
@@ -169,9 +169,10 @@ namespace Shanism.Client.UI
 
         /// <summary>
         /// The event whenever a game action (a key and zero or more modifier keys) 
-        /// is activated (pressed or released as per <see cref="Settings.QuickButtonPress"/>). 
+        /// is activated (pressed or released as per <see cref="Settings.QuickButtonPress"/>)
+        /// while this control has focus (see <see cref="FocusControl"/>. 
         /// </summary>
-        public event Action<GameAction> GameActionActivated;
+        public event Action<ClientAction> GameActionActivated;
 
         public event Action<Keybind> KeyPressed;
 
@@ -224,36 +225,22 @@ namespace Shanism.Client.UI
             }
         }
 
-        void resizeChildren(AnchorMode min, AnchorMode max, Vector d)
-        {
-            foreach (var c in controls)
-            {
-                var hasMin = c.ParentAnchor.HasFlag(min);
-                var hasMax = c.ParentAnchor.HasFlag(max);
-
-                if (hasMax && hasMin)    //anchor both sides -> modify size
-                    c.Size += d;
-                else if (hasMax && !hasMin)  // anchor at max (right/top) -> modify loc
-                    c.Location += d;
-                else if (!hasMin && !hasMax) // has no anchor -> float in center
-                    c.Location += d / 2;
-                //else if hasMin, !hasMax -> don't touch
-            }
-        }
-
 
         /// <summary>
         /// Gets all the children of this control. 
         /// </summary>
         public IEnumerable<Control> Controls => controls;
 
-        public bool HasFocus => (FocusControl == this);
+        /// <summary>
+        /// Gets whether this control is the currently focused control.
+        /// </summary>
+        public bool HasFocus => FocusControl == this;
 
+        /// <summary>
+        /// Gets whether this control is the root (top-level) control. 
+        /// </summary>
+        public bool IsRootControl => Parent == null;
 
-        protected Control()
-        {
-            IsVisible = true;
-        }
 
 
         #region Control Bounds
@@ -354,7 +341,7 @@ namespace Shanism.Client.UI
         public void ToggleVisible() => IsVisible = !IsVisible;
 
 
-        public void ActivateAction(GameAction a) => GameActionActivated?.Invoke(a);
+        public void ActivateAction(ClientAction act) => GameActionActivated?.Invoke(act);
 
         public void PressKey(Keybind k) => KeyPressed?.Invoke(k);
 
@@ -433,6 +420,23 @@ namespace Shanism.Client.UI
         /// <param name="msElapsed"></param>
         protected virtual void OnUpdate(int msElapsed) { }
 
+
+        void resizeChildren(AnchorMode min, AnchorMode max, Vector d)
+        {
+            foreach (var c in controls)
+            {
+                var hasMin = c.ParentAnchor.HasFlag(min);
+                var hasMax = c.ParentAnchor.HasFlag(max);
+
+                if (hasMax && hasMin)    //anchor both sides -> modify size
+                    c.Size += d;
+                else if (hasMax && !hasMin)  // anchor at max (right/top) -> modify loc
+                    c.Location += d;
+                else if (!hasMin && !hasMax) // has no anchor -> float in center
+                    c.Location += d / 2;
+                //else if hasMin, !hasMax -> don't touch
+            }
+        }
 
         Control recalcHoverControl()
         {

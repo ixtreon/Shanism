@@ -1,6 +1,6 @@
 ﻿using Shanism.Engine.Objects;
 using Shanism.Engine.Objects.Buffs;
-using Shanism.Engine.Objects.Entities;
+using Shanism.Engine.Entities;
 using Shanism.Engine.Systems.Abilities;
 using Shanism.Common;
 using Shanism.Common.Game;

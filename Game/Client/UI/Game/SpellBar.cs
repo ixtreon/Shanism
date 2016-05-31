@@ -49,7 +49,7 @@ namespace Shanism.Client.UI
             GameActionActivated += onActionActivated;
         }
 
-        private void onActionActivated(Input.GameAction act)
+        private void onActionActivated(Input.ClientAction act)
         {
             if (!act.IsBarAction() || act.GetBarId() != BarId)
                 return;

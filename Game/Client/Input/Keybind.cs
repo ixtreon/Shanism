@@ -9,21 +9,24 @@ using System.Threading.Tasks;
 namespace Shanism.Client.Input
 {
     /// <summary>
-    /// A keybind that consists of a main key and zero or more modifier keys. 
+    /// A keyboard gesture that consists of one main key and zero or more modifier keys. 
     /// </summary>
     struct Keybind
     {
         public static readonly Keybind None = new Keybind(ModifierKeys.None, Keys.None);
 
+
         public ModifierKeys Modifiers { get; }
 
         public Keys Key { get; }
+
 
         public bool Control => (Modifiers & ModifierKeys.Control) != 0;
 
         public bool Alt => (Modifiers & ModifierKeys.Alt) != 0;
 
         public bool Shift => (Modifiers & ModifierKeys.Shift) != 0;
+
 
         public Keybind(Keys key)
         {
@@ -40,15 +43,16 @@ namespace Shanism.Client.Input
             Key = key;
         }
 
+
         public string ToShortString()
         {
             if (Key == Keys.None)
                 return "N/A";
 
             var ans = "";
-            if (Modifiers.HasFlag(ModifierKeys.Control))    ans += "C";
-            if (Modifiers.HasFlag(ModifierKeys.Alt))        ans += "A";
-            if (Modifiers.HasFlag(ModifierKeys.Shift))      ans += "S";
+            if (Control)    ans += "C";
+            if (Alt)        ans += "A";
+            if (Shift)      ans += "S";
             ans += KeyMap.GetChar(Key, false)?.ToString().ToUpper() ?? Key.ToString();
             return ans;
         }
@@ -71,9 +75,7 @@ namespace Shanism.Client.Input
 
         public override bool Equals(object obj)
         {
-            if (!(obj is Keybind))
-                return false;
-            return (Keybind)obj == this;
+            return (obj is Keybind) && (Keybind)obj == this;
         }
 
         public override string ToString()

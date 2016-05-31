@@ -15,6 +15,9 @@ namespace Shanism.Client
     /// </summary>
     class Settings
     {
+
+        #region Static Members
+
         /// <summary>
         /// The file where settings are saved. 
         /// </summary>
@@ -51,12 +54,11 @@ namespace Shanism.Client
                 Current.Save();
             }
 
-
-            Current.Keybinds[Input.GameAction.ToggleMenus] = Microsoft.Xna.Framework.Input.Keys.Escape;
+            //why put it there if it can't be changed?
+            Current.Keybinds[Input.ClientAction.ToggleMenus] = Microsoft.Xna.Framework.Input.Keys.Escape;
         }
 
-
-
+        #endregion
 
 
         public bool AlwaysShowHealthBars { get; set; } = true;

@@ -21,7 +21,7 @@ namespace Shanism.ScenarioLib
     {
         #region Static and const members
         public const string OutputFileName = "scenario.dll";
-        public const string OutputDirectory = "scenarios/";
+        public const string OutputDirectory = "Scenario/";
 
         public const string OutputFilePath = OutputDirectory + OutputFileName;
         public const string OutputPdbPath = OutputFilePath + ".pdb";
@@ -52,26 +52,15 @@ namespace Shanism.ScenarioLib
         #endregion
 
 
-        private string _scenarioDir;
-        public string ScenarioDir
-        {
-            get { return _scenarioDir; }
-            set
-            {
-                if (_scenarioDir != value)
-                {
-                    IsCompiled = false;
-                    _scenarioDir = value;
-                }
-            }
-        }
-
         /// <summary>
         /// Gets whether we made a compilation in the given directory. 
         /// </summary>
         public bool IsCompiled { get; private set; }
 
         public Assembly Assembly { get; private set; }
+
+        public string ScenarioDir { get; private set; }
+
 
 
         /// <summary>
@@ -89,6 +78,7 @@ namespace Shanism.ScenarioLib
         }
 
 
+
         /// <summary>
         /// Loads the already compiled assembly. 
         /// Throws an <see cref="InvalidOperationException"/> if <see cref="IsCompiled"/> is false. 
@@ -99,14 +89,17 @@ namespace Shanism.ScenarioLib
             if (!IsCompiled)
                 throw new InvalidOperationException("Please compile the scenario first!");
 
+            var rawAssembly = File.ReadAllBytes(OutputFilePath);
+            var rawSymbols = File.ReadAllBytes(OutputPdbPath);
+
+            /// Using a sandboxed assembly
+            //Sandboxer.Init();
+            //var loader = Sandboxer.Create();
+            //loader.LoadAssembly(rawAssembly, rawSymbols);
+
+            /// Using the current assembly
             try
             {
-                Sandboxer.Init();
-                var rawAssembly = File.ReadAllBytes(OutputFilePath);
-                var rawSymbols = File.ReadAllBytes(OutputPdbPath);
-
-                var sandbox = Sandboxer.Create();
-
                 Assembly = Assembly.Load(rawAssembly, rawSymbols);
             }
             catch (Exception e)

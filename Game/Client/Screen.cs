@@ -14,23 +14,18 @@ namespace Shanism.Client
     /// </summary>
     static class Screen
     {
-        const int DefaultUiScale = 240;
-
-
-        /// <summary>
-        /// Gets the UI-to-pixel scaling. 
-        /// </summary>
-        public static double UiScale { get; private set; } = DefaultUiScale;
+        static readonly Point DefaultSize = new Point(800, 600);
+        static readonly int DefaultUiScale = Math.Min(DefaultSize.X, DefaultSize.Y) / 2;
 
         /// <summary>
         /// Gets the size of the screen window in in-game units. 
         /// </summary>
-        public static Vector InGameSize { get; private set; } = Constants.Client.WindowSize;
+        public static Vector GameSize { get; private set; } = Constants.Client.WindowSize;
 
         /// <summary>
         /// Gets the in-game bounds of the screen rectangle. 
         /// </summary>
-        public static RectangleF InGameBounds { get; private set; }
+        public static RectangleF GameBounds { get; private set; }
 
         /// <summary>
         /// Gets the size of the screen window in pixels. 
@@ -40,13 +35,23 @@ namespace Shanism.Client
         /// <summary>
         /// Gets half the size of the sreen window in pixels. 
         /// </summary>
-        public static Point ScreenHalfSize { get; private set; }
+        public static Point HalfSize { get; private set; }
 
         /// <summary>
-        /// Gets the font scale, which is the curent Ui scale over the default one. 
+        /// Gets the font-to-pixel ratio, 
+        /// which is defined as the curent Ui scale over the default one. 
         /// </summary>
         public static double FontScale { get; private set; } = 1;
 
+        /// <summary>
+        /// Gets the UI-to-pixel scaling factor. 
+        /// </summary>
+        public static double UiScale { get; private set; } = DefaultUiScale;
+
+        /// <summary>
+        /// Gets the Game-to-pixel scaling factor. 
+        /// </summary>
+        public static Vector GameScale => Size / GameSize;
 
         /// <summary>
         /// Gets the size of the screen in UI units. 
@@ -64,15 +69,15 @@ namespace Shanism.Client
 
 
 
-        public static void SetCamera(Point? windowSz, 
-            Vector? cameraCenter = null, 
-            IEntity lockedEntity = null,
-            Vector? inGameSz = null)
+        public static void SetCamera(Point? windowSz,
+            Vector? inGameSz = null,
+            Vector? cameraCenter = null,
+            IEntity lockedEntity = null)
         {
-            if (windowSz != null)
+            if (windowSz.HasValue)
             {
                 Size = windowSz.Value;
-                ScreenHalfSize = Size / 2;
+                HalfSize = Size / 2;
 
                 UiScale = Math.Min(Size.X, Size.Y) / 2;
                 FontScale = UiScale / DefaultUiScale;
@@ -83,8 +88,12 @@ namespace Shanism.Client
             else if (cameraCenter != null)
                 _inGameCenter = cameraCenter.Value;
 
-            InGameSize = inGameSz ?? InGameSize;
-            InGameBounds = new RectangleF(InGameCenter - InGameSize / 2, InGameSize);
+            if (inGameSz.HasValue)
+            {
+                GameSize = inGameSz.Value;
+                
+                GameBounds = new RectangleF(InGameCenter - GameSize / 2, GameSize);
+            }
         }
 
         /// <summary>
@@ -92,7 +101,7 @@ namespace Shanism.Client
         /// </summary>
         public static Vector GameToScreen(Vector p)
         {
-            return (p - InGameCenter) * Size / InGameSize + ScreenHalfSize;
+            return (p - InGameCenter) * GameScale + HalfSize;
         }
 
         /// <summary>
@@ -100,7 +109,7 @@ namespace Shanism.Client
         /// </summary>
         public static Vector ScreenToGame(Vector position)
         {
-            return (position - ScreenHalfSize) *  InGameSize / Size + InGameCenter;
+            return (position - HalfSize) / GameScale + InGameCenter;
         }
 
 
@@ -124,7 +133,7 @@ namespace Shanism.Client
         /// </summary>
         public static Vector UiToScreen(Vector p)
         {
-            return ScreenHalfSize + p * UiScale;
+            return HalfSize + p * UiScale;
         }
 
 
@@ -134,7 +143,7 @@ namespace Shanism.Client
         /// </summary>
         public static Vector ScreenToUi(Vector p)
         {
-            return (p - ScreenHalfSize) / UiScale;
+            return (p - HalfSize) / UiScale;
         }
 
         /// <summary>

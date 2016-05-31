@@ -22,7 +22,7 @@ namespace Shanism.Client.Input
 
         public static IEnumerable<Keys> JustReleasedKeys { get; private set; }
 
-        public static IEnumerable<GameAction> JustActivatedActions { get; private set; }
+        public static IEnumerable<ClientAction> JustActivatedActions { get; private set; }
 
         public static ModifierKeys Modifiers { get; private set; }
 
@@ -63,7 +63,7 @@ namespace Shanism.Client.Input
         /// <summary>
         /// Gets whether a key is down. 
         /// </summary>
-        public static bool IsDown(Keys k)
+        static bool IsDown(Keys k)
         {
             return newKeysDown.Contains(k);
         }
@@ -72,7 +72,7 @@ namespace Shanism.Client.Input
         /// Gets whether a key was just activated. 
         /// The definition of activation is determined by <see cref="Settings.QuickButtonPress"/>. 
         /// </summary>
-        public static bool IsActivated(Keys k)
+        static bool IsActivated(Keys k)
         {
             if (Settings.Current.QuickButtonPress)
                 return !oldKeysDown.Contains(k) && newKeysDown.Contains(k);
@@ -86,11 +86,12 @@ namespace Shanism.Client.Input
         /// </summary>
         /// <param name="a">The game action whose key to check. </param>
         /// <returns>Whether the key is currently down. </returns>
-        public static bool IsDown(GameAction a)
+        public static bool IsDown(ClientAction a)
         {
             var kb = Settings.Current.Keybinds[a];
             return checkModifiers(kb.Modifiers) && IsDown(kb.Key);    //TODO: fix for modifiers
         }
+
 
         public static bool IsDown(Keybind kb)
         {

@@ -12,6 +12,8 @@ using System.Reflection;
 using System.Collections.Concurrent;
 using Shanism.Common.Game;
 using Shanism.Common.Interfaces.Engine;
+using Shanism.ScenarioLib;
+using Shanism.Engine.Scripting;
 
 namespace Shanism.Engine
 {
@@ -61,7 +63,7 @@ namespace Shanism.Engine
         /// <summary>
         /// Gets the map that contains the units in this scenario. 
         /// </summary>
-        public IGameMap Map => Game?.map;
+        public IGameMap Map => Game?.Map;
 
 
         /// <summary>
@@ -74,7 +76,11 @@ namespace Shanism.Engine
         /// </summary>
         public Scenario Scenario => Game?.Scenario;
 
+
+
         internal PerfCounter PerfCounter => Game?.PerfCounter;
+
+        internal IScriptRunner Scripts => Game?.Scripts;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameObject"/> class.

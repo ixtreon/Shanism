@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Shanism.Common;
+using Shanism.Common.Interfaces.Engine;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,8 +15,6 @@ namespace Shanism.ScenarioLib
 {
     class Sandboxer : MarshalByRefObject
     {
-        /* static, 'cause only 1 scenario should ever be loaded */
-        static AppDomain Sandbox;
 
         //TODO: gotta sign the exe...
         static readonly SecurityPermissionFlag[] scenarioPermissions =
@@ -24,14 +24,19 @@ namespace Shanism.ScenarioLib
 
         public const string OutputDirectory = ScenarioCompiler.OutputDirectory;
 
+        /* static, 'cause only 1 scenario should ever be loaded */
+        static AppDomain Sandbox;
 
         public static void Init(string outputDir = null)
         {
-            outputDir = outputDir ?? OutputDirectory;
+            outputDir = Path.GetFullPath(outputDir ?? OutputDirectory);
 
             //AppDomain setup
-            var adSetup = new AppDomainSetup();
-            adSetup.ApplicationBase = Path.GetFullPath(outputDir);
+            var adSetup = new AppDomainSetup
+            {
+                ApplicationBase = outputDir,
+                PrivateBinPath = "/",
+            };
 
             //Permission set
             var permissions = new PermissionSet(PermissionState.None);
@@ -52,14 +57,40 @@ namespace Shanism.ScenarioLib
                 typeof(Sandboxer).Assembly.ManifestModule.FullyQualifiedName,
                 typeof(Sandboxer).FullName );
 
-            Sandboxer newDomainInstance = (Sandboxer)handle.Unwrap();
+            var sandboxGuy = (Sandboxer)handle.Unwrap();
 
-            return newDomainInstance;
+            //var sandboxGuy2 = (Sandboxer)Sandbox.CreateInstanceAndUnwrap(typeof(Sandboxer).Assembly.ManifestModule.FullyQualifiedName, typeof(Sandboxer).FullName, null);
+
+            return sandboxGuy;
         }
 
-        public Assembly LoadAssembly(byte[] assemblyBytes, byte[] symbolBytes)
+        public IEnumerable<IGameObject> LoadAssembly(byte[] assemblyBytes, byte[] symbolBytes)
         {
-            return Assembly.Load(assemblyBytes, symbolBytes);
+            var dom = AppDomain.CurrentDomain;
+
+            System.Diagnostics.Debug.Assert(!dom.IsFullyTrusted);
+            var ass = dom.Load(assemblyBytes, symbolBytes);
+
+            var brd = ass.GetType("DefaultScenario.Buffs.Haste", true, true);
+
+            var dtys = ass.DefinedTypes;
+
+            var tys = ass.GetTypesDescending<IGameObject>()
+                .Select(t => (IGameObject)Activator.CreateInstance(t))
+                .ToList();
+
+            return tys;
         }
+
+        //public static Assembly Load(byte[] assemblyBytes, byte[] symbolBytes)
+        //{
+        //    var sp = Sandbox.SetupInformation.PrivateBinPathProbe;
+        //    var ap = AppDomain.CurrentDomain.RelativeSearchPath;
+
+        //    Init();
+        //    var a = Sandbox.Load(assemblyBytes, symbolBytes);
+
+        //    return a;
+        //}
     }
 }

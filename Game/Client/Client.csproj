@@ -11,7 +11,7 @@
     <RootNamespace>Shanism.Client</RootNamespace>
     <AssemblyName>Shanism.Client</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -135,7 +135,10 @@
     <Compile Include="Assets\CircleDict.cs" />
     <Compile Include="ClientGame.cs" />
     <Compile Include="Interfaces\IClientEngine.cs" />
-    <Compile Include="Interfaces\IClientSystem.cs" />
+    <Compile Include="Systems\ClientSystem.cs" />
+    <Compile Include="Systems\Actions.cs" />
+    <Compile Include="Systems\Chat.cs" />
+    <Compile Include="Systems\Movement.cs" />
     <Compile Include="UI\Chat\ChatBox.cs" />
     <Compile Include="UI\Chat\IChatProvider.cs" />
     <Compile Include="UI\CombatText\RangeIndicator.cs" />
@@ -159,10 +162,10 @@
     <Compile Include="Ext\SpriteBatch.cs" />
     <Compile Include="Input\KeyRepeater.cs" />
     <Compile Include="Input\ModifierKeys.cs" />
-    <Compile Include="Input\GameAction.cs" />
+    <Compile Include="Input\ClientAction.cs" />
     <Compile Include="Input\KeyboardInfo.cs" />
     <Compile Include="GameManager.cs" />
-    <Compile Include="Objects\Controls\EffectControl.cs" />
+    <Compile Include="Objects\EffectControl.cs" />
     <Compile Include="UI\Game\UnitHoverFrame.cs" />
     <Compile Include="UI\Menus\Keybinds\KeybindPanel.cs" />
     <Compile Include="UI\Menus\Keybinds\KeyBoxLabel.cs" />
@@ -175,11 +178,11 @@
     <Compile Include="Interfaces\IClientInstance.cs" />
     <Compile Include="Map\ChunkData.cs" />
     <Compile Include="Map\MapManager.cs" />
-    <Compile Include="Objects\ObjectManager.cs" />
-    <Compile Include="Objects\Controls\DoodadControl.cs" />
-    <Compile Include="Objects\Controls\HeroControl.cs" />
-    <Compile Include="Objects\Controls\ObjectControl.cs" />
-    <Compile Include="Objects\Controls\UnitControl.cs" />
+    <Compile Include="Systems\Objects.cs" />
+    <Compile Include="Objects\DoodadControl.cs" />
+    <Compile Include="Objects\HeroControl.cs" />
+    <Compile Include="Objects\ObjectControl.cs" />
+    <Compile Include="Objects\UnitControl.cs" />
     <Compile Include="Screen.cs" />
     <Compile Include="Ext\General.cs" />
     <Compile Include="Common\Graphics.cs" />
@@ -203,7 +206,7 @@
     <Compile Include="UI\Menus\Keybinds.cs" />
     <Compile Include="UI\Menus\MainMenu.cs" />
     <Compile Include="UI\Tooltips\AbilityTip.cs" />
-    <Compile Include="UI\UiManager.cs" />
+    <Compile Include="Systems\Interface.cs" />
     <Compile Include="UI\Game\SpellBar.cs" />
     <Compile Include="UI\Menus\Abilities.cs" />
     <Compile Include="UI\Game\SpellButton.cs" />

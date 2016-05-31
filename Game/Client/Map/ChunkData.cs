@@ -108,21 +108,26 @@ namespace Shanism.Client.Map
                 foreach (var pt in r.Iterate())
                 {
                     var ttyId = pt.X + pt.Y * Constants.Terrain.ChunkSize;
-                    var ttyTexPos = Content.Terrain.GetTileTextureBounds(tiles[ttyId]);
-                    var ttyGamePos = new RectangleF(Chunk.BottomLeft + pt, Vector.One);
-
-                    vertexData[6 * ttyId + 0] = genPoint(ttyGamePos.BottomLeft, ttyTexPos.BottomLeft);
-                    vertexData[6 * ttyId + 1] = genPoint(ttyGamePos.BottomRight, ttyTexPos.BottomRight);
-                    vertexData[6 * ttyId + 2] = genPoint(ttyGamePos.TopLeft, ttyTexPos.TopLeft);
-
-                    vertexData[6 * ttyId + 3] = genPoint(ttyGamePos.TopLeft, ttyTexPos.TopLeft);
-                    vertexData[6 * ttyId + 4] = genPoint(ttyGamePos.BottomRight, ttyTexPos.BottomRight);
-                    vertexData[6 * ttyId + 5] = genPoint(ttyGamePos.TopRight, ttyTexPos.TopRight);
+                    var srcRect = Content.Terrain.GetTileTextureBounds(tiles[ttyId]);
+                    var destRect = new RectangleF(Chunk.BottomLeft + pt, Vector.One);
+                    var offset = 6 * ttyId;
+                    writePtData(offset, srcRect, destRect);
                 }
 
                 buffer.SetData(vertexData);
                 HasBuffer = true;
             });
+        }
+
+        void writePtData(int offset, RectangleF sourceRectangle, RectangleF destRectangle)
+        {
+            vertexData[offset + 0] = genPoint(destRectangle.BottomLeft, sourceRectangle.BottomLeft);
+            vertexData[offset + 1] = genPoint(destRectangle.BottomRight, sourceRectangle.BottomRight);
+            vertexData[offset + 2] = genPoint(destRectangle.TopLeft, sourceRectangle.TopLeft);
+
+            vertexData[offset + 3] = genPoint(destRectangle.TopLeft, sourceRectangle.TopLeft);
+            vertexData[offset + 4] = genPoint(destRectangle.BottomRight, sourceRectangle.BottomRight);
+            vertexData[offset + 5] = genPoint(destRectangle.TopRight, sourceRectangle.TopRight);
         }
 
         /// <summary>

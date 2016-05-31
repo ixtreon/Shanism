@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Shanism.Editor.ViewModels;
 using Shanism.ScenarioLib;
-using Shanism.Engine.Objects.Entities;
+using Shanism.Engine.Entities;
 using Shanism.Common.Game;
 using Shanism.Common.Util;
 

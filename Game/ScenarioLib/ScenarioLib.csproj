@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Shanism.ScenarioLib</RootNamespace>
     <AssemblyName>Shanism.ScenarioLib</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -125,7 +125,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CompiledScenario.cs" />
+    <Compile Include="Scenario.cs" />
     <Compile Include="CompilerException.cs" />
     <Compile Include="Config\ContentConfig.cs" />
     <Compile Include="Config\ObjectConstructors.cs" />
