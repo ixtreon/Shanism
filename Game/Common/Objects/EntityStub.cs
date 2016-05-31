@@ -25,6 +25,8 @@ namespace Shanism.Common.Objects
 
         public string AnimationName { get; set; }
 
+        public string AnimationSuffix { get; set; }
+
         public ShanoColor CurrentTint { get; set; }
 
 

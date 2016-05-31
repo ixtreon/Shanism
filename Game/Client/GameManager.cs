@@ -24,15 +24,28 @@ namespace Shanism.Client
     // A top level control, contains all the client systems
     class GameManager : Control
     {
-
-
         #region Systems
 
         readonly List<ClientSystem> systems = new List<ClientSystem>();
 
+        /// <summary>
+        /// Listens for ability casts and informs the server. 
+        /// </summary>
         readonly ActionSystem actions;
+
+        /// <summary>
+        /// Listens for key presses and informs the server. 
+        /// </summary>
         readonly MoveSystem movement;
+
+        /// <summary>
+        /// Listens for chat messages and sends them to the chatbox
+        /// </summary>
         readonly ChatSystem chat;
+
+        /// <summary>
+        /// Lists and draws objects. 
+        /// </summary>
         readonly ObjectSystem objects;
 
         /// <summary>
@@ -40,25 +53,24 @@ namespace Shanism.Client
         /// </summary>
         readonly MapSystem map;
 
+        /// <summary>
+        /// Holds all elements of the UI. 
+        /// </summary>
         UiSystem @interface;
 
         #endregion
 
 
-        /// <summary>
-        /// The main UI window. 
-        /// </summary>
-        public UiSystem Interface => @interface;
+        public void SetUiVisible(bool isVisible) => @interface.Root.IsVisible = IsVisible;
 
-        /// <summary>
-        /// The guy that handles objects. 
-        /// </summary>
-        public ObjectSystem Objects => objects;
+        public void DrawUi(SpriteBatch sb) => @interface.Root.Draw(sb);
 
-        public MapSystem Map => map;
+        public void DrawObjects(SpriteBatch sb) => objects.Root.Draw(sb);
 
+        public void DrawTerrain() => map.DrawTerrain();
 
-        public FloatingTextProvider FloatingText => Interface.FloatingText;
+        public IHero MainHero => objects.MainHero;
+
 
 
         public event Action<IOMessage> MessageSent;
@@ -75,26 +87,34 @@ namespace Shanism.Client
             systems.Add(movement = new MoveSystem());
             systems.Add(chat = new ChatSystem());
             systems.Add(objects = new ObjectSystem());
-            systems.Add(@interface = new UiSystem(Objects));
-            systems.Add(actions = new ActionSystem(Interface));
+            systems.Add(@interface = new UiSystem(objects));
+            systems.Add(actions = new ActionSystem(@interface));
             systems.Add(map = new MapSystem(graphicsDevice));
 
-            Objects.ObjectClicked += onObjectClicked;
-            Objects.TerrainClicked += onGroundClicked;
+            objects.ObjectClicked += onObjectClicked;
+            objects.TerrainClicked += onGroundClicked;
+
+            @interface.chatBox.SetProvider(chat);
 
             foreach (var sys in systems)
                 sys.MessageSent += (m) => MessageSent?.Invoke(m);
 
-            Add(Objects.Root);
-            Add(Interface.Root);
+            Add(objects.Root);
+            Add(@interface.Root);
         }
 
 
         public void ReloadUi()
         {
-            Remove(Interface.Root);
-            @interface = new UiSystem(Objects);
-            Add(Interface.Root);
+            Remove(@interface.Root);
+            @interface = new UiSystem(objects);
+            Add(@interface.Root);
+        }
+
+        public void HandleMessage(IOMessage msg)
+        {
+            foreach (var sys in systems)
+                sys.HandleMessage(msg);
         }
 
 
@@ -116,8 +136,8 @@ namespace Shanism.Client
 
                 default:
                     //propagate to *both* interface and objects, let them handle it
-                    Interface.Root.ActivateAction(ga);
-                    Objects.Root.ActivateAction(ga);
+                    @interface.Root.ActivateAction(ga);
+                    objects.Root.ActivateAction(ga);
                     break;
             }
         }
@@ -126,23 +146,23 @@ namespace Shanism.Client
         {
             //clear target
             if (e.Button == MouseButton.Left)
-                Interface.Target = null;
+                @interface.Target = null;
         }
 
         void onObjectClicked(MouseButtonArgs e)
         {
             //target a unit or nothing
             if (e.Button == MouseButton.Left)
-                Interface.Target = e.Control as UnitControl;
+                @interface.Target = e.Control as UnitControl;
         }
 
         protected override void OnUpdate(int msElapsed)
         {
             // update the interface's main hero from the objects' main hero. 
-            Interface.MainHeroControl = Objects.MainHeroControl;
-            Interface.Hover = HoverControl as UnitControl;
+            @interface.MainHeroControl = objects.MainHeroControl;
+            @interface.Hover = HoverControl as UnitControl;
 
-            actions.Hero = Objects.MainHero;
+            actions.Hero = objects.MainHero;
 
             UpdateMain(msElapsed);
 

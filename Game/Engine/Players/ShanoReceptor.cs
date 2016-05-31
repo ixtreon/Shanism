@@ -18,7 +18,8 @@ using Shanism.Engine.Entities;
 namespace Shanism.Engine.Players
 {
     /// <summary>
-    /// Represents a human player connected to the engine. 
+    /// Represents a client connected to the engine. 
+    /// Handles all messages coming from the given client.  
     /// </summary>
     class ShanoReceptor : INetReceptor
     {
@@ -30,7 +31,7 @@ namespace Shanism.Engine.Players
         /// <summary>
         /// Gets the client handle of this player. 
         /// </summary>
-        IShanoClient InputDevice { get; }
+        IShanoClient Client { get; }
 
         /// <summary>
         /// Gets the underlying in-game player represented by this receptor. 
@@ -43,20 +44,20 @@ namespace Shanism.Engine.Players
         /// <summary>
         /// Gets the name of the player. 
         /// </summary>
-        public string Name => InputDevice.Name;
+        public string Name => Client.Name;
 
 
-        public ShanoReceptor(ShanoEngine engine, IShanoClient inputDevice)
+        public ShanoReceptor(ShanoEngine engine, IShanoClient client)
         {
             Engine = engine;
-            InputDevice = inputDevice;
-            Player = new Player(this, inputDevice.Name);    //broken circuitry..
+            Client = client;
+            Player = new Player(this, client.Name);    //broken circuitry..
 
             Player.ObjectSeen += onPlayerObjectSeen;
             Player.ObjectUnseen += onPlayerObjectUnseen;
             Player.MainHeroChanged += onPlayerHeroChange;
 
-            InputDevice.MessageSent += parseClientMessage;
+            Client.MessageSent += parseClientMessage;
         }
 
         #region Player listeners
@@ -81,7 +82,7 @@ namespace Shanism.Engine.Players
 
         #region IShanoClient listeners
 
-        void parseClientMessage(IOMessage msg)
+        async void parseClientMessage(IOMessage msg)
         {
             switch (msg.Type)
             {
@@ -90,28 +91,47 @@ namespace Shanism.Engine.Players
                     break;
 
                 case MessageType.MoveUpdate:
-                    updateHeroMovement((MoveMessage)msg);
+                    parseMoveMessage((MoveMessage)msg);
                     break;
 
                 case MessageType.MapRequest:
-                    parseMapRequest((MapRequestMessage)msg);
+                    await parseMapRequest((MapRequestMessage)msg);
+                    break;
+
+                case MessageType.ClientChat:
+                    parseChat((Shanism.Common.Message.Client.ChatMessage)msg);
                     break;
             }
         }
 
-        void updateHeroMovement(MoveMessage msg)
+        void parseChat(Shanism.Common.Message.Client.ChatMessage msg)
+        {
+            const float chatRange = 10;
+            var pls = Player.controlledUnits
+                .SelectMany(u => u.Map.GetUnitsInRange(u.Position, chatRange,  true))
+                .Select(u => u.Owner)
+                .Where(pl => pl.IsHuman)
+                .Distinct()
+                .ToList();
+
+            var outMsg = new Shanism.Common.Message.Server.ChatMessage(msg.Message, Player);
+            foreach (var pl in pls)
+                SendMessage(outMsg);
+        }
+
+        void parseMoveMessage(MoveMessage msg)
         {
             if (MainHero != null)
             {
-                var ms = msg.Direction;
-                if (ms.IsMoving)
-                    MainHero.SetOrder(new PlayerMoveOrder(ms));
+                var newState = msg.Direction;
+                if (newState.IsMoving)
+                    MainHero.SetOrder(new PlayerMoveOrder(newState));
                 else
                     MainHero.ClearOrder();
             }
         }
 
-        async void parseMapRequest(MapRequestMessage msg)
+        async Task parseMapRequest(MapRequestMessage msg)
         {
             var chunk = msg.Chunk;
             var chunkData = new TerrainType[chunk.Span.Area];

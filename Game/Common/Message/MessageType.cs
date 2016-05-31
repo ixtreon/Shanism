@@ -15,7 +15,9 @@ namespace Shanism.Common.Message
         /// <summary>
         /// A message sent by both the client and the server to relay chat messages. 
         /// </summary>
-        SendChat = 2,
+        ServerChat = 2,
+
+        ClientChat = 2,
 
         ///-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 

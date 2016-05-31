@@ -14,11 +14,6 @@ namespace Shanism.Engine.Entities
         public double MoveSpeed { get; protected internal set; }
 
         /// <summary>
-        /// Gets the walking speed of the unit, which is the running speed divided by 3. 
-        /// </summary>
-        public double WalkSpeed { get { return MoveSpeed / 3; } }
-
-        /// <summary>
         /// Gets whether this guy can walk on any terrain 
         /// without collision. 
         /// </summary>

@@ -115,7 +115,7 @@ namespace Shanism.Engine.Entities
         public Hero(Player owner)
             : base(owner)
         {
-            ModelName = "units/hero";
+            AnimationName = "units/hero";
 
             BaseMoveSpeed = 12;
 

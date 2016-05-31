@@ -10,6 +10,9 @@ using Shanism.Common.Objects;
 using Shanism.Client.UI.CombatText;
 using Shanism.Client.UI.Chat;
 using Shanism.Client.UI;
+using Shanism.Common.Message.Client;
+using Shanism.Common.Message;
+using Shanism.Common.Message.Server;
 
 namespace Shanism.Client.Systems
 {
@@ -24,7 +27,7 @@ namespace Shanism.Client.Systems
         readonly MenuBar menus;
         readonly CastBar castBar;
         readonly ChatBar chatBar;
-        readonly ChatBox chatBox;
+        internal readonly ChatBox chatBox;
         readonly BuffBar heroBuffBar;
         readonly ErrorTextControl errors;
 
@@ -148,6 +151,7 @@ namespace Shanism.Client.Systems
                 ParentAnchor = AnchorMode.Right | AnchorMode.Top,
             });
             chatBox.SetProvider(chatBar);
+            chatBar.MessageSent += onPlayerMessageSent;
 
             //menus
             Root.Add(menus = new MenuBar(Root));
@@ -160,6 +164,10 @@ namespace Shanism.Client.Systems
             Root.Maximize();
         }
 
+        void onPlayerMessageSent(string msg)
+        {
+            SendMessage(new Common.Message.Client.ChatMessage(string.Empty, msg));
+        }
 
         public override void Update(int msElapsed)
         {
@@ -174,6 +182,16 @@ namespace Shanism.Client.Systems
             heroFrame.Target = MainHeroControl;
         }
 
+        public override void HandleMessage(IOMessage ioMsg)
+        {
+            switch (ioMsg.Type)
+            {
+                case MessageType.DamageEvent:
+                    var dmgEv = (DamageEventMessage)ioMsg;
+                    FloatingText.AddDamageLabel(dmgEv);
+                    break;
+            }
+        }
 
         void onActionActivated(ClientAction ga)
         {
@@ -182,6 +200,7 @@ namespace Shanism.Client.Systems
                 case ClientAction.Chat:
                     chatBar.SetFocus();
                     break;
+
                 default:
                     abilityBar.ActivateAction(ga);
                     menus.ActivateAction(ga);

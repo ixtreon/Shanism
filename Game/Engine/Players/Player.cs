@@ -39,9 +39,9 @@ namespace Shanism.Engine
 
 
 
-        readonly ConcurrentSet<Unit> controlledUnits = new ConcurrentSet<Unit>();
+        internal readonly ConcurrentSet<Unit> controlledUnits = new ConcurrentSet<Unit>();
 
-        readonly ConcurrentSet<Entity> objectsSeen = new ConcurrentSet<Entity>();
+        internal readonly ConcurrentSet<Entity> objectsSeen = new ConcurrentSet<Entity>();
 
         Hero _mainHero;
 

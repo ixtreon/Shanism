@@ -32,7 +32,7 @@ namespace Shanism.Common.Util
         /// <param name="paths">The paths to combine.</param>
         /// <returns>A single path that is a concatenation of all the given paths. </returns>
         public static string Combine(IEnumerable<string> paths)
-            => string.Join(PathDelimiter, paths.Select(p => p.ToLower().Trim(RecognizedDelimiters)));
+            => string.Join(PathDelimiter, paths.Select(p => (p ?? string.Empty).ToLower().Trim(RecognizedDelimiters)));
 
         /// <summary>
         /// Combines the specified paths using the default path delimiter. 

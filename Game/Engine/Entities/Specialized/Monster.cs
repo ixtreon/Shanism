@@ -37,7 +37,7 @@ namespace Shanism.Engine.Entities
         public Monster(int level, bool isElite = false)
             : base(Player.NeutralAggressive, level)
         {
-            ModelName = "units/devilkin";
+            AnimationName = "units/devilkin";
 
             IsElite = isElite;
             if(isElite)
@@ -78,7 +78,7 @@ namespace Shanism.Engine.Entities
             : this(prototype.Level, prototype.IsElite)
         {
             Position = prototype.Position;
-            ModelName = prototype.ModelName;
+            AnimationName = prototype.AnimationName;
         }
     }
 }

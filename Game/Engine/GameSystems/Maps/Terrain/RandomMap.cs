@@ -98,7 +98,7 @@ namespace Shanism.Engine.Maps
                         var dy = Hash.GetDouble(pt.X, pt.Y, 2);
                         var loc = pt + new Vector(dx, dy);
 
-                        yield return new Doodad { ModelName = "tree", Position = loc };
+                        yield return new Doodad { AnimationName = "tree", Position = loc };
                     }
                 }
             }

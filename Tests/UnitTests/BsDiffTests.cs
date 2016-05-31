@@ -19,8 +19,8 @@ namespace UnitTests
         {
             const long count = 1000;
 
-            var oa = new Monster { Name = "Goshko", Life = 420, Mana = 420, ModelName = "lala", AnimationSuffix = "blala" };
-            var ob = new Monster { Name = "Troshko", Life = 420, Mana = 420, ModelName = "lala", AnimationSuffix = "blala" };
+            var oa = new Monster { Name = "Goshko", Life = 420, Mana = 420, AnimationName = "lala", AnimationSuffix = "blala" };
+            var ob = new Monster { Name = "Troshko", Life = 420, Mana = 420, AnimationName = "lala", AnimationSuffix = "blala" };
 
             var da = Enumerable.Range(0, 100).SelectMany(_ => Shanism.Engine.Serialization.ShanoReader.QuickSerialize(oa)).ToArray();
             var db = Enumerable.Range(0, 100).SelectMany(_ => Shanism.Engine.Serialization.ShanoReader.QuickSerialize(ob)).ToArray();

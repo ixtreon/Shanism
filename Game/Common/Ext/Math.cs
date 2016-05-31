@@ -45,11 +45,11 @@ namespace Shanism.Common
         }
 
 
-        public static bool AlmostEqualTo(this double a, double b, double epsilon = 1E-5)
+        public static bool AlmostEqualTo(this double a, double b, double epsilon = 1E-3)
             => Math.Abs(a - b) <= epsilon;
 
 
-        public static bool AlmostEqualTo(this float a, float b, float epsilon = 1E-5f)
+        public static bool AlmostEqualTo(this float a, float b, float epsilon = 1E-3f)
             => Math.Abs(a - b) <= epsilon;
 
 

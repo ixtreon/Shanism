@@ -102,20 +102,15 @@ namespace Shanism.Engine
 
 
         /// <summary>
-        /// Gets or sets the model, also animation prefix, of this entity. 
+        /// Gets or sets the base animation name of this entity. 
         /// </summary>
-        public string ModelName { get; set; }
+        public string AnimationName { get; set; }
 
         /// <summary>
         /// Gets or sets the animation suffix of this entity. 
+        /// The resulting animation may not actually be present on the client. 
         /// </summary>
-        public string AnimationSuffix { get; set; }
-
-        /// <summary>
-        /// Gets the full animation name of the object.
-        /// </summary>
-        public string AnimationName
-            => ModelName + "/" + AnimationSuffix;
+        public string AnimationSuffix { get; set; } = Shanism.Common.Constants.Content.DefaultValues.Animation;
 
         /// <summary>
         /// The event raised whenever the entity is updated by the engine. 
@@ -136,15 +131,15 @@ namespace Shanism.Engine
         {
             Name = @base.Name;
             Position = @base.Position;
-            ModelName = @base.ModelName;
+            AnimationName = @base.AnimationName;
             AnimationSuffix = @base.AnimationSuffix;
             Scale = @base.Scale;
         }
 
         /// <summary>
-        /// Resets this entity's current animation to the default animation name. 
+        /// Resets this entity's current animation suffix to the default animation name. 
         /// </summary>
-        public void ResetAnimation() =>
+        public void ResetAnimationSuffx() =>
             AnimationSuffix = Shanism.Common.Constants.Content.DefaultValues.Animation;
 
 

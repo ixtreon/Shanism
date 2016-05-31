@@ -118,6 +118,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Message\Client\ChatMessage.cs" />
     <Compile Include="Util\Color.cs" />
     <Compile Include="Game\DamageResult.cs" />
     <Compile Include="Content\AnimationDef.cs" />

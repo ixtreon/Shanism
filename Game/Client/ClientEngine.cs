@@ -27,8 +27,18 @@ namespace Shanism.Client
     {
         public static bool ShowDebugStats = false;
 
+
+        readonly string playerName;
+
+        readonly IGraphicsDeviceService graphics;
+
+        readonly ContentManager ContentManager;
+
+        readonly RenderTarget2D[] textures = new RenderTarget2D[5];
+
         readonly ConcurrentQueue<IOMessage> pendingMessages = new ConcurrentQueue<IOMessage>();
-        
+
+
         /// <summary>
         /// Contains all systems. 
         /// </summary>
@@ -38,34 +48,23 @@ namespace Shanism.Client
         /// <summary>
         /// The average time to render a frame. 
         /// </summary>
-        double timeToRender = 0;
-
-        string playerName;
+        double timeToRender;
 
         IReceptor server;
 
-
-        #region MonoGame/Rendering Fields
-        readonly IGraphicsDeviceService graphics;
-
-        readonly ContentManager ContentManager;
-
         SpriteBatch spriteBatch;
 
-        readonly RenderTarget2D[] textures = new RenderTarget2D[5];
 
+
+        bool IsConnected { get; set; }
+
+        GraphicsDevice graphicsDevice => graphics.GraphicsDevice;
 
         RenderTarget2D terrainTexture => textures[0];
         RenderTarget2D objectsTexture => textures[1];
         RenderTarget2D interfaceTexture => textures[2];
         RenderTarget2D shadowTextureA => textures[3];
         RenderTarget2D shadowTextureB => textures[4];
-        #endregion
-
-
-        bool IsConnected { get; set; }
-
-        GraphicsDevice graphicsDevice => graphics.GraphicsDevice;
 
 
         #region IShanoClient Implementation
@@ -121,9 +120,6 @@ namespace Shanism.Client
             Game.MessageSent += sendMessage;
         }
 
-        void sendMessage(IOMessage msg) => MessageSent?.Invoke(msg);
-
-
         void IClientEngine.Update(GameTime gameTime)
         {
             var msElapsed = (int)gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -143,7 +139,7 @@ namespace Shanism.Client
                 KeyboardInfo.Update(msElapsed);
 
                 //camera
-                Screen.SetCamera(null, cameraCenter: Game.Objects.MainHero?.Position);
+                Screen.SetCamera(null, cameraCenter: Game.MainHero?.Position);
 
                 //ui, objects
                 Game.Update(msElapsed);
@@ -171,7 +167,7 @@ namespace Shanism.Client
                     graphicsDevice.SetRenderTarget(terrainTexture);
                     graphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
-                    Game.Map.DrawTerrain();
+                    Game.DrawTerrain();
                 }
 
                 // 2. draw gameobjects
@@ -180,7 +176,7 @@ namespace Shanism.Client
                     drawCode: () =>
                     {
                         //if (false)
-                            Game.Objects.Root.Draw(spriteBatch);
+                            Game.DrawObjects(spriteBatch);
                     });
 
                 // 3. draw shadow layer
@@ -205,7 +201,7 @@ namespace Shanism.Client
                     blend: BlendState.AlphaBlend,
                     drawCode: () =>
                     {
-                        Game.Interface.Root.Draw(spriteBatch);
+                        Game.DrawUi(spriteBatch);
                         if (ShowDebugStats)
                             drawDebugStats(spriteBatch);
                     });
@@ -239,8 +235,7 @@ namespace Shanism.Client
         void IClientEngine.SetCameraParams(Vector? cameraPos, IEntity lockedEntity, Vector? windowSz)
             => Screen.SetCamera(null, windowSz, cameraPos, lockedEntity);
 
-        void IClientEngine.ToggleUI(bool visible)
-            => Game.Interface.Root.IsVisible = visible;
+        void IClientEngine.ToggleUI(bool visible) => Game.SetUiVisible(visible);
 
         Vector IClientEngine.GameToScreen(Vector gamePos)
             => Screen.GameToScreen(gamePos);
@@ -248,7 +243,21 @@ namespace Shanism.Client
         Vector IClientEngine.ScreenToGame(Vector screenPos)
             => Screen.ScreenToGame(screenPos);
 
-        #endregion
+        void sendMessage(IOMessage msg) => MessageSent?.Invoke(msg);
+
+        void parseMessage(IOMessage msg)
+        {
+            switch (msg.Type)
+            {
+                case MessageType.HandshakeReply:
+                    onHandshakeReply((HandshakeReplyMessage)msg);
+                    break;
+
+                default:
+                    Game.HandleMessage(msg);
+                    break;
+            }
+        }
 
         void recreateDrawingSurfaces()
         {
@@ -259,23 +268,9 @@ namespace Shanism.Client
             }
         }
 
-        void parseMessage(IOMessage msg)
-        {
-            Game.Map.HandleMessage(msg);
-            Game.Objects.HandleMessage(msg);
+        #endregion
 
-            switch (msg.Type)
-            {
-                case MessageType.HandshakeReply:
-                    onHandshakeReply((HandshakeReplyMessage)msg);
-                    break;
 
-                case MessageType.DamageEvent:
-                    var dmgEv = (DamageEventMessage)msg;
-                    Game.FloatingText.AddDamageLabel(dmgEv);
-                    break;
-            }
-        }
 
         #region Event Handlers
 
@@ -347,7 +342,7 @@ namespace Shanism.Client
             {
                 "FPS: {0:00}".F(1000 / timeToRender),
                 "UI X/Y: {0:0.00}".F(mpUi),
-                "Hero X/Y: {0:0.00}".F(Game.Objects.MainHero?.Position),
+                "Hero X/Y: {0:0.00}".F(Game.MainHero?.Position),
                 "Game X/Y: {0:0.00}".F(mpGame),
                 //"{0} objects".F(Game.Objects.Controls.Count()),
                 "Hover: " + Control.HoverControl.GetType().Name,

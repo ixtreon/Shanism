@@ -13,7 +13,12 @@ namespace Shanism.Common.Util
     /// <typeparam name="T"></typeparam>
     public static class GenericId<T>
     {
-        static int guidCount = 0;
+        /// <summary>
+        /// The GUID that will not be assigned to any object. 
+        /// </summary>
+        public const int None = 0;
+
+        static int guidCount = None;
 
         /// <summary>
         /// Generates a new, unique id for the current type <typeparamref name="T"/>. 

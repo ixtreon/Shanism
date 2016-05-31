@@ -34,7 +34,8 @@ namespace Shanism.Common.Message
     [ProtoInclude((int)MessageType.DamageEvent, typeof(DamageEventMessage))]
 
     //common?
-    [ProtoInclude((int)MessageType.SendChat, typeof(ChatMessage))]
+    [ProtoInclude((int)MessageType.ServerChat, typeof(Server.ChatMessage))]
+    [ProtoInclude((int)MessageType.ClientChat, typeof(Client.ChatMessage))]
 
     //network
     [ProtoInclude((int)MessageType.GameFrame, typeof(GameFrameMessage))]

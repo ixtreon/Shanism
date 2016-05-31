@@ -16,7 +16,7 @@ namespace Shanism.Client.Systems
         public event Action<IOMessage> MessageSent;
 
 
-        public virtual void HandleMessage(IOMessage msg) { }
+        public virtual void HandleMessage(IOMessage ioMsg) { }
 
         public virtual void Update(int msElapsed) { }
 

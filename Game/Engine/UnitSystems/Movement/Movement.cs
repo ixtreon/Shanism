@@ -20,7 +20,6 @@ namespace Shanism.Engine.Systems
         bool _isMoving;
         double _moveDirection;
         double _moveDistanceLeft;
-        bool _moveSlowly;
 
 
         public MovementSystem(Unit owner)
@@ -34,15 +33,37 @@ namespace Shanism.Engine.Systems
         internal void Stop()
         {
             _isMoving = false;
+
+            if (_isMoving)
+                Owner.AnimationSuffix = "move";
+            else
+                Owner.ResetAnimationSuffx();
         }
 
         ///
-        internal void SetMovementState(double direction, double maxDistance = double.MaxValue, bool moveSlow = false)
+        internal void SetMovementState(double direction)
         {
-            _isMoving = true;
-            _moveDirection = direction;
-            _moveDistanceLeft = maxDistance;
-            _moveSlowly = moveSlow;
+            if (!(_isMoving 
+                && _moveDirection.AlmostEqualTo(direction)))
+            {
+                _isMoving = true;
+                _moveDirection = direction;
+                _moveDistanceLeft = double.MaxValue;
+                Owner.AnimationSuffix = "move";
+            }
+        }
+
+        internal void SetMovementState(double direction, double maxDistance)
+        {
+            if (!(_isMoving
+                && _moveDirection.AlmostEqualTo(direction)
+                && maxDistance.AlmostEqualTo(_moveDistanceLeft)))
+            {
+                _isMoving = true;
+                _moveDirection = direction;
+                _moveDistanceLeft = maxDistance;
+                Owner.AnimationSuffix = "move";
+            }
         }
 
         internal override void Update(int msElapsed)
@@ -51,11 +72,20 @@ namespace Shanism.Engine.Systems
                 return;
 
             //get the suggested move position
-            var speed = _moveSlowly ? Owner.WalkSpeed : Owner.MoveSpeed;
+            var speed = Owner.MoveSpeed;
             var maxDist = speed * msElapsed / 1000;
             var suggestedDist = Math.Min(_moveDistanceLeft, maxDist);
             
-            Owner.Position = resolveStep(Owner, _moveDirection, suggestedDist);
+            var newPos = resolveStep(Owner, _moveDirection, suggestedDist);
+            var dist = newPos.DistanceToSquared(Owner.Position);
+            var hasMovedMuch = dist > 1E-6;
+            if (hasMovedMuch && Owner is Hero)
+            {
+                Owner.Position = newPos;
+            }
+            else if(Owner.AnimationSuffix == "move" && Owner is Hero)
+                Owner.ResetAnimationSuffx();
+
         }
 
         static Vector resolveStep(Unit owner, double angle, double dist, int nTries = 5)

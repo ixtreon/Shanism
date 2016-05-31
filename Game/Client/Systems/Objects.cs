@@ -35,13 +35,13 @@ namespace Shanism.Client.Systems
         };
 
 
-        public readonly Control Root = new Control();
 
         /// <summary>
         /// A dictionary of all objects indexed by their guid. 
         /// </summary>
         readonly Dictionary<uint, ObjectControl> objects = new Dictionary<uint, ObjectControl>();
 
+        public Control Root { get; } = new Control();
 
         /// <summary>
         /// Gets the UI control of the main hero, if the hero is available. 
@@ -59,7 +59,7 @@ namespace Shanism.Client.Systems
         public IHero MainHero => MainHeroControl?.Hero;
 
         /// <summary>
-        /// The event raised whenever a game object clicked. 
+        /// The event raised whenever a game object is clicked. 
         /// </summary>
         public event Action<MouseButtonArgs> ObjectClicked;
 

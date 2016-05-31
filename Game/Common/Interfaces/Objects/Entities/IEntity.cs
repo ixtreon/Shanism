@@ -23,9 +23,16 @@ namespace Shanism.Common.Objects
         Vector Position { get; }
 
         /// <summary>
-        /// Gets the full animation name of the object.
+        /// Gets the base animation name of the object.
         /// </summary>
         string AnimationName { get; }
+
+
+        /// <summary>
+        /// Gets or sets the animation suffix of this entity. 
+        /// The resulting animation may not actually be present on the client. 
+        /// </summary>
+        string AnimationSuffix { get; }
 
         /// <summary>
         /// Gets the orientation of the object's animation. 
