@@ -16,7 +16,7 @@ namespace Shanism.Common
     /// </summary>
     [ProtoContract]
     [JsonObject(MemberSerialization.OptIn)]
-    public struct Vector : IxSerializable
+    public struct Vector : IxSerializable, IEquatable<Vector>
     {
         /// <summary>
         /// Deserializes the data from the specified reader into this object.
@@ -64,13 +64,34 @@ namespace Shanism.Common
         public static readonly Vector MinValue = new Vector(double.MinValue);
 
         /// <summary>
+        /// Returns a vector with x/y equal to the larger of both inputs' x/y. 
+        /// </summary>
+        public static Vector Max(Vector a, Vector b)
+        {
+            return new Vector(Math.Max(a.X, b.X), Math.Max(a.Y, b.Y));
+        }
+
+        public static Vector Abs(Vector vector)
+        {
+            return new Vector(Math.Abs(vector.X), Math.Abs(vector.Y));
+        }
+
+        /// <summary>
+        /// Returns a vector with x/y equal to the smaller of both inputs' x/y. 
+        /// </summary>
+        public static Vector Min(Vector a, Vector b)
+        {
+            return new Vector(Math.Min(a.X, b.X), Math.Min(a.Y, b.Y));
+        }
+
+        /// <summary>
         /// Calculates the distance from this point to the given rectangle. 
         /// </summary>
         /// <param name="rect"></param>
         /// <returns></returns>
         public double DistanceTo(RectangleF rect)
         {
-            var insRect = Clamp(rect.BottomLeft, rect.TopRight);
+            var insRect = Clamp(rect.TopLeft, rect.BottomRight);
             return DistanceTo(insRect);
         }
 
@@ -120,6 +141,14 @@ namespace Shanism.Common
             X = Y = v;
         }
 
+        public Vector RotateAround(Vector center, double rad)
+        {
+            var dist = center.DistanceTo(this);
+            var ang = center.AngleTo(this) + rad;
+
+            return center.PolarProjection(ang, dist);
+        }
+
         /// <summary>
         /// Creates a new vector with the given X and Y coordinates. 
         /// </summary>
@@ -130,7 +159,7 @@ namespace Shanism.Common
         }
 
 
-        #region Operator Overloads
+        #region Binary Operators
         /// <summary>
         /// Performs an element-wise addition on the two vectors. 
         /// </summary>
@@ -169,6 +198,37 @@ namespace Shanism.Common
         public static bool operator ==(Vector a, Vector b)
         {
             return a.X.Equals(b.X) && a.Y.Equals(b.Y);
+        }
+
+        /// <summary>
+        /// Returns whether both elements of the first vector are smaller than their counterparts in the second vector. 
+        /// </summary>
+        public static bool operator <(Vector a, Vector b)
+        {
+            return a.X < b.X && a.Y < b.Y;
+        }
+
+        /// <summary>
+        /// Returns whether both elements of the vector are smaller than the given scalar. 
+        /// </summary>
+        public static bool operator <(Vector a, double v)
+        {
+            return a.X < v && a.Y < v;
+        }
+        /// <summary>
+        /// Returns whether both elements of the vector are greater than the given scalar. 
+        /// </summary>
+        public static bool operator >(Vector a, double v)
+        {
+            return a.X > v && a.Y > v;
+        }
+
+        /// <summary>
+        /// Returns whether both elements of the first vector are greater than their counterparts in the second vector. 
+        /// </summary>
+        public static bool operator >(Vector a, Vector b)
+        {
+            return a.X > b.X && a.Y > b.Y;
         }
 
         /// <summary>
@@ -368,6 +428,19 @@ namespace Shanism.Common
         public override bool Equals(object obj)
         {
             return (obj is Vector) && (Vector)obj == this;
+        }
+
+        /// <summary>
+        /// Indicates whether the current vector's components are equal 
+        /// to another vector's components.
+        /// </summary>
+        /// <param name="other">An object to compare with this object.</param>
+        /// <returns>
+        /// true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.
+        /// </returns>
+        public bool Equals(Vector other)
+        {
+            return other == this;
         }
 
         /// <summary>

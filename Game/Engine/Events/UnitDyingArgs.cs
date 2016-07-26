@@ -9,7 +9,7 @@ namespace Shanism.Engine.Events
     /// The arguments passed whenever a unit dies. 
     /// </summary>
     /// <seealso cref="System.EventArgs" />
-    public class UnitDyingArgs : EventArgs
+    public class UnitDyingArgs : UnitArgs
     {
         /// <summary>
         /// The unit that is dying. 
@@ -40,6 +40,7 @@ namespace Shanism.Engine.Events
         /// <param name="dyingUnit">The dying unit.</param>
         /// <param name="killerUnit">The killer unit.</param>
         public UnitDyingArgs(Unit dyingUnit, Unit killerUnit)
+            : base(dyingUnit)
         {
             DyingUnit = dyingUnit;
             KillingUnit = killerUnit;

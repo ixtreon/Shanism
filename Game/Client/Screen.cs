@@ -1,11 +1,12 @@
 ﻿using Shanism.Common;
 using Shanism.Common.Game;
-using Shanism.Common.Objects;
+using Shanism.Common.StubObjects;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Client
 {
@@ -88,12 +89,10 @@ namespace Shanism.Client
             else if (cameraCenter != null)
                 _inGameCenter = cameraCenter.Value;
 
-            if (inGameSz.HasValue)
-            {
+            if (inGameSz != null)
                 GameSize = inGameSz.Value;
                 
-                GameBounds = new RectangleF(InGameCenter - GameSize / 2, GameSize);
-            }
+            GameBounds = new RectangleF(InGameCenter - GameSize / 2, GameSize);
         }
 
         /// <summary>

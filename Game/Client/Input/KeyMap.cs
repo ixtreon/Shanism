@@ -60,7 +60,8 @@ namespace Shanism.Client.Input
 
         static void addCustomMap(Keys from, Keys to, string sNormal, string sCaps)
         {
-            Debug.Assert(sNormal.Length == sCaps.Length);
+            Debug.Assert(sCaps.Length == sNormal.Length);
+            Debug.Assert(to - from + 1 == sNormal.Length);
 
             for (var i = from; i <= to; i++)
             {

@@ -7,6 +7,7 @@ using Shanism.Engine.Objects;
 using Shanism.Engine.Entities;
 using Shanism.Common.Game;
 using Shanism.ScenarioLib;
+using Shanism.Engine.Events;
 
 namespace Shanism.Engine.Systems
 {
@@ -15,11 +16,21 @@ namespace Shanism.Engine.Systems
     /// </summary>
     public abstract class CustomScript : GameObject
     {
-        public override ObjectType ObjectType {  get { return ObjectType.Script; } }
+        /// <summary>
+        /// Gets the <see cref="Shanism.Common.Game.ObjectType"/> of this game object. 
+        /// Always returns <see cref="ObjectType.Script"/>. 
+        /// </summary>
+        public override ObjectType ObjectType { get; } = ObjectType.Script;
+
+
+
         /// <summary>
         /// The method executed when the game has started. 
         /// </summary>
         public virtual void OnGameStart() { }
+
+
+        #region Player
 
         /// <summary>
         /// The method executed when a player has joined the game. 
@@ -28,27 +39,38 @@ namespace Shanism.Engine.Systems
         public virtual void OnPlayerJoined(Player pl) { }
 
         /// <summary>
-        /// The method executed when a hero is created. 
+        /// The method executed whenever a player's main hero is changed. 
+        /// The new hero is available via the <see cref="Player.MainHero"/> property. 
         /// </summary>
-        /// <param name="hero"></param>
-        public virtual void OnHeroSpawned(Hero hero) { }
+        /// <param name="pl">The player who had his main hero changed.</param>
+        public virtual void OnPlayerMainHeroChanged(Player pl) { }
 
         /// <summary>
         /// NYI
         /// </summary>
-        /// <param name="unit"></param>
-        public virtual void OnUnitAdded(Unit unit) { }
+        /// <param name="e">The e.</param>
+        public virtual void OnPlayerChatMessage(PlayerChatArgs e) { }
+
+        #endregion
+
+        #region Map
 
         /// <summary>
-        /// NYI
+        /// The method executed whenever an entity is added to the game map. 
         /// </summary>
-        /// <param name="d"></param>
-        public virtual void OnDoodadAdded(Doodad d) { }
+        /// <param name="e">The entity that was added to the map.</param>
+        public virtual void OnEntityAdded(Entity e) { }
+
+        #endregion
+
+
+        #region Units
 
         /// <summary>
-        /// NYI
+        /// The method executed when a unit has died. 
         /// </summary>
-        /// <param name="unit"></param>
-        public virtual void OnUnitDeath(Unit unit) { }
+        public virtual void OnUnitDeath(UnitDyingArgs e) { }
+
+        #endregion
     }
 }

@@ -1,14 +1,15 @@
-﻿using Shanism.Common.Objects;
+﻿using Shanism.Common.StubObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shanism.Common.Game;
+using Shanism.Common.Interfaces.Objects;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-namespace Shanism.Common.Objects
+namespace Shanism.Common.StubObjects
 {
     /// <summary>
     /// Represents an empty buff as reconstructed by a network client. 
@@ -25,49 +26,49 @@ namespace Shanism.Common.Objects
         }
 
 
-        public double Agility { get; private set; }
+        public double Agility { get; set; }
 
-        public int AttackSpeedPercentage { get; private set; }
+        public int AttackSpeedPercentage { get; set; }
 
-        public double Defense { get; private set; }
+        public double Defense { get; set; }
 
-        public string Description { get; private set; }
+        public string Description { get; set; }
 
-        public double Dodge { get; private set; }
-        public int DurationLeft { get; private set; }
+        public double Dodge { get; set; }
+        public int DurationLeft { get; set; }
 
-        public int FullDuration { get; private set; }
+        public int FullDuration { get; set; }
 
-        public string Icon { get; private set; }
+        public string Icon { get; set; }
 
-        public double Intellect { get; private set; }
+        public double Intellect { get; set; }
 
-        public double Life { get; private set; }
+        public double MaxLife { get; set; }
 
-        public double Mana { get; private set; }
+        public double MaxMana { get; set; }
 
-        public double LifeRegen { get; private set; }
+        public double LifeRegen { get; set; }
 
-        public double ManaRegen { get; private set; }
+        public double ManaRegen { get; set; }
 
-        public double MaxDamage { get; private set; }
+        public double MaxDamage { get; set; }
 
-        public double MinDamage { get; private set; }
+        public double MinDamage { get; set; }
 
-        public double MoveSpeed { get; private set; }
+        public double MoveSpeed { get; set; }
 
-        public int MoveSpeedPercentage { get; private set; }
+        public int MoveSpeedPercentage { get; set; }
 
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
-        public double Strength { get; private set; }
+        public double Strength { get; set; }
 
-        public BuffStackType StackType { get; private set; }
+        public BuffStackType StackType { get; set; }
 
-        public bool HasIcon { get; private set; }
+        public bool HasIcon { get; set; }
 
-        public double Vitality { get; private set; }
+        public double Vitality { get; set; }
 
-        public UnitFlags UnitStates { get; private set; }
+        public StateFlags UnitStates { get; set; }
     }
 }

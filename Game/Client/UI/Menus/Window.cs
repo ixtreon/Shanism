@@ -48,7 +48,7 @@ namespace Shanism.Client.UI.Common
             set { titleBar.Text = value; }
         }
 
-        ///// <summary>
+        /// <summary>
         /// Gets or sets whether this window has a title bar. 
         /// </summary>
         public bool HasTitleBar
@@ -57,14 +57,12 @@ namespace Shanism.Client.UI.Common
             set { titleBar.IsVisible = value; }
         }
 
-        /// <summary>
-        /// The event raised whenever the close button is clicked, 
-        /// right before the window is hidden. 
-        /// </summary>
-        public event Action CloseButtonClicked;
-
         readonly Label titleBar;
         readonly Button CloseButton;
+
+        public Vector MinimumSize { get; set; } = new Vector(0.3, TitleHeight + 2 * Padding);
+
+        public Vector MaximumSize { get; set; } = Vector.MaxValue;
 
         /// <summary>
         /// Creates a new window, optionally specifying the side it is anchored to. 
@@ -73,7 +71,7 @@ namespace Shanism.Client.UI.Common
         protected Window(AnchorMode anchor = AnchorMode.None)
         {
             IsVisible = false;
-            //CanFocus = true;
+            CanFocus = true;
             Size = DefaultSize;
             BackColor = Color.SaddleBrown;
             VisibleChanged += onVisibleChanged;
@@ -82,14 +80,14 @@ namespace Shanism.Client.UI.Common
             switch (anchor)
             {
                 case AnchorMode.Left:
-                    ParentAnchor = AnchorMode.Left;
-                    Location = new Vector(0, 0.25);
+                    ParentAnchor = AnchorMode.Left | AnchorMode.Bottom;
+                    Location = new Vector(0, 1 - Size.Y);
                     Locked = true;
                     break;
 
                 case AnchorMode.Right:
-                    ParentAnchor = AnchorMode.Right;
-                    Location = new Vector(2 - Size.X, 0.25);
+                    ParentAnchor = AnchorMode.Right | AnchorMode.Bottom;
+                    Location = new Vector(2 - Size.X, 1 - Size.Y);
                     Locked = true;
                     break;
 
@@ -125,7 +123,7 @@ namespace Shanism.Client.UI.Common
                 Size = new Vector(0.1, 0.07),
                 Location = new Vector(DefaultSize.X - 0.1, 0),
 
-                Texture = Content.Textures.TryGetUI("close"),
+                Texture = Content.Textures.UiCloseButton,
                 TextureColor = Color.Black,
 
                 BackColor = Color.Red.SetAlpha(150),
@@ -142,10 +140,10 @@ namespace Shanism.Client.UI.Common
 
         void onMouseDown(MouseButtonArgs ev)
         {
-            var dFromCorner = (Size.X - ev.RelativePosition.X) + (Size.Y - ev.RelativePosition.Y);
-            if (dFromCorner < 3 * Padding)
+            var dFromCorner = Size - ev.Position;
+            if (dFromCorner.X + dFromCorner.Y < 3 * Padding)
             {
-                sizeLoc = ev.RelativePosition;
+                sizeLoc = dFromCorner;
             }
         }
 
@@ -153,8 +151,8 @@ namespace Shanism.Client.UI.Common
         {
             if (sizeLoc != null)
             {
-                Size += ev.RelativePosition - sizeLoc.Value;
-                sizeLoc = ev.RelativePosition;
+                Size = (ev.Position + sizeLoc.Value)
+                    .Clamp(MinimumSize, MaximumSize);
             }
         }
 
@@ -170,14 +168,14 @@ namespace Shanism.Client.UI.Common
         void onTitleBarMouseMove(MouseArgs ev)
         {
             if (dragLoc != null)
-                Location += ev.RelativePosition - dragLoc.Value;
+                Location += ev.Position - dragLoc.Value;
         }
 
         void onTitleBarMouseDown(MouseButtonArgs ev)
         {
             if (!Locked)
             {
-                dragLoc = ev.RelativePosition;
+                dragLoc = ev.Position;
             }
         }
         void onTitleBarMouseUp(MouseButtonArgs ev)
@@ -202,8 +200,10 @@ namespace Shanism.Client.UI.Common
 
         void CloseButton_MouseUp(MouseButtonArgs e)
         {
-            CloseButtonClicked?.Invoke();
+            OnCloseButtonClicked();
             IsVisible = false;
         }
+
+        protected virtual void OnCloseButtonClicked() { }
     }
 }

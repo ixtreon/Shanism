@@ -13,11 +13,14 @@ namespace Shanism.Common.Message
     public enum MessageType
     {
         /// <summary>
-        /// A message sent by both the client and the server to relay chat messages. 
+        /// A message sent by the server to relay chat messages. 
         /// </summary>
         ServerChat = 2,
 
-        ClientChat = 2,
+        /// <summary>
+        /// A message sent by the client to relay chat messages. 
+        /// </summary>
+        ClientChat,
 
         ///-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -49,7 +52,7 @@ namespace Shanism.Common.Message
         HandshakeReply,
 
         /// <summary>
-        /// A message sent by the server to inform the hero of his status (i.e. if a player has a hero). 
+        /// A message sent by the server to inform the player of his status (i.e. if a player has a hero). 
         /// </summary>
         PlayerStatusUpdate,
 
@@ -96,5 +99,6 @@ namespace Shanism.Common.Message
         /// Sent by the engine to inform about scenario objects. 
         /// </summary>
         GameFrame,
+        ClientFrame,
     }
 }

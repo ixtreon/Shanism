@@ -24,7 +24,7 @@ namespace Shanism.Common.Content
         /// The number of logical divisions in the file, if there is more than one such segment.  
         /// </summary>
         [JsonProperty]
-        public Point Splits;
+        public Point Cells;
 
         /// <summary>
         /// The name, also the path, to the file behind this texture. 
@@ -35,18 +35,19 @@ namespace Shanism.Common.Content
         /// <summary>
         /// Gets the total number of segments in this texture. 
         /// </summary>
-        public int SegmentsCount {  get { return Splits.X * Splits.Y; } }
+        public int SegmentsCount {  get { return Cells.X * Cells.Y; } }
 
         TextureDef() { }
 
         /// <summary>
         /// Creates a new TextureDef for the given file containing multiple image segments. 
         /// </summary>
-        /// <param name="name">The name (or path) of the file. </param>
+        /// <param name="name">The name of (also relative path to) the file. </param>
+        /// <param name="logicalSize">The number of logical divisions of this texture, in case it is an atlas. </param>
         public TextureDef(string name, Point logicalSize)
         {
             Name = name;
-            Splits = logicalSize;
+            Cells = logicalSize;
         }
 
 

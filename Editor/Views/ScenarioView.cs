@@ -15,13 +15,15 @@ namespace Shanism.Editor.Views
     {
         public override ScenarioViewType ViewType { get; } = ScenarioViewType.Details;
 
-        protected override async Task LoadModel()
+        protected override Task LoadModel()
         {
             txtName.Enabled =
             txtDescription.Enabled = (Model != null);
 
             txtName.Text = Model.Scenario.Config.Name ?? "";
             txtDescription.Text = Model.Scenario.Config.Description ?? "";
+
+            return Task.CompletedTask;
         }
 
         protected override void SaveModel()

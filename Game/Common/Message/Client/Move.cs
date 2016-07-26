@@ -11,19 +11,25 @@ namespace Shanism.Common.Message.Client
     [ProtoContract]
     public class MoveMessage : IOMessage
     {
-        
+        public override MessageType Type => MessageType.MoveUpdate;
+
 
         [ProtoMember(1)]
-        public readonly MovementState Direction;
+        public readonly bool IsMoving;
 
-        public override MessageType Type { get { return MessageType.MoveUpdate; } }
+        [ProtoMember(2)]
+        public readonly byte ByteAngle;
+
+
+        public double AngleRad => ByteAngle * Math.PI * 2 / 256;
 
         MoveMessage() { }
 
         public MoveMessage(MovementState st)
             : this()
         {
-            Direction = st;
+            IsMoving = st.IsMoving;
+            unchecked { ByteAngle = (byte)(st.AngleRad / Math.PI / 2 * 256); }
         }
     }
 }

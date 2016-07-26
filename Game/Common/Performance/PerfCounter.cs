@@ -12,14 +12,15 @@ namespace Shanism.Common.Performance
     /// <summary>
     /// Provides a breakdown of the performance of an application.. 
     /// </summary>
-    public class PerfCounter : IPerformanceStats
+    public class PerfCounter
     {
-        public static readonly PerfCounter Default = new PerfCounter();
+        public const int DefaultBarLength = 20;
 
-        readonly ConcurrentDictionary<string, SectionCounter> stats = new ConcurrentDictionary<string, SectionCounter>();
+        static readonly Stopwatch Stopwatch = Stopwatch.StartNew();
+
+        readonly Dictionary<string, long> stats = new Dictionary<string, long>();
 
 
-        public IReadOnlyDictionary<string, long> Measurements => stats.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.TotalElapsed);
 
         /// <summary>
         /// Resets the timings for all performance categories in the application. 
@@ -29,48 +30,75 @@ namespace Shanism.Common.Performance
             stats.Clear();
         }
 
+
+        public IReadOnlyDictionary<string, long> Stats => stats;
+
         /// <summary>
         /// Logs the time taken to run the given benchmarked category. 
         /// </summary>
         public void Log(string category, long timeTaken)
         {
-            stats.AddOrUpdate(category,
-                (_) => new SectionCounter(timeTaken),
-                (_, pc) => pc.Add(timeTaken));
+            long t;
+            if (stats.TryGetValue(category, out t))
+                stats[category] = t + timeTaken;
+            else
+                stats[category] = timeTaken;
         }
 
-        public void WrapLogger(string category, Action func)
+        public long Data(string category)
         {
-            var sw = Stopwatch.StartNew();
-            func();
-            sw.Stop();
+            long ticks;
+            if (stats.TryGetValue(category, out ticks))
+                return ticks;
 
-            Log(category, sw.ElapsedTicks);
+            return 0;
         }
 
-        public IEnumerable<KeyValuePair<string, long>> Stats
+        public void RunAndLog(string categoryName, Action act)
         {
-            get { return stats.Select(kvp => new KeyValuePair<string, long>(kvp.Key, kvp.Value.TotalElapsed)); }
+            var st = Stopwatch.ElapsedTicks;
+            act();
+            var end = Stopwatch.ElapsedTicks;
+
+            Log(categoryName, end - st);
         }
 
-        struct SectionCounter
+        public void RunAndLog<T>(string categoryName, Action<T> act, T arg0)
         {
-            long _totalElapsed;
+            var st = Stopwatch.ElapsedTicks;
+            act(arg0);
+            var end = Stopwatch.ElapsedTicks;
 
-            public long TotalElapsed { get { return _totalElapsed; } }
+            Log(categoryName, end - st);
+        }
 
-            public SectionCounter(long msElapsed) { _totalElapsed = msElapsed; }
+        public string GetPerformanceData(int barLength = DefaultBarLength)
+        {
+            return GetPerformanceData(stats.Sum(s => s.Value), barLength);
+        }
 
-            public void Reset()
-            {
-                _totalElapsed = 0;
-            }
+        public string GetPerformanceData(long totalTimeTaken, int barLength = DefaultBarLength)
+        {
+            var lines = Stats
+                .OrderByDescending(kvp => kvp.Key)
+                .Select(kvp => $"{kvp.Key}  {kvp.Value:0000000}    {writeBar(kvp.Value, totalTimeTaken, barLength)}");
 
-            public SectionCounter Add(long msElapsed)
-            {
-                Interlocked.Add(ref _totalElapsed, msElapsed);
-                return this;
-            }
+            var logData = string.Join("\n", lines);
+
+            return $"Total: {totalTimeTaken}\n{logData}";
+        }
+
+        static string writeBar(double curT, double totalT, int totalLength)
+        {
+            if (totalT <= 0)
+                return new string('-', totalLength);
+            var sb = new StringBuilder();
+            var pluses = (int)(curT / totalT * totalLength);
+
+            sb.Append('+', pluses);
+            sb.Append('-', totalLength - pluses);
+
+            return sb.ToString();
         }
     }
 }

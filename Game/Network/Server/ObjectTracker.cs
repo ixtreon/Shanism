@@ -1,5 +1,5 @@
 ﻿using Shanism.Common.Game;
-using Shanism.Common.Objects;
+using Shanism.Common.StubObjects;
 using Shanism.Common.Serialization;
 using System;
 using System.Collections.Concurrent;
@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Network.Server
 {

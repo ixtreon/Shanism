@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Linq;
@@ -9,8 +8,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Shanism.ScenarioLib;
 using Shanism.Editor.MapAdapter;
-using Shanism.Common.Objects;
 using Shanism.Engine;
+using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Editor.Views
 {
@@ -27,20 +26,23 @@ namespace Shanism.Editor.Views
 
         public MapConfig Map => Model.Scenario.Config.Map;
 
-        protected override async Task LoadModel()
+        protected override Task LoadModel()
         {
-            if (Map == null) return;
+            if (Map != null)
+            {
+                chkInfinite.Checked = Map.IsInfinite;
+                chkInfinite_CheckedChanged(null, null);
 
-            chkInfinite.Checked = Map.IsInfinite;
-            chkInfinite_CheckedChanged(null, null);
+                propPanel.LoadModel(Model.Content.Animations);
 
-            propPanel.LoadModel(Model.Content.Animations);
+                nWidth.Value = Map.Width;
+                nHeight.Value = Map.Height;
 
-            nWidth.Value = Map.Width;
-            nHeight.Value = Map.Height;
+                if (clientLoaded)
+                    Engine.LoadScenario(Model);
+            }
 
-            if(clientLoaded)
-                Engine.LoadScenario(Model);
+            return Task.CompletedTask;
         }
 
 

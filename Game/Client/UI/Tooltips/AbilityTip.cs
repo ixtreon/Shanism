@@ -2,24 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework.Graphics;
-using Shanism.Client.Textures;
 using Shanism.Common.Game;
 using Color = Microsoft.Xna.Framework.Color;
-using Shanism.Common.Objects;
 using Shanism.Client.UI.Common;
 using Shanism.Common;
-using Shanism.Client.Assets;
+using Shanism.Client.Drawing;
+using Shanism.Common.Interfaces.Objects;
+using Shanism.Client.Input;
 
 namespace Shanism.Client.UI.Tooltips
 {
     class AbilityTip : Control
     {
         //The size minus the height needed to write the description. 
-        static readonly Vector BaseSize = new Vector(0.6, 0.15);
+        const double tipMargin = 2 * Padding;
 
-        IAbility Ability;
+        const double MaxDescWidth = 0.9;
+
+        IAbility ability;
 
         public TextureFont Font { get; set; }
 
@@ -30,7 +30,7 @@ namespace Shanism.Client.UI.Tooltips
         {
             Font = Content.Fonts.NormalFont;
             BackColor = Color.Black.SetAlpha(25);
-            Size = BaseSize;
+            Size = new Vector(0.6, 0.15);
             CanHover = false;
 
             txtName = new Label
@@ -38,7 +38,7 @@ namespace Shanism.Client.UI.Tooltips
 
                 Location = new Vector(Padding),
                 Text = "lalalala",
-                
+
                 CanHover = false,
                 Font = Content.Fonts.FancyFont,
                 TextColor = Color.Goldenrod,
@@ -58,35 +58,55 @@ namespace Shanism.Client.UI.Tooltips
             Add(txtName);
             Add(txtStuff);
         }
-        
+
+        double DescriptionWidth => Size.X - 2 * tipMargin;
+
         protected override void OnUpdate(int msElapsed)
         {
-            var ability = HoverControl?.ToolTip as IAbility;
 
-            //continue if visible
-            IsVisible = (ability != null);
-            if (!IsVisible)
+            var newAbility = HoverControl?.ToolTip as IAbility;
+
+            if (newAbility == null)
+            {
+                IsVisible = false;
                 return;
+            }
+
+            if (newAbility != ability)
+            {
+
+                txtName.Text = newAbility.Name;
+
+                if (newAbility.TargetType == AbilityTargetType.Passive)
+                {
+                    txtStuff.Text = string.Empty;
+                }
+                else
+                {
+                    var mc = newAbility.ManaCost;
+                    var cd = newAbility.Cooldown / 1000.0;
+                    var ct = newAbility.CastTime / 1000.0;
+                    var cr = newAbility.CastRange;
+                    if (newAbility.TargetType == AbilityTargetType.NoTarget)
+                        txtStuff.Text = $"MC: {mc} CD: {cd:0.0}s CT: {ct:0.0}s";
+                    else
+                        txtStuff.Text = $"MC: {mc} R: {cr} CD: {cd:0.0}s CT: {ct:0.0}s";
+                }
 
 
-            Ability = ability;
 
-            txtName.Text = ability.Name;
-            txtStuff.Text = $"MC: {ability.ManaCost} " 
-                + $"R: {ability.CastRange} "
-                + $"CD: {(ability.Cooldown / 1000.0).ToString("0.0")}s "
-                + $"CT: {(ability.CastTime / 1000.0).ToString("0.0")}s"; 
+                var headerWidth = Math.Max(txtName.Size.X, txtStuff.Size.X) + tipMargin;
+                var descSz = Font.MeasureStringUi(newAbility.Description, MaxDescWidth);
+                var w = Math.Max(headerWidth, descSz.X) + 2 * tipMargin;
+                var h = txtStuff.Bottom + descSz.Y + 2 * tipMargin;
+                Size = new Vector(w, h);
 
-            var headerSz = Math.Max(txtName.Font.MeasureStringUi(txtName.Text).X, txtStuff.Font.MeasureStringUi(txtStuff.Text).X) + 2 * Padding;
-            var descriptionMaxWidth = Size.X - Padding * 2;
-            var descSz = Font.MeasureStringUi(ability.Description, descriptionMaxWidth);
-            var screenPos = (mouseState.Position.ToPoint() + new Point(14, 26))
-                .Clamp(Point.Zero, Screen.Size - ScreenSize);
+                ability = newAbility;
+            }
 
-            Size = new Vector(Math.Max(headerSz, descSz.X) + 2 * Padding, BaseSize.Y + 4 * Padding + descSz.Y);
-            AbsolutePosition = Screen.ScreenToUi(screenPos);
-
-            BringToFront();
+            Location = ((MouseInfo.ScreenPosition + MouseInfo.CursorSize) / Screen.UiScale)
+                .Clamp(Vector.Zero, Screen.UiSize - Size);
+            IsVisible = true;
         }
 
         public override void OnDraw(Graphics g)
@@ -97,7 +117,7 @@ namespace Shanism.Client.UI.Tooltips
                 g.Draw(Content.Textures.Blank, Vector.Zero, Size, Color.Black.SetAlpha(150));
 
                 //text
-                g.DrawString(Font, Ability?.Description, Color.White, new Vector(Padding, txtStuff.Bottom + Padding) , 0, 0, txtMaxWidth: Size.X - 2 * Padding);
+                g.DrawString(Font, ability.Description, Color.White, new Vector(0, txtStuff.Bottom) + tipMargin, 0, 0, txtMaxWidth: DescriptionWidth);
             }
         }
     }

@@ -13,96 +13,70 @@ using Color = Microsoft.Xna.Framework.Color;
 
 namespace Shanism.Client.UI
 {
+    enum MenuButtonType
+    {
+        Keybinds, Options, Exit
+    }
+
     class MainMenu : Window
     {
-        const int NButtons = 3;
+        class MenuButton : Button
+        {
+            public MenuButtonType Type { get; set; }
+        }
 
-        Button btnKeys;
-        Button btnOptions;
-        Button btnExit;
+        static readonly int NButtons = Enum<MenuButtonType>.Count;
+        static readonly Vector ButtonSize = new Vector(0.45, 0.14);
+        static readonly double MenuPadding = Padding * 3;
 
-        public event Action KeybindsClicked;
-        public event Action ExitClicked;
-        public event Action OptionsClicked;
+
+        public event Action<MenuButtonType> ButtonClicked;
 
 
         public MainMenu()
         {
-            const double edgeAnchor = Padding * 3;
-            var btnSize = new Vector(0.45, 0.14);
-
             HasTitleBar = true;
+            CanFocus = false;
             TitleText = "Menu";
-
-
-            Location = new Vector(0.75, 0.6);
-            Size = new Vector(btnSize.X, TitleHeight + (Padding + btnSize.Y) * NButtons) + 2 * edgeAnchor;
-            ParentAnchor = AnchorMode.None;
-
             ToggleAction = ClientAction.ToggleMenus;
 
-            btnKeys = new Button("Keybinds")
+            Location = new Vector(0.75, 0.6);
+            Size = new Vector(ButtonSize.X, TitleHeight + (Padding + ButtonSize.Y) * NButtons) + 2 * MenuPadding;
+            ParentAnchor = AnchorMode.None;
+
+            foreach (var ty in Enum<MenuButtonType>.Values)
+                addButton(ty);
+        }
+
+        MenuButton lastButton;
+
+        MenuButton addButton(MenuButtonType btnType)
+        {
+            var btnY = (lastButton?.Bottom ?? TitleHeight + MenuPadding) + Padding;
+            var btnPos = new Vector(MenuPadding, btnY);
+
+            lastButton = new MenuButton()
             {
+                Type = btnType,
+                Text = btnType.ToString(),
+
                 ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
-                Location = new Vector(edgeAnchor, TitleHeight + Padding + edgeAnchor),
-                Size = btnSize,
+                Location = btnPos,
+                Size = ButtonSize,
             };
+            lastButton.MouseUp += onButtonClick;
+            Add(lastButton);
 
-            btnOptions = new Button("Options")
-            {
-                ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
-                Location = new Vector(edgeAnchor, Padding + btnKeys.Bottom),
-                Size = btnSize,
-            };
-
-            btnExit = new Button("Exit")
-            {
-                ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
-                Location = new Vector(edgeAnchor, Padding + btnOptions.Bottom),
-                Size = btnSize,
-            };
-
-
-            Add(btnKeys);
-            Add(btnOptions);
-            Add(btnExit);
-
-            btnKeys.MouseUp += btnKeys_MouseUp;
-            btnOptions.MouseUp += btnOptions_MouseUp;
-            btnExit.MouseUp += btnExit_MouseUp;
+            return lastButton;
         }
 
-        void btnOptions_MouseUp(MouseButtonArgs obj)
+        void onButtonClick(MouseButtonArgs ev)
         {
-            OptionsClicked?.Invoke();
-        }
+            var btn = (MenuButton)ev.Control;
+            var btnType = btn.Type;
 
-        void btnKeys_MouseUp(MouseButtonArgs e)
-        {
-            Hide();
-
-            KeybindsClicked?.Invoke();
-
-
-            if (Parent.Controls.OfType<KeybindsMenu>().Any()) return;
-
-            var kbMenu = new KeybindsMenu { IsVisible = true };
-            Parent.Add(kbMenu);
-        }
-
-        void btnExit_MouseUp(MouseButtonArgs e)
-        {
-            ExitClicked?.Invoke();
-        }
-
-        protected override void OnUpdate(int msElapsed)
-        {
-            base.OnUpdate(msElapsed);
-        }
-
-        public override void OnDraw(Graphics g)
-        {
-            base.OnDraw(g);
+            IsVisible = false;
+            ButtonClicked?.Invoke(btnType);
         }
     }
 }

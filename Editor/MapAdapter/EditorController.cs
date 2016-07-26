@@ -12,12 +12,13 @@ using Shanism.Engine.Objects;
 using Shanism.Common.Game;
 using Shanism.ScenarioLib;
 using System.Windows.Forms;
-using Shanism.Common.Objects;
+using Shanism.Common.StubObjects;
 using Shanism.Engine;
 using Shanism.Engine.Entities;
 
 using Color = Microsoft.Xna.Framework.Color;
 using Shanism.Engine.Common;
+using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Editor.MapAdapter
 {
@@ -106,7 +107,7 @@ namespace Shanism.Editor.MapAdapter
             Control.Client.SetServer(this);
 
             //send the scenario datas
-            var scData = config.GetBytes();
+            var scData = config.SaveToBytes();
             var contentData = config.ZipContent();
             IOMessage msg = new HandshakeReplyMessage(true, scData, contentData);
             MessageSent(msg);
@@ -125,15 +126,22 @@ namespace Shanism.Editor.MapAdapter
             msg = new PlayerStatusMessage(God.Id);
             MessageSent(msg);
 
-            //send map
+            //resend map
             resendMap();
 
-            //send units
-            foreach (var oc in ScenarioView.Scenario.Config.Map.Objects)   //LMAOOOO
+            //resend units
+            foreach (var u in _startupObjects.ToList())
+                RemoveObject(u);
+
+            var ocs = ScenarioView.Scenario.Config.Map.Objects.ToList();
+
+            foreach (var oc in ocs)   //LMAOOOO
             {
                 var o = CreateObject(oc);
-                if(o != null)
+                if (o != null)
                     AddObject(o);
+                else
+                    ScenarioView.Scenario.Config.Map.Objects.Remove(oc);
             }
         }
 
@@ -159,7 +167,7 @@ namespace Shanism.Editor.MapAdapter
         {
             if (_startupObjects.Add(o))
             {
-                MessageSent(new ObjectSeenMessage(o));
+                onMessageSent(new ObjectSeenMessage(o));
                 return true;
             }
             return false;
@@ -169,7 +177,7 @@ namespace Shanism.Editor.MapAdapter
         {
             if (_startupObjects.Remove(o))
             {
-                MessageSent(new ObjectUnseenMessage(o.Id, true));
+                onMessageSent(new ObjectUnseenMessage(o.Id, true));
                 return true;
             }
 
@@ -349,7 +357,7 @@ namespace Shanism.Editor.MapAdapter
             MessageSent(msg);
         }
 
-        TerrainType[] getMapData(MapConfig map)
+        static TerrainType[] getMapData(MapConfig map)
         {
             var tty = new TerrainType[map.Width * map.Height];
 

@@ -15,7 +15,7 @@ namespace Shanism.Common.Game
         /// <summary>
         /// Gets the size of a chunk. 
         /// </summary>
-        public static readonly Point ChunkSize = new Point(Constants.Terrain.ChunkSize);
+        public static readonly Point ChunkSize = new Point(Constants.Client.ChunkSize);
 
 
         /// <summary>

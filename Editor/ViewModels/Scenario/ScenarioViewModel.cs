@@ -34,12 +34,14 @@ namespace Shanism.Editor.ViewModels
         /// Saves the view model to the scenario
         /// and the scenario to the disk. 
         /// </summary>
-        public async Task Save()
+        public Task Save()
         {
             Content.Save();
-            Scenario.Config.Save();
+            Scenario.Config.SaveToDisk();
 
             IsDirty = false;
+
+            return Task.CompletedTask;
         }
     }
 }

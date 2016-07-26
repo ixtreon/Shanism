@@ -8,39 +8,60 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shanism.Common.Serialization;
+using Shanism.Engine;
 
 namespace UnitTests
 {
     [TestClass]
     public class BsDiffTests
     {
+
         [TestMethod]
         public void PerfTest()
         {
-            const long count = 1000;
+            const long nTestReps = 1000;
+            const int nUnitReps = 1;
 
-            var oa = new Monster { Name = "Goshko", Life = 420, Mana = 420, AnimationName = "lala", AnimationSuffix = "blala" };
-            var ob = new Monster { Name = "Troshko", Life = 420, Mana = 420, AnimationName = "lala", AnimationSuffix = "blala" };
+            var oldGuy = new Monster { Name = "Goshko", Life = 420, Mana = 420, Model = "lala" };
+            var newGuy = new Monster { Name = "Troshko", Life = 420, Mana = 420, Model = "lala" };
+            GameSerializer serializer = new GameSerializer();
 
-            var da = Enumerable.Range(0, 100).SelectMany(_ => Shanism.Engine.Serialization.ShanoReader.QuickSerialize(oa)).ToArray();
-            var db = Enumerable.Range(0, 100).SelectMany(_ => Shanism.Engine.Serialization.ShanoReader.QuickSerialize(ob)).ToArray();
+            var oldState = Enumerable.Range(0, nUnitReps)
+                .SelectMany(_ => write(serializer, oldGuy))
+                .ToArray();
+            var newState = Enumerable.Range(0, nUnitReps)
+                .SelectMany(_ => write(serializer, newGuy))
+                .ToArray();
 
             var sw = Stopwatch.StartNew();
             byte[] datas = new byte[0];
-            for (var i = 0; i < count; i++)
+            for (var i = 0; i < nTestReps; i++)
             {
                 using (var ms = new MemoryStream())
                 {
-                    BsDiffLib.BinaryPatchUtility.Create(da, db, ms);
+                    BsDiffLib.BinaryPatchUtility.Create(oldState, newState, ms);
                     datas = ms.ToArray();
                 }
             }
 
             sw.Stop();
-            Console.WriteLine($"BinDiff: {count * 1000 / sw.ElapsedMilliseconds} reps/sec. ");
+            Console.WriteLine($"BinDiff: {nTestReps * 1000 / sw.ElapsedMilliseconds} reps/sec. ");
             Console.WriteLine($"Time Elapsed: {sw.ElapsedMilliseconds} ms. ");
-            Console.WriteLine($"Input length: {da.Length + db.Length} ({da.Length} + {db.Length}) bytes");
+            Console.WriteLine($"Input length: {newState.Length} bytes");
             Console.WriteLine($"Patch length: {datas.Length} bytes");
+        }
+
+        byte[] write<T>(GameSerializer s, T obj)
+            where T : GameObject
+        {
+            using (var ms = new MemoryStream())
+            {
+                using (var w = new BinaryWriter(ms))
+                    s.Write(w, obj, obj.ObjectType);
+
+                return ms.ToArray();
+            }
         }
     }
 }

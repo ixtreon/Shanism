@@ -14,20 +14,22 @@ namespace Shanism.Client.UI.CombatText
         const int BlinkDuration = 250;
         const int WaitDuration = 250;
 
-        bool isCustom;
+
+        public Color ForeColor { get; set; } = Color.LimeGreen.SetAlpha(100);
+
+        bool isForced;
         double range;
         int durationLeft;
 
-        //needs testing..
         static bool isBlinkShown(int msRemaining)
             => (msRemaining % (BlinkDuration + WaitDuration)) < BlinkDuration;
 
 
-        public void ShowRange(double range, int duration, bool blink)
+        public void Show(double range, int duration = 1250)
         {
             this.range = range;
             this.durationLeft = duration;
-            isCustom = true;
+            isForced = true;
         }
 
 
@@ -37,10 +39,10 @@ namespace Shanism.Client.UI.CombatText
                 durationLeft -= Math.Min(durationLeft, msElapsed);
 
             if (durationLeft <= 0)
-                isCustom = false;
+                isForced = false;
 
             var curAbilityHover = (HoverControl as SpellButton)?.Ability;
-            if (!isCustom && curAbilityHover != null && ((curAbilityHover.TargetType & AbilityTargetType.PointOrUnitTarget) != 0))
+            if (!isForced && curAbilityHover != null && ((curAbilityHover.TargetType & AbilityTargetType.PointOrUnitTarget) != 0))
             {
                 durationLeft = 1;
                 range = curAbilityHover.CastRange;
@@ -50,21 +52,27 @@ namespace Shanism.Client.UI.CombatText
 
         public override void OnDraw(Graphics g)
         {
-            if (durationLeft > 0 && (!isCustom || isBlinkShown(durationLeft)))
+            if (durationLeft <= 0)
+                return;
+
+            if (isForced && !isBlinkShown(durationLeft))
+                return;
+
+            var gamePos = Screen.InGameCenter - range;
+            var screenPos = Screen.GameToScreen(gamePos);
+            var screenDiameter = Screen.GameScale * (2 * range);
+            var rekt = new RectangleF(screenPos, screenDiameter);
+
+            var circleSz = (int)Math.Max(screenDiameter.X, screenDiameter.Y) * 2;
+            if (circleSz < Content.Circles.MaximumSize)
             {
-                var llGame = Screen.InGameCenter - range;
-                var urGame = Screen.InGameCenter + range;
-                var llPx = Screen.GameToScreen(llGame); 
-                var urPx = Screen.GameToScreen(urGame);
-                var rekt = new RectangleF(llPx, urPx - llPx);
+                var circle = Content.Circles.GetTexture(circleSz);
 
-                var circleSz = (int)Math.Max(rekt.Width, rekt.Height) * 2;
-                if (circleSz < Content.Circles.MaximumSize)
-                {
-                    var circle = Content.Circles.GetTexture(circleSz);
-
-                    g.SpriteBatch.ShanoDraw(circle, rekt, Color.LimeGreen.SetAlpha(100));
-                }
+                g.SpriteBatch.Draw(circle,
+                    sourceRectangle: circle.Bounds,
+                    position: screenPos.ToVector2(),
+                    scale: (screenDiameter / new Vector(circle.Width, circle.Height)).ToVector2(),
+                    color: ForeColor);
             }
         }
     }

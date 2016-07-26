@@ -1,4 +1,4 @@
-﻿using Shanism.Client.Assets;
+﻿using Shanism.Client.Drawing;
 using Shanism.Client.Input;
 using Shanism.Client.UI.Common;
 using Shanism.Common;
@@ -63,6 +63,7 @@ namespace Shanism.Client.UI.Common
         {
             const double ValueWidth = 0.2;
             Size = new Vector(0.5, 0.10);
+
             lblText = new Label
             {
                 AutoSize = false,
@@ -77,8 +78,7 @@ namespace Shanism.Client.UI.Common
             lblValue = new Label
             {
                 AutoSize = false,
-                Location = new 
-                Vector(Size.X - ValueWidth, 0),
+                Location = new Vector(Size.X - ValueWidth, 0),
                 Size = new Vector(ValueWidth, Size.Y),
                 ParentAnchor = AnchorMode.Top | AnchorMode.Right | AnchorMode.Bottom,
 

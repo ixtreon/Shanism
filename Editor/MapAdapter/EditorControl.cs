@@ -1,10 +1,9 @@
 ﻿using Shanism.Client;
 using Shanism.Common;
-using Shanism.Common.Game;
 using MGWinForms;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using Shanism.Client.Drawing;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,9 +11,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using GameTime = Microsoft.Xna.Framework.GameTime;
-using Color = Microsoft.Xna.Framework.Color;
-using Shanism.Editor.Views.Maps;
-using Shanism.Client.Textures;
 
 namespace Shanism.Editor.MapAdapter
 {
@@ -74,7 +70,7 @@ namespace Shanism.Editor.MapAdapter
             _client = ShanoGame.CreateClientEngine(PlayerName, GraphicsDeviceService, _editorContent);
             _client.LoadContent();
             _client.SetWindowSize(new Point(Width, Height));
-            _client.ToggleUI(false);
+            _client.SetDesignMode(true);
 
 
             ClientLoaded?.Invoke();

@@ -55,8 +55,15 @@ namespace Shanism.Editor.ViewModels
 
         public void Add(AnimationViewModel anim)
         {
+            var baseName = anim.Name;
+            var newName = baseName;
+            var i = 1;
+            while (animations.ContainsKey(newName))
+                newName = $"{baseName} ({++i})";
+            anim.Name = newName;
+
+            animations.Add(newName, anim);
             anim.NameChanged += onAnimNameChanged;
-            animations.Add(anim.Name, anim);
         }
 
         void onAnimNameChanged(AnimationViewModel anim, string oldName)
@@ -73,11 +80,13 @@ namespace Shanism.Editor.ViewModels
         public bool Remove(string key)
             => animations.Remove(key);
 
-        public async Task Reload()
+        public Task Reload()
         {
             animations.Clear();
             foreach (var animDef in content.Animations)
                 Add(new AnimationViewModel(textures, animDef));
+
+            return Task.CompletedTask;
         }
 
         public void Save()

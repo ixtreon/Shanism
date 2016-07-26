@@ -1,7 +1,7 @@
 ﻿using Shanism.Common.Message;
 using Shanism.Common.Message.Network;
 using Shanism.Common.Message.Server;
-using Shanism.Common.Objects;
+using Shanism.Common.StubObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;

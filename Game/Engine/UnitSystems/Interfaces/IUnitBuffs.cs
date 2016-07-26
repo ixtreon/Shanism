@@ -2,10 +2,11 @@
 using Shanism.Engine.Objects.Buffs;
 using System.Collections.Generic;
 
-namespace Shanism.Engine.Systems.Buffs
+namespace Shanism.Engine.Systems
 {
-    public interface IUnitBuffs : IEnumerable<BuffInstance>
+    public interface IUnitBuffs : IReadOnlyCollection<BuffInstance>
     {
+
         /// <summary>
         /// Applies the given buff to the unit. 
         /// </summary>
@@ -38,5 +39,7 @@ namespace Shanism.Engine.Systems.Buffs
         void Remove(Buff buffType, int nStacks);
 
         bool Contains(BuffInstance b);
+
+        bool Contains(Buff b);
     }
 }

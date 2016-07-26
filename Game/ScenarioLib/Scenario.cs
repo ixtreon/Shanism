@@ -5,10 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common.Objects;
 using Newtonsoft.Json;
-using Shanism.Common.Game;
 using System.IO;
+using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.ScenarioLib
 {
@@ -44,7 +43,7 @@ namespace Shanism.ScenarioLib
         public Scenario() { }
 
         /// <summary>
-        /// Creates a new scenario at the given path. 
+        /// Creates a new empty scenario at the given path. 
         /// </summary>
         /// <param name="scenarioPath"></param>
         public Scenario(string scenarioPath)
@@ -59,17 +58,31 @@ namespace Shanism.ScenarioLib
             }
         }
 
-
-        public static Scenario Load(string scenarioPath, out string errors)
+        /// <summary>
+        /// The collection of outcomes from a scenario compilation.
+        /// See <see cref="Scenario.Load(string, out string, out Scenario)"/>.
+        /// </summary>
+        public enum ScenarioCompilationResult
         {
+            InvalidConfig,
+            CompileErrors,
+            InvalidAssembly,
+
+            Success,
+        }
+
+        public static ScenarioCompilationResult Load(string scenarioPath, 
+            out string errors, out Scenario sc)
+        {
+            sc = null;
+
             //load the config
             string configLoadErrors;
-            var config = ScenarioConfig.Load(scenarioPath, out configLoadErrors);
+            var config = ScenarioConfig.LoadFromDisk(scenarioPath, out configLoadErrors);
             if (config == null)
             {
-                errors = "Invalid config file:"
-                    + "\n" + configLoadErrors;
-                return null;
+                errors = configLoadErrors;
+                return ScenarioCompilationResult.InvalidConfig;
             }
 
             //compile..
@@ -77,9 +90,8 @@ namespace Shanism.ScenarioLib
             var compileErrors = cmp.Compile();
             if (compileErrors.Any())
             {
-                errors = "Unable to compile the scenario:" +
-                    "\n" + string.Join("\n", compileErrors.Select(e => $"{e.Location} {e.GetMessage()}"));
-                return null;
+                errors = string.Join("\n", compileErrors.Select(e => $"{e.Location} {e.GetMessage()}"));
+                return ScenarioCompilationResult.CompileErrors;
             }
 
             //..and load the assembly
@@ -88,7 +100,7 @@ namespace Shanism.ScenarioLib
             {
                 errors = "Unable to load the compiled scenario:"
                     + "\n" + assemblyLoadErrors;
-                return null;
+                return ScenarioCompilationResult.InvalidAssembly;
             }
 
             var definedObjs = cmp.Assembly
@@ -98,15 +110,14 @@ namespace Shanism.ScenarioLib
                     .ToList()
                     ?? Enumerable.Empty<IEntity>();
 
-            var sc = new Scenario
+            errors = string.Empty;
+            sc = new Scenario
             {
                 Config = config,
                 Assembly = cmp.Assembly,
                 DefinedEntities = definedObjs,
             };
-
-            errors = string.Empty;
-            return sc;
+            return ScenarioCompilationResult.Success;
         }
 
         void loadAssembly(Assembly scAssembly)

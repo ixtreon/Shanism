@@ -66,9 +66,17 @@ namespace Shanism.Client
         public bool QuickButtonPress { get; set; } = true;
 
 
+        public bool VSync { get; set; } = false;
+        public float RenderSize { get; set; } = 1.0f;
+
+        //public bool EnableShaders { get; set; } = true;
+
+
         public KeybindSettings Keybinds { get; set; } = new KeybindSettings(true);
 
-        private Settings() { }
+
+
+        Settings() { }
 
         /// <summary>
         /// Resets all keybindings to their default values and then saves the configuration file. 

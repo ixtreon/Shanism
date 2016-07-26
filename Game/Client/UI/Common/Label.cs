@@ -1,4 +1,4 @@
-﻿using Shanism.Client.Assets;
+﻿using Shanism.Client.Drawing;
 using Shanism.Common.Game;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -16,11 +16,38 @@ namespace Shanism.Client.UI.Common
     /// </summary>
     class Label : Control
     {
-        public string Text { get; set; } = string.Empty;
+        TextureFont DefaultFont => Content.Fonts.FancyFont;
+
+        string _text = string.Empty;
+        TextureFont font;
+
+        public string Text
+        {
+            get { return _text; }
+            set
+            {
+                _text = value;
+                resize();
+            }
+        }
+
+        void resize()
+        {
+            if (AutoSize)
+                Size = Font.MeasureStringUi(Text) + new Vector(Padding * 2) + 1E-5;
+        }
 
         public Color TextColor { get; set; } = Color.Goldenrod;
 
-        public TextureFont Font { get; set; } = Content.Fonts.FancyFont;
+        public TextureFont Font
+        {
+            get { return font; }
+            set
+            {
+                font = value;
+                resize();
+            }
+        }
 
         /// <summary>
         /// Gets or sets whether this label automatically fits to the text inside it. 
@@ -37,13 +64,12 @@ namespace Shanism.Client.UI.Common
         {
             BackColor = Color.Transparent;
             Size = new Vector(0.4, 0.1);
+            font = DefaultFont;
 
             CanHover = true;
         }
         protected override void OnUpdate(int msElapsed)
         {
-            if(AutoSize)
-                Size = Font.MeasureStringUi(Text) + new Vector(Padding * 2) + 0.001;
 
             base.OnUpdate(msElapsed);
         }

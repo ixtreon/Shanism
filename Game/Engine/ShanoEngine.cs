@@ -1,7 +1,5 @@
 ﻿using Shanism.Engine.Maps;
-using Shanism.Engine.Systems;
 using Shanism.Common;
-using Shanism.Common.Game;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -15,12 +13,18 @@ using Shanism.Engine.Players;
 using Shanism.Engine.Scripting;
 using Shanism.Engine.Common;
 using Shanism.ScenarioLib;
+using Shanism.Engine.Exceptions;
+using Shanism.Common.Game;
+using Shanism.Engine.GameSystems;
+using System.Text;
+using System.Diagnostics;
 
 namespace Shanism.Engine
 {
     /// <summary>
-    /// The game engine lies here. 
+    /// The game engine lies here.
     /// </summary>
+    /// <seealso cref="IShanoEngine" />
     public class ShanoEngine : IShanoEngine
     {
         /// <summary>
@@ -28,29 +32,36 @@ namespace Shanism.Engine
         /// </summary>
         const int FPS = 60;
 
+        /// <summary>
+        /// Milliseconds per frame. 
+        /// </summary>
+        const int MSPF = 1000 / FPS;
 
-        ConcurrentSet<MapChunkId> generatedChunks { get; } = new ConcurrentSet<MapChunkId>();
 
+        readonly ConcurrentSet<MapChunkId> generatedChunks = new ConcurrentSet<MapChunkId>();
 
         /// <summary>
-        /// A list of all receptors to players currently in game. 
+        /// A list of all receptors (human players) currently in game. 
         /// </summary>
-        internal ConcurrentBag<ShanoReceptor> Players { get; } = new ConcurrentBag<ShanoReceptor>();
+        internal readonly ConcurrentDictionary<IShanoClient, ShanoReceptor> Players = new ConcurrentDictionary<IShanoClient, ShanoReceptor>();
 
 
-        internal PerfCounter PerfCounter { get; } = new PerfCounter();
+        internal readonly PerfCounter UnitPerfCounter = new PerfCounter();
+        readonly PerfCounter GamePerfCounter = new PerfCounter();
+        readonly Counter perfResetCounter = new Counter(250);
 
 
-        /// <summary>
-        /// Gets the scenario this engine is playing. 
-        /// </summary>
-        internal Scenario Scenario { get; private set; }
+        readonly List<GameSystem> systems = new List<GameSystem>();
+
+        readonly MapSystem map;
+        readonly NetworkSystem network;
+        readonly ScriptingSystem scripts;
+        readonly RangeSystem rangeQt;
+        readonly EntitiesSystem objects;
 
 
-        /// <summary>
-        /// The current world map containing the terrain info. 
-        /// </summary>
-        internal ITerrainMap TerrainMap { get; private set; }
+        Scenario scenario;
+
 
 
         /// <summary>
@@ -68,19 +79,8 @@ namespace Shanism.Engine
         /// </summary>
         public double GameTime { get; private set; }
 
+        public string PerformanceData { get; private set; }
 
-        #region Systems
-
-        readonly MapSystem map;
-
-        readonly NetworkSystem network;
-
-        readonly ScriptRunner scripts;
-
-
-        List<GameSystem> systems { get; } = new List<GameSystem>();
-
-        #endregion
 
         /// <summary>
         /// The current game map containing unit/doodad/sfx info. 
@@ -89,65 +89,68 @@ namespace Shanism.Engine
 
         internal IScriptRunner Scripts => scripts;
 
+        /// <summary>
+        /// Gets the scenario this engine is playing. 
+        /// </summary>
+        internal Scenario Scenario => scenario;
+
 
         public ShanoEngine()
         {
-            scripts = new ScriptRunner(Thread.CurrentThread);
+            scripts = new ScriptingSystem(Thread.CurrentThread);
             map = new MapSystem();
+            rangeQt = new RangeSystem(map);
             network = new NetworkSystem();
+            objects = new EntitiesSystem(map);
 
-            systems.Add(scripts);
+            systems.Add(objects);
+            systems.Add(rangeQt);
             systems.Add(map);
+            systems.Add(scripts);
             systems.Add(network);
+
+            //register this server as the parent of all objects. 
+            //quite hacky by nature
+            if (!GameObject.TrySetEngine(this))
+                throw new SingleServerException();
         }
 
-        public ShanoEngine(int mapSeed, string scenarioDir)
-            : this()
-        {
-            startPlaying(mapSeed, scenarioDir);
-        }
 
-
-        void startPlaying(int mapSeed, string scenarioDir)
+        public void LoadScenario(string scenarioDir, int? mapSeed = null)
         {
             //compile the scenario
+            scenarioDir = Path.GetFullPath(scenarioDir);
             string scenarioCompileErrors;
-            Scenario = Scenario.Load(Path.GetFullPath(scenarioDir), out scenarioCompileErrors);
-            if (Scenario == null)
-                throw new FileLoadException($"Unable to load the scenario: \n\n{scenarioCompileErrors}");
+            var result = Scenario.Load(scenarioDir, out scenarioCompileErrors, out scenario);
+            if (result != Scenario.ScenarioCompilationResult.Success)
+                throw new ScenarioLoadException(scenarioDir, scenarioCompileErrors);
 
-            //register the server as the parent of all objects. 
-            GameObject.SetEngine(this);
 
-            //initialize terrain, objects, scripts.  
-            TerrainMap = Maps.Terrain.MapGod.Create(Scenario.Config.Map, mapSeed);
-            createStartupObjects(map);
-            scripts.ReloadScripts(Scenario.Assembly);
+            //initialize map + objects, scripts  
+            map.LoadScenario(Scenario, mapSeed ?? Rnd.Next());
+            scripts.LoadScenario(Scenario);
 
             //fire the OnGameStart script event
             Scripts.Run(cs => cs.OnGameStart());
         }
-
-        void createStartupObjects(MapSystem map)
+         
+        static void createStartupObjects(Scenario sc, MapSystem map)
         {
-            var oc = new ObjectCreator(Scenario);
-            var entities = Scenario.Config.Map.Objects
-                .Select(oc.CreateObject)
-                .Where(o => o != null)
-                .ToList();
 
-            foreach (var e in entities)
-                map.Add(e);
         }
 
 
         #region IEngine implementation
 
+        /// <summary>
+        /// Accepts the given client to the server.
+        /// Returns the network receptor responsible for it. 
+        /// </summary>
         public INetReceptor AcceptClient(IShanoClient c)
         {
             var pl = new ShanoReceptor(this, c);
 
-            // TODO: do some checks on player join?x
+            // TODO: do some checks on player join?
 
             return pl;
         }
@@ -159,37 +162,42 @@ namespace Shanism.Engine
                 throw new ArgumentException(nameof(rec), $"The receptor must be of type `{nameof(ShanoReceptor)}` as returned by this engine!");
             pl.SendHandshake(true);
 
-            AddPlayer(pl);
+            addPlayer(pl);
         }
 
         #endregion
 
         #region Server Controls
+
         /// <summary>
-        /// Starts the game server by executing the main game loop. 
+        /// Starts running the main game loop on the current thread. 
         /// </summary>
-        /// <param name="spawnNewThread">If true spawns a new thread to run the loop on. Otherwise uses the current thread. </param>
-        public void Start(bool spawnNewThread = false)
+        /// <exception cref="ServerRunningException">Thrown if the server has already been started. </exception>
+        public void Start()
         {
-            if (IsRunning)
-                return;
+            if (IsRunning) throw new ServerRunningException();
             IsRunning = true;
 
-
-            if (spawnNewThread)
-            {
-                // start the update thread
-                GameThread = new Thread(mainLoop) { IsBackground = true };
-                GameThread.Start();
-            }
-            else
-            {
-                mainLoop();
-            }
+            mainLoop();
         }
 
         /// <summary>
-        /// Stops the game server. 
+        /// Starts running the main game loop on a new background thread. 
+        /// </summary>
+        /// <exception cref="ServerRunningException">Thrown if the server has already been started. </exception>
+        public Thread StartBackground()
+        {
+            if (IsRunning) throw new ServerRunningException();
+            IsRunning = true;
+
+            GameThread = new Thread(mainLoop) { IsBackground = true };
+            GameThread.Start();
+
+            return GameThread;
+        }
+
+        /// <summary>
+        /// Stops the game server as soon as the current frame has finished processing. 
         /// </summary>
         public void Stop()
         {
@@ -197,46 +205,16 @@ namespace Shanism.Engine
         }
 
         /// <summary>
-        /// Allows for network connections to be established to this game. 
+        /// Starts the network module which allows remote players to connect to the server. 
         /// </summary>
         public void OpenToNetwork()
         {
-            network.Start(this);
+            network.Restart(this);
         }
 
-
-        /// <summary>
-        /// Runs the game loop. 
-        /// </summary>
-        void mainLoop()
-        {
-            int frameStart, frameEnd = 0;
-            while (IsRunning)
-            {
-                var toSleep = 1000 / FPS - frameEnd;    //to sleep
-                var isThrottled = toSleep < 0;          //or not to sleep?
-
-                if (!isThrottled)
-                    Thread.Sleep(toSleep);
-
-                frameStart = Environment.TickCount;
-                Update(1000 / FPS);
-                frameEnd = Environment.TickCount - frameStart;
-            }
-        }
 
         #endregion
 
-        /// <summary>
-        /// Adds the given player to the game. 
-        /// </summary>
-        /// <param name="pl"></param>
-        void AddPlayer(ShanoReceptor pl)
-        {
-            Players.Add(pl);
-
-            Scripts.Run(s => s.OnPlayerJoined(pl.Player));
-        }
 
         /// <summary>
         /// Performs a single update of the game state. 
@@ -245,50 +223,52 @@ namespace Shanism.Engine
         public void Update(int msElapsed)
         {
             GameTime += msElapsed;
-            PerfCounter.Reset();
 
-            //update systems
+            if (perfResetCounter.Tick(msElapsed))
+            {
+                PerformanceData = $"{GamePerfCounter.GetPerformanceData()}\n\n"
+                    + $"{UnitPerfCounter.GetPerformanceData()}\n\n";
+
+                UnitPerfCounter.Reset();
+                GamePerfCounter.Reset();
+            }
+
             foreach (var sys in systems)
-                sys.Update(msElapsed);
-
+                GamePerfCounter.RunAndLog(sys.SystemName, sys.Update, msElapsed);
         }
 
 
         /// <summary>
-        /// Writes the map data for the given rectangle in the given array. 
+        /// Adds the given player to the game. 
         /// </summary>
-        public void GetTiles(IReceptor pl, ref TerrainType[] tileMap, MapChunkId chunk)
+        /// <param name="pl"></param>
+        void addPlayer(ShanoReceptor pl)
         {
-            //TODO: check if chunk is valid for player pl
+            Players[pl.Client] = pl;
+
+            Scripts.Run(s => s.OnPlayerJoined(pl.Player));
+        }
 
 
-            TerrainMap.GetMap(chunk.Span, ref tileMap);
-            if (!generatedChunks.TryAdd(chunk))
+        /// <summary>
+        /// Runs the main game loop. 
+        /// </summary>
+        void mainLoop()
+        {
+            while (IsRunning)
             {
-                foreach (var dood in TerrainMap.GetNativeEntities(chunk.Span))
-                    map.Add(dood);
+                var frameStart = Environment.TickCount;
+
+                Update(1000 / FPS);
+
+                var msElapsed = Environment.TickCount - frameStart;
+                var msSleep = MSPF - msElapsed;     //to sleep
+                var isThrottled = msSleep < 0;      //or not to sleep?
+
+                if (!isThrottled)
+                    Thread.Sleep(msSleep);
             }
         }
 
-        const int perfBarLength = 20;
-
-        public string GetPerfData()
-        {
-            //return string.Empty;
-
-            var totalTimeTaken = PerfCounter.Stats.Sum(kvp => kvp.Value);
-
-            var text = PerfCounter.Stats
-                .OrderByDescending(kvp => kvp.Key)
-                .Select(kvp => new
-                {
-                    Pluses = (int)(kvp.Value * perfBarLength / totalTimeTaken),
-                    Name = kvp.Key,
-                })
-                .Select(n => "{0}{1}   {2}".F(new string('+', n.Pluses), new string('_', perfBarLength - n.Pluses), n.Name))
-                .Aggregate("", (a, b) => a + '\n' + b);
-
-            return text;
-        }
     }
 }

@@ -1,45 +1,37 @@
-﻿using Shanism.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shanism.Common.Game;
-using Shanism.Common.Content;
-using Shanism.Common.Objects;
-using ProtoBuf;
+using Shanism.Common.Interfaces.Entities;
+using Shanism.Common.Interfaces.Objects;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 
-namespace Shanism.Common.Objects
+namespace Shanism.Common.StubObjects
 {
     public class UnitStub : EntityStub, IUnit
     {
-
         #region IUnit implementation
 
-        public IEnumerable<IBuffInstance> Buffs { get; set; }
-        public IEnumerable<IAbility> Abilities { get; set; }
+        public readonly List<IBuffInstance> Buffs = new List<IBuffInstance>();
+        public readonly List<IAbility> Abilities = new List<IAbility>();
+
+        IReadOnlyCollection<IBuffInstance> IUnit.Buffs => Buffs;
+
+        IReadOnlyCollection<IAbility> IUnit.Abilities => Abilities;
 
 
 
         public uint OwnerId { get; set; }
-        public IEnumerable<uint> BuffIds { get; set; }
-        public IEnumerable<uint> AbilityIds { get; set; }
-        public uint? CastingAbilityId { get; set; }
-
 
 
         public int AttackCooldown { get; set; }
 
-        public double BaseDefense { get; set; }
-
-        public int CastingProgress { get; set; }
 
         public double Defense { get; set; }
-
-        public bool Invulnerable { get; set; }
 
         public bool IsDead { get; set; }
 
@@ -67,7 +59,7 @@ namespace Shanism.Common.Objects
 
         public OrderType OrderType { get; set; }
 
-        public UnitFlags States { get; set; }
+        public StateFlags States { get; set; }
 
         public bool IsMoving { get; set; }
 
@@ -75,6 +67,8 @@ namespace Shanism.Common.Objects
 
         public double VisionRange { get; set; }
 
+        public uint CastingAbilityId { get; set; }
+        public int CastingProgress { get; set; }
         public int TotalCastingTime { get; set; }
 
         #endregion

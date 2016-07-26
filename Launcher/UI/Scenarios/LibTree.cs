@@ -56,13 +56,11 @@ namespace ShanoRPGWin.UI.Scenarios
             Loaded = true;
 
             //load libs from app settings
-            await Task.Run(() =>
-            {
-                librariesInUse = Settings.Default.ScenarioLibrary
-                    .Split(new[] { '\t' }, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(s => new ScenarioLibrary(s))
-                    .ToDictionary(l => l.DirectoryPath, l => l);
-            });
+            librariesInUse = Settings.Default.ScenarioLibrary
+                .Split(new[] { '\t' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => new ScenarioLibrary(s))
+                .ToDictionary(l => l.DirectoryPath, l => l);
+
             //search for scenarios in them libs
             await RefreshLibs();
 
@@ -99,7 +97,7 @@ namespace ShanoRPGWin.UI.Scenarios
         /// Adds a new library. 
         /// </summary>
         /// <param name="path"></param>
-        public void AddLibrary(string path)
+        public async Task AddLibrary(string path)
         {
             if (librariesInUse.ContainsKey(path))
                 return;
@@ -109,6 +107,7 @@ namespace ShanoRPGWin.UI.Scenarios
             Save();
 
             //add treestuff
+            await lib.Refresh();
             addLibraryNode(lib);
             Sort();
         }

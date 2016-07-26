@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Shanism.Editor</RootNamespace>
-    <AssemblyName>Shanism.Editor.WF</AssemblyName>
+    <AssemblyName>ShanoEditor</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -29,65 +29,6 @@
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Editor|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Editor\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Editor|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Editor\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Shanism.Editor.Program</StartupObject>
   </PropertyGroup>
@@ -103,39 +44,39 @@
   <PropertyGroup>
     <SignManifests>false</SignManifests>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Publish|AnyCPU'">
-    <OutputPath>..\..\bin\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Publish|x64'">
-    <OutputPath>bin\x64\Publish\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>..\..\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MonoGame.Framework, Version=3.4.0.459, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.4.0.459\lib\net40\MonoGame.Framework.dll</HintPath>
+    <Reference Include="MonoGame.Framework, Version=3.5.1.1679, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.5.1.1679\lib\net40\MonoGame.Framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -151,7 +92,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Ext.cs" />
+    <Compile Include="Util\Ext.cs" />
     <Compile Include="MapAdapter\Tools\Brush.cs" />
     <Compile Include="MapAdapter\Tools\Brushes\CustomObjectBrush.cs" />
     <Compile Include="MapAdapter\Tools\SelectionTool.cs" />
@@ -163,7 +104,9 @@
     <Compile Include="MapAdapter\GLTestControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Keyboard.cs" />
+    <Compile Include="Util\Grids\RangeAttribute.cs" />
+    <Compile Include="Util\Image.cs" />
+    <Compile Include="Util\Keyboard.cs" />
     <Compile Include="MapAdapter\IEditorEngine.cs" />
     <Compile Include="MapAdapter\IMapControl.cs" />
     <Compile Include="MapAdapter\MapTool.cs" />
@@ -174,21 +117,24 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Util\Grids\ShanoGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ViewModels\Scenario\ContentLists\Animations.cs" />
     <Compile Include="ViewModels\Scenario\ContentLists\Textures.cs" />
-    <Compile Include="Views\AnimationsView.Designer.cs">
+    <Compile Include="Views\Animations\AnimationsView.Designer.cs">
       <DependentUpon>AnimationsView.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\Common\IScenarioControl.cs" />
     <Compile Include="Views\Common\ObjectButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Views\Content\AnimationBox.cs">
+    <Compile Include="Views\Animations\AnimationBox.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ViewModels\Scenario\Content\Animation.cs" />
     <Compile Include="ViewModels\Scenario\ContentViewModel.cs" />
-    <Compile Include="Views\Content\AnimationTree.cs">
+    <Compile Include="Views\Animations\AnimationTree.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Views\Maps\PropPanel.cs">
@@ -203,15 +149,16 @@
     <Compile Include="Views\Maps\SelectionWindow.Designer.cs">
       <DependentUpon>SelectionWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\Textures\TextureBrowser.cs">
+    <Compile Include="Views\ShanoTreeNode.cs" />
+    <Compile Include="Views\Textures\TextureTree.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Views\Textures\TextureBrowser.Designer.cs">
-      <DependentUpon>TextureBrowser.cs</DependentUpon>
+    <Compile Include="Views\Textures\TextureTree.Designer.cs">
+      <DependentUpon>TextureTree.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\Textures\TextureTree.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Views\Textures\TextureFolderNode.cs" />
+    <Compile Include="Views\Textures\TextureNode.cs" />
+    <Compile Include="Views\Textures\TextureNodeBuilder.cs" />
     <Compile Include="Views\ScenarioView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -248,13 +195,7 @@
     <Compile Include="Views\MapView.Designer.cs">
       <DependentUpon>MapView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\Content\AnimationView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Views\Content\AnimationView.Designer.cs">
-      <DependentUpon>AnimationView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\AnimationsView.cs">
+    <Compile Include="Views\Animations\AnimationsView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ViewModels\IViewModel.cs" />
@@ -269,14 +210,14 @@
     <Compile Include="Views\Common\ScenarioControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Views\ScenarioViewType.cs" />
-    <Compile Include="Views\TexturesView.cs">
+    <Compile Include="Util\ScenarioViewType.cs" />
+    <Compile Include="Views\Textures\TexturesView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Views\TexturesView.Designer.cs">
+    <Compile Include="Views\Textures\TexturesView.Designer.cs">
       <DependentUpon>TexturesView.cs</DependentUpon>
     </Compile>
-    <Compile Include="StaticImageList.cs" />
+    <Compile Include="Util\StaticImageList.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="ShanoEditor.cs">
       <SubType>Form</SubType>
@@ -289,10 +230,11 @@
     <Compile Include="ShanoFormFileActions.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Util\Grids\TextureTypeConverter.cs" />
     <EmbeddedResource Include="MapAdapter\EditorControl.resx">
       <DependentUpon>EditorControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\Content\AnimationTree.resx">
+    <EmbeddedResource Include="Views\Animations\AnimationTree.resx">
       <DependentUpon>AnimationTree.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Maps\PropPanel.resx">
@@ -301,8 +243,8 @@
     <EmbeddedResource Include="Views\Maps\SelectionWindow.resx">
       <DependentUpon>SelectionWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\Textures\TextureBrowser.resx">
-      <DependentUpon>TextureBrowser.cs</DependentUpon>
+    <EmbeddedResource Include="Views\Textures\TextureBox.resx">
+      <DependentUpon>TextureBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Textures\TextureTree.resx">
       <DependentUpon>TextureTree.cs</DependentUpon>
@@ -325,13 +267,10 @@
     <EmbeddedResource Include="Views\MapView.resx">
       <DependentUpon>MapView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\Content\AnimationView.resx">
-      <DependentUpon>AnimationView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\AnimationsView.resx">
+    <EmbeddedResource Include="Views\Animations\AnimationsView.resx">
       <DependentUpon>AnimationsView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\TexturesView.resx">
+    <EmbeddedResource Include="Views\Textures\TexturesView.resx">
       <DependentUpon>TexturesView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ShanoEditor.resx">
@@ -358,17 +297,21 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Game\ClientContent\ClientContent.csproj">
+      <Project>{3088ee46-46f9-441d-a2b8-e044c30cd0b3}</Project>
+      <Name>ClientContent</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Game\Client\Client.csproj">
       <Project>{418f2cbd-5db3-47d4-bee1-2c69aa6d1914}</Project>
       <Name>Client</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Game\Engine\Engine.csproj">
-      <Project>{0b2e9f70-7046-470a-8e5d-ebd47f030ddc}</Project>
-      <Name>Engine</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Game\Common\Common.csproj">
       <Project>{dc89987d-5817-4f1d-95ca-80c024c8d6bb}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Game\Engine\Engine.csproj">
+      <Project>{0b2e9f70-7046-470a-8e5d-ebd47f030ddc}</Project>
+      <Name>Engine</Name>
     </ProjectReference>
     <ProjectReference Include="..\lib\MGWinFormsControls\MGWinFormsControls.csproj">
       <Project>{85bd604a-c94d-4058-94be-6977c97a1291}</Project>

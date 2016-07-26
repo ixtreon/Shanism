@@ -62,31 +62,11 @@ namespace Shanism.Client.UI.CombatText
 
         int rainbowXDirection = 1;
 
-        readonly Systems.ObjectSystem ObjectManager;
         readonly HashSet<TextData> labels = new HashSet<TextData>();
 
-        public FloatingTextProvider(Systems.ObjectSystem mgr)
+        public FloatingTextProvider()
         {
-            if (mgr == null) throw new ArgumentNullException(nameof(mgr));
-
             CanHover = false;
-            ObjectManager = mgr;
-        }
-
-
-        public void AddDamageLabel(DamageEventMessage msg)
-        {
-            //get unit position
-            var unit = ObjectManager.TryGet(msg.UnitId);
-            if (unit == null)
-                return;
-
-            var text = msg.ValueChange.ToString("0");
-            var labelPos = unit.Position;
-            var lblType = FloatingTextStyle.Rainbow;
-            var color = Color.Red;
-
-            AddLabel(labelPos, text, color, lblType);
         }
 
         public void AddLabel(Vector inGamePos, string text, Color c, FloatingTextStyle style)
@@ -134,7 +114,7 @@ namespace Shanism.Client.UI.CombatText
             foreach (var td in labels)
             {
                 var screenPos = Screen.GameToScreen(td.Location);
-                Content.Fonts.NormalFont.DrawStringPx(g.SpriteBatch, td.Text, td.Color, screenPos, 0.5f, 0.5f);
+                Content.Fonts.NormalFont.DrawString(g.SpriteBatch, td.Text, td.Color, screenPos, 0.5f, 0.5f);
             }
         }
     }

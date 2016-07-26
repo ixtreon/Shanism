@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shanism.Common.Interfaces.Engine
+namespace Shanism.Common.Interfaces.Objects
 {
     public interface IGameObject
     {

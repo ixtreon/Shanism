@@ -3,183 +3,103 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Shanism.Common;
-using Shanism.Client.Objects;
 using Shanism.Client.Input;
 using Shanism.Client.UI.Menus;
-using Shanism.Common.Objects;
 using Shanism.Client.UI.CombatText;
 using Shanism.Client.UI.Chat;
 using Shanism.Client.UI;
-using Shanism.Common.Message.Client;
 using Shanism.Common.Message;
 using Shanism.Common.Message.Server;
+using Shanism.Common.Interfaces.Entities;
+using Shanism.Common.Interfaces.Objects;
+using Shanism.Client.Drawing;
+using Shanism.Client.UI.Game;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Shanism.Client.Systems
 {
-    class UiSystem : ClientSystem
+    /// <summary>
+    /// Holds all elements of the default user interface. 
+    /// </summary>
+    /// <seealso cref="Shanism.Client.Systems.ClientSystem" />
+    class Interface : ClientSystem
     {
-        public readonly Control Root = new Control();
+        readonly Root root;
 
-        readonly UnitFrame heroFrame;
-        readonly UnitFrame targetFrame;
-        readonly UnitHoverFrame hoverFrame;
-        readonly SpellBar abilityBar;
-        readonly MenuBar menus;
-        readonly CastBar castBar;
-        readonly ChatBar chatBar;
-        internal readonly ChatBox chatBox;
-        readonly BuffBar heroBuffBar;
-        readonly ErrorTextControl errors;
+        readonly ObjectSystem objects;
 
-        HeroControl _mainHeroControl;
+        UnitSprite _curHeroSprite;
 
-        public FloatingTextProvider FloatingText { get; }
+        public FloatingTextProvider FloatingText => root.FloatingText;
 
-        public RangeIndicator RangeIndicator { get; }
-
-
-        /// <summary>
-        /// Gets or sets the HeroControl that represents the player's 
-        /// current hero, if there is one. 
-        /// </summary>
-        public HeroControl MainHeroControl
-        {
-            get { return _mainHeroControl; }
-            set
-            {
-                if (_mainHeroControl != value)
-                {
-                    _mainHeroControl = value;
-
-                    // adds all abilities of the hero to the bar
-                    abilityBar.Controls
-                        .OfType<SpellButton>()
-                        .Zip(MainHero.Abilities ?? Enumerable.Empty<IAbility>(),
-                            (sb, a) => sb.Ability = a)
-                        .ToArray();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the current target of the player. 
-        /// </summary>
-        public UnitControl Target
-        {
-            get { return targetFrame.Target; }
-            set { targetFrame.Target = value; }
-        }
-
-        /// <summary>
-        /// Gets or sets the current hover of the player. 
-        /// </summary>
-        public UnitControl Hover
-        {
-            get { return hoverFrame.Target; }
-            set { hoverFrame.Target = value; }
-        }
-
-
-        public IHero MainHero => MainHeroControl?.Hero;
+        public RangeIndicator RangeIndicator => root.RangeIndicator;
 
         public IAbility CurrentAbility => SpellBarButton.CurrentSpellButton?.Ability;
 
+        public Control Root => root;
 
-        public UiSystem(ObjectSystem objManager)
+        readonly SpriteBatch interfaceBatch;
+
+
+        public Interface(GraphicsDevice device, ObjectSystem objManager, IChatProvider chatProvider)
         {
-            if (objManager == null) throw new ArgumentNullException(nameof(objManager));
+            interfaceBatch = new SpriteBatch(device);
+            objects = objManager;
 
-            Root = new Control
-            {
-                Size = new Vector(2, 1),
-                CanHover = false,
-            };
-            Root.GameActionActivated += onActionActivated;
-
-            /* add controls: order is important, unless ZValue is manually set. */
-
-            var castBarSize = new Vector(0.5f, 0.08f);
-            var unitFrameXOffset = 0.25;
-            var chatFont = Content.Fonts.NormalFont;
-
-            //game indicators
-            Root.Add(FloatingText = new FloatingTextProvider(objManager));
-            Root.Add(RangeIndicator = new RangeIndicator());
-            Root.Add(errors = new ErrorTextControl());
-
-            //game controls
-            Root.Add(heroFrame = new UnitFrame
-            {
-                ParentAnchor = AnchorMode.Top,
-                Location = new Vector(1 - unitFrameXOffset - UnitFrame.DefaultSize.X, 0),
-            });
-            Root.Add(targetFrame = new UnitFrame
-            {
-                ParentAnchor = AnchorMode.Top,
-                Location = new Vector(1 + unitFrameXOffset, 0),
-            });
-            Root.Add(hoverFrame = new UnitHoverFrame(0.02, 0.02)
-            {
-                ParentAnchor = AnchorMode.Top,
-            });
-            Root.Add(abilityBar = new SpellBar(0)
-            {
-                ParentAnchor = AnchorMode.Bottom,
-                Location = new Vector(0.6, 0.8),
-            });
-            Root.Add(castBar = new CastBar
-            {
-                ParentAnchor = AnchorMode.Bottom,
-
-                Size = castBarSize,
-                Location = new Vector(1 - castBarSize.X / 2, 0.55),
-            });
-
-            //chat
-            var chatSize = new Vector(abilityBar.Size.X, Content.Fonts.NormalFont.HeightUi + 2 * Control.Padding);
-            Root.Add(chatBar = new ChatBar
-            {
-                ParentAnchor = AnchorMode.Bottom,
-                Font = chatFont,
-                Size = chatSize,
-                Location = abilityBar.Location - new Vector(0, chatSize.Y),
-            });
-            Root.Add(chatBox = new ChatBox
-            {
-                Size = new Vector(chatSize.X, ChatBox.DefaultSize.Y),
-                Location = new Vector(2, 0) - new Vector(chatSize.X, 0),
-                ParentAnchor = AnchorMode.Right | AnchorMode.Top,
-            });
-            chatBox.SetProvider(chatBar);
-            chatBar.MessageSent += onPlayerMessageSent;
-
-            //menus
-            Root.Add(menus = new MenuBar(Root));
-
-            //tooltips
-            Root.Add(new UI.Tooltips.SimpleTip());
-            Root.Add(new UI.Tooltips.AbilityTip());
-            
-            Root.BringToFront();
-            Root.Maximize();
+            root = new Root();
+            root.GameActionActivated += onActionActivated;
+            root.ChatBox.SetProvider(chatProvider);
+            root.ChatBar.ChatSent += (m) =>
+                SendMessage(new Common.Message.Client.ChatMessage(string.Empty, m));
         }
 
-        void onPlayerMessageSent(string msg)
+        // adds all abilities of the hero to the default bar
+        void updateBarAbilities(IHero h)
         {
-            SendMessage(new Common.Message.Client.ChatMessage(string.Empty, msg));
+            var abilities = h.Abilities ?? Enumerable.Empty<IAbility>();
+            root.HeroAbilities.Controls
+                .OfType<SpellButton>()
+                .Zip(abilities, (sb, a) => sb.Ability = a)
+                .ToList();
+        }
+
+        public void Draw()
+        {
+            var g = new Graphics(interfaceBatch, -Screen.UiSize / 2, Screen.UiSize);
+
+            interfaceBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend,
+                SamplerState.PointClamp, DepthStencilState.DepthRead,
+                RasterizerState.CullNone);
+
+            Root.Draw(g);
+
+            interfaceBatch.End();
         }
 
         public override void Update(int msElapsed)
         {
-            Root.Maximize();
+            //update hero pointer
+            if (objects.MainHeroSprite != _curHeroSprite)
+            {
+                root.Menus.OurHero = objects.MainHero;
+                root.HeroCastBar.Target = objects.MainHero;
+                root.HeroFrame.TargetSprite = objects.MainHeroSprite;
 
-            Ticker.Default.Update(msElapsed);
+                _curHeroSprite = objects.MainHeroSprite;
 
-            menus.OurHero = MainHero;
+                updateBarAbilities(objects.MainHero);
+            }
 
-            castBar.Target = MainHero;
-            //heroBuffBar.Target = MainHero;
-            heroFrame.Target = MainHeroControl;
+            //update target & hover ccontrols
+            if (Control.HoverControl.IsRootControl)
+            {
+                var unitHover = objects.HoverSprite as UnitSprite;
+                root.HoverFrame.Target = unitHover;
+
+                if (MouseInfo.LeftJustPressed)
+                    root.TargetFrame.TargetSprite = unitHover;
+            }
         }
 
         public override void HandleMessage(IOMessage ioMsg)
@@ -187,8 +107,14 @@ namespace Shanism.Client.Systems
             switch (ioMsg.Type)
             {
                 case MessageType.DamageEvent:
+
                     var dmgEv = (DamageEventMessage)ioMsg;
-                    FloatingText.AddDamageLabel(dmgEv);
+                    var unit = objects.TryGet(dmgEv.UnitId);
+                    if (unit == null)
+                        return;
+
+                    var text = dmgEv.ValueChange.ToString("0");
+                    FloatingText.AddLabel(unit.Position, text, Color.Red, FloatingTextStyle.Rainbow);
                     break;
             }
         }
@@ -198,12 +124,12 @@ namespace Shanism.Client.Systems
             switch (ga)
             {
                 case ClientAction.Chat:
-                    chatBar.SetFocus();
+                    root.ChatBar.SetFocus();
                     break;
 
                 default:
-                    abilityBar.ActivateAction(ga);
-                    menus.ActivateAction(ga);
+                    root.HeroAbilities.ActivateAction(ga);
+                    root.Menus.ActivateAction(ga);
                     break;
             }
         }

@@ -27,13 +27,30 @@ namespace ShanoRPGWin
 
         private async void Form1_Load(object sender, EventArgs e)
         {
-
-            //Restore the last IP and port values. 
-            loadSettings();
-
             Size = MinimumSize;
 
+            //restore user settings
+            txtPlayerName.Text = Settings.Default.PlayerName;
+            txtRemoteIp.Text = Settings.Default.RemoteIp;
+            if (Settings.Default.IsRemoteGame)
+                isRemoteGame.Checked = true;
+            else
+                isLocalGame.Checked = true;
+
+            //reload scenarios
             await scenarioPicker.LoadScenarios();
+
+            //restore last scenario
+            var scPath = Settings.Default.CurrentScenario;
+            if (string.IsNullOrEmpty(scPath))
+                return;
+
+            var sc = scenarioPicker.FindScenario(scPath);
+            if (sc != null)
+            {
+                setCurrentScenario(sc);
+                validatePlayButton();
+            }
         }
 
         private void btnPlay_Click(object sender, EventArgs e)
@@ -44,11 +61,11 @@ namespace ShanoRPGWin
 
             //save some settings
             Settings.Default.PlayerName = playerName;
-            Settings.Default.IsRemoteGame = !btnLocalGame.Checked;
+            Settings.Default.IsRemoteGame = !isLocalGame.Checked;
             Settings.Default.RemoteIp = ipAddress;
             Settings.Default.Save();
 
-            if (btnLocalGame.Checked)
+            if (isLocalGame.Checked)
                 StartLocalGame(playerName);
             else
                 StartRemoteGame(playerName, ipAddress);
@@ -81,35 +98,41 @@ namespace ShanoRPGWin
                 var theGame = new LocalShano(playerName, mapSeed, scenarioPath);
 
                 if (chkLocalNetworked.Checked)
-                    theGame.ShanoEngine.OpenToNetwork();
+                    theGame.OpenToNetwork();
             }).Start();
         }
 
-        private void txtPlayerName_TextChanged(object sender, EventArgs e)
+        void playerName_TextChanged(object sender, EventArgs e)
         {
             validatePlayButton();
         }
 
-        private void txtRemoteIp_TextChanged(object sender, EventArgs e)
+        void remoteIp_TextChanged(object sender, EventArgs e)
         {
             validatePlayButton();
         }
 
         #region Panel event handlers
-        private void btnLocalGame_CheckedChanged(object sender, EventArgs e)
+        void isLocalGame_CheckedChanged(object sender, EventArgs e)
         {
-            pLocalGame.Visible = btnLocalGame.Checked;
+            pLocalGame.Visible = isLocalGame.Checked;
+
+            isLocalGame.TabStop = !isLocalGame.Checked;
+            isRemoteGame.TabStop = !isRemoteGame.Checked;
             validatePlayButton();
         }
 
-        private void btnRemoteGame_CheckedChanged(object sender, EventArgs e)
+        void isRemoteGame_CheckedChanged(object sender, EventArgs e)
         {
-            pRemoteGame.Visible = btnRemoteGame.Checked;
+            pRemoteGame.Visible = isRemoteGame.Checked;
+
+            isLocalGame.TabStop = !isLocalGame.Checked;
+            isRemoteGame.TabStop = !isRemoteGame.Checked;
             validatePlayButton();
         }
         #endregion
 
-        private void Form1_Resize(object sender, EventArgs e)
+        void Form1_Resize(object sender, EventArgs e)
         {
             //resize the gamesettings panel
             var left = lblBasic.Left + pSettings.Left;
@@ -117,45 +140,13 @@ namespace ShanoRPGWin
         }
         
 
-        private void btnScenarioDirs_Click(object sender, EventArgs e)
+        void btnScenarioDirs_Click(object sender, EventArgs e)
         {
             var result = scenarioPicker.ShowDialog(this);
             if (result == DialogResult.OK)
                 setCurrentScenario(scenarioPicker.ChosenScenario);
         }
 
-        /// <summary>
-        /// Loads the app settings to the form
-        /// </summary>
-        void loadSettings()
-        {
-            //player name
-            txtPlayerName.Text = Settings.Default.PlayerName;
-
-            //remote or local
-            if (Settings.Default.IsRemoteGame)
-                btnRemoteGame.Checked = true;
-            else
-                btnLocalGame.Checked = true;
-
-            //chosen scenario
-            scenarioPicker.ScenariosLoaded += () =>
-            {
-                var scPath = Settings.Default.CurrentScenario;
-                if (string.IsNullOrEmpty(scPath))
-                    return;
-
-                var sc = scenarioPicker.FindScenario(scPath);
-                if (sc == null)
-                    return;
-
-                setCurrentScenario(sc);
-                btnPlay.Enabled = true;
-            };
-
-            //remote ip
-            txtRemoteIp.Text = Settings.Default.RemoteIp;
-        }
 
         void setCurrentScenario(ScenarioConfig scenario)
         {
@@ -184,7 +175,7 @@ namespace ShanoRPGWin
 
             var hasLocalScenario = ChosenScenario != null;
             var hasRemoteServer = !string.IsNullOrEmpty(txtRemoteIp.Text);
-            var hasDataToPlay = btnLocalGame.Checked ? hasLocalScenario : hasRemoteServer;
+            var hasDataToPlay = isLocalGame.Checked ? hasLocalScenario : hasRemoteServer;
 
             var isValid = hasName && hasDataToPlay;
 

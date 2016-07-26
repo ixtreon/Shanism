@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Shanism.Common.Game;
-using Shanism.Common.Objects;
+﻿using System.Linq;
 using Shanism.ScenarioLib;
 using Microsoft.Xna.Framework;
 using Shanism.Client;
 using Shanism.Common.Message;
 using Shanism.Engine;
-using Shanism.Engine.Objects;
-using Shanism.Engine.Entities;
 using Shanism.Common.Message.Server;
 using Shanism.Common;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Shanism.Editor.MapAdapter
 {
@@ -53,8 +46,9 @@ namespace Shanism.Editor.MapAdapter
             var llPos = control.Client.GameToScreen(inGamePos - @object.Scale / 2);
             var urPos = control.Client.GameToScreen(inGamePos + @object.Scale / 2);
             var tint = Color.White;
-            var tex = control.DefaultContent.TryGetRaw(@object.AnimationName);
-            if (tex == null)
+
+            Texture2D tex;
+            if (!control.DefaultContent.TryGet(@object.Model, out tex))
             {
                 tex = control.EditorContent.Circle;
                 tint = (canPlace(inGamePos) ? Color.Blue : Color.Red).SetAlpha(50);

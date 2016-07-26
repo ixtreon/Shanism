@@ -1,14 +1,18 @@
 ﻿using Shanism.Common.Content;
-using Shanism.Common.Objects;
+using Shanism.Common.StubObjects;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Common.Message.Server
 {
+    /// <summary>
+    /// NYI. May not be needed if the client handles animations locally. 
+    /// </summary>
     [ProtoContract]
     class ObjectAnimationMessage : IOMessage
     {

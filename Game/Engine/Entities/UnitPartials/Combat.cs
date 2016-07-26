@@ -12,6 +12,13 @@ namespace Shanism.Engine.Entities
 {
     partial class Unit
     {
+
+        /// <summary>
+        /// Gets whether the unit is dead. 
+        /// </summary>
+        public bool IsDead { get; private set; }
+
+
         /// <summary>
         /// The event fired when the unit gets killed by another unit. 
         /// </summary>
@@ -23,20 +30,21 @@ namespace Shanism.Engine.Entities
         public event Action<UnitDamagedArgs> DamageReceived;
 
         /// <summary>
-        /// The event executed right before a unit deals damage to a target. 
+        /// The event executed right before the unit deals damage to a target. 
         /// </summary>
-        public event Action<UnitDamagingArgs> DamageDealt;
+        public event Action<UnitDamagingArgs> DealingDamage;
+
+        /// <summary>
+        /// Occurs when the unit is finally removed from the map, i.e. destroyed.
+        /// </summary>
+        public event Action<UnitArgs> Destroyed;
 
 
         /// <summary>
         /// Gets the time it takes for an unit to attack as determined by <see cref="AttacksPerSecond"/>. 
         /// </summary>
-        /// <returns>The time for an attack in milliseconds. </returns>
-        public int AttackCooldown
-        {
-            get { return (AttacksPerSecond > 0) ? (int)(1000 / AttacksPerSecond) : int.MaxValue; }
-        }
-
+        /// <returns>The time for one attack in milliseconds. </returns>
+        public int AttackCooldown => (AttacksPerSecond > 0) ? (int)(1000 / AttacksPerSecond) : int.MaxValue;
 
 
         /// <summary>
@@ -72,7 +80,40 @@ namespace Shanism.Engine.Entities
         /// <returns></returns>
         public virtual int GetExperienceReward()
         {
-            return Constants.Units.Experience.Base + this.Level * Constants.Units.Experience.LevelFactor;
+            return Constants.Heroes.Experience.Base + Level * Constants.Heroes.Experience.LevelFactor;
+        }
+
+
+        /// <summary>
+        /// Instantly kills the unit. 
+        /// </summary>
+        /// <param name="killer">The killer of the unit or null if it is a suicide.</param>
+        public void Kill(Unit killer = null)
+        {
+            if (IsDead)
+                return;
+
+            // update unit state
+            Life = 0;
+            IsDead = true;
+            Buffs.Clear();
+
+
+            // give out rewards
+            if (killer != null)
+            {
+                // gold reward!
+
+                if (killer is Hero)
+                    ((Hero)killer).Experience += GetExperienceReward();
+            }
+
+            // raise the event
+            var args = new UnitDyingArgs(this, killer ?? this);
+            Death?.Invoke(args);
+
+            //run the scripts
+            Scripts.Run(s => s.OnUnitDeath(args));
         }
 
         /// <summary>
@@ -89,14 +130,12 @@ namespace Shanism.Engine.Entities
             if (target.IsDead)
                 return false;
 
-
             // Check target can take damage
-            if (dmgType == DamageType.Physical && target.States.HasFlag(UnitFlags.PhysicalImmune))
+            if (dmgType == DamageType.Physical && target.States.HasFlag(StateFlags.PhysicalImmune))
                 return false;
 
-            if (dmgType == DamageType.Magical && target.States.HasFlag(UnitFlags.MagicImmune))
+            if (dmgType == DamageType.Magical && target.States.HasFlag(StateFlags.MagicImmune))
                 return false;
-
 
             // Check target dodging
             var isDodge = !flags.HasFlag(DamageFlags.NoDodge) && (Rnd.Next(0, 100) < target.DodgeChance);
@@ -109,7 +148,7 @@ namespace Shanism.Engine.Entities
 
             // raise the pre-damage event
             var dmgArgs = new UnitDamagingArgs(this, target, dmgType, flags, amount);
-            DamageDealt?.Invoke(dmgArgs);
+            DealingDamage?.Invoke(dmgArgs);
 
             // Damage damping (armor, +magic def)
             var finalDmg = target.GetFinalDamage(dmgArgs.BaseDamage, dmgArgs.DamageType);
@@ -122,13 +161,12 @@ namespace Shanism.Engine.Entities
             target.DamageReceived?.Invoke(receiveArgs);
 
             //send a message yo
-            target.SendMessageToVisibles(new DamageEventMessage(target, dmgType, finalDmg, true));
+            var eventMessage = new DamageEventMessage(target, dmgType, finalDmg, true);
+            target.SendMessageToVisibles(eventMessage);
 
             //check for death
             if (target.LifePercentage <= 0)
-            {
                 target.Kill(this);
-            }
 
             return true;
         }

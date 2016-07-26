@@ -1,13 +1,14 @@
 ﻿using Shanism.Engine.Entities;
+using Shanism.Engine.Objects.Abilities;
 using System;
 using System.Collections.Generic;
 
-namespace Shanism.Engine.Systems.Abilities
+namespace Shanism.Engine.Systems
 {
     /// <summary>
     /// A collection of all the abilities of a unit.  
     /// </summary>
-    public interface IUnitAbilities : IEnumerable<Ability>
+    public interface IUnitAbilities : ICollection<Ability>, IReadOnlyCollection<Ability>
     {
 
         /// <summary>
@@ -24,21 +25,7 @@ namespace Shanism.Engine.Systems.Abilities
         /// The event raised when this unit loses an ability. 
         /// </summary>
         event Action<Ability> OnAbilityLost;
-
-
-        /// <summary>
-        /// Adds the given ability to the spellbook of this hero. 
-        /// </summary>
-        /// <param name="a">The ability that is to be added. </param>
-        void Add(Ability a);
-
-        /// <summary>
-        /// Removes the given ability from the spellbook of this hero. 
-        /// </summary>
-        /// <returns>Whether the ability was successfully found and removed. </returns>
-        bool Remove(Ability a);
-
-
+        
         /// <summary>
         /// Tries to get the value of the given ability from this unit's spell book. 
         /// Returns null if the ability is not found. 

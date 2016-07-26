@@ -41,21 +41,21 @@ namespace Shanism.Common.ShadowCalc
             switch (q)
             {
                 case 0: //<x, <y -> right, top
-                    yield return new Line(rect.BottomRight, rect.TopRight);
-                    yield return new Line(rect.TopRight, rect.TopLeft);
+                    yield return new Line(rect.TopRight, rect.BottomRight);
+                    yield return new Line(rect.BottomRight, rect.BottomLeft);
                     break;
                 case 1: //<x, >y -> right, bottom
-                    yield return new Line(rect.BottomLeft, rect.BottomRight);
-                    yield return new Line(rect.BottomRight, rect.TopRight);
+                    yield return new Line(rect.TopLeft, rect.TopRight);
+                    yield return new Line(rect.TopRight, rect.BottomRight);
                     break;
                 case 2: //>x, <y -> left, top
-                    yield return new Line(rect.BottomLeft, rect.TopLeft);
-                    yield return new Line(rect.TopLeft, rect.TopRight);
+                    yield return new Line(rect.TopLeft, rect.BottomLeft);
+                    yield return new Line(rect.BottomLeft, rect.BottomRight);
 
                     break;
                 case 3: //>x, >y -> left, bottom
-                    yield return new Line(rect.TopLeft, rect.BottomLeft);
-                    yield return new Line(rect.BottomLeft, rect.BottomRight);
+                    yield return new Line(rect.BottomLeft, rect.TopLeft);
+                    yield return new Line(rect.TopLeft, rect.TopRight);
                     break;
             }
         }

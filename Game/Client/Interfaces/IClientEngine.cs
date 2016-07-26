@@ -1,7 +1,6 @@
-﻿using Shanism.Client.Textures;
+﻿using Shanism.Client.Drawing;
 using Shanism.Common;
-using Shanism.Common.Game;
-using Shanism.Common.Objects;
+using Shanism.Common.Interfaces.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,9 +46,9 @@ namespace Shanism.Client
 
         /// <summary>
         /// Informs the client of changes to the size of
-        /// the underlying game window. 
+        /// the main game window. 
         /// </summary>
-        /// <param name="rect">The rect.</param>
+        /// <param name="sz">The new size of the window.</param>
         void SetWindowSize(Point sz);
 
         /// <summary>
@@ -63,7 +62,7 @@ namespace Shanism.Client
         /// Toggles the visibility of the default UI.
         /// </summary>
         /// <param name="visible">if set to <c>true</c> the UI gets visible.</param>
-        void ToggleUI(bool visible);
+        void SetDesignMode(bool isDesignMode);
 
         /// <summary>
         /// Converts the given in-game point to an on-screen point. 
@@ -75,7 +74,7 @@ namespace Shanism.Client
         /// <summary>
         /// Converts the given on-screen point to an in-game point. 
         /// </summary>
-        /// <param name="gamePos">The on-screen position.</param>
+        /// <param name="screenPos">The on-screen position.</param>
         /// <returns>The in-game position of the given point. </returns>
         Vector ScreenToGame(Vector screenPos);
     }

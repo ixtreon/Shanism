@@ -29,8 +29,6 @@ namespace Shanism.Editor
             if (!wasClosed)
                 return;
 
-            //modify the UI
-            StatusLoading = true;
 
             var dialog = new OpenFileDialog
             {
@@ -43,6 +41,9 @@ namespace Shanism.Editor
 
             if (dialog.ShowDialog() != DialogResult.OK)
                 return;
+
+            //modify the UI
+            StatusLoading = true;
 
             var sc = new Scenario(dialog.FileName);
 
@@ -85,8 +86,9 @@ namespace Shanism.Editor
             Model = null;
 
             string scenarioLoadErrors = string.Empty;
-            var scenario = await Task.Run(() => Scenario.Load(filePath, out scenarioLoadErrors));
-            if (scenario == null)
+            Scenario scenario = null;
+            var result = await Task.Run(() => Scenario.Load(filePath, out scenarioLoadErrors, out scenario));
+            if (result != Scenario.ScenarioCompilationResult.Success)
             {
                 MessageBox.Show($"Unable to load a scenario from `{filePath}`. The error returned was: \n {scenarioLoadErrors}", "ShanoEditor", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 StatusLoading = false;

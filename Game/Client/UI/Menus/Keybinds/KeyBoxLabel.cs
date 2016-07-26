@@ -85,13 +85,13 @@ namespace Shanism.Client.UI.Menus.Keybinds
 
             lblValue.Text = kb?.ToShortString() ?? NoKeybindString;
 
-            lblText.TextColor = MouseOver ? Color.Goldenrod.Brighten(20) : Color.Goldenrod;
+            lblText.TextColor = HasHover ? Color.Goldenrod.Brighten(20) : Color.Goldenrod;
             ToolTip = kb?.ToString() ?? string.Empty;
 
             if (HasFocus)
                 BackColor = Color.Black.SetAlpha((int)Ticker.Default.GetValue(150, 200));
             else
-                BackColor = Color.Black.SetAlpha(MouseOver ? 100 : 50);
+                BackColor = Color.Black.SetAlpha(HasHover ? 100 : 50);
         }
     }
 }

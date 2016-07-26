@@ -22,16 +22,18 @@ namespace Shanism.Common.Game
 
         [ProtoMember(2)]
         readonly double angle;
+        /// <summary>
+        /// Gets a value indicating whether this instance is moving.
+        /// </summary>
+        public bool IsMoving => isMoving;
 
         /// <summary>
         /// Gets a direction vector of length 1. 
         /// </summary>
         public Vector DirectionVector => Vector.Zero.PolarProjection(angle, 1);
 
-        /// <summary>
-        /// Gets a value indicating whether this instance is moving.
-        /// </summary>
-        public bool IsMoving => isMoving;
+
+        public double AngleRad => angle;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MovementState"/> struct.

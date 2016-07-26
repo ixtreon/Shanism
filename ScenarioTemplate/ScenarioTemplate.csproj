@@ -53,13 +53,13 @@
     <Folder Include="Units\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Game\Engine\Engine.csproj">
-      <Project>{0b2e9f70-7046-470a-8e5d-ebd47f030ddc}</Project>
-      <Name>Engine</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Game\Common\Common.csproj">
       <Project>{dc89987d-5817-4f1d-95ca-80c024c8d6bb}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Game\Engine\Engine.csproj">
+      <Project>{0b2e9f70-7046-470a-8e5d-ebd47f030ddc}</Project>
+      <Name>Engine</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

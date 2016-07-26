@@ -215,7 +215,7 @@ namespace Shanism.Editor.Views
             this.pMapSettings.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pMapSettings.Location = new System.Drawing.Point(3, 3);
             this.pMapSettings.Name = "pMapSettings";
-            this.pMapSettings.Size = new System.Drawing.Size(216, 551);
+            this.pMapSettings.Size = new System.Drawing.Size(216, 500);
             this.pMapSettings.TabIndex = 0;
             // 
             // pInfiniteSettings
@@ -278,22 +278,24 @@ namespace Shanism.Editor.Views
             // mapSplitter.Panel2
             // 
             this.mapSplitter.Panel2.Controls.Add(this.selectionWindow1);
-            this.mapSplitter.Size = new System.Drawing.Size(928, 585);
+            this.mapSplitter.Size = new System.Drawing.Size(922, 534);
             this.mapSplitter.SplitterDistance = 232;
             this.mapSplitter.TabIndex = 1;
             // 
             // tabControl1
             // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Controls.Add(this.tabPage3);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(230, 583);
+            this.tabControl1.Size = new System.Drawing.Size(230, 532);
             this.tabControl1.TabIndex = 3;
             // 
             // tabPage1
@@ -302,7 +304,7 @@ namespace Shanism.Editor.Views
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(222, 557);
+            this.tabPage1.Size = new System.Drawing.Size(222, 506);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Map";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -313,7 +315,7 @@ namespace Shanism.Editor.Views
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(222, 557);
+            this.tabPage2.Size = new System.Drawing.Size(222, 506);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Terrain";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -324,7 +326,7 @@ namespace Shanism.Editor.Views
             this.pTerrain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pTerrain.Location = new System.Drawing.Point(3, 3);
             this.pTerrain.Name = "pTerrain";
-            this.pTerrain.Size = new System.Drawing.Size(216, 551);
+            this.pTerrain.Size = new System.Drawing.Size(216, 500);
             this.pTerrain.TabIndex = 17;
             this.pTerrain.TerrainBrushChanged += new System.Action(this.onTerrainBrushChanged);
             // 
@@ -334,7 +336,7 @@ namespace Shanism.Editor.Views
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(222, 557);
+            this.tabPage4.Size = new System.Drawing.Size(222, 506);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Props";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -345,7 +347,7 @@ namespace Shanism.Editor.Views
             this.propPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propPanel.Location = new System.Drawing.Point(3, 3);
             this.propPanel.Name = "propPanel";
-            this.propPanel.Size = new System.Drawing.Size(216, 551);
+            this.propPanel.Size = new System.Drawing.Size(216, 500);
             this.propPanel.TabIndex = 0;
             this.propPanel.BrushChanged += new System.Action<Shanism.ScenarioLib.ObjectConstructor>(this.propPanel_BrushChanged);
             // 
@@ -355,7 +357,7 @@ namespace Shanism.Editor.Views
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(222, 557);
+            this.tabPage3.Size = new System.Drawing.Size(222, 506);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Objects";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -366,9 +368,9 @@ namespace Shanism.Editor.Views
             this.pObjects.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pObjects.Location = new System.Drawing.Point(3, 3);
             this.pObjects.Name = "pObjects";
-            this.pObjects.Size = new System.Drawing.Size(216, 551);
+            this.pObjects.Size = new System.Drawing.Size(216, 500);
             this.pObjects.TabIndex = 0;
-            this.pObjects.ObjectSelected += new System.Action<Common.Objects.IEntity>(this.pObjects_ObjectSelected);
+            this.pObjects.ObjectSelected += new System.Action<Shanism.Common.Interfaces.Entities.IEntity>(this.pObjects_ObjectSelected);
             // 
             // selectionWindow1
             // 
@@ -377,7 +379,7 @@ namespace Shanism.Editor.Views
             this.selectionWindow1.Location = new System.Drawing.Point(0, -1);
             this.selectionWindow1.Margin = new System.Windows.Forms.Padding(0);
             this.selectionWindow1.Name = "selectionWindow1";
-            this.selectionWindow1.Size = new System.Drawing.Size(177, 135);
+            this.selectionWindow1.Size = new System.Drawing.Size(213, 168);
             this.selectionWindow1.TabIndex = 0;
             this.selectionWindow1.Visible = false;
             // 
@@ -388,7 +390,7 @@ namespace Shanism.Editor.Views
             this.Controls.Add(this.mapSplitter);
             this.MinimumSize = new System.Drawing.Size(310, 240);
             this.Name = "MapView";
-            this.Size = new System.Drawing.Size(928, 585);
+            this.Size = new System.Drawing.Size(922, 534);
             ((System.ComponentModel.ISupportInitialize)(this.nWidth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nHeight)).EndInit();
             this.pFiniteSettings.ResumeLayout(false);

@@ -11,7 +11,7 @@ namespace Shanism.Client.Systems
 {
     class ChatSystem : ClientSystem, IChatProvider
     {
-        public event Action<string> MessageSent;
+        public event Action<string> ChatSent;
 
         public override void Update(int msElapsed)
         {
@@ -23,7 +23,7 @@ namespace Shanism.Client.Systems
             if (ioMsg.Type == MessageType.ServerChat)
             {
                 var msg = (ChatMessage)ioMsg;
-                MessageSent?.Invoke(msg.Message);
+                ChatSent?.Invoke(msg.Message);
             }
         }
     }

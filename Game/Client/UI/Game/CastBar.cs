@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using Shanism.Common.Game;
 using Shanism.Client.UI.Common;
-using Shanism.Common.Objects;
+using Shanism.Common.StubObjects;
 using Color = Microsoft.Xna.Framework.Color;
+using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Client.UI
 {
@@ -35,7 +36,7 @@ namespace Shanism.Client.UI
         protected override void OnUpdate(int msElapsed)
         {
             IsVisible = Target != null
-                && Target.CastingAbilityId.HasValue
+                && Target.IsCasting()
                 && Target.TotalCastingTime > 0;
 
             if (IsVisible)

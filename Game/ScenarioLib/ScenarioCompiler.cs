@@ -68,7 +68,7 @@ namespace Shanism.ScenarioLib
         /// </summary>
         static ScenarioCompiler()
         {
-            Sandboxer.Init(Path.GetFullPath(OutputDirectory));
+            Sandboxer.Init();
         }
 
 

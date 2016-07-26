@@ -7,8 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Shanism.Common.Objects;
+using Shanism.Common.StubObjects;
 using Shanism.Common;
+using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Editor.Views.Maps
 {
@@ -33,28 +34,28 @@ namespace Shanism.Editor.Views.Maps
         }
 
 
-        protected override void OnMouseEnter(EventArgs e)
+        protected override void OnMouseEnter(EventArgs eventargs)
         {
-            base.OnMouseEnter(e);
+            base.OnMouseEnter(eventargs);
             Invalidate();
         }
 
-        protected override void OnMouseLeave(EventArgs e)
+        protected override void OnMouseLeave(EventArgs eventargs)
         {
-            base.OnMouseLeave(e);
+            base.OnMouseLeave(eventargs);
             Invalidate();
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        protected override void OnPaint(PaintEventArgs pevent)
         {
             const float fontMargin = 3f;
 
-            base.OnPaint(e);
+            base.OnPaint(pevent);
 
             if (Model == null)
                 return;
 
-            var g = e.Graphics;
+            var g = pevent.Graphics;
             var animMargin = fontMargin;
             
             //draw object name
@@ -74,12 +75,12 @@ namespace Shanism.Editor.Views.Maps
 
 
             //draw animation
-            var anim = Model.Content.Animations.TryGet(Object.AnimationName);
+            var anim = Model.Content.Animations.TryGet(Object.Model);
             var animDest = new Common.RectangleF(animMargin, fontMargin, Width - 2 * animMargin, Height - (2 * animMargin - fontMargin));
             if (anim == null)
                 g.FillRectangle(Brushes.Red, animDest.ToNetRectangle());
             else
-                anim.Paint(g, animDest);
+                anim.Paint(g, new[] { animDest.TopLeft, animDest.TopRight, animDest.BottomLeft });
 
 
         }

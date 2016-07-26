@@ -8,8 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Shanism.ScenarioLib;
-using Shanism.Common.Objects;
+using Shanism.Common.StubObjects;
 using Shanism.Common;
+using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Editor.Views.Maps
 {
@@ -44,21 +45,25 @@ namespace Shanism.Editor.Views.Maps
             cbOwner.SelectedIndex = 0;
         }
 
-        protected override async Task LoadModel()
+        protected override Task LoadModel()
         {
             if (Model?.Scenario == null)
-                return;
+                return Task.CompletedTask;
 
-            var units = Model.Scenario.DefinedEntities
+            return Task.Run(() =>
+            {
+                var units = Model.Scenario.DefinedEntities
                 .Where(o => o is IUnit);
 
-            var doodads = Model.Scenario.DefinedEntities
+                var doodads = Model.Scenario.DefinedEntities
                 .Where(o => o is IDoodad);
 
-            if (units.Any())
-                AddObjects("Custom Units", units, true);
-            if (doodads.Any())
-                AddObjects("Custom Doodads", doodads, false);
+                if (units.Any())
+                    AddObjects("Custom Units", units, true);
+                if (doodads.Any())
+                    AddObjects("Custom Doodads", doodads, false);
+            });
+
         }
 
         void AddObjects(string name, IEnumerable<IEntity> objects, bool canOwn)
@@ -94,7 +99,7 @@ namespace Shanism.Editor.Views.Maps
             foreach (var o in objs)
             {
                 var animView = Model.Content
-                    .Animations.TryGet(o.AnimationName);
+                    .Animations.TryGet(o.Model);
 
                 var btn = new GameObjectButton(o);
                 btn.ObjectSelected += onGameObjectClicked;

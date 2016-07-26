@@ -1,5 +1,4 @@
 ﻿using Shanism.Client.Input;
-using Shanism.Client.Textures;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -7,9 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shanism.Common;
-using Shanism.Common.Game;
 using Color = Microsoft.Xna.Framework.Color;
-using Shanism.Client.Assets;
+using Shanism.Client.Drawing;
 
 namespace Shanism.Client.UI.Chat
 {
@@ -65,7 +63,7 @@ namespace Shanism.Client.UI.Chat
             => HasFocus && (cursorBlink < CursorBlinkRate / 2);
 
         Vector CursorSize
-            => new Vector(Font.CharSpacingUi, Font.HeightUi);
+            => new Vector(Font.HeightUi / 10, Font.HeightUi);
 
 
         readonly LinkedList<string> messageHistory = new LinkedList<string>();
@@ -74,7 +72,7 @@ namespace Shanism.Client.UI.Chat
 
         readonly KeyRepeater keyRepeater = new KeyRepeater();
 
-        public event Action<string> MessageSent;
+        public event Action<string> ChatSent;
 
         public ChatBar()
         {
@@ -153,9 +151,9 @@ namespace Shanism.Client.UI.Chat
                     if (messageHistory.Any())
                     {
                         if (currentMsgHistoryNode == null)
-                            currentMsgHistoryNode = messageHistory.First;
+                            currentMsgHistoryNode = messageHistory.Last;
                         else
-                            currentMsgHistoryNode = currentMsgHistoryNode.Next;
+                            currentMsgHistoryNode = currentMsgHistoryNode.Previous;
 
                         CurrentText = currentMsgHistoryNode?.Value ?? string.Empty;
                         selectAllText();
@@ -173,7 +171,7 @@ namespace Shanism.Client.UI.Chat
                     //send the message
                     if (!string.IsNullOrEmpty(CurrentText))
                     {
-                        MessageSent?.Invoke(CurrentText);
+                        ChatSent?.Invoke(CurrentText);
                         currentMsgHistoryNode = null;
                         clearText();
                     }
@@ -294,6 +292,7 @@ namespace Shanism.Client.UI.Chat
             }
             else
             {
+                //draw partial string
                 var diff = lastTextChar - lastPossiblePos;
                 var trimmedChars = textPositions.TakeWhile(p => p < diff).Count();
 

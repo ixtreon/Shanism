@@ -21,11 +21,13 @@ namespace Shanism.Engine.Common
             typeof(Effect),
         };
 
+        readonly Scenario scenario;
         readonly Dictionary<string, Type> recognizedTypes;
 
 
         public ObjectCreator(Scenario sc)
         {
+            scenario = sc;
             recognizedTypes = baseTypes
                 .Concat(sc.DefinedEntityTypes)
                 .ToDictionary(ty => ty.FullName, ty => ty);
@@ -41,13 +43,13 @@ namespace Shanism.Engine.Common
             var e = (Entity)Activator.CreateInstance(objTy);
             e.Position = oc.Location;
 
-            //TODO: set owner
-            //if (!string.IsNullOrEmpty(oc.Owner) && e is Unit)
-            //    ((Unit)e).Owner = Player.NeutralAggressive;
+            Player owner;
+            if (e is Unit && Player.TryParse(oc.Owner, out owner))
+                ((Unit)e).SetOwner(Player.Aggressive);
 
             //set animation
-            if (!string.IsNullOrEmpty(oc.Animation))
-                e.AnimationSuffix = oc.Animation;
+            if (!string.IsNullOrEmpty(oc.Model))
+                e.Model = oc.Model;
 
             if (oc.Size > 0)
                 e.Scale = oc.Size;
@@ -56,6 +58,15 @@ namespace Shanism.Engine.Common
                 e.CurrentTint = e.DefaultTint = oc.Tint.Value;
 
             return e;
+        }
+
+
+        public IEnumerable<Entity> CreateAllEntities()
+        {
+            return scenario.Config.Map.Objects
+                .Select(CreateObject)
+                .Where(o => o != null)
+                .ToList();
         }
     }
 }

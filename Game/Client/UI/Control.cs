@@ -6,8 +6,8 @@ using System.Linq;
 using System.Text;
 using Shanism.Common;
 using Shanism.Common.Game;
-using Color = Microsoft.Xna.Framework.Color;
 using Shanism.Client.Input;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace Shanism.Client.UI
 {
@@ -29,26 +29,17 @@ namespace Shanism.Client.UI
     {
         #region Static/Const members
 
+        static readonly IComparer<Control> controlDrawOrderComparer
+            = new GenericComparer<Control>((a, b) => a.DrawOrder.CompareTo(b.DrawOrder));
+
 
         /// <summary>
         /// Specifies the default distance between elements in UI scale. 
         /// </summary>
         public const double Padding = 0.01;
 
+        public const double LargePadding = 0.02;
 
-        ///// <summary>
-        ///// Gets the keyboard state. 
-        ///// </summary>
-        //protected static KeyboardState
-        //    oldKeyboardState = Keyboard.GetState(),
-        //    keyboardState = Keyboard.GetState();
-
-        /// <summary>
-        /// Gets the mouse state. 
-        /// </summary>
-        protected static MouseState
-            oldMouseState = Mouse.GetState(),
-            mouseState = Mouse.GetState();
 
         /// <summary>
         /// Gets the first control that is under the mouse pointer
@@ -71,10 +62,11 @@ namespace Shanism.Client.UI
         Vector _size;
 
         /// <summary>
-        /// The list of child controls. 
+        /// The list of child controls sorted by ascending <see cref="DrawOrder"/>. 
         /// </summary>
-        protected readonly List<Control> controls = new List<Control>();
+        readonly SortedSet<Control> controls = new SortedSet<Control>(controlDrawOrderComparer);
 
+        protected static AssetList Content { get; private set; }
 
         #region Public Properties
 
@@ -111,7 +103,7 @@ namespace Shanism.Client.UI
         /// <summary>
         /// Gets the Z-order of the control. 
         /// </summary>
-        public double ZOrder { get; set; }
+        public double DrawOrder { get; private set; }
 
         /// <summary>
         /// Gets the sticky sides in relation to the parent control. 
@@ -123,7 +115,42 @@ namespace Shanism.Client.UI
         /// </summary>
         public Vector Location { get; set; }
 
+        /// <summary>
+        /// Gets or sets whether the control is visible. 
+        /// </summary>
+        public bool IsVisible
+        {
+            get { return _isVisible; }
+            set
+            {
+                if (value != _isVisible)
+                {
+                    _isVisible = value;
+                    VisibleChanged?.Invoke(this);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the size of the control in UI coordinates. 
+        /// </summary>
+        public Vector Size
+        {
+            get { return _size; }
+            set
+            {
+                var d = value - _size;
+                _size = value;
+
+                resizeChildren(AnchorMode.Left, AnchorMode.Right, new Vector(d.X, 0));
+                resizeChildren(AnchorMode.Top, AnchorMode.Bottom, new Vector(0, d.Y));
+
+                SizeChanged?.Invoke(this);
+            }
+        }
+
         #endregion
+
 
 
         #region Events
@@ -168,7 +195,12 @@ namespace Shanism.Client.UI
         public event Action<Control> VisibleChanged;
 
         /// <summary>
-        /// The event whenever a game action (a key and zero or more modifier keys) 
+        /// Raised whenever the control's size changes. 
+        /// </summary>
+        public event Action<Control> SizeChanged;
+
+        /// <summary>
+        /// The event whenever a game action (a key plus/minus some modifier keys) 
         /// is activated (pressed or released as per <see cref="Settings.QuickButtonPress"/>)
         /// while this control has focus (see <see cref="FocusControl"/>. 
         /// </summary>
@@ -179,52 +211,8 @@ namespace Shanism.Client.UI
         #endregion
 
 
-        /// <summary>
-        /// Gets or sets the absolute position of this control in UI coordinates. 
-        /// Calculated using the parent's absolute position. 
-        /// </summary>
-        public Vector AbsolutePosition
-        {
-            get { return ParentAbsolutePosition + Location; }
-            set { Location = value - ParentAbsolutePosition; }
-        }
 
-        /// <summary>
-        /// Gets or sets whether the control is visible. 
-        /// </summary>
-        public bool IsVisible
-        {
-            get { return _isVisible; }
-            set
-            {
-                if (value != _isVisible)
-                {
-                    _isVisible = value;
-                    VisibleChanged?.Invoke(this);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the size of the control in UI coordinates. 
-        /// </summary>
-        public Vector Size
-        {
-            get { return _size; }
-            set
-            {
-                if (_size != value)
-                {
-                    var d = value - _size;
-                    _size = value;
-
-                    resizeChildren(AnchorMode.Left, AnchorMode.Right, new Vector(d.X, 0));
-                    resizeChildren(AnchorMode.Top, AnchorMode.Bottom, new Vector(0, d.Y));
-                }
-
-            }
-        }
-
+        #region Property Shortcuts
 
         /// <summary>
         /// Gets all the children of this control. 
@@ -232,18 +220,10 @@ namespace Shanism.Client.UI
         public IEnumerable<Control> Controls => controls;
 
         /// <summary>
-        /// Gets whether this control is the currently focused control.
+        /// Gets the bounds of this control relative to its parent's coordinate space.
         /// </summary>
-        public bool HasFocus => FocusControl == this;
+        public RectangleF Bounds => new RectangleF(Location, Size);
 
-        /// <summary>
-        /// Gets whether this control is the root (top-level) control. 
-        /// </summary>
-        public bool IsRootControl => Parent == null;
-
-
-
-        #region Control Bounds
         /// <summary>
         /// Gets the top (low Y) coordinate of this control relative to its parent. 
         /// </summary>
@@ -259,55 +239,31 @@ namespace Shanism.Client.UI
         /// </summary>
         public double Bottom => Location.Y + Size.Y;
 
-
         /// <summary>
         /// Gets the right X coordinate of this control relative to its parent. 
         /// </summary>
         public double Right => Location.X + Size.X;
 
         /// <summary>
+        /// Gets whether this control is the currently focused control.
+        /// </summary>
+        public bool HasFocus => FocusControl == this;
+
+        /// <summary>
         /// Gets whether the mouse is currently over this control. 
         /// </summary>
-        public bool MouseOver => (HoverControl == this);
-
-
-        /// <summary>
-        /// Gets or sets the screen position of this control, in pixels. 
-        /// </summary>
-        public Vector ScreenLocation
-        {
-            get { return Screen.UiToScreen(Location); }
-            set { AbsolutePosition = Screen.ScreenToUi(value); }
-        }
+        public bool HasHover => (HoverControl == this);
 
         /// <summary>
-        /// Gets the screen size of this control, in pixels. 
+        /// Gets whether this control is a root (top-level) control. 
         /// </summary>
-        public Point ScreenSize
-        {
-            get { return (Size * Screen.UiScale).ToPoint(); }
-        }
-        #endregion
-
-
-        #region Parent Bounds
-        /// <summary>
-        /// Gets the absolute position of this control's parent, 
-        /// or <see cref="Vector.Zero"/> if this control has no parent. 
-        /// </summary>
-        private Vector ParentAbsolutePosition
-        {
-            get { return Parent?.AbsolutePosition ?? Vector.Zero; }
-        }
+        public bool IsRootControl => Parent == null;
 
         /// <summary>
-        /// Gets the size of this control's parent. 
+        /// Calculates the absolute position of this control in UI coordinates. 
         /// </summary>
-        /// <returns></returns>
-        private Vector ParentSize
-        {
-            get { return Parent?.Size ?? Vector.Zero; }
-        }
+        public Vector AbsolutePosition
+            => (Parent?.AbsolutePosition ?? Vector.Zero) + Location;
         #endregion
 
 
@@ -319,75 +275,78 @@ namespace Shanism.Client.UI
         /// <exception cref="System.ArgumentNullException"></exception>
         public void Add(Control c)
         {
-            if (c == null) throw new ArgumentNullException(nameof(c));
-
-            controls.Add(c);
-
-            c.Parent = this;
-            c.BringToFront();
+            add(c, largestDrawOrder() + 1);
         }
+
+        public void AddRange(IEnumerable<Control> controls)
+        {
+            if (controls == null) throw new ArgumentNullException(nameof(controls));
+
+            var id = largestDrawOrder() + 1;
+            foreach (var c in controls)
+                add(c, id++);
+        }
+
 
         /// <summary>
         /// Removes the given child control. 
         /// </summary>
         /// <param name="c"></param>
-        public bool Remove(Control c) => controls.Remove(c);
+        public bool Remove(Control c)
+        {
+            var rem = controls.Remove(c);
+            if (rem)
+                OnControlRemoved(c);
+            return rem;
+        }
+
+        /// <summary>
+        /// Removes all child controls.
+        /// </summary>
+        public void ClearControls() => controls.Clear();
 
 
-        public void Show() => IsVisible = true;
 
-        public void Hide() => IsVisible = false;
+        void add(Control c, double drawOrder)
+        {
+            if (c == null) throw new ArgumentNullException(nameof(c));
 
-        public void ToggleVisible() => IsVisible = !IsVisible;
+            c.Parent = this;
+            c.DrawOrder = drawOrder;
 
+            controls.Add(c);
+            OnControlAdded(c);
+        }
 
+        double largestDrawOrder() => controls.Max?.DrawOrder ?? 0;
+
+        public static void SetContent(AssetList content)
+        {
+            Content = content;
+        }
+
+        /// <summary>
+        /// Handles the given ClientAction. 
+        /// </summary>
+        /// <param name="act"></param>
         public void ActivateAction(ClientAction act) => GameActionActivated?.Invoke(act);
 
-        public void PressKey(Keybind k) => KeyPressed?.Invoke(k);
 
 
-        /// <summary>
-        /// Brings thie control to the front of the z-order. 
-        /// </summary>
-        public void BringToFront()
+
+
+        public void Draw(Graphics g)
         {
-            if (Parent != null && Parent.controls.Count > 1)
-            {
-                var maxZ = Parent.controls.Where(c => c != this).Max(c => c.ZOrder);
-                if (maxZ >= ZOrder)
-                    ZOrder = maxZ + 1;
-            }
-            else
-                ZOrder = 0;
-        }
+            if (!IsVisible)
+                return;
 
-        /// <summary>
-        /// Returns whether the given point lies within this control. 
-        /// </summary>
-        /// <param name="p">The specified point, in UI coordinates. </param>
-        /// <returns>True if the point is within this control. False otherwise. </returns>
-        public bool Contains(Vector p)
-        {
-            var localP = p - AbsolutePosition;
-            var inside = localP.X >= 0 && localP.Y >= 0 && localP.X < Size.X && localP.Y < Size.Y;
-            return inside;
-        }
+            g.PushWindow(Location, Size);
 
-        public void Draw(SpriteBatch sb) => Draw(new Graphics(sb));
+            OnDraw(g);
+            foreach (var c in controls)
+                c.Draw(g);
 
-        public void Draw(Graphics parentGraphics)
-        {
-            if (IsVisible)
-            {
-                var g = new Graphics(parentGraphics, Location, Size);
-
-                OnDraw(g);
-
-                // draw controls
-                // sort by z order - lower is first
-                foreach (var c in controls.OrderBy(c => c.ZOrder))
-                    c.Draw(g);
-            }
+            g.PopWindow();
         }
 
         /// <summary>
@@ -420,6 +379,10 @@ namespace Shanism.Client.UI
         /// <param name="msElapsed"></param>
         protected virtual void OnUpdate(int msElapsed) { }
 
+        protected virtual void OnControlAdded(Control c) { }
+
+        protected virtual void OnControlRemoved(Control c) { }
+
 
         void resizeChildren(AnchorMode min, AnchorMode max, Vector d)
         {
@@ -428,44 +391,29 @@ namespace Shanism.Client.UI
                 var hasMin = c.ParentAnchor.HasFlag(min);
                 var hasMax = c.ParentAnchor.HasFlag(max);
 
-                if (hasMax && hasMin)    //anchor both sides -> modify size
+                if (hasMax && hasMin)           //anchor both sides -> modify size
                     c.Size += d;
-                else if (hasMax && !hasMin)  // anchor at max (right/top) -> modify loc
+                else if (hasMax && !hasMin)     //anchor at (right/top) -> modify loc
                     c.Location += d;
-                else if (!hasMin && !hasMax) // has no anchor -> float in center
+                else if (!hasMin && !hasMax)    //has no anchor -> float in center
                     c.Location += d / 2;
-                //else if hasMin, !hasMax -> don't touch
+                //else if                       //anchor at (left/bottom) -> don't touch
             }
         }
 
-        Control recalcHoverControl()
+        Control getHover(Vector mousePos)
         {
             //search child controls first
-            //order by reverse z - higher is first
-            var childHover = controls
-                .Where(c => c.IsVisible)
-                .OrderBy(c => -c.ZOrder)
-                .Select(c => c.recalcHoverControl())
-                .Where(c => c != null)
-                .FirstOrDefault();
+            //order by descending zorder
+            Control childHover = null;
+            foreach (var c in controls.Reverse())
+                if (c.IsVisible
+                    && c.Bounds.Contains(mousePos)
+                    && (childHover = c.getHover(mousePos - c.Location)) != null)
+                    return childHover;
 
-            if (childHover != null)
-                return childHover;
-
-            if (CanHover && Contains(Screen.ScreenToUi(mouseState.Position.ToPoint())))
-                return this;
-
-            return null;
+            return CanHover ? this : null;
         }
-
-        #region Mouse key helpers
-        bool holdDownLeft { get { return mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Pressed; } }
-        bool holdDownRight { get { return mouseState.RightButton == ButtonState.Pressed && oldMouseState.RightButton == ButtonState.Pressed; } }
-        bool justPressedLeft { get { return mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released; } }
-        bool justPressedRight { get { return mouseState.RightButton == ButtonState.Pressed && oldMouseState.RightButton == ButtonState.Released; } }
-        bool justReleasedLeft { get { return mouseState.LeftButton == ButtonState.Released && oldMouseState.LeftButton == ButtonState.Pressed; } }
-        bool justReleasedRight { get { return mouseState.RightButton == ButtonState.Released && oldMouseState.RightButton == ButtonState.Pressed; } }
-        #endregion
 
         internal void UpdateMain(int msElapsed)
         {
@@ -479,67 +427,69 @@ namespace Shanism.Client.UI
             raiseKeyboardEvents();
         }
 
+        MouseArgs baseArgs => new MouseArgs(HoverControl, MouseInfo.UiPosition);
+        MouseButtonArgs leftArgs => new MouseButtonArgs(HoverControl, MouseInfo.UiPosition, MouseButton.Left);
+        MouseButtonArgs rightArgs => new MouseButtonArgs(HoverControl, MouseInfo.UiPosition, MouseButton.Right);
+
         void raiseMoveEvents()
         {
-            oldMouseState = mouseState;
-            mouseState = Mouse.GetState();
+            if (HoverControl == null)
+                HoverControl = this;
 
-            var mPos = Screen.ScreenToUi(mouseState.Position.ToPoint());
-            var oldMPos = Screen.ScreenToUi(oldMouseState.Position.ToPoint());
+            //button release
+            if (MouseInfo.LeftJustReleased)
+                HoverControl?.MouseUp?.Invoke(leftArgs);
 
-            //check drag-drop start before updating hover
-            var oldHover = HoverControl ?? this;
-            if (!holdDownLeft)
-                HoverControl = recalcHoverControl() ?? this;
+            if (MouseInfo.RightJustReleased)
+                HoverControl?.MouseUp?.Invoke(rightArgs);
+
+
+            //hover update
+            if (!MouseInfo.LeftDown)
+            {
+                var newHover = getHover(MouseInfo.UiPosition - Location);
+                if (newHover != HoverControl)
+                {
+                    //leave old control
+                    HoverControl?.MouseLeave?.Invoke(baseArgs);
+
+                    // if we also released the button this frame and the source 
+                    // supports drag-drop, raise the drag-drop events
+                    //
+                    // hover is kept when mouse is down 
+                    // so that's what a drag-drop is
+                    if (MouseInfo.LeftJustReleased && HoverControl.CanDrag)
+                    {
+                        HoverControl.OnDrag?.Invoke(newHover);
+                        newHover.OnDrop?.Invoke(HoverControl);
+                    }
+
+                    //enter new control
+                    HoverControl = newHover;
+                    HoverControl.MouseEnter?.Invoke(baseArgs);
+                }
+            }
 
             //mouse move
-            if (mPos != oldMPos)
-                HoverControl.MouseMove?.Invoke(new MouseArgs(HoverControl, mPos));
+            if (MouseInfo.UiPosition != MouseInfo.OldUiPosition)
+                HoverControl?.MouseMove?.Invoke(baseArgs);
 
-            //left click
-            if (justPressedLeft)
-                HoverControl.MouseDown?
-                    .Invoke(new MouseButtonArgs(HoverControl, mPos, MouseButton.Left));
-            else if (justReleasedLeft)
-                HoverControl.MouseUp?
-                    .Invoke(new MouseButtonArgs(HoverControl, mPos, MouseButton.Left));
 
-            //right click
-            if (justPressedRight)
-                HoverControl.MouseDown?
-                    .Invoke(new MouseButtonArgs(HoverControl, mPos, MouseButton.Right));
-            else if (justReleasedRight)
-                HoverControl.MouseUp?
-                    .Invoke(new MouseButtonArgs(HoverControl, mPos, MouseButton.Right));
+            //button press
+            if (MouseInfo.LeftJustPressed)
+                HoverControl?.MouseDown?.Invoke(leftArgs);
+
+            if (MouseInfo.RightJustPressed)
+                HoverControl?.MouseDown?.Invoke(rightArgs);
+
 
             //focus control
-            if (justPressedLeft || justPressedRight)
+            if ((MouseInfo.LeftJustPressed || MouseInfo.RightJustPressed) && HoverControl != null)
             {
                 var c = HoverControl;
                 while (!c.CanFocus && c.Parent != null)
                     c = c.Parent;
                 c.SetFocus();
-            }
-
-            //hover change
-            if (HoverControl != oldHover)
-            {
-                //leave old control
-                oldHover.MouseLeave?.Invoke(new MouseArgs(HoverControl, mPos));
-
-                // if we also released the button this frame and the source 
-                // supports drag-drop, raise the drag-drop events
-                //
-                // hover is kept when mouse is down 
-                // so that's what a drag-drop is
-                if (justReleasedLeft && oldHover.CanDrag)
-                {
-                    oldHover.OnDrag?.Invoke(HoverControl);
-                    HoverControl.OnDrop?.Invoke(oldHover);
-                }
-
-                //enter new control
-                HoverControl.MouseEnter?.Invoke(new MouseArgs(HoverControl, mPos));
             }
         }
 
@@ -570,8 +520,8 @@ namespace Shanism.Client.UI
             var min = Screen.ScreenToUi(Point.Zero);
             var max = Screen.ScreenToUi(new Point(Screen.Size.X, Screen.Size.Y));
 
-            AbsolutePosition = min;   //use the lowercase field so we don't move children..
-            Size = max - min;
+            Location = Vector.Zero;
+            Size = Parent.Size;
         }
 
         /// <summary>

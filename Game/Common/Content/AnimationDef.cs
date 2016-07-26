@@ -14,6 +14,8 @@ namespace Shanism.Common.Content
     /// </summary>
     public class AnimationDef
     {
+        public const int DefaultDuration = 500;
+
         /// <summary>
         /// A placeholder animation that is present in all games. Uses <see cref="TextureDef.Default"/> as its texture. 
         /// </summary>
@@ -32,7 +34,7 @@ namespace Shanism.Common.Content
 
 
         /// <summary>
-        /// Gets the span of this animation. 
+        /// Gets the texture cells spanned by this animation. 
         /// </summary>
         public Rectangle Span { get; set; } = new Rectangle(Point.Zero, Point.One);
 
@@ -40,8 +42,7 @@ namespace Shanism.Common.Content
         /// Gets or sets whether this animation is dynamic. 
         /// <para/>
         /// If set to true, cells in this animation's span are treated as animation frames
-        /// that change every <see cref="Period"/> milliseconds and optionally 
-        /// loop forever (see <see cref="IsLooping"/>). 
+        /// that change every <see cref="Period"/> milliseconds. 
         /// <para/>
         /// If set to false, all cells in this animation's span are treated 
         /// as part of one frame. 
@@ -55,19 +56,19 @@ namespace Shanism.Common.Content
         /// </summary>
         public int Period { get; set; }
 
-        /// <summary>
-        /// Gets or sets whether a dynamic animation is looping.    
-        /// Undefined if <see cref="IsDynamic"/> is false. 
-        /// </summary>
-        public bool IsLooping { get; set; }
+        public AnimationStyle RotationStyle { get; set; } = AnimationStyle.Fixed;
 
         /// <summary>
         /// Gets the number of frames in this animation. 
         /// </summary>
         public int FrameCount => IsDynamic ? Span.Area : 1;
 
+        public int TotalDuration => IsDynamic ? Period * FrameCount : DefaultDuration;
+
+
         /// <summary>
         /// Returns the span of the n'th frame in this animation. 
+        /// Values are whole numbers indicating the cells of the animation. 
         /// </summary>
         /// <param name="frame">The consecutive number of the frame, starting from 0. </param>
         public Rectangle GetFrame(int frame)
@@ -88,6 +89,7 @@ namespace Shanism.Common.Content
         /// </summary>
         /// <param name="animName">The name of the animation. </param>
         /// <param name="texName">The name of the source texture. </param>
+        /// <param name="span">The cell span of this animation within its texture. </param>
         public AnimationDef(string animName, string texName, Rectangle span)
         {
             Name = animName;
@@ -104,8 +106,7 @@ namespace Shanism.Common.Content
         /// <param name="texName">The source texture for the animation. </param>
         /// <param name="span"></param>
         /// <param name="period"></param>
-        /// <param name="isLooping"></param>
-        public AnimationDef(string animName, string texName, Rectangle span, int period, bool isLooping)
+        public AnimationDef(string animName, string texName, Rectangle span, int period)
         {
             Name = animName;
 
@@ -113,17 +114,21 @@ namespace Shanism.Common.Content
             Texture = texName;
             Span = span;
             Period = period;
-            IsLooping = isLooping;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AnimationDef"/> class
+        /// which is a clone of the supplied animation. 
+        /// </summary>
+        /// <param name="base">The base animation to clone.</param>
         public AnimationDef(AnimationDef @base)
         {
             IsDynamic = @base.IsDynamic;
-            IsLooping = @base.IsLooping;
             Name = @base.Name;
             Period = @base.Period;
             Span = @base.Span;
             Texture = @base.Texture;
+            RotationStyle = @base.RotationStyle;
         }
 
         /// <summary>

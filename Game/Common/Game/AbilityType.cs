@@ -7,10 +7,12 @@ using System.Threading.Tasks;
 namespace Shanism.Common.Game
 {
     /// <summary>
-    /// Specifies the type of an ability. 
+    /// Specifies the type of an ability.
+    /// 
+    /// A type of <seealso cref="byte"/>. 
     /// </summary>
     [Flags]
-    public enum AbilityTargetType
+    public enum AbilityTargetType : byte
     {
         /// <summary>
         /// A passive ability.  

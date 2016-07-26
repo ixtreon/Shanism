@@ -18,15 +18,19 @@ namespace Shanism.Common
         /// </summary>
         public static IReadOnlyList<TEnum> Values { get; } = Enum.GetValues(typeof(TEnum))
             .Cast<TEnum>()
-            .OrderBy(e => e.ToString())
+            .OrderBy(v => v)
             .ToList();
+
+        /// <summary>
+        /// Gets the number of constants defined in the provided enum type. 
+        /// </summary>
+        public static int Count { get; } = Values.Count;
 
         /// <summary>
         /// Gets the names of all values in the provided enum. 
         /// </summary>
         public static IReadOnlyList<string> Names { get; } = Values
             .Select(val => Enum.GetName(typeof(TEnum), val))
-            .OrderBy(s => s)
             .ToList();
 
         /// <summary>
@@ -48,11 +52,13 @@ namespace Shanism.Common
         public static TEnum GetNext<TEnum>(this TEnum t)
             where TEnum : struct, IConvertible, IComparable, IFormattable
         {
-            int id;
-            if (!Enum<TEnum>.ValueIds.TryGetValue(t, out id) || (++id == Enum<TEnum>.Values.Count))
-                return Enum<TEnum>.Values.First();
+            var vals = Enum<TEnum>.Values;
+            var id = vals.IndexOf(t);
 
-            return Enum<TEnum>.Values[id];
+            if (id == null || ++id == vals.Count)
+                return vals[0];
+
+            return vals[id.Value];
         }
     }
 }

@@ -41,13 +41,13 @@ namespace Shanism.Engine.Scripting
 
         public void ExecutePendingWorkItems()
         {
-            var oldContext = Current;
-            SetSynchronizationContext(this);
+            //var oldContext = Current;
+            //SetSynchronizationContext(this);
 
             while (HasWorkItems)
                 executeNextWorkItem();
 
-            SetSynchronizationContext(oldContext);
+            //SetSynchronizationContext(oldContext);
         }
 
         public void Post(Action act) => Post(new SendOrPostCallback((_) => act()), null);

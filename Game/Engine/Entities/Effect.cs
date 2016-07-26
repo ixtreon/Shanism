@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Shanism.Common.Game;
-using Shanism.Common.Objects;
+using Shanism.Common.StubObjects;
 using Shanism.Common.Util;
 using Shanism.Common;
+using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Engine.Entities
 {
@@ -35,7 +36,7 @@ namespace Shanism.Engine.Entities
         /// Gets the object type of this effect. 
         /// Always has a value of <see cref="ObjectType.Effect"/>. 
         /// </summary>
-        public override ObjectType ObjectType => ObjectType.Effect;
+        public override ObjectType ObjectType { get; } = ObjectType.Effect;
 
         /// <summary>
         /// Gets whether this effect has collision. 

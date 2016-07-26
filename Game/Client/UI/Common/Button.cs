@@ -1,14 +1,10 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Shanism.Client.Textures;
 using Color = Microsoft.Xna.Framework.Color;
-using Shanism.Common.Game;
-using Shanism.Client.Assets;
+using Shanism.Client.Drawing;
 using Shanism.Common;
 
 namespace Shanism.Client.UI.Common
@@ -18,6 +14,8 @@ namespace Shanism.Client.UI.Common
     /// </summary>
     class Button : Control
     {
+        public static readonly Vector DefaultSize = new Vector(0.15, 0.06);
+
         bool _isSelected = false;
 
         /// <summary>
@@ -35,7 +33,7 @@ namespace Shanism.Client.UI.Common
 
         public string Text { get; set; }
 
-        public TextureFont Font { get; set; } = Content.Fonts.NormalFont;
+        public TextureFont Font { get; set; }
 
         public Color FontColor { get; set; } = Color.Black;
 
@@ -69,8 +67,8 @@ namespace Shanism.Client.UI.Common
 
         public Button(string text = null, Texture2D texture = null)
         {
-            var sz = Font.MeasureStringUi("WOWyglj");
-            Size = new Vector(0.05f, sz.Y);
+            Font = Content.Fonts.NormalFont;
+            Size = DefaultSize;
 
             Text = text;
             Texture = texture;
@@ -96,7 +94,7 @@ namespace Shanism.Client.UI.Common
         {
             //draw background
             g.Draw(Content.Textures.Blank, Vector.Zero, Size, BackColor);
-            if(MouseOver)
+            if(HasHover)
                 g.Draw(Content.Textures.Blank, Vector.Zero, Size, HoverOverlayColor);
 
             //draw texture
@@ -110,9 +108,9 @@ namespace Shanism.Client.UI.Common
             //draw border
             if (HasBorder)
             {
-                var border = Content.Textures.TryGetIcon("border_hover");
-                var tint = MouseOver ? Color.White : new Color(32, 32, 32);
-                tint = (IsSelected && CanSelect) ? Color.Gold.Brighten(20) : tint;
+                var border = Content.Textures.IconBorder;
+                var tint = HasHover ? Color.White : new Color(32, 32, 32);
+                tint = (CanSelect && IsSelected) ? Color.Gold.Brighten(20) : tint;
 
                 g.Draw(border, Vector.Zero, Size, tint);
             }

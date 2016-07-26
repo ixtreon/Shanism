@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shanism.Common;
-using Shanism.Common.Objects;
+using Shanism.Common.StubObjects;
 using ProtoBuf;
 
 

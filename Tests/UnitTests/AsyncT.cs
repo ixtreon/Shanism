@@ -17,7 +17,6 @@ namespace UnitTests
         {
             testNormal();
 
-
             Thread.Sleep(500);
             Console.WriteLine("End");
         }

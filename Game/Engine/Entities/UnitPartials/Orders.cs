@@ -1,6 +1,4 @@
 ﻿using Shanism.Engine.Entities;
-using Shanism.Engine.Systems.Abilities;
-using Shanism.Engine.Systems.Behaviours;
 using Shanism.Engine.Systems.Orders;
 using Shanism.Common;
 using Shanism.Common.Game;
@@ -10,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shanism.Engine.Objects.Behaviours;
+using Shanism.Engine.Objects.Abilities;
 
 namespace Shanism.Engine.Entities
 {
@@ -55,9 +55,9 @@ namespace Shanism.Engine.Entities
         public bool IsMoving => Order is IMoveOrder;
 
         /// <summary>
-        /// Gets the direction in which this unit is moving, or <see cref="double.NaN"/> if it is standing. 
+        /// Gets the direction in which this unit is moving, if it is moving. 
         /// </summary>
-        public double MoveDirection => (Order as IMoveOrder)?.Direction ?? double.NaN;
+        public double MoveDirection => (Order as IMoveOrder)?.Direction ?? 0;
 
         internal void SetOrder(IOrder ord, bool isCustomOrder = true)
         {
@@ -70,41 +70,63 @@ namespace Shanism.Engine.Entities
         }
 
         /// <summary>
-        /// Tries to cast the given ability on the provided target. 
+        /// Tries to cast the given ability on the provided target entity. 
         /// </summary>
-        /// <param name="ability"></param>
-        /// <param name="target"></param>
-        public void CastAbility(Ability ability, object target) => abilities.CastAbility(ability, target);
+        /// <param name="ability">The ability to cast.</param>
+        /// <param name="target">The targeted entity.</param>
+        /// <returns>Whether the unit began casting the ability.</returns>
+        public bool TryCastAbility(Ability ability, Entity target)
+            => abilities.BeginCasting(ability, target);
 
-        internal void TryCastAbility(ActionMessage msg)
+        /// <summary>
+        /// Tries to cast the given ability on the provided target location. 
+        /// </summary>
+        /// <param name="ability">The ability to cast.</param>
+        /// <param name="location">The target location.</param>
+        /// <returns>Whether the unit began casting the ability.</returns>
+        public bool TryCastAbility(Ability ability, Vector location)
+            => abilities.BeginCasting(ability, location);
+
+        /// <summary>
+        /// Tries to cast the given ability without a target. 
+        /// </summary>
+        /// <param name="ability">The ability to cast.</param>
+        /// <returns>Whether the unit began casting the ability.</returns>
+        public bool TryCastAbility(Ability ability)
+            => abilities.BeginCasting(ability);
+
+
+        internal bool TryCastAbility(ActionMessage msg)
         {
-            //check if we got the ability
             var ability = abilities.TryGet(msg.AbilityId);
-            if (ability == null)
-                return;
+            if (ability == null) return false;
 
-            object target = null;
+            var targetEntity = Map.GetByGuid(msg.TargetGuid);
+
             switch(ability.TargetType)
             {
-                case AbilityTargetType.PointTarget:
-                    target = msg.TargetLocation;
-                    break;
-
-                case AbilityTargetType.UnitTarget:
-                    target = Map.GetByGuid(msg.TargetGuid);
-                    if (target == null)
-                        return;
-                    break;
-
-                case AbilityTargetType.PointOrUnitTarget:
-                    target = (object)Map.GetByGuid(msg.TargetGuid) ?? msg.TargetLocation;
-                    break;
+                case AbilityTargetType.Passive:
+                    return false;
 
                 case AbilityTargetType.NoTarget:
+                    return TryCastAbility(ability);
 
-                    break;
+                case AbilityTargetType.PointTarget:
+                    return TryCastAbility(ability, msg.TargetLocation);
+
+                case AbilityTargetType.UnitTarget:
+                    if (targetEntity != null)
+                        return TryCastAbility(ability, targetEntity);
+                    return false;
+
+                case AbilityTargetType.PointOrUnitTarget:
+                    if (targetEntity != null)
+                        return TryCastAbility(ability, targetEntity);
+                    return TryCastAbility(ability, msg.TargetLocation);
+
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-            abilities.CastAbility(ability, target);
         }
 
 
@@ -121,30 +143,38 @@ namespace Shanism.Engine.Entities
         /// </summary>
         public void ClearOrder() => SetOrder(new Stand(), false);
 
-        //public void OrderMove(Vector target)
-        //{
-        //    SetOrder(new MoveLocation(target));
-        //}
+        /// <summary>
+        /// Orders the unit to start moving towards the target in-game position. 
+        /// </summary>
+        public void OrderMove(Vector target) => SetOrder(new MoveLocation(target));
 
-        //public void OrderMove(Unit target, bool follow = true)
-        //{
-        //    SetOrder(new MoveUnit(target, keepFollowing: follow));
-        //}
+        /// <summary>
+        /// Orders the unit to go to the target unit. 
+        /// Similar to <see cref="OrderMove(Vector)"/> but makes sure the target is reached
+        /// even if it moves after the order was issued. 
+        /// </summary>
+        public void OrderMove(Unit target, bool follow = true) => SetOrder(new MoveUnit(target, keepFollowing: false));
 
-        //public void OrderAttack(Unit target)
-        //{
-        //    throw new NotImplementedException();
-        //}
 
-        //public void OrderPatrol(Vector target)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public void OrderFollow(Unit target) => SetOrder(new MoveUnit(target, keepFollowing: true));
 
-        //public void OrderMoveAttack(Vector target)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public void OrderAttack(Unit target)
+        {
+            if (!Owner.IsEnemyOf(target))
+                return;
+
+            throw new NotImplementedException();
+        }
+
+        public void OrderPatrol(Vector target)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OrderMoveAttack(Vector target)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }

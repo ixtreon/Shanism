@@ -8,7 +8,7 @@ namespace Shanism.Engine.Events
     /// <summary>
     /// The arguments passed whenever a unit is about to get damaged by some other unit. 
     /// </summary>
-    public class UnitDamagingArgs : EventArgs
+    public class UnitDamagingArgs : UnitArgs
     {
         /// <summary>
         /// Gets the unit that is dealing the damage. 
@@ -37,6 +37,7 @@ namespace Shanism.Engine.Events
         public double BaseDamage { get; set; }
 
         internal UnitDamagingArgs(Unit attacker, Unit receiver, DamageType type, DamageFlags flags, double baseDamage)
+            : base(attacker)
         {
             DamagingUnit = attacker;
             DamagedUnit = receiver;

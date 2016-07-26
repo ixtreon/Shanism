@@ -5,20 +5,16 @@ using System.Linq;
 using System.Text;
 using Shanism.Common;
 using Microsoft.Xna.Framework.Graphics;
-using Shanism.Common.Objects;
-using Shanism.Client.Textures;
 
 namespace Shanism.Client
 { 
     static class EffectExt
     {
         readonly static Matrix view = Matrix.CreateLookAt(new Vector3(0, 0, -3), new Vector3(0, 0, 0), new Vector3(0, -1, 0));
-        static readonly Matrix projection = Matrix.CreateOrthographic(Constants.Client.WindowWidth, Constants.Client.WindowHeight, -5, 5);
 
-        public static void Set2DMatrices(this BasicEffect effect)
+        public static void SetStaticViewMatrix(this BasicEffect effect)
         {
             effect.View = view;
-            //effect.Projection = projection;
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Shanism.Common;
-using Shanism.Common.Objects;
+using Shanism.Common.StubObjects;
 using Lidgren.Network;
 using System;
 using System.Collections.Generic;
@@ -11,8 +11,8 @@ using Shanism.Common.Message.Network;
 using Shanism.Common.Message;
 using Shanism.Common.Message.Server;
 using Shanism.Common.Serialization;
-using Shanism.Common.Interfaces.Engine;
 using System.IO;
+using Shanism.Common.Interfaces.Objects;
 
 namespace Shanism.Network.Client
 {
@@ -21,10 +21,31 @@ namespace Shanism.Network.Client
     /// </summary>
     class ObjectCache : IObjectCache
     {
-        readonly Dictionary<uint, IGameObject> _objectCache = new Dictionary<uint, IGameObject>();
+        readonly NetworkSerializer serializer = new NetworkSerializer();
+
+        readonly Dictionary<uint, ObjectStub> _objectCache = new Dictionary<uint, ObjectStub>();
 
         readonly HashSet<uint> _unitsSeen = new HashSet<uint>();
 
+
+        public IGameObject SeeObject(PlayerStatusMessage msg)
+        {
+            return getOrAdd(msg.HeroId, ObjectType.Hero);
+        }
+
+        IGameObject getOrAdd(uint objId, ObjectType objType)
+        {
+            ObjectStub obj;
+            if (!TryGetValue(objId, out obj))
+            {
+                obj = serializer.Create(objId, objType);
+                Add(objId, obj);
+            }
+
+            _unitsSeen.Add(obj.Id);
+
+            return obj;
+        }
 
         public IGameObject SeeObject(ObjectSeenMessage msg)
         {
@@ -32,24 +53,14 @@ namespace Shanism.Network.Client
                 throw new ArgumentException(nameof(msg), $"Did not expect to \"see\" a {msg.ObjectType}... ");
 
             //get or create the object in the cache
-            var obj = GetOrAdd(msg.ObjectType, msg.ObjectId);
-
-            _unitsSeen.Add(obj.Id);
-
-            return obj;
+            return getOrAdd(msg.ObjectId, msg.ObjectType);
         }
 
-        public IGameObject GetOrAdd(ObjectType objType, uint id)
-        {
-            IGameObject obj;
-            if (!_objectCache.TryGetValue(id, out obj))
-            {
-                obj = StubFactory.Create(objType, id);
-                _objectCache[id] = obj;
-            }
+        public bool TryGetValue(uint id, out ObjectStub obj)
+            => _objectCache.TryGetValue(id, out obj);
 
-            return obj;
-        }
+        public void Add(uint id, ObjectStub obj)
+            => _objectCache.Add(id, obj);
 
 
         public bool UnseeObject(ObjectUnseenMessage msg)
@@ -59,46 +70,8 @@ namespace Shanism.Network.Client
 
         internal void UpdateGame(GameFrameMessage msg)
         {
-            var objs = ShanoWriter.ReadObjectStream(this, msg)
-                .OfType<EntityStub>()
-                .ToList();
-
-            foreach (var obj in objs)
-                UpdateObjectIds(obj);
+            serializer.ReadObjectStream(this, msg);
         }
 
-        /// <summary>
-        /// Reverse of <see cref="Engine.Serialization.ShanoReader.FetchObjectIds"/>...
-        /// </summary>
-        /// <param name="obj"></param>
-        public void UpdateObjectIds(EntityStub obj)
-        {
-            switch(obj.ObjectType)
-            {
-                case ObjectType.Hero:
-                    var h = (HeroStub)obj;
-                    h.Abilities = h.AbilityIds
-                        .Select(id => GetOrAdd(ObjectType.Ability, id))
-                        .Cast<IAbility>()
-                        .ToList();
-
-                    goto case ObjectType.Unit;
-
-                case ObjectType.Unit:
-                    var u = (UnitStub)obj;
-
-                    u.Buffs = u.BuffIds
-                        .Select(id => GetOrAdd(ObjectType.BuffInstance, id))
-                        .Cast<IBuffInstance>()
-                        .ToList();
-
-                    //yield return ((Unit)obj).Owner.Id; -- not a gameobject!!
-                    goto case ObjectType.Doodad;
-
-                case ObjectType.Doodad:
-                case ObjectType.Effect:
-                    break;
-            }
-        }
     }
 }

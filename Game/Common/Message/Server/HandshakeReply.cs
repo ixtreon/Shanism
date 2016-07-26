@@ -17,6 +17,11 @@ namespace Shanism.Common.Message.Server
     public class HandshakeReplyMessage : IOMessage
     {
         /// <summary>
+        /// A negative response to a player joining. 
+        /// </summary>
+        public static readonly HandshakeReplyMessage Negative = new HandshakeReplyMessage(false, null, null);
+
+        /// <summary>
         /// Gets whether the handshake was successful. 
         /// </summary>
         [ProtoMember(1)]

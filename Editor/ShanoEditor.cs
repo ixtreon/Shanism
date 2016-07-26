@@ -18,37 +18,22 @@ namespace Shanism.Editor
     {
 
         ScenarioControl[] scenarioViews;
-        
+
 
         public bool StatusLoading
         {
             set
             {
                 scenarioLoadProgressBar.Visible = value;
-                //if (value)  statusLabel.Text = "Loading...";
-                //else        statusLabel.Text = "";
+                menuStrip1.Enabled = !value;
             }
-        }
-        public bool StatusSaving
-        {
-            set
-            {
-                scenarioLoadProgressBar.Visible = value;
-                //if (value) statusLabel.Text = "Saving...";
-                //else statusLabel.Text = "";
-            }
-        }
-
-        static IEnumerable<Control> enumControls(Control c)
-        {
-            var cc = c.Controls.Cast<Control>();
-            return cc.Concat(cc.SelectMany(enumControls));
         }
 
 
         public ShanoEditorForm()
         {
             InitializeComponent();
+
             updateRecentsMenu();
 
             scenarioTree.SelectionChanged += tree_SelectionChanged;
@@ -63,8 +48,23 @@ namespace Shanism.Editor
                 c.Visible = false;
                 c.ScenarioChanged += scenarioView_ChangedScenario;
             }
+
+#if DEBUG
+            openMostRecent();
+#endif
         }
-        
+
+        void openMostRecent()
+        {
+            var mostRecent = recentToolStripMenuItem.DropDownItems
+                .OfType<ToolStripMenuItem>()
+                .FirstOrDefault();
+
+            if (mostRecent != null)
+                mostRecent.PerformClick();
+        }
+
+
 
         void scenarioView_ChangedScenario()
         {
@@ -90,19 +90,18 @@ namespace Shanism.Editor
                 .Where(p => !string.IsNullOrEmpty(p));
 
             //if no recent items, create a placeholder item and return
-            if(!recents.Any())
+            if (!recents.Any())
             {
                 recentToolStripMenuItem.DropDownItems.Add(new ToolStripMenuItem("<empty>")
-                    {
-                        Enabled = false,
-                    });
+                {
+                    Enabled = false,
+                });
                 return;
             }
 
             recentToolStripMenuItem.DropDownItems.Clear();
-            foreach(var path in recents)
+            foreach (var path in recents)
             {
-
                 var recentFileMenuItem = new ToolStripMenuItem(path)
                 {
                     ToolTipText = path,
@@ -110,6 +109,7 @@ namespace Shanism.Editor
                 recentFileMenuItem.Click += async (o, e) => { await open(path); };
                 recentToolStripMenuItem.DropDownItems.Add(recentFileMenuItem);
             }
+
         }
 
         void newToolStripMenuItem_Click(object sender, EventArgs e)
@@ -141,7 +141,7 @@ namespace Shanism.Editor
         {
             //checkSyntax();
         }
-        
+
 
         async void ShanoEditor_FormClosing(object sender, FormClosingEventArgs e)
         {

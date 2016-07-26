@@ -1,20 +1,9 @@
 ﻿using Shanism.Common;
-using Shanism.Common.Game;
-using Shanism.Common.Content;
 using Shanism.Common.Message;
-using Shanism.Common.Message.Client;
 using Shanism.Common.Message.Server;
-using Shanism.Common.Objects;
-using IxLog;
 using Lidgren.Network;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ProtoBuf;
-using Shanism.Common.Message.Network;
+using Shanism.Common.Util;
 
 namespace Shanism.Network.Server
 {
@@ -27,6 +16,7 @@ namespace Shanism.Network.Server
     /// </summary>
     public class NServerClient : IShanoClient
     {
+
         /// <summary>
         /// Gets the underlying NetConnection. 
         /// </summary>
@@ -36,6 +26,8 @@ namespace Shanism.Network.Server
         /// Gets the underlying network server. 
         /// </summary>
         readonly NetServer Server;
+
+        readonly uint Id;
 
         /// <summary>
         /// The receptor serving this connection
@@ -61,6 +53,7 @@ namespace Shanism.Network.Server
         {
             Server = serv;
             ConnectionHandle = conn;
+            Id = GenericId<NServerClient>.GetNew();
             
             Name = name;
         }
@@ -122,6 +115,7 @@ namespace Shanism.Network.Server
 
         internal void handleClientMessage(IOMessage msg)
         {
+            Log.Default.Info($"{StringId} Received a {msg.Type}");
             MessageSent?.Invoke(msg);
         }
 
@@ -132,7 +126,10 @@ namespace Shanism.Network.Server
         void sendMessage(IOMessage msg, NetDeliveryMethod deliveryMethod = NetDeliveryMethod.ReliableUnordered)
         {
             Server.SendMessage(msg.ToNetMessage(Server), ConnectionHandle, deliveryMethod);
-            Log.Default.Debug("Sent a '{0}' message to client {1}", msg.Type, ConnectionHandle.RemoteEndPoint.Address);
+            if(msg.Type != MessageType.GameFrame)
+                Log.Default.Info($"{StringId} Sent a {msg.Type}");
         }
+
+        string StringId => $"[#{Id}]";
     }
 }

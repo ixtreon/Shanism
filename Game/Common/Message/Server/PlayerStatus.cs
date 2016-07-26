@@ -1,5 +1,5 @@
 ﻿using Shanism.Common.Game;
-using Shanism.Common.Objects;
+using Shanism.Common.StubObjects;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
@@ -12,12 +12,11 @@ namespace Shanism.Common.Message.Server
     [ProtoContract]
     public class PlayerStatusMessage : IOMessage
     {
-        
+        public override MessageType Type => MessageType.PlayerStatusUpdate;
+
         [ProtoMember(1)]
         public readonly uint HeroId = 0;
 
-
-        public override MessageType Type { get { return MessageType.PlayerStatusUpdate; } }
 
         PlayerStatusMessage() { }
 

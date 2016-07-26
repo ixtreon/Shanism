@@ -1,6 +1,5 @@
 ﻿using Shanism.Engine.Entities;
-using Shanism.Common.Game;
-using Shanism.Common.Objects;
+using Shanism.Common.StubObjects;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;

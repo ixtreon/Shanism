@@ -55,6 +55,7 @@ namespace ShanoRPGWin.UI
         public async Task LoadScenarios()
         {
             await libTree.LoadAsync();
+
             ScenariosLoaded?.Invoke();
         }
 
@@ -92,12 +93,12 @@ namespace ShanoRPGWin.UI
         #endregion
 
         #region Add/Refresh/Remove event handlers
-        void btnAddLibrary_Click(object sender, EventArgs e)
+        async void btnAddLibrary_Click(object sender, EventArgs e)
         {
             var result = folderDialog.ShowDialog();
             if(result == DialogResult.OK && Directory.Exists(folderDialog.SelectedPath))
             {
-                libTree.AddLibrary(folderDialog.SelectedPath);
+                await libTree.AddLibrary(folderDialog.SelectedPath);
             }
         }
 

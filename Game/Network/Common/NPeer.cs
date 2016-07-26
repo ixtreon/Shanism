@@ -17,6 +17,7 @@ namespace Shanism.Network
         protected NPeer(NetPeer peer)
         {
             this.peer = peer;
+            peer.Configuration.ConnectionTimeout = 6000000;
 
             //start the client
             peer.Start();

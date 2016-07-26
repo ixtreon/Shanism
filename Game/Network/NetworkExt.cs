@@ -53,7 +53,7 @@ namespace Shanism.Network
                 using (var ms = new MemoryStream(bytes))
                     return Serializer.Deserialize<IOMessage>(ms);
             }
-            catch(Exception e)
+            catch
             {
                 return null;
             }

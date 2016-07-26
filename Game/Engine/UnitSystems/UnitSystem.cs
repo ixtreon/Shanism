@@ -8,14 +8,12 @@ using System.Threading.Tasks;
 
 namespace Shanism.Engine.Systems
 {
-
-    public abstract class UnitSystem
+    /// <summary>
+    /// A system for a unit. 
+    /// </summary>
+    abstract class UnitSystem
     {
 
-
-        internal abstract void Update(int msElapsed);
-
-
-        
+        public virtual void Update(int msElapsed) { }
     }
 }

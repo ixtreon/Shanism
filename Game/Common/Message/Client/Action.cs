@@ -14,6 +14,7 @@ namespace Shanism.Common.Message.Client
     [ProtoContract]
     public class ActionMessage : IOMessage
     {
+        public override MessageType Type => MessageType.Action;
 
 
         public bool HasTarget;
@@ -36,8 +37,6 @@ namespace Shanism.Common.Message.Client
         /// </summary>
         [ProtoMember(3)]
         public readonly Vector TargetLocation;
-
-        public override MessageType Type { get { return MessageType.Action; } }
 
         ActionMessage() { }
 

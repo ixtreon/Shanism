@@ -5,18 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shanism.Engine.Objects
+namespace Shanism.Engine.Entities
 {
-    public static class UnitHelper
+    partial class Unit
     {
-        public static bool IsHero(this Unit u)
+        public bool IsHero()
         {
-            return u is Hero;
+            return this is Hero;
         }
 
-        public static bool IsNonPlayable(this Unit u)
+        public bool IsNonPlayable()
         {
-            return !u.IsHero();
+            return !Owner.IsHuman;
         }
     }
 }

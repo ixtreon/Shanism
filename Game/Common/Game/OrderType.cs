@@ -9,7 +9,7 @@ namespace Shanism.Common.Game
     /// <summary>
     /// The basic types of orders units can perform. 
     /// </summary>
-    public enum OrderType
+    public enum OrderType : byte
     {
         /// <summary>
         /// Indicates that a unit has no order. 

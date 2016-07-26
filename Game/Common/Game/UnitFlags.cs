@@ -11,7 +11,7 @@ namespace Shanism.Common.Game
     /// both temporary and semi-permanent. 
     /// </summary>
     [Flags]
-    public enum UnitFlags
+    public enum StateFlags : short
     {
         /// <summary>
         /// No flags whatsoever...
@@ -68,7 +68,7 @@ namespace Shanism.Common.Game
         RangedAttack = 1 << 8,
 
         /// <summary>
-        /// Specifies that the unit is invulnerable to damage, both magic and physical. 
+        /// Specifies that the unit is invulnerable to all damage, both magic and physical. 
         /// </summary>
         Invulnerable = MagicImmune | PhysicalImmune,
     }

@@ -8,11 +8,12 @@ using System.Threading.Tasks;
 namespace Shanism.Client.Systems
 {
     /// <summary>
-    /// A system for the client engine. 
+    /// An abstract system for the client engine. 
     /// Can handle messages and update itself. 
     /// </summary>
     abstract class ClientSystem
     {
+
         public event Action<IOMessage> MessageSent;
 
 
@@ -22,4 +23,5 @@ namespace Shanism.Client.Systems
 
         internal void SendMessage(IOMessage msg) => MessageSent?.Invoke(msg);
     }
+
 }

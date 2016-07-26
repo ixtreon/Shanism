@@ -1,19 +1,15 @@
 ﻿using Shanism.Common;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Shanism.Common.Message;
 using Shanism.Common.Message.Network;
 using Shanism.Common.Message.Server;
-using Shanism.Common.Util;
-using Shanism.Engine.Objects;
 using Shanism.Common.Message.Client;
 using Shanism.Engine.Systems.Orders;
 using Shanism.Common.Game;
-using Shanism.Common.Objects;
 using Shanism.Engine.Entities;
+using Shanism.Engine.Serialization;
 
 namespace Shanism.Engine.Players
 {
@@ -23,6 +19,8 @@ namespace Shanism.Engine.Players
     /// </summary>
     class ShanoReceptor : INetReceptor
     {
+        static EngineSerializer serializer = new EngineSerializer();
+
         /// <summary>
         /// The engine this player is part of. 
         /// </summary>
@@ -31,7 +29,7 @@ namespace Shanism.Engine.Players
         /// <summary>
         /// Gets the client handle of this player. 
         /// </summary>
-        IShanoClient Client { get; }
+        public IShanoClient Client { get; }
 
         /// <summary>
         /// Gets the underlying in-game player represented by this receptor. 
@@ -71,7 +69,7 @@ namespace Shanism.Engine.Players
             SendMessage(new PlayerStatusMessage(h.Id));
 
             //TODO: change to OnPlayerHeroChanged
-            Engine.Scripts.Run(s => s.OnHeroSpawned(h));
+            Engine.Scripts.Run(s => s.OnPlayerMainHeroChanged(Player));
         }
 
         void onPlayerObjectSeen(Entity obj)
@@ -106,26 +104,32 @@ namespace Shanism.Engine.Players
 
         void parseChat(Shanism.Common.Message.Client.ChatMessage msg)
         {
-            const float chatRange = 10;
+            var text = msg.Message;
             var pls = Player.controlledUnits
-                .SelectMany(u => u.Map.GetUnitsInRange(u.Position, chatRange,  true))
+                .SelectMany(u => u.visibleFromUnits)
                 .Select(u => u.Owner)
                 .Where(pl => pl.IsHuman)
                 .Distinct()
                 .ToList();
 
-            var outMsg = new Shanism.Common.Message.Server.ChatMessage(msg.Message, Player);
-            foreach (var pl in pls)
-                SendMessage(outMsg);
+            var ev = new Events.PlayerChatArgs(Player, text);
+
+            Engine.Scripts.Run(s => s.OnPlayerChatMessage(ev));
+
+            if (ev.Propagate)
+            {
+                var outMsg = new Shanism.Common.Message.Server.ChatMessage(text, Player);
+                foreach (var pl in pls)
+                    SendMessage(outMsg);
+            }
         }
 
         void parseMoveMessage(MoveMessage msg)
         {
             if (MainHero != null)
             {
-                var newState = msg.Direction;
-                if (newState.IsMoving)
-                    MainHero.SetOrder(new PlayerMoveOrder(newState));
+                if (msg.IsMoving)
+                    MainHero.SetOrder(new PlayerMoveOrder(msg.AngleRad));
                 else
                     MainHero.ClearOrder();
             }
@@ -136,7 +140,7 @@ namespace Shanism.Engine.Players
             var chunk = msg.Chunk;
             var chunkData = new TerrainType[chunk.Span.Area];
 
-            await Task.Run(() => Engine.GetTiles(this, ref chunkData, chunk));
+            await Task.Run(() => Engine.Map.Terrain.Get(chunk.Span, ref chunkData));
 
             SendMessage(new MapDataMessage(chunk.Span, chunkData));
         }
@@ -150,27 +154,29 @@ namespace Shanism.Engine.Players
         internal void SendMessage(IOMessage msg) => MessageSent(msg);
 
 
-        public string GetPerfData()
-        {
-            return Engine.GetPerfData();
-        }
+        public string GetPerfData() => Engine.PerformanceData;
 
-        public void UpdateServer(int msElapsed)
-        {
-            Engine.Update(msElapsed);
-        }
+        public void UpdateServer(int msElapsed) => Engine.Update(msElapsed);
+
 
         public GameFrameMessage GetCurrentFrame()
         {
-            var msg = Serialization.ShanoReader.PrepareGameFrame(Player.VisibleObjects);
+            var msg = serializer.PrepareGameFrame(Player, Player.VisibleObjects);
             return msg;
         }
 
         public void SendHandshake(bool isSuccessful)
         {
-            var scConfig = Engine.Scenario.Config;
+            if (!isSuccessful)
+            {
+                SendMessage(HandshakeReplyMessage.Negative);
+                return;
+            }
 
-            SendMessage(new HandshakeReplyMessage(isSuccessful, scConfig.GetBytes(), scConfig.ZipContent()));
+            var scConfig = Engine.Scenario.Config;
+            var msg = new HandshakeReplyMessage(true, scConfig.SaveToBytes(), scConfig.ZipContent());
+
+            SendMessage(msg);
         }
         #endregion
     }

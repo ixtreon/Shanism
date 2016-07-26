@@ -22,17 +22,15 @@ namespace Shanism.Client.UI.Menus
 
         public KeybindsMenu()
         {
+            MinimumSize = new Vector(1.6, 1.0);
             Size = new Vector(1.6, 1.0);
             Location = (new Vector(2, 1)- Size) / 2;
             ParentAnchor = AnchorMode.None;
             TitleText = "Keybinds";
 
-            CloseButtonClicked += onCloseButtonClicked;
-
             var lblPadding = 3 * Padding;
             var labelFont = Content.Fonts.NormalFont;
-            var btnSize = new Vector(0.15, 0.06);
-            var lblWidth = Size.X - 3 * lblPadding - btnSize.X;
+            var lblWidth = Size.X - 3 * lblPadding - Button.DefaultSize.X;
 
             lblKeybinds = new Label
             {
@@ -49,7 +47,6 @@ namespace Shanism.Client.UI.Menus
             {
                 ParentAnchor = AnchorMode.Top | AnchorMode.Right,
                 Location = new Vector(lblPadding + lblWidth, TitleHeight + labelFont.HeightUi) + lblPadding,
-                Size = btnSize,
 
                 Font = Content.Fonts.NormalFont,
                 Text = "Reset",
@@ -59,17 +56,16 @@ namespace Shanism.Client.UI.Menus
 
             keybinds = new KeybindPanel
             {
-                ParentAnchor = AnchorMode.Left | AnchorMode.Top | AnchorMode.Right,
+                ParentAnchor = AnchorMode.Left | AnchorMode.Top | AnchorMode.Right | AnchorMode.Bottom,
                 Location = new Vector(0, lblKeybinds.Bottom) + Padding,
                 Size = new Vector(Size.X - 2 * Padding, 0.4),
 
                 BackColor = BackColor.Darken(20),
             };
-            keybinds.InitKeybindLabels();
 
             lblActionBars = new Label
             {
-                ParentAnchor = AnchorMode.All,
+                ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Bottom,
                 Location = new Vector(lblKeybinds.Left, keybinds.Bottom + lblPadding),
                 Size = new Vector(Size.X - 2 * lblPadding, lblKeybinds.Size.Y),
                 AutoSize = false,
@@ -81,8 +77,7 @@ namespace Shanism.Client.UI.Menus
             btnCancel = new Button
             {
                 ParentAnchor = AnchorMode.Bottom | AnchorMode.Right,
-                Size = btnSize,
-                Location = Size - btnSize - 2 * Padding,
+                Location = Size - Button.DefaultSize - 2 * Padding,
 
                 Font = Content.Fonts.NormalFont,
                 Text = "Cancel",
@@ -93,8 +88,7 @@ namespace Shanism.Client.UI.Menus
             btnOk = new Button
             {
                 ParentAnchor = AnchorMode.Bottom | AnchorMode.Right,
-                Size = btnSize,
-                Location = btnCancel.Location - new Vector(2 * Padding + btnSize.X, 0),
+                Location = btnCancel.Location - new Vector(2 * Padding + Button.DefaultSize.X, 0),
 
                 Font = Content.Fonts.NormalFont,
                 Text = "Accept",
@@ -109,9 +103,28 @@ namespace Shanism.Client.UI.Menus
 
             Add(btnCancel);
             Add(btnOk);
+
+            KeyPressed += onKeyPressed;
         }
 
-        void onCloseButtonClicked()
+        void onKeyPressed(Keybind kb)
+        {
+            var bar = HoverControl as SpellBarButton;
+            if (bar != null)
+            {
+                Settings.Current.Keybinds[bar.BarId, bar.ButtonId] = kb;
+            }
+        }
+
+        protected override void OnUpdate(int msElapsed)
+        {
+            if (HoverControl is SpellBarButton)
+            {
+
+            }
+        }
+
+        protected override void OnCloseButtonClicked()
         {
             Settings.Reload();
         }

@@ -28,7 +28,7 @@ namespace Shanism.Engine.Maps
             this.map = map;
         }
 
-        public void GetMap(Rectangle rect, ref TerrainType[] outMap)
+        public void Get(Rectangle rect, ref TerrainType[] outMap)
         {
             outMap = new TerrainType[rect.Width * rect.Height];
 
@@ -49,12 +49,19 @@ namespace Shanism.Engine.Maps
             return Enumerable.Empty<Entity>();
         }
 
-        public TerrainType GetTerrain(Vector loc)
+        public TerrainType Get(Vector loc)
         {
             var pt = loc.Floor();
             if (!Bounds.Contains(pt))
                 return TerrainType.None;
             return map[pt.X, pt.Y];
+        }
+
+        public void SetTerrain(Point loc, TerrainType tty)
+        {
+            if (!Bounds.Contains(loc))
+                return;
+            map[loc.X, loc.Y] = tty;
         }
     }
 }

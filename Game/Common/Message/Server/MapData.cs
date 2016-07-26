@@ -42,6 +42,7 @@ namespace Shanism.Common.Message.Server
         /// Creates a new map reply message informing a client of the terrain in a chunk. 
         /// </summary>
         /// <param name="data"></param>
+        /// <param name="span">The in-game span of the requested data. </param>
         public MapDataMessage(Rectangle span, TerrainType[] data)
             : this()
         {

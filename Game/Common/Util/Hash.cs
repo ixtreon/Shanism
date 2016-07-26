@@ -21,14 +21,23 @@ namespace Shanism.Common.Util.Hash
             hashGuy.Initialize();
         }
 
-        public static int GetInt(params int[] vals)
+        public static int GetSlow(params int[] vals)
             => getHash(BitConverter.GetBytes, vals);
 
-        //public static int GetInt(params uint[] vals)
-        //    => getHash(BitConverter.GetBytes, vals);
+        public static int Get(params int[] vals)
+        {
+            unchecked
+            {
+                int hash = 17;
+                for (int i = 0; i < vals.Length; i++)
+                    hash = hash * 23 + vals[i];
+                return hash;
+            }
+        }
+
 
         public static double GetDouble(params int[] ints)
-            => (double)Math.Abs(GetInt(ints)) / int.MaxValue;
+            => (double)Math.Abs(GetSlow(ints)) / int.MaxValue;
 
 
         static int getHash<T>(Func<T, byte[]> f, params T[] vals)

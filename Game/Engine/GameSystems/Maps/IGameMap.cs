@@ -5,10 +5,23 @@ using Shanism.Common;
 namespace Shanism.Engine.Maps
 {
     /// <summary>
-    /// Represents the in-game map in a ShanoRPG scenario. 
+    /// Represents the in-game map of a ShanoRPG scenario. 
+    /// Contains all entities on the map and all its terrain. 
     /// </summary>
     public interface IGameMap
     {
+        /// <summary>
+        /// Gets the area this map is defined in.         
+        /// </summary>
+        Rectangle Bounds { get; }
+
+        IEnumerable<Entity> Entities { get; }
+
+        /// <summary>
+        /// Gets the terrain map of the scenario this object is part of. 
+        /// </summary>
+        ITerrainMap Terrain { get; }
+
         /// <summary>
         /// Adds the specified object to the game map. 
         /// </summary>
@@ -27,6 +40,22 @@ namespace Shanism.Engine.Maps
         /// <param name="rect">The rectangle to return units within. </param>
         /// <returns>All entities within the specified rectangle. </returns>
         IEnumerable<Entity> GetObjectsInRect(RectangleF rect);
+
+        /// <summary>
+        /// Returns all entities with locations within the specified rectangle. 
+        /// </summary>
+        /// <param name="rect">The rectangle to return units within. </param>
+        /// <returns>All entities within the specified rectangle. </returns>
+        IEnumerable<Entity> GetObjectsInRect(Vector center, Vector range);
+
+        /// <summary>
+        /// Adds all entities with locations within the specified rectangle to the 
+        /// given collection. 
+        /// </summary>
+        /// <param name="center">The center of the query rectange.</param>
+        /// <param name="range">The range of the query rectangle.</param>
+        /// <param name="collection">The collection to add entities to.</param>
+        void GetObjectsInRect(Vector center, Vector range, ICollection<Entity> collection);
 
         /// <summary>
         /// Returns all units with locations within the specified rectangle. 
@@ -52,14 +81,5 @@ namespace Shanism.Engine.Maps
         /// <param name="aliveOnly">True to only return alive units. </param>
         /// <returns>All units within range of the given central point. </returns>
         IEnumerable<Unit> GetUnitsInRange(Vector pos, double range, bool aliveOnly = true);
-
-        /// <summary>
-        /// Executes a raw query which returns all entities inside a given rectangle,
-        /// but may also returns entities that are around it. 
-        /// </summary>
-        /// <param name="rect"></param>
-        /// <returns></returns>
-        IEnumerable<Entity> RawQuery(RectangleF rect);
-
     }
 }

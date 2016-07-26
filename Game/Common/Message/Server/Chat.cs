@@ -1,4 +1,4 @@
-﻿using Shanism.Common.Objects;
+﻿using Shanism.Common.StubObjects;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;

@@ -34,26 +34,6 @@
     <Prefer32Bit>false</Prefer32Bit>
     <DocumentationFile>bin\Release\Shanism.Common.XML</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Network|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Network\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Editor|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Editor\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
@@ -74,26 +54,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Network|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Network\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Editor|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Editor\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
@@ -101,8 +61,8 @@
     <AssemblyOriginatorKeyFile>..\..\key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="protobuf-net, Version=2.0.0.668, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
@@ -118,7 +78,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Content\AnimationStyle.cs" />
+    <Compile Include="Game\EquipSlot.cs" />
+    <Compile Include="Interfaces\Engine\IPlayerTicket.cs" />
+    <Compile Include="Interfaces\Objects\IItem.cs" />
     <Compile Include="Message\Client\ChatMessage.cs" />
+    <Compile Include="Serialization\Objects\AbilitySerializer.cs" />
+    <Compile Include="Serialization\Objects\BuffSerializer.cs" />
+    <Compile Include="Serialization\Entities\Hero.cs" />
+    <Compile Include="Serialization\Entities\Unit.cs" />
+    <Compile Include="Serialization\Entities\Entity.cs" />
+    <Compile Include="Serialization\Object.cs" />
+    <Compile Include="Serialization\Serializer.cs" />
     <Compile Include="Util\Color.cs" />
     <Compile Include="Game\DamageResult.cs" />
     <Compile Include="Content\AnimationDef.cs" />
@@ -134,8 +105,7 @@
     <Compile Include="Interfaces\Engine\INetReceptor.cs" />
     <Compile Include="Interfaces\Objects\IGameObject.cs" />
     <Compile Include="Math\RectangleF.cs" />
-    <Compile Include="Message\Network\ObjectData.cs" />
-    <Compile Include="Message\Network\GameFrame.cs" />
+    <Compile Include="Message\Network\ServerFrame.cs" />
     <Compile Include="Message\Server\ObjectUnseen.cs" />
     <Compile Include="Objects\AbilityStub.cs" />
     <Compile Include="Objects\BuffStub.cs" />
@@ -143,14 +113,10 @@
     <Compile Include="Objects\Entities\EffectStub.cs" />
     <Compile Include="Objects\Entities\HeroStub.cs" />
     <Compile Include="Objects\Entities\UnitStub.cs" />
-    <Compile Include="Objects\EntityStub.cs" />
+    <Compile Include="Objects\Entities\EntityStub.cs" />
     <Compile Include="Objects\ObjectStub.cs" />
-    <Compile Include="Performance\IPerformanceStats.cs" />
     <Compile Include="Performance\PerfCounter.cs" />
-    <Compile Include="Serialization\PropertyCaller - Copy.cs" />
-    <Compile Include="Serialization\PropertyCaller.cs" />
-    <Compile Include="Util\AnimPath.cs" />
-    <Compile Include="Util\CloningPlant.cs" />
+    <Compile Include="Util\ShanoPath.cs" />
     <Compile Include="Util\ConcurrentSet.cs" />
     <Compile Include="Util\GenericBackBuffer.cs" />
     <Compile Include="Util\GenericEqualityComparer.cs" />
@@ -159,8 +125,8 @@
     <Compile Include="Game\OrderType.cs" />
     <Compile Include="Interfaces\Engine\IReceptor.cs" />
     <Compile Include="Message\Server\ObjectAnimation.cs" />
-    <Compile Include="Interfaces\Objects\Other\IBuff.cs" />
-    <Compile Include="Interfaces\Objects\Entities\IEffect.cs" />
+    <Compile Include="Interfaces\Objects\IBuff.cs" />
+    <Compile Include="Interfaces\Entities\IEffect.cs" />
     <Compile Include="ShadowCalc\ShadowGuy.cs" />
     <Compile Include="Content\TextureType.cs" />
     <Compile Include="Game\UnitFlags.cs" />
@@ -183,14 +149,14 @@
     <Compile Include="Message\Server\ObjectSeen.cs" />
     <Compile Include="Message\Server\PlayerStatus.cs" />
     <Compile Include="Message\Server\DamageEvent.cs" />
-    <Compile Include="Interfaces\Objects\Other\IAbility.cs" />
-    <Compile Include="Interfaces\Objects\Other\IBuffInstance.cs" />
-    <Compile Include="Interfaces\Objects\Entities\IDoodad.cs" />
+    <Compile Include="Interfaces\Objects\IAbility.cs" />
+    <Compile Include="Interfaces\Objects\IBuffInstance.cs" />
+    <Compile Include="Interfaces\Entities\IDoodad.cs" />
     <Compile Include="Interfaces\Engine\IShanoEngine.cs" />
-    <Compile Include="Interfaces\Objects\Entities\IEntity.cs" />
-    <Compile Include="Interfaces\Objects\Other\IPlayer.cs" />
-    <Compile Include="Interfaces\Objects\Entities\IUnit.cs" />
-    <Compile Include="Interfaces\Objects\Entities\IHero.cs" />
+    <Compile Include="Interfaces\Entities\IEntity.cs" />
+    <Compile Include="Interfaces\IPlayer.cs" />
+    <Compile Include="Interfaces\Entities\IUnit.cs" />
+    <Compile Include="Interfaces\Entities\IHero.cs" />
     <Compile Include="Maps\TerrainType.cs" />
     <Compile Include="Interfaces\Client\IShanoClient.cs" />
     <Compile Include="Game\MovementState.cs" />
@@ -199,6 +165,7 @@
     <Compile Include="Util\GenericId.cs" />
     <Compile Include="Util\Hash.cs" />
     <Compile Include="Util\NullComparer.cs" />
+    <Compile Include="Util\StatsDict.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

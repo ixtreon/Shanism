@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Shanism.Common.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,26 +12,32 @@ namespace Shanism.Common
     {
         public static string GetRelativePath(this string absolutePath, string folder)
         {
-            absolutePath = Path.GetFullPath(absolutePath);
-            folder = Path.GetFullPath(folder);
-            // Folders must end in a slash
-            if (!folder.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.InvariantCulture))
-                folder += Path.DirectorySeparatorChar;
+            var absSegments = ShanoPath.SplitPath(absolutePath);
+            var dirSegments = ShanoPath.SplitPath(folder);
+            int commonPrefix = getCommonPrefix(absSegments, dirSegments);
 
-            var pathUri = new Uri(absolutePath);
-            var folderUri = new Uri(folder);
+            var sb = new StringBuilder();
 
-            return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri)
-                .ToString()
-                .Replace('/', Path.DirectorySeparatorChar));
+            for (var i = commonPrefix; i < dirSegments.Length; i++)
+            {
+                sb.Append("..");
+                sb.Append('/');
+            }
+
+            sb.Append(string.Join("/", absSegments, commonPrefix, absSegments.Length - commonPrefix));
+
+            var retVal = sb.ToString();
+            return retVal;
         }
 
-        public static string RemoveFileExtension(this string absolutePath)
+        static int getCommonPrefix(string[] absSegments, string[] dirSegments)
         {
-            var id = absolutePath.IndexOf('.');
-            if (id < 0)
-                return absolutePath;
-            return absolutePath.Substring(0, id);
+            var maxPrefix = Math.Min(absSegments.Length, dirSegments.Length);
+            var commonPrefix = 0;
+            while (commonPrefix < maxPrefix
+                && absSegments[commonPrefix].Equals(dirSegments[commonPrefix]))
+                commonPrefix++;
+            return commonPrefix;
         }
     }
 }

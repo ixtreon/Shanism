@@ -136,6 +136,18 @@ namespace Shanism.Common
             yield return item;
         }
 
+        public static int? IndexOf<T>(this IEnumerable<T> e, T item)
+        {
+            int id = 0;
+            foreach (var it in e)
+            {
+                if (it.Equals(item))
+                    return id;
+                id++;
+            }
+
+            return null;
+        }
 
         /// <summary>
         /// Gets the elements that score the highest according to a given function. 
@@ -211,5 +223,21 @@ namespace Shanism.Common
             => b.CompareTo(a);
         #endregion
 
+
+        #region IList<T> Extensions
+
+        /// <summary>
+        /// Returns and removes the last element of the list. 
+        /// Has a complexity of O(1)
+        /// </summary>
+        public static T Pop<T>(this List<T> l)
+        {
+            var id = l.Count - 1;
+            var elem = l[id];
+            l.RemoveAt(id);
+            return elem;
+        }
+
+        #endregion
     }
 }

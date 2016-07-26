@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Shanism.Engine.Systems;
-using Shanism.Common.Objects;
+using Shanism.Common.StubObjects;
 using Shanism.Common.Game;
 using Shanism.Common;
 using Shanism.Common.Util;
+using Shanism.Common.Interfaces.Objects;
 
 namespace Shanism.Engine.Objects.Buffs
 {
@@ -26,6 +27,11 @@ namespace Shanism.Engine.Objects.Buffs
         int _moveSpeed;
         string _rawDescription;
 
+
+        /// <summary>
+        /// Gets or sets whether this buff has an icon and shows in the default buff bar. 
+        /// </summary>
+        public bool HasIcon { get; set; } = true;
 
         /// <summary>
         /// Gets or sets icon of the buff. 
@@ -55,17 +61,17 @@ namespace Shanism.Engine.Objects.Buffs
         /// <summary>
         /// Gets the formatted description of this buff. 
         /// </summary>
-        public string Description { get; set; }
+        public string Description { get; private set; }
 
         /// <summary>
         /// Gets or sets the life modifier of this buff. 
         /// </summary>
-        public double Life { get; set; }
+        public double MaxLife { get; set; }
 
         /// <summary>
         /// Gets or sets the mana modifier of this buff. 
         /// </summary>
-        public double Mana { get; set; }
+        public double MaxMana { get; set; }
 
         /// <summary>
         /// Gets or sets the life regen modifier of this buff. 
@@ -161,14 +167,9 @@ namespace Shanism.Engine.Objects.Buffs
         public BuffStackType StackType { get; set; }
 
         /// <summary>
-        /// Gets or sets whether this buff has an icon and shows in the default buff bar. 
-        /// </summary>
-        public bool HasIcon { get; set; } = true;
-
-        /// <summary>
         /// Gets or sets the unit states that are applied to units affected by this buff. 
         /// </summary>
-        public UnitFlags UnitStates { get; set; }
+        public StateFlags UnitStates { get; set; }
 
 
         /// <summary>
@@ -185,10 +186,6 @@ namespace Shanism.Engine.Objects.Buffs
         }
 
 
-        public Buff(Buff @base)
-        {
-            CloningPlant.ShallowCopy(@base, this);
-        }
 
 
         /// <summary>
@@ -224,19 +221,14 @@ namespace Shanism.Engine.Objects.Buffs
         public override int GetHashCode() => (int)Id;
 
         /// <summary>
-        /// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
+        /// Determines whether the specified <see cref="object" /> is equal to this instance.
         /// </summary>
-        /// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
+        /// <param name="obj">The <see cref="object" /> to compare with this instance.</param>
         /// <returns>
-        ///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
+        ///   <c>true</c> if the specified <see cref="object" /> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object obj)
-            => (obj is Buff) && ((Buff)obj).Id == Id;
-
-
-        public static bool operator == (Buff a, Buff b) => a?.Id == b?.Id;
-
-        public static bool operator != (Buff a, Buff b) => a?.Id != b?.Id;
+        public override bool Equals(object obj) => (obj is Buff) 
+            && ((Buff)obj).Id == Id;
 
     }
 }

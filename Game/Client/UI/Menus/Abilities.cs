@@ -2,21 +2,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
 using Shanism.Common.Game;
 using Shanism.Client.Input;
 using Shanism.Client.UI.Common;
-using Shanism.Common.Objects;
+using Shanism.Common.Interfaces.Entities;
+using Shanism.Common.Interfaces.Objects;
+
+
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace Shanism.Client.UI
 {
     class SpellBook : Window
     {
-        const int AbilitiesPerPage = 10;
-        const int AbilitiesPerColumn = 5;
+        static readonly Point DefaultPageSize = new Point(2, 5);
+        static readonly Vector DefaultButtonSize = new Vector(0.12);
 
         public IHero Target { get; set; }
 
@@ -24,6 +24,12 @@ namespace Shanism.Client.UI
 
         SortedSet<SpellButton> spellButtons = new SortedSet<SpellButton>(
             new GenericComparer<SpellButton>((x, y) => string.Compare(x.Ability.Name, y.Ability.Name, StringComparison.Ordinal)));
+
+        public Point PageSize { get; set; } = DefaultPageSize;
+
+        public Vector ButtonSize { get; set; } = DefaultButtonSize;
+
+        int AbilitiesPerPage => PageSize.X * PageSize.Y;
 
         public int Pages
         {
@@ -41,65 +47,89 @@ namespace Shanism.Client.UI
             }
             set
             {
-                if (value != _currentPage)
-                {
-                    foreach (var sb in spellButtons)
-                        sb.IsVisible = false;
-                    foreach (var sb in spellButtons.Skip(AbilitiesPerPage * value).Take(value))
-                        sb.IsVisible = true;
-                    _currentPage = value;
-                }
+                foreach (var sb in spellButtons)
+                    sb.IsVisible = false;
+                foreach (var sb in spellButtons
+                    .Skip(AbilitiesPerPage * value)
+                    .Take(AbilitiesPerPage))
+                    sb.IsVisible = true;
+                _currentPage = value;
             }
         }
+
+        Control pagePanel;
+        Button prevPage, nextPage;
+        Label pageText;
+
+        const double PagePanelHeight = 0.08;
 
         public SpellBook()
             : base(AnchorMode.Right)
         {
-            this.ToggleAction = ClientAction.ToggleAbilityMenu;
-            this.TitleText = "Abilities";
-            this.IsVisible = false;
-            this.VisibleChanged += SpellBook_VisibleChanged;
+            ToggleAction = ClientAction.ToggleAbilityMenu;
+            TitleText = "Abilities";
+            IsVisible = false;
+            CanFocus = false;
+
+            VisibleChanged += SpellBook_VisibleChanged;
+
+            pagePanel = new Control
+            {
+                Location = new Vector(LargePadding, Size.Y - PagePanelHeight - LargePadding),
+                Size = new Vector(Size.X - 2 * LargePadding, PagePanelHeight),
+                ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Bottom,
+
+                BackColor = Color.Green,
+            };
+
+            Add(pagePanel);
         }
 
         void SpellBook_VisibleChanged(Control obj)
         {
-
+            ButtonSize = new Vector(0.12);
             //update contents
             if (Target != null && IsVisible)
             {
-                var newAbils = new HashSet<IAbility>(Target.Abilities);
+                var newAbils = new HashSet<IAbility>(Target.Abilities ?? Enumerable.Empty<IAbility>());
 
                 //remove old abilities and mark existing ones
-                foreach (var sb in spellButtons.ToArray())
+                foreach (var sb in spellButtons.ToList())
                     if (newAbils.Contains(sb.Ability))  //ability is already in the book; don't add it again
                         newAbils.Remove(sb.Ability);
                     else    //ability is in the book but not in the new list; remove it
                     {
                         spellButtons.Remove(sb);
-                        this.Remove(sb);
+                        Remove(sb);
                     }
+
                 foreach (var ab in newAbils)     // add the actually new abilities
                 {
                     var sb = new SpellButton
                     {
                         CanSelect = false,
-                        Size = new Vector(0.15),
+                        Size = ButtonSize,
                     };
                     sb.Ability = ab;
                     spellButtons.Add(sb);
                     this.Add(sb);
                 }
 
-                var i = 0;
-                var page = 0;
+                var menuPos = new Vector(0, TitleHeight) + LargePadding;
+                var menuSize = new Vector(Size.X, pagePanel.Top) - LargePadding - menuPos;
+
+                var unit = (menuSize - ButtonSize * PageSize) / (PageSize * 2);
+                var baseOffset = menuPos + unit;
+                var cumulativeOffset = ButtonSize + unit * 2;
 
                 // update their positions
+                var i = 0;
+                var page = 0;
                 foreach (var sb in spellButtons)
                 {
-                    var id = new Vector(i / AbilitiesPerColumn, i % AbilitiesPerColumn);
-                    //var relativePos = new Vector(0.075, 0.1) + id * new Vector(0.5, 0.2);
-                    sb.Location = new Vector(0.075f + (i / AbilitiesPerColumn) * 0.5f,
-                        0.1f + (i % AbilitiesPerColumn) * 0.2f);
+                    var id = new Vector(i / PageSize.Y, i % PageSize.Y);
+
+                    sb.Location = baseOffset + id * cumulativeOffset;
 
                     if (++i == AbilitiesPerPage)
                     {

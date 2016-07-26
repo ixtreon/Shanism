@@ -1,4 +1,4 @@
-﻿using Shanism.Client.Assets;
+﻿using Shanism.Client.Drawing;
 using Shanism.Common.Game;
 using Microsoft.Xna.Framework;
 using System;
@@ -18,7 +18,7 @@ namespace Shanism.Client.UI.Chat
 
         IChatProvider chatProvider;
 
-        public TextureFont Font { get; set; } = Content.Fonts.SmallFont;
+        public TextureFont Font { get; set; }
 
         readonly LinkedList<string> lines = new LinkedList<string>();
 
@@ -28,17 +28,18 @@ namespace Shanism.Client.UI.Chat
         {
             Size = DefaultSize;
             BackColor = Color.Black.SetAlpha(100);
+            Font = Content.Fonts.SmallFont;
         }
 
         public void SetProvider(IChatProvider provider)
         {
             if (chatProvider != null)
-                chatProvider.MessageSent -= onMessageReceived;
+                chatProvider.ChatSent -= onMessageReceived;
 
             chatProvider = provider;
 
             if (chatProvider != null)
-                chatProvider.MessageSent += onMessageReceived;
+                chatProvider.ChatSent += onMessageReceived;
         }
 
         public override void OnDraw(Graphics g)

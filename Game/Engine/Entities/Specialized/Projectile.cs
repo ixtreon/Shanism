@@ -89,7 +89,7 @@ namespace Shanism.Engine.Entities
         /// This method is run every time a projectile is updated. 
         /// </summary>
         /// <param name="msElapsed"></param>
-        internal override void Update(int msElapsed)
+        public override void OnUpdate(int msElapsed)
         {
             // update location
             var dist = (Speed * msElapsed / 1000);
@@ -98,7 +98,7 @@ namespace Shanism.Engine.Entities
 
             //get valid targets
             var units = Map
-                .GetUnitsInRange(Position, (Scale + Constants.Units.MaximumObjectSize) / 2 )
+                .GetUnitsInRange(Position, (Scale + Constants.Entities.MaxSize) / 2 )
                 .Where(u => !u.IsDead
                     && u.Owner.IsEnemyOf(Owner)
                     && !unitsHit.Contains(u)
@@ -126,10 +126,9 @@ namespace Shanism.Engine.Entities
                 }
             }
 
-            if (DistanceTravelled > MaxRange && MaxRange > 0)
+            if (MaxRange > 0 && DistanceTravelled > MaxRange)
                 Destroy();
 
-            base.Update(msElapsed);
         }
 
     }

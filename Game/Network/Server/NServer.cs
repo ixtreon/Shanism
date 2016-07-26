@@ -2,7 +2,7 @@
 using Shanism.Common.Message;
 using Shanism.Common.Message.Client;
 using Shanism.Common.Message.Server;
-using Shanism.Common.Objects;
+using Shanism.Common.StubObjects;
 using Shanism.Common.Serialization;
 using IxLog;
 using Lidgren.Network;
@@ -82,7 +82,10 @@ namespace Shanism.Network
             var ioMsg = msg.ToIOMessage();
 
             if (ioMsg == null)
+            {
                 Log.Default.Warning($"Unable to read incoming message of length {msg.LengthBytes}. ");
+                return;
+            }
 
             //check if it's a handshake and if so, ask the server whether to accept it
             if (ioMsg.Type == MessageType.HandshakeInit)
@@ -118,7 +121,7 @@ namespace Shanism.Network
             //check if the server accepts it
             var receptor = engine.AcceptClient(client);
             var accepted = (receptor != null);  //TODO: make an actual check
-            Log.Default.Info("Got a handshake from {0}! Accepted? {1}", peerConnection.RemoteEndPoint.Address, accepted ? "yep" : "nope");
+            Log.Default.Info($"[{peerConnection.RemoteEndPoint.Address}] Requested handshake. Accept? {accepted}");
 
             //if so, add to our list, too
             if (accepted)

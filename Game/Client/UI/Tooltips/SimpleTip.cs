@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Xna.Framework.Graphics;
-using Shanism.Client.Textures;
-using Shanism.Common.Game;
 using Color = Microsoft.Xna.Framework.Color;
-using Shanism.Client.Assets;
+using Shanism.Client.Drawing;
 using Shanism.Common;
+using Shanism.Client.Input;
 
 namespace Shanism.Client.UI.Tooltips
 {
@@ -35,21 +33,22 @@ namespace Shanism.Client.UI.Tooltips
             var tipAsString = (HoverControl?.ToolTip as string);
 
             //visible if that's a string
-            IsVisible = HoverControl != null && !string.IsNullOrWhiteSpace(tipAsString);
-            if (!IsVisible)
+            if (string.IsNullOrWhiteSpace(tipAsString))
+            {
+                IsVisible = false;
                 return;
+            }
 
-            Text = tipAsString;
+            if (Text != tipAsString)
+            {
+                Text = tipAsString;
+                //update size, position
+                Size = Font.MeasureStringUi(Text, 0.5) + new Vector(Padding * 2);
+            }
 
-            //update size, position
-            Size = Font.MeasureStringUi(Text, 0.5) + new Vector(Padding * 2);
-            var screenPosRaw =
-                (mouseState.Position.ToPoint() + new Point(14, 26));
-            var screenPos = screenPosRaw
-                .Clamp(Point.Zero, Screen.Size - ScreenSize);
-            AbsolutePosition = Screen.ScreenToUi(screenPos);
-
-            BringToFront();
+            Location = ((MouseInfo.ScreenPosition + MouseInfo.CursorSize) / Screen.UiScale)
+                .Clamp(Vector.Zero, Screen.UiSize - Size);
+            IsVisible = true;
         }
 
 

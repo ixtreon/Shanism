@@ -47,7 +47,7 @@ namespace ShanoRPGWin.UI.Scenarios
                 string errors;
                 var dirs = Directory.EnumerateDirectories(DirectoryPath);
                 scenarios = dirs
-                    .Select(d => ScenarioConfig.Load(d, out errors))
+                    .Select(d => ScenarioConfig.LoadFromDisk(d, out errors))
                     .Where(sc => sc != null)
                     .ToList();
                 scenarioLookupTable = scenarios

@@ -1,4 +1,4 @@
-﻿using Shanism.Client.Assets;
+﻿using Shanism.Client.Drawing;
 using Shanism.Common.Game;
 using Microsoft.Xna.Framework;
 using System;
@@ -14,11 +14,9 @@ namespace Shanism.Client.UI
     {
         static readonly double TextYStart = 0.3;
 
-        static readonly TextureFont Font = Content.Fonts.NormalFont;
 
         static readonly int FullTimespan = 5000;
         static readonly int FadeStart = 3000;
-        static readonly int BrighterDuration = 500;
         static readonly int MaxErrorCount = 3;
 
         class ErrorData
@@ -28,6 +26,8 @@ namespace Shanism.Client.UI
         }
 
         readonly LinkedList<ErrorData> errors = new LinkedList<ErrorData>();
+
+        TextureFont Font => Content.Fonts.NormalFont;
 
         public ErrorTextControl()
         {
@@ -67,9 +67,8 @@ namespace Shanism.Client.UI
             var y = TextYStart;
             foreach(var ed in errors.Reverse())
             {
-                var brightness = (int)(Math.Max(0, (double)(BrighterDuration + ed.Timespan - FullTimespan) / BrighterDuration) * 25);
                 var alpha = Math.Min(255, 255 * ed.Timespan / FadeStart);
-                var c = Color.Red.SetAlpha(alpha).Brighten(brightness);
+                var c = Color.Red.SetAlpha(alpha);
 
                 g.DrawString(Font, ed.Text, c, new Vector(Size.X / 2, y), 0.5f, 0f);
 

@@ -8,6 +8,6 @@ namespace Shanism.Client.UI.Chat
 {
     interface IChatProvider
     {
-        event Action<string> MessageSent;
+        event Action<string> ChatSent;
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Shanism.Client.Input;
+using Shanism.Client.UI.Common;
 using Shanism.Common;
-using Shanism.Common.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,37 +13,20 @@ namespace Shanism.Client.UI.Menus.Keybinds
     /// <summary>
     /// Lists all standard keybinds (exluding actionbars). 
     /// </summary>
-    class KeybindPanel : Control
+    class KeybindPanel : FlowPanel
     {
-        readonly List<KeyBoxLabel> keyBoxes = new List<KeyBoxLabel>();
-
         public KeybindPanel()
         {
             BackColor = new Color();
-        }
 
-        public void InitKeybindLabels()
-        {
-            var allKeyButtons = Enum<ClientAction>.Values
+            Direction = FlowDirection.Vertical;
+            var controls = Enum<ClientAction>.Values
+                .OrderBy(a => a.ToString())
                 .Where(a => a != ClientAction.ToggleMenus)
                 .Where(a => a < ClientAction.ActionBar_0_0)
-                .Select(a => new KeyBoxLabel(a))
-                .ToList();
+                .Select(a => new KeyBoxLabel(a));
 
-            var position = new Vector(Padding);
-
-            foreach(var btn in allKeyButtons)
-            {
-                btn.Location = position;
-                Add(btn);
-
-                position += new Vector(0, btn.Size.Y + Padding);
-                if(position.Y + btn.Size.Y + Padding > Size.Y)
-                {
-                    position = new Vector(position.X + btn.Size.X + Padding * 2, Padding);
-                }
-            }
-
+            AddRange(controls);
         }
 
     }

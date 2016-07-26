@@ -10,24 +10,19 @@ namespace Shanism.Engine.Network
 {
     class NetworkSystem : GameSystem
     {
-        public bool IsOnline { get; private set; } = false;
+        public override string SystemName => "Network";
+        public bool IsOnline { get; private set; }
 
         public NServer Server { get; private set; }
 
 
         /// <summary>
-        /// Starts the underlying network server
+        /// Restarts the underlying network server
         /// passing the given game engine to it. 
         /// </summary>
         /// <param name="engine"></param>
-        public void Start(IShanoEngine engine)
+        public void Restart(IShanoEngine engine)
         {
-            if (IsOnline)
-            {
-                Console.WriteLine("Trying to open the server for network play but it is already online!");
-                return;
-            }
-
             IsOnline = true;
             Server = new NServer(engine);
         }

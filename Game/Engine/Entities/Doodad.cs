@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common.Objects;
+using Shanism.Common.StubObjects;
 using Shanism.Common.Game;
 using Shanism.Common;
 using Shanism.Common.Util;
+using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Engine.Entities
 {
@@ -20,7 +21,7 @@ namespace Shanism.Engine.Entities
         /// Gets the object type of this doodad. 
         /// Always has a value of <see cref="ObjectType.Doodad"/>. 
         /// </summary>
-        public override ObjectType ObjectType => ObjectType.Doodad;
+        public override ObjectType ObjectType { get; } = ObjectType.Doodad;
 
         /// <summary>
         /// Gets whether this doodad has collision. 

@@ -32,7 +32,7 @@ namespace Shanism.Common
         [Obsolete]
         public static string GetDirectory(this TextureType t, string name)
         {
-            return Path.Combine(dirs[(int)t], name);
+            return Util.ShanoPath.Combine(dirs[(int)t], name);
         }
     }
 }

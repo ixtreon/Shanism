@@ -81,9 +81,9 @@ namespace IxLog
         }
 
 
-        public void Info(string msg, params object[] args)
+        public void Info(string msg)
         {
-            writeToLog(LogLevel.Info, msg, args);
+            writeToLog(LogLevel.Info, msg);
         }
 
         public void Debug(string msg, params object[] args)

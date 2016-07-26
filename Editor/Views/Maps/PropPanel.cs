@@ -25,10 +25,10 @@ namespace Shanism.Editor.Views.Maps
         ObjectConstructor constr = new ObjectConstructor
         {
             TypeName = DoodadType,
-            Animation = string.Empty,
+            Model = string.Empty,
             Owner = string.Empty,
             Size = 2.5,
-            Tint = ShanoColor.White,
+            Tint = Common.Util.Color.White,
         };
 
         public void LoadModel(AnimationsViewModel animations)
@@ -41,7 +41,7 @@ namespace Shanism.Editor.Views.Maps
         {
             if (anim != null)
             {
-                constr.Animation = anim.Name;
+                constr.Model = anim.Name;
 
                 BrushChanged?.Invoke(constr);
             }

@@ -4,31 +4,35 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shanism.Common;
-using Shanism.Engine.Systems.Range;
 using Shanism.Common.Util;
 using Shanism.Common.Message;
+using Shanism.Engine.Objects.Range;
+using Shanism.Engine.Players;
 
 namespace Shanism.Engine.Entities
 {
     partial class Unit
     {
 
+
+        //used by range events
+        internal readonly Dictionary<Entity, double> nearbyDistances = new Dictionary<Entity, double>();
+
+        internal readonly HashSet<Entity> nearbyEntities = new HashSet<Entity>();
+
+        //used by the vision system
+        readonly HashSet<Entity> objectsSeen = new HashSet<Entity>();
+
         double _visionRange = 20;
 
 
         /// <summary>
-        /// Gets or sets the RangeEvent that is fired whenever an object approaches this unit. 
-        /// </summary>
-        internal RangeEvent ObjectVisionRangeEvent { get; set; }
-
-
-        /// <summary>
-        /// The event raised whenever a game object enters this unit's vision range. 
+        /// The event raised whenever an entity enters this unit's vision range. 
         /// </summary>
         public event Action<Entity> ObjectSeen;
 
         /// <summary>
-        /// The event raised whenever a game object leaves this unit's vision range. 
+        /// The event raised whenever an entity leaves this unit's vision range. 
         /// </summary>
         public event Action<Entity> ObjectUnseen;
 
@@ -39,9 +43,9 @@ namespace Shanism.Engine.Entities
 
 
         /// <summary>
-        /// Gets all units this guy can see. 
+        /// Gets all entities this unit can see. 
         /// </summary>
-        public IEnumerable<Entity> VisibleObjects => vision.objectsSeen;
+        public IEnumerable<Entity> VisibleObjects => objectsSeen;
 
         /// <summary>
         /// Gets or sets the vision range of the unit. 
@@ -52,11 +56,8 @@ namespace Shanism.Engine.Entities
 
             set
             {
-                if (!_visionRange.AlmostEqualTo(value, 1E-3))  //should be ok, lel
-                {
-                    _visionRange = value;
-                    VisionRangeChanged?.Invoke(this);
-                }
+                _visionRange = value;
+                VisionRangeChanged?.Invoke(this);
             }
         }
 
@@ -65,33 +66,65 @@ namespace Shanism.Engine.Entities
         /// Gets whether the specified object is visible by this unit. 
         /// </summary>
         /// <param name="o">The object to check for visibility. </param>
-        public bool IsInVisionRange(Entity o)
-        {
-            return vision.objectsSeen.Contains(o);
-        }
+        public bool IsInVisionRange(Entity o) 
+            => objectsSeen.Contains(o);
+
 
         internal void SendMessageToVisibles(IOMessage msg)
         {
-            var pls = seenByUnits
-                .Select(u => u.Owner.Receptor)
-                .Concat(new[] { Owner.Receptor })
-                .Where(pl => pl != null)
-                .Distinct()
-                .ToList();
+            var set = new HashSet<ShanoReceptor>();
+                set.Add(Owner.Receptor);
 
-            foreach (var pl in pls)
-                pl.SendMessage(msg);
+            foreach (var u in visibleFromUnits)
+                    set.Add(u.Owner.Receptor);
+
+            foreach (var pl in set)
+                pl?.SendMessage(msg);
         }
 
         /// <summary>
-        /// Raises the <see cref="ObjectSeen"/> event. 
+        /// Called whenever an entity enters this unit's vision range. 
         /// </summary>
-        internal virtual void OnObjectSeen(Entity obj) { ObjectSeen?.Invoke(obj); }
+        internal void OnObjectSeen(Entity e) { }
 
 
         /// <summary>
-        /// Raises the <see cref="ObjectUnseen"/> event. 
+        /// Called whenever an entity leaves this unit's vision range. 
         /// </summary>
-        internal virtual void OnObjectUnseen(Entity obj) { ObjectUnseen?.Invoke(obj); }
+        internal void OnObjectUnseen(Entity e) { }
+
+        internal void see(Entity e)
+        {
+            if (objectsSeen.Add(e))
+            {
+                e.visibleFromUnits.Add(this);
+
+                OnObjectSeen(e);
+                ObjectSeen?.Invoke(e);
+            }
+        }
+
+        internal void unsee(Entity e)
+        {
+            if (objectsSeen.Remove(e))
+            {
+                e.visibleFromUnits.Remove(this);
+
+                OnObjectUnseen(e);
+                ObjectUnseen?.Invoke(e);
+            }
+        }
+
+        internal void unseeAll()
+        {
+            foreach (var e in objectsSeen)
+            {
+                e.visibleFromUnits.Remove(this);
+
+                OnObjectUnseen(e);
+                ObjectUnseen?.Invoke(e);
+            }
+            objectsSeen.Clear();
+        }
     }
 }

@@ -45,11 +45,10 @@ namespace Shanism.Client
         protected override void Initialize()
         {
             base.Initialize();
-
-            Content.RootDirectory = "Content";
             Window.Title = "ShanoRPG";
-
             ExitHelper.SetGame(this);
+            Content.RootDirectory = "Content";
+
 
             GraphicsDevice.RasterizerState = new RasterizerState
             {
@@ -127,7 +126,6 @@ namespace Shanism.Client
             {
                 _isLoaded = true;
                 GameLoaded?.Invoke();
-                //Window_ClientSizeChanged(null, null);
             }
 
             _clientEngine.Draw(gameTime);

@@ -1,94 +1,94 @@
-﻿using Shanism.Client.Textures;
-using Shanism.Client.UI.Common;
-using Shanism.Common;
+﻿using Shanism.Common;
 using Shanism.Common.Game;
-using Shanism.Common.Objects;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Color = Microsoft.Xna.Framework.Color;
+using Shanism.Common.Interfaces.Entities;
+using Shanism.Common.Interfaces.Objects;
+using Shanism.Client.UI.Game;
 
 namespace Shanism.Client.UI
 {
     class BuffBar : Control
     {
-        public float BuffSize { get; set; }
+        const float DefaultBuffSize = 0.05f;
+        const int DefaultMaxBuffs = 40;
+        static readonly Color DefaultBackColor = Color.Black.SetAlpha(100);
+
+        static readonly GenericComparer<IBuffInstance> buffComparer = new GenericComparer<IBuffInstance>(
+            (x, y) =>
+            {
+                var cmpId = x.Id.CompareTo(y.Id);
+                return cmpId;
+            });
+
+
+
+        readonly SortedDictionary<IBuffInstance, BuffBox> buffDict = new SortedDictionary<IBuffInstance, BuffBox>(
+            buffComparer);
+
+        public float BuffSize { get; set; } = DefaultBuffSize;
 
         /// <summary>
         /// Gets a list of all the buffs affecting the current unit. 
         /// </summary>
         public IEnumerable<IBuffInstance> BuffList { get; private set; }
 
-
-        SortedDictionary<IBuffInstance, BuffControl> buffDict = new SortedDictionary<IBuffInstance, BuffControl>(new BuffComparer());
-
-        /// <summary>
-        /// Gets or sets the maximum size of the bar in terms of buffs. 
-        /// </summary>
-        public int BuffsPerRow
-        {
-            get
-            {
-                return (int)(Size.X / BuffSize);
-            }
-        }
-
         /// <summary>
         /// Gets or sets the maximum number of buffs that are to be shown. 
         /// </summary>
-        public int MaxBuffs { get; set; }
-
-        /// <summary>
-        /// Gets or sets whether consecutive buff rows are added to the top or the bottom. 
-        /// </summary>
-        public bool GrowDown { get; set; }
+        public int MaxBuffs { get; set; } = DefaultMaxBuffs;
 
         /// <summary>
         /// Gets the target for the buff bar. 
         /// </summary>
-        public IUnit Target { get; set; }
+        public IUnit TargetUnit { get; set; }
+
+        /// <summary>
+        /// Gets or sets the maximum size of the bar in terms of buffs. 
+        /// </summary>
+        public int BuffsPerRow => (int)(Size.X / BuffSize);
 
         public BuffBar()
         {
-            this.MaxBuffs = 40;
-            this.BuffSize = 0.05f;
-            this.BackColor = Color.Black.SetAlpha(100);
+            this.BackColor = DefaultBackColor;
         }
 
         protected override void OnUpdate(int msElapsed)
         {
-            this.IsVisible = (Target != null);
-
-            if (IsVisible)
+            if (IsVisible = TargetUnit?.Buffs?.Any() ?? false)
             {
                 //get the new buffs
-                BuffList = Target.Buffs?.Take(MaxBuffs) ?? Enumerable.Empty<IBuffInstance>();
+                BuffList = TargetUnit.Buffs.Take(MaxBuffs);
 
                 //update the underlying controls
                 buffDict.SyncValues(BuffList, addBuff, removeBuff);
 
                 var i = 0;
+                Vector buffPos = Vector.Zero;
                 foreach(var bc in buffDict.Values)
                 {
                     var x = (i % BuffsPerRow);
                     var y = (i / BuffsPerRow);
-                    bc.Location = new Vector(x, y) * (BuffSize + Padding);
+                    buffPos = new Vector(x, y) * (BuffSize + Padding);
+                    bc.Location = buffPos;
                     i++;
                 }
+                
+                Size = new Vector(Size.X, buffPos.Y + BuffSize + Padding);
             }
         }
 
-        void removeBuff(IBuffInstance b, BuffControl c)
+        void removeBuff(IBuffInstance b, BuffBox c)
         {
             Remove(c);
         }
 
-        private BuffControl addBuff(IBuffInstance b)
+        BuffBox addBuff(IBuffInstance b)
         {
-            var bc = new BuffControl
+            var bc = new BuffBox
             {
                 Size = BuffSize,
                 Buff = b,

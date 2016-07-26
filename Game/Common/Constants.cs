@@ -27,7 +27,7 @@ namespace Shanism.Common
                 /// <summary>
                 /// Gets the path to the default model's texture on the client. 
                 /// </summary>
-                public const string ModelTexture = "objects\\dummy.png";
+                public const string ModelTexture = "objects/dummy.png";
 
 
                 public const string Icon = "default";
@@ -53,6 +53,13 @@ namespace Shanism.Common
 
         }
 
+        public static class Animations
+        {
+            public const string Move = "move";
+            public const string Cast = "cast";
+
+        }
+
         public static class Client
         {
             //5184
@@ -60,20 +67,11 @@ namespace Shanism.Common
             public const int WindowHeight = 54;
 
             public static readonly Point WindowSize = new Point(WindowWidth, WindowHeight);
-        }
 
-        public static class Terrain 
-        {
             /// <summary>
-            /// WTF?!
+            /// The size of the terrain chunks requested by the client. 
             /// </summary>
-            [Obsolete]
-            public static readonly int ChunkSize = Client.WindowHeight / 2;
-        }
-
-        public static class Engine
-        {
-            public const double DamageReductionPerDefense = 0.05;
+            public static readonly int ChunkSize = WindowHeight / 2;
         }
     }
 }

@@ -1,17 +1,17 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using Shanism.Client.Input;
+using Shanism.Client.UI;
+using Shanism.Client.UI.CombatText;
+using Shanism.Common.Game;
+using Shanism.Common.Interfaces.Entities;
+using Shanism.Common.Interfaces.Objects;
+using Shanism.Common.Message.Client;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common.Message;
-using Shanism.Client.UI;
-using Shanism.Client.Objects;
-using Microsoft.Xna.Framework.Input;
-using Shanism.Common.Message.Client;
-using Shanism.Common.Objects;
-using Shanism.Client.UI.CombatText;
-using Shanism.Common.Game;
-using Microsoft.Xna.Framework;
 
 namespace Shanism.Client.Systems
 {
@@ -20,34 +20,27 @@ namespace Shanism.Client.Systems
 
         FloatingTextProvider ErrorTextProvider => Interface.FloatingText;
 
-        readonly UiSystem Interface;
-
-
-        MouseState mouseState;
-        MouseState oldMouseState = Mouse.GetState();
+        readonly Interface Interface;
+        readonly ObjectSystem Objects;
 
         public IHero Hero { get; set; }
 
 
-
-        public ActionSystem(UiSystem ui)
+        public ActionSystem(Interface ui, ObjectSystem objects)
         {
             Interface = ui;
+            Objects = objects;
         }
 
 
         public override void Update(int msElapsed)
         {
-            oldMouseState = mouseState;
-            mouseState = Mouse.GetState();
 
             //cast abilities if button is held
-            if (mouseState.RightButton == ButtonState.Pressed)
+            if (MouseInfo.RightDown)
             {
-                var justPressedKey = (oldMouseState.RightButton == ButtonState.Released);
-
                 ActionMessage msg;
-                if (tryCastAbility(Interface.CurrentAbility, justPressedKey, out msg))
+                if (tryCastAbility(Interface.CurrentAbility, MouseInfo.RightJustPressed, out msg))
                     SendMessage(msg);
             }
         }
@@ -64,21 +57,18 @@ namespace Shanism.Client.Systems
         bool tryCastAbility(IAbility ab, bool displayErrors, out ActionMessage msg)
         {
             msg = null;
-            if (ab == null)
+            if (ab == null || ab.TargetType == AbilityTargetType.Passive)
                 return false;
 
             //get target object and ground location
-            var targetGuid = (Control.HoverControl as ObjectControl)?.Object.Id ?? 0;
-            var targetLoc = Screen.ScreenToGame(mouseState.Position.ToPoint());
+            var targetGuid = Objects.MainHeroGuid;
+            var targetLoc = MouseInfo.InGamePosition;
 
-
-            //make some checks so we don't spam the server
 
             //cooldown
-            var justClicked = mouseState.RightButton == ButtonState.Pressed && oldMouseState.RightButton == ButtonState.Released;
             if (ab.CurrentCooldown > 0)
             {
-                if (displayErrors && justClicked)
+                if (displayErrors)
                     Interface.FloatingText.AddLabel(targetLoc, $"{ab.CurrentCooldown / 1000.0:0.0} sec!", Color.Red, FloatingTextStyle.Top);
                 return false;
             }
@@ -90,7 +80,7 @@ namespace Shanism.Client.Systems
                 if (displayErrors)
                 {
                     Interface.FloatingText.AddLabel(targetLoc, "Out of range", Color.Red, FloatingTextStyle.Top);
-                    Interface.RangeIndicator.ShowRange(ab.CastRange, 1250, true);
+                    Interface.RangeIndicator.Show(ab.CastRange);
                 }
                 return false;
             }

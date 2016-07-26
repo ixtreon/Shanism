@@ -1,5 +1,5 @@
 ﻿using Shanism.Client;
-using Shanism.Client.Textures;
+using Shanism.Client.Drawing;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;

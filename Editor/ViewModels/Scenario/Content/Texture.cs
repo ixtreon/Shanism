@@ -9,34 +9,19 @@ using System.Threading.Tasks;
 
 using Bitmap = System.Drawing.Bitmap;
 using Shanism.Common;
+using Shanism.Editor.Util;
+using System.Drawing.Design;
+using Shanism.Common.Util;
 
 namespace Shanism.Editor.ViewModels
 {
     public class TextureViewModel
     {
-        /// <summary>
-        /// Gets whether this texture is included in the scenario. 
-        /// </summary>
-        [ReadOnly(true)]
-        public bool Included { get; set; }
-
-        /// <summary>
-        /// Gets the full path to the texture. 
-        /// </summary>
-        public string FullPath => System.IO.Path.Combine(ContentDirectory, Path);
-
-
+        [Browsable(false)]
         public string ContentDirectory { get; }
 
-
-        /// <summary>
-        /// Gets the relative path to the texture. 
-        /// </summary>
-        public string Path => Data.Name;
-
-
         [Browsable(false)]
-        public Bitmap Image { get; }
+        public Bitmap Bitmap { get; }
 
         /// <summary>
         /// The definition of the texture. 
@@ -44,26 +29,56 @@ namespace Shanism.Editor.ViewModels
         [Browsable(false)]
         public TextureDef Data { get; }
 
+        /// <summary>
+        /// Gets the full path to the texture. 
+        /// </summary>
+        //[Browsable(false)]
+        public string FullPath { get; private set; }
 
-        //Used by the UI
+
+        /// <summary>
+        /// Gets whether this texture is included in the scenario. 
+        /// </summary>
+        //[ReadOnly(true)]
+        [Description("Whether to include this texture with the scenario."
+            + "\n" + "Use the checkboxes to the right to change this property.")]
+        public bool Included { get; set; }
+
+        /// <summary>
+        /// Gets or sets the relative path to the texture. 
+        /// </summary>
+        [Browsable(true)]
+        public string Name
+        {
+            get { return Data.Name; }
+        }
+
+
+        [Category("Cells")]
+        [DisplayName("Horizontal")]
+        [Description("The number of logical divisions (cells) along this texture's X coordinate.")]
+        [Range(1, 100)]
         public int LogicalWidth
         {
-            get { return Data.Splits.X; }
+            get { return Data.Cells.X; }
             set
             {
-                if (value >= 0 && value < Size.X)
-                    Data.Splits = new Point(value, Data.Splits.Y);
+                if (value >= 0 && value < ImageSize.X)
+                    Data.Cells = new Point(value, Data.Cells.Y);
             }
         }
 
-        //Used by the UI
+        [Category("Cells")]
+        [DisplayName("Vertical")]
+        [Description("The number of logical divisions (cells) along this texture's Y coordinate.")]
+        [Range(1, 100)]
         public int LogicalHeight
         {
-            get { return Data.Splits.Y; }
+            get { return Data.Cells.Y; }
             set
             {
-                if (value >= 0 && value < Size.Y)
-                    Data.Splits = new Point(Data.Splits.X, value);
+                if (value >= 0 && value < ImageSize.Y)
+                    Data.Cells = new Point(Data.Cells.X, value);
             }
         }
 
@@ -71,23 +86,33 @@ namespace Shanism.Editor.ViewModels
         /// Gets the size of a single cell in this texture. 
         /// </summary>
         [Browsable(false)]
-        public Point CellSize => Image.Size.ToPoint() / Data.Splits;
+        public Point CellSize => Bitmap.Size.ToPoint() / Data.Cells;
+
+        [Description("The full size of the texture, in pixels.")]
+        [DisplayName("Dimensions")]
+        public Point ImageSize => new Point(Bitmap.Width, Bitmap.Height);
 
 
-        public Point Size => new Point(Image.Width, Image.Height);
-
-
-        public TextureViewModel(string contentDir, Bitmap bmp, TextureDef data)
+        public TextureViewModel(string contentDir, string fullPath, Bitmap bmp, TextureDef data)
         {
             if (bmp == null) throw new ArgumentNullException(nameof(bmp));
             if (data == null) throw new ArgumentNullException(nameof(data));
 
             ContentDirectory = contentDir;
+            FullPath = fullPath;
             Data = data;
-            Image = bmp;
+            Bitmap = bmp;
         }
 
-        public override string ToString() => Path;
+        public void SetNameAndPath(string fullPath)
+        {
+            var name = ShanoPath.GetRelativePath(fullPath, ContentDirectory);
+
+            Data.Name = name;
+            FullPath = fullPath;
+        }
+
+        public override string ToString() => Name;
     }
 
 }

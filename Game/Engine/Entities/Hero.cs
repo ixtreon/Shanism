@@ -11,9 +11,9 @@ using Shanism.Engine.Common;
 using Shanism.Engine.Entities;
 using Shanism.Engine.Systems.Orders;
 using Shanism.Common.Message.Client;
-using Shanism.Common.Objects;
-using Shanism.Engine.Systems.Abilities;
+using Shanism.Common.StubObjects;
 using Shanism.Common.Util;
+using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Engine.Entities
 {
@@ -34,7 +34,7 @@ namespace Shanism.Engine.Entities
 
 
         /// <summary>
-        /// The total experience of the unit. 
+        /// The total experience of the hero. 
         /// </summary>
         int _experience;
 
@@ -45,7 +45,7 @@ namespace Shanism.Engine.Entities
             => XpPerLevel * Level;
 
         /// <summary>
-        /// The current experience of this hero.
+        /// The current experience of the hero.
         /// </summary>
         public int Experience
         {
@@ -55,7 +55,7 @@ namespace Shanism.Engine.Entities
                 if (value < _experience)
                     throw new Exception("You must supply an experience value higher than the previous one!");
                 _experience = value;
-                while (_experience > ExperienceNeeded)
+                while (_experience >= ExperienceNeeded)
                 {
                     _experience -= ExperienceNeeded;
                     Level++;
@@ -64,49 +64,42 @@ namespace Shanism.Engine.Entities
         }
 
         /// <summary>
-        /// Gets or sets the base strength of this hero. 
+        /// Gets or sets the base strength of the hero. 
         /// </summary>
         public double BaseStrength { get; set; } = 10;
         /// <summary>
-        /// Gets or sets the base vitality of this hero. 
+        /// Gets or sets the base vitality of the hero. 
         /// </summary>
         public double BaseVitality { get; set; } = 10;
         /// <summary>
-        /// Gets or sets the base intellect of this hero. 
+        /// Gets or sets the base intellect of the hero. 
         /// </summary>
         public double BaseIntellect { get; set; } = 10;
         /// <summary>
-        /// Gets or sets the base agility of this hero. 
+        /// Gets or sets the base agility of the hero. 
         /// </summary>
         public double BaseAgility { get; set; } = 10;
 
 
 
         /// <summary>
-        /// Gets the current strength of this hero. 
+        /// Gets the current strength of the hero. 
         /// </summary>
-        /// <returns></returns>
         public double Strength { get; internal set; }
         /// <summary>
-        /// Gets the current vitality of this hero. 
+        /// Gets the current vitality of the hero. 
         /// </summary>
         public double Vitality { get; internal set; }
         /// <summary>
-        /// Gets the current intellect of this hero. 
+        /// Gets the current intellect of the hero. 
         /// </summary>
         public double Intellect { get; internal set; }
         /// <summary>
-        /// Gets the current agility of this hero. 
+        /// Gets the current agility of the hero. 
         /// </summary>
         public double Agility { get; internal set; }
 
-
-
-        /// <summary>
-        /// Gets the movement state of this hero, if it is moving. 
-        /// </summary>
-        public MovementState MoveState
-            => (Order as PlayerMoveOrder)?.State ?? MovementState.Stand;
+        
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Hero"/> class.
@@ -115,25 +108,12 @@ namespace Shanism.Engine.Entities
         public Hero(Player owner)
             : base(owner)
         {
-            AnimationName = "units/hero";
+            Model = "units/hero";
 
             BaseMoveSpeed = 12;
 
-            BaseLife = 100;
-            BaseMana = 5;
-        }
-
-
-        /// <summary>
-        /// Fired whenever the player requests the activation of some action. 
-        /// </summary>
-        internal virtual void OnAction(ActionMessage args)
-        {
-            var ability = Abilities.TryGet(args.AbilityId);
-            if (ability == null)
-                return;
-
-            CastAbility(ability, args.TargetLocation);
+            BaseMaxLife = 100;
+            BaseMaxMana = 5;
         }
     }
 }

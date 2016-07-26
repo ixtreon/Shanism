@@ -41,24 +41,6 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Network|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Network\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Editor|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Editor\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
@@ -73,24 +55,6 @@
     <DefineConstants>TRACE;WINDOWS</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Network|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Network\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Editor|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Editor\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
-    <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
@@ -113,94 +77,82 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Network|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Network\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Editor|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Editor\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Assets\CircleDict.cs" />
+    <Compile Include="Assets\IconCache.cs" />
+    <Compile Include="Assets\SpriteCache.cs" />
+    <Compile Include="Drawing\CircleDict.cs" />
     <Compile Include="ClientGame.cs" />
+    <Compile Include="Drawing\Sprites\EntitySprite.cs" />
+    <Compile Include="Drawing\Sprites\SpriteBase.cs" />
+    <Compile Include="Drawing\Sprites\UnitSprite.cs" />
+    <Compile Include="Drawing\TextureChunk.cs" />
+    <Compile Include="Exceptions\ContentDirectoryMissing.cs" />
+    <Compile Include="Input\MouseInfo.cs" />
     <Compile Include="Interfaces\IClientEngine.cs" />
     <Compile Include="Systems\ClientSystem.cs" />
     <Compile Include="Systems\Actions.cs" />
     <Compile Include="Systems\Chat.cs" />
     <Compile Include="Systems\Movement.cs" />
+    <Compile Include="Systems\Objects.cs" />
     <Compile Include="UI\Chat\ChatBox.cs" />
     <Compile Include="UI\Chat\IChatProvider.cs" />
     <Compile Include="UI\CombatText\RangeIndicator.cs" />
+    <Compile Include="UI\Common\CheckBox.cs" />
     <Compile Include="UI\Common\ProgressBar.cs" />
+    <Compile Include="UI\Common\Slider.cs" />
+    <Compile Include="UI\Common\SliderLabel.cs" />
     <Compile Include="UI\Common\ValueLabel.cs" />
     <Compile Include="UI\ErrorText\ErrorTextControl.cs" />
+    <Compile Include="UI\Game\UnitFrame.cs" />
+    <Compile Include="UI\Items\ItemSlot.cs" />
     <Compile Include="UI\Menus\Character\StatBox.cs" />
+    <Compile Include="UI\Common\FlowPanel.cs" />
     <Compile Include="UI\Menus\Options.cs" />
+    <Compile Include="UI\Root.cs" />
     <Compile Include="UI\Ticker.cs" />
-    <Compile Include="Assets\Content.cs" />
-    <Compile Include="Assets\ContentList.cs" />
+    <Compile Include="Assets\AssetList.cs" />
     <Compile Include="Assets\FontCache.cs" />
-    <Compile Include="Assets\Sprite.cs" />
     <Compile Include="Assets\TerrainCache.cs" />
     <Compile Include="ExitHelper.cs" />
-    <Compile Include="Input\Keybind.cs" />
+    <Compile Include="Input\Common\Keybind.cs" />
     <Compile Include="Input\KeyMap.cs" />
-    <Compile Include="Input\MouseButtonArgs.cs" />
-    <Compile Include="Input\MouseArgs.cs" />
+    <Compile Include="EventArgs\MouseButtonArgs.cs" />
+    <Compile Include="EventArgs\MouseArgs.cs" />
     <Compile Include="Ext\Effects.cs" />
     <Compile Include="Ext\SpriteBatch.cs" />
-    <Compile Include="Input\KeyRepeater.cs" />
-    <Compile Include="Input\ModifierKeys.cs" />
-    <Compile Include="Input\ClientAction.cs" />
+    <Compile Include="Input\Common\KeyRepeater.cs" />
+    <Compile Include="Input\Common\ModifierKeys.cs" />
+    <Compile Include="Input\Common\ClientAction.cs" />
     <Compile Include="Input\KeyboardInfo.cs" />
-    <Compile Include="GameManager.cs" />
-    <Compile Include="Objects\EffectControl.cs" />
-    <Compile Include="UI\Game\UnitHoverFrame.cs" />
+    <Compile Include="SystemGod.cs" />
+    <Compile Include="UI\Game\UnitHoverBox.cs" />
     <Compile Include="UI\Menus\Keybinds\KeybindPanel.cs" />
     <Compile Include="UI\Menus\Keybinds\KeyBoxLabel.cs" />
-    <Compile Include="UI\MenuBar.cs" />
-    <Compile Include="UI\Game\SpellBarButton.cs" />
+    <Compile Include="UI\Menus\MenuBar.cs" />
+    <Compile Include="UI\Game\Elements\SpellBarButton.cs" />
     <Compile Include="Settings\ShanoSettings.cs" />
     <Compile Include="Settings\Keybinds.cs" />
-    <Compile Include="Assets\Shaders.cs" />
+    <Compile Include="Drawing\Shaders.cs" />
     <Compile Include="ShanoGame.cs" />
     <Compile Include="Interfaces\IClientInstance.cs" />
-    <Compile Include="Map\ChunkData.cs" />
-    <Compile Include="Map\MapManager.cs" />
-    <Compile Include="Systems\Objects.cs" />
-    <Compile Include="Objects\DoodadControl.cs" />
-    <Compile Include="Objects\HeroControl.cs" />
-    <Compile Include="Objects\ObjectControl.cs" />
-    <Compile Include="Objects\UnitControl.cs" />
+    <Compile Include="Map\TerrainChunk.cs" />
+    <Compile Include="Systems\Terrain.cs" />
     <Compile Include="Screen.cs" />
     <Compile Include="Ext\General.cs" />
-    <Compile Include="Common\Graphics.cs" />
-    <Compile Include="Assets\SpriteCache.cs" />
+    <Compile Include="Drawing\Graphics.cs" />
     <Compile Include="Assets\TextureCache.cs" />
     <Compile Include="ClientEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Assets\TextureFont.cs" />
+    <Compile Include="Drawing\TextureFont.cs" />
     <Compile Include="UI\CombatText\FloatingTextProvider.cs" />
-    <Compile Include="UI\BuffControl.cs" />
+    <Compile Include="UI\Game\Elements\BuffControl.cs" />
     <Compile Include="UI\Game\BuffBar.cs" />
-    <Compile Include="UI\Game\BuffComparer.cs" />
     <Compile Include="UI\Game\CastBar.cs" />
     <Compile Include="UI\Chat\ChatBar.cs" />
     <Compile Include="UI\Common\Button.cs" />
-    <Compile Include="UI\Game\HealthBar.cs" />
-    <Compile Include="UI\Game\ManaBar.cs" />
-    <Compile Include="UI\Game\XpBar.cs" />
+    <Compile Include="UI\Game\Elements\HealthBar.cs" />
+    <Compile Include="UI\Game\Elements\ManaBar.cs" />
+    <Compile Include="UI\Game\Elements\XpBar.cs" />
     <Compile Include="UI\Common\Label.cs" />
     <Compile Include="UI\Menus\Character.cs" />
     <Compile Include="UI\Menus\Keybinds.cs" />
@@ -209,59 +161,27 @@
     <Compile Include="Systems\Interface.cs" />
     <Compile Include="UI\Game\SpellBar.cs" />
     <Compile Include="UI\Menus\Abilities.cs" />
-    <Compile Include="UI\Game\SpellButton.cs" />
-    <Compile Include="UI\Game\UnitFrame.cs" />
+    <Compile Include="UI\Game\Elements\SpellButton.cs" />
+    <Compile Include="UI\Game\UnitBox.cs" />
     <Compile Include="UI\Tooltips\SimpleTip.cs" />
     <Compile Include="UI\Control.cs" />
     <Compile Include="UI\Common\ValueBar.cs" />
     <Compile Include="UI\Menus\Window.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="MonoGame.Framework, Version=3.4.0.459, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MonoGame.Framework.WindowsDX.3.4.0.459\lib\net40\MonoGame.Framework.dll</HintPath>
+    <Reference Include="MonoGame.Framework, Version=3.5.1.1679, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MonoGame.Framework.WindowsDX.3.5.1.1679\lib\net40\MonoGame.Framework.dll</HintPath>
       <Private>True</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\1.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Fonts\ui-text.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Fonts\ui-text.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Objects\dummy.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\terrain.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\UI\close.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Fonts\UI.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Fonts\UI.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Icons\border.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Icons\border_hover.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Icons\default.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -278,15 +198,15 @@
     <None Include="app.config" />
     <None Include="ClientContent.mgcb" />
     <None Include="packages.config" />
-    <None Include="Shaders\shader.fx" />
-    <None Include="Shaders\shader.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\StatBox\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

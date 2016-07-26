@@ -9,8 +9,9 @@ using System.Threading.Tasks;
 using Shanism.Common.Message.Client;
 using Shanism.Common.Message;
 using Shanism.Common.Message.Server;
-using Shanism.Common.Objects;
+using Shanism.Common.StubObjects;
 using Shanism.Common.Message.Network;
+using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Network.Client
 {
@@ -23,21 +24,21 @@ namespace Shanism.Network.Client
     {
         public readonly string PlayerName;
 
-        NetClient NetClient { get { return (NetClient)peer; } }
+        readonly ObjectCache objects = new ObjectCache();
 
-        bool isConnected = false;
 
-        #region GameReceptor fields and properties
-        public event Action<IUnit, string> AnyUnitAction;
-        public event Action<IOMessage> MessageSent;
+        bool isConnected;
 
-        #endregion
 
         public IHero MainHero { get; private set; }
 
         public IShanoClient GameClient { get; private set; }
 
-        ObjectCache objects { get; } = new ObjectCache();
+        public event Action<IOMessage> MessageSent;
+
+        NetClient NetClient => (NetClient)peer;
+
+        public bool IsConnected => isConnected;
 
         static NClient()
         {
@@ -65,7 +66,7 @@ namespace Shanism.Network.Client
 
         internal override void OnConnected(NetConnection conn)
         {
-
+            isConnected = true;
 
             //send a handshake init to the server
             // no matter if the client requested it or not, lel
@@ -77,7 +78,6 @@ namespace Shanism.Network.Client
         internal override void OnDisconnected(NetConnection conn)
         {
             isConnected = false;
-
             Log.Default.Info("Disconnected");
         }
 
@@ -92,49 +92,45 @@ namespace Shanism.Network.Client
                 return;
             }
 
-            switch(ioMsg.Type)
-            {
-                //relay most messages to the IClient
-                case MessageType.HandshakeReply:
-                case MessageType.PlayerStatusUpdate:
-                case MessageType.MapReply:
-                    Log.Default.Info($"Received a {ioMsg.Type}. ");
 
-                    MessageSent(ioMsg);
-                    break;
+            switch (ioMsg.Type)
+            {
 
                 case MessageType.ObjectUnseen:
-                    Log.Default.Info($"Received a {ioMsg.Type}. ");
-
                     objects.UnseeObject((ObjectUnseenMessage)ioMsg);
 
                     MessageSent(ioMsg);
                     break;
 
                 case MessageType.ObjectSeen:
-                    Log.Default.Info($"Received a {ioMsg.Type}. ");
-
                     var obj = objects.SeeObject((ObjectSeenMessage)ioMsg) as IEntity;
+
                     if (obj != null)
                         MessageSent(new ObjectSeenMessage(obj));
-
                     break;
 
                 case MessageType.GameFrame:
                     objects.UpdateGame((GameFrameMessage)ioMsg);
                     break;
 
+                //relay all other messages to the IClient
+                case MessageType.HandshakeReply:
+                case MessageType.PlayerStatusUpdate:
+                case MessageType.MapReply:
+                    MessageSent(ioMsg);
+                    break;
+
                 default:
                     Log.Default.Warning($"Unrecognized message type: {ioMsg.Type}");
-                    break;
+                    return;
             }
+
+            if (ioMsg.Type != MessageType.GameFrame)
+                Log.Default.Info($"Received a {ioMsg.Type}. ");
         }
 
         void SendMessage(IOMessage ioMsg)
         {
-            if (ioMsg.Type == MessageType.HandshakeInit)
-                return; //TODO: figure out why?!?!?!
-
             SendMessage(ioMsg, NetDeliveryMethod.ReliableUnordered);
         }
 
@@ -146,7 +142,6 @@ namespace Shanism.Network.Client
             if(result == NetSendResult.FailedNotConnected)
             {
                 //TODO: initiate shutdown sequence
-
                 Log.Default.Info($"Connection dropped. ");
                 return;
             }

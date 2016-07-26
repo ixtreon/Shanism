@@ -55,12 +55,12 @@ namespace Shanism.Common
         /// <summary>
         /// Gets the position of the bottom-left (low) corner of the rectangle. 
         /// </summary>
-        public Vector Position => new Vector(_x, _y);
+        public Vector Position => new Vector(X, Y);
 
         /// <summary>
         /// Gets the size of the rectangle. 
         /// </summary>
-        public Vector Size => new Vector(_width, _height);
+        public Vector Size => new Vector(Width, Height);
 
         /// <summary>
         /// Gets the low X coordinate of this rectangle. 
@@ -104,29 +104,29 @@ namespace Shanism.Common
 
 
         /// <summary>
-        /// Gets the bottom left (low X, low Y) corner of this rectangle. 
+        /// Gets the top left (low X, low Y) corner of this rectangle. 
         /// </summary>
-        public Vector BottomLeft => new Vector(Left, Bottom);
+        public Vector TopLeft => new Vector(Left, Bottom);
 
         /// <summary>
-        /// Gets the top left (low X, high Y) corner of this rectangle. 
+        /// Gets the top right (high X, low Y) corner of this rectangle. 
         /// </summary>
-        public Vector TopLeft => new Vector(Left, Top);
+        public Vector TopRight => new Vector(Right, Bottom);
 
         /// <summary>
-        /// Gets the bottom right (high X, low Y) corner of this rectangle. 
+        /// Gets the bottom left (low X, high Y) corner of this rectangle. 
         /// </summary>
-        public Vector BottomRight => new Vector(Right, Bottom);
+        public Vector BottomLeft => new Vector(Left, Top);
+
+        /// <summary>
+        /// Gets the bottom right (high X, high Y) corner of this rectangle. 
+        /// </summary>
+        public Vector BottomRight => new Vector(Right, Top);
 
         /// <summary>
         /// Gets the top right (high X, high Y) corner of this rectangle. 
         /// </summary>
-        public Vector TopRight => new Vector(Right, Top);
-
-        /// <summary>
-        /// Gets the top right (high X, high Y) corner of this rectangle. 
-        /// </summary>
-        public Vector FarPosition => TopRight;
+        public Vector FarPosition => BottomRight;
 
         /// <summary>
         /// Gets the point at the center of this rectangle. 
@@ -216,6 +216,11 @@ namespace Shanism.Common
             _y = src._y;
             _width = src._width;
             _height = src._height;
+        }
+
+        public Rectangle ToRectangle()
+        {
+            return new Rectangle((int)_x, (int)_y, (int)_width, (int)_height);
         }
 
         /// <summary>

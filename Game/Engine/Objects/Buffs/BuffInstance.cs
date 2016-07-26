@@ -1,11 +1,8 @@
 ﻿using Shanism.Common.Game;
-using Shanism.Common.Objects;
-using Shanism.Common.Util;
+using Shanism.Common.Interfaces.Objects;
+using Shanism.Common.Util.Hash;
 using Shanism.Engine.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Shanism.Engine.Objects.Buffs
@@ -21,7 +18,7 @@ namespace Shanism.Engine.Objects.Buffs
         /// Gets the object type of this buff instance.
         /// Always returns <see cref="ObjectType.BuffInstance"/>. 
         /// </summary>
-        public override ObjectType ObjectType => ObjectType.BuffInstance;
+        public override ObjectType ObjectType { get; } = ObjectType.BuffInstance;
 
         /// <summary>
         /// Gets the buff prototype of this buff instance. 
@@ -82,12 +79,12 @@ namespace Shanism.Engine.Objects.Buffs
         /// <summary>
         /// Gets the life modifier of this buff.
         /// </summary>
-        public double Life => ((IBuff)Prototype).Life;
+        public double MaxLife => ((IBuff)Prototype).MaxLife;
 
         /// <summary>
         /// Gets the mana modifier of this buff.
         /// </summary>
-        public double Mana => ((IBuff)Prototype).Mana;
+        public double MaxMana => ((IBuff)Prototype).MaxMana;
 
         /// <summary>
         /// Gets the defense provided by this buff.
@@ -153,7 +150,7 @@ namespace Shanism.Engine.Objects.Buffs
         /// <summary>
         /// Gets the unit states that are applied to units affected by this buff.
         /// </summary>
-        public UnitFlags UnitStates => ((IBuff)Prototype).UnitStates;
+        public StateFlags UnitStates => ((IBuff)Prototype).UnitStates;
 
         /// <summary>
         /// Gets the life regen modifier of this buff.
@@ -195,7 +192,7 @@ namespace Shanism.Engine.Objects.Buffs
             Prototype.OnApplied(this);
         }
 
-        
+
         internal override void Update(int msElapsed)
         {
             if (Prototype.IsTimed)
@@ -247,15 +244,10 @@ namespace Shanism.Engine.Objects.Buffs
         /// </returns>
         public override int GetHashCode()
         {
-            // http://stackoverflow.com/questions/5221396/what-is-an-appropriate-gethashcode-algorithm-for-a-2d-point-struct-avoiding
-            unchecked
-            {
-                int hash = 17;
-                hash = hash * 23 + Prototype.GetHashCode();
-                hash = hash * 23 + Caster?.GetHashCode() ?? 0;
-                hash = hash * 23 + Target.GetHashCode();
-                return hash;
-            }
+            return Hash.Get(
+                Prototype.GetHashCode(),
+                Caster?.GetHashCode() ?? 0,
+                Target.GetHashCode());
         }
     }
 }

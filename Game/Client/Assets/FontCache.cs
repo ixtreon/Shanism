@@ -1,11 +1,12 @@
 ﻿using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shanism.Client.Assets
+namespace Shanism.Client.Drawing
 {
     /// <summary>
     /// Contains a listing of common fonts. 
@@ -33,18 +34,25 @@ namespace Shanism.Client.Assets
         /// </summary>
         public TextureFont LargeFont { get; private set; }
 
+        public SpriteFont ShanoFont { get; private set; }
+
         /// <summary>
         /// Loads all fonts to memory using the provided <see cref="ContentManager"/>. 
         /// </summary>
         /// <param name="content"></param>
         public void Load(ContentManager content)
         {
-            content.RootDirectory = @"Content\";
+            content.RootDirectory = "Content/";
+
+            var fancy = content.Load<SpriteFont>("Fonts/psicopatologia");
+            var main = content.Load<SpriteFont>("Fonts/helvetica");
+
             //load default fonts
-            FancyFont = new TextureFont(content, "Fonts\\UI", 0.625, 3.5);
-            NormalFont = new TextureFont(content, "Fonts\\ui-text", 0.625, 2.5);
-            SmallFont = new TextureFont(NormalFont, 1.0);
-            LargeFont = new TextureFont(NormalFont, 2.0);
+            FancyFont = new TextureFont(fancy, 0.6);
+            NormalFont = new TextureFont(main, 0.6);
+
+            SmallFont = new TextureFont(main, 0.5);
+            LargeFont = new TextureFont(main, 0.72);
         }
     }
 }

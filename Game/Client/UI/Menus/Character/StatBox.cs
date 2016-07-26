@@ -1,4 +1,4 @@
-﻿using Shanism.Client.Assets;
+﻿using Shanism.Client.Drawing;
 using Shanism.Client.UI.Common;
 using Microsoft.Xna.Framework;
 using System;
@@ -11,12 +11,13 @@ namespace Shanism.Client.UI.Menus.Character
 {
     class StatBox : Control
     {
-        /*static readonly*/ Vector DefaultSize = new Vector(0.4, 0.15);
+        static readonly Vector DefaultSize = new Vector(0.4, 0.15);
 
-        TextureFont statNameFont = Content.Fonts.FancyFont;
-        TextureFont labelNameFont = Content.Fonts.NormalFont;
+        TextureFont statNameFont => Content.Fonts.FancyFont;
+        TextureFont labelNameFont => Content.Fonts.NormalFont;
 
-        TextureFont valueFont = Content.Fonts.NormalFont;
+        TextureFont valueFont => Content.Fonts.NormalFont;
+
 
         Color TextColor = Color.Gold;
         Color ValueColor = Color.White;
@@ -70,7 +71,7 @@ namespace Shanism.Client.UI.Menus.Character
             {
                 CanHover = true,
 
-                AbsolutePosition = new Vector(SecondaryIndent, mainStatLabel.Bottom + id * lblHeight),
+                Location = new Vector(SecondaryIndent, mainStatLabel.Bottom + id * lblHeight),
                 Size = new Vector(Size.X - SecondaryIndent, lblHeight),
                 ParentAnchor = AnchorMode.Top | AnchorMode.Left | AnchorMode.Right,
 

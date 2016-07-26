@@ -1,5 +1,4 @@
 ﻿using Shanism.Engine.Entities;
-using Shanism.Engine.Systems.Abilities;
 using Shanism.Common.Game;
 using System;
 using System.Collections.Generic;
@@ -7,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shanism.Common;
+using Shanism.Engine.Objects.Abilities;
 
 namespace Shanism.Engine.Events
 {
@@ -29,7 +29,7 @@ namespace Shanism.Engine.Events
         /// <summary>
         /// Gets the unit this ability targeted, if there was one. 
         /// </summary>
-        public Unit TargetUnit { get; }
+        public Entity TargetEntity { get; }
 
         /// <summary>
         /// Gets the location this spell targeted. If a unit was targeted, returns its position at the time. 
@@ -43,27 +43,39 @@ namespace Shanism.Engine.Events
         public bool Success { get; set; } = true;
 
 
-        internal AbilityCastArgs(Ability a, Unit caster, object target)
+        internal AbilityCastArgs(Ability a, Unit caster, Unit target)
         {
             CastingUnit = caster;
 
-            if(target is Unit)
-            {
-                TargetType = AbilityTargetType.UnitTarget;
-                TargetUnit = (Unit)target;
-                TargetLocation = TargetUnit.Position;
-            }
-            else if (target is Vector)
-            {
-                TargetType = AbilityTargetType.PointTarget;
-                TargetLocation = (Vector)target;
-            }
-            else
+            TargetType = AbilityTargetType.UnitTarget;
+            TargetEntity = target;
+            TargetLocation = TargetEntity.Position;
+        }
+
+        internal AbilityCastArgs(Unit caster, CastingData cd)
+        {
+            var a = cd.Ability;
+            CastingUnit = caster;
+
+            if (a.TargetType == AbilityTargetType.NoTarget)
             {
                 TargetType = AbilityTargetType.NoTarget;
-                TargetUnit = caster;
-                TargetLocation = TargetUnit.Position;
+                TargetEntity = caster;
+                TargetLocation = caster.Position;
             }
+            else if (cd.IsEntityTarget)
+            {
+                TargetType = AbilityTargetType.UnitTarget;
+                TargetEntity = (Entity)cd.Target;
+                TargetLocation = TargetEntity.Position;
+            }
+            else if (cd.IsGroundTarget)
+            {
+                TargetType = AbilityTargetType.PointTarget;
+                TargetLocation = (Vector)cd.Target;
+            }
+            else
+                throw new Exception();
         }
     }
 

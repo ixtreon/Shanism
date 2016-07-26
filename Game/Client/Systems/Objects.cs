@@ -1,19 +1,17 @@
-﻿using Shanism.Client.Input;
-using Shanism.Client.Objects;
-using Shanism.Client.UI;
-using Shanism.Client.UI.CombatText;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Shanism.Client.Drawing;
+using Shanism.Client.Input;
 using Shanism.Common;
 using Shanism.Common.Game;
+using Shanism.Common.Interfaces.Entities;
 using Shanism.Common.Message;
 using Shanism.Common.Message.Server;
-using Shanism.Common.Objects;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Client.Systems;
 
 namespace Shanism.Client.Systems
 {
@@ -21,70 +19,107 @@ namespace Shanism.Client.Systems
     {
         const uint NoHeroGuid = 0;
 
+        readonly GraphicsDevice device;
 
-        /// <summary>
-        /// Contains a mapping from each subtype of <see cref="IEntity"/> 
-        /// to a function that constructs the respective UI <see cref="Control"/>. 
-        /// </summary>
-        static readonly Dictionary<Type, Func<IEntity, ObjectControl>> gameObjectToControlMap = new Dictionary<Type, Func<IEntity, ObjectControl>>
-        {
-            { typeof(IHero), (o) => new HeroControl((IHero)o) },
-            { typeof(IUnit), (o) => new UnitControl((IUnit)o) },
-            { typeof(IDoodad), (o) => new DoodadControl((IDoodad)o) },
-            { typeof(IEffect), (o) => new EffectControl((IEffect)o) },
-        };
+        readonly AssetList content;
+
+        readonly Dictionary<uint, EntitySprite> unitSpriteMapping = new Dictionary<uint, EntitySprite>();
 
 
 
-        /// <summary>
-        /// A dictionary of all objects indexed by their guid. 
-        /// </summary>
-        readonly Dictionary<uint, ObjectControl> objects = new Dictionary<uint, ObjectControl>();
+        uint mainHeroGuid;
 
-        public Control Root { get; } = new Control();
+        UnitSprite mainSprite;
+        EntitySprite hoverSprite;
 
-        /// <summary>
-        /// Gets the UI control of the main hero, if the hero is available. 
-        /// </summary>
-        public HeroControl MainHeroControl { get; private set; }
+        SpriteBatch objectBatch;
+        Matrix transformMatrix;
+
 
         /// <summary>
         /// Gets the GUID of the main hero. 
         /// </summary>
-        public uint MainHeroGuid { get; set; } = NoHeroGuid;
+        public uint MainHeroGuid => mainHeroGuid;
+
 
         /// <summary>
         /// Gets the main hero, if it is available. 
         /// </summary>
-        public IHero MainHero => MainHeroControl?.Hero;
+        public IHero MainHero => mainSprite?.Entity as IHero;
 
         /// <summary>
-        /// The event raised whenever a game object is clicked. 
+        /// Gets the sprite of our main hero, if it exists.
         /// </summary>
-        public event Action<MouseButtonArgs> ObjectClicked;
-
-        /// <summary>
-        /// The event raised whenever the terrain is clicked. 
-        /// </summary>
-        public event Action<MouseButtonArgs> TerrainClicked;
+        public UnitSprite MainHeroSprite => mainSprite;
 
 
-        public ObjectSystem()
+        public EntitySprite HoverSprite => hoverSprite;
+
+        public IEnumerable<IEntity> Entities => unitSpriteMapping.Select(kvp => kvp.Value.Entity);
+
+        public event Action<uint> MainHeroChanged;
+
+
+        public ObjectSystem(GraphicsDevice device, AssetList content)
         {
-            Root.MouseDown += (e) => TerrainClicked?.Invoke(e);
+            this.device = device;
+            this.content = content;
+
+            objectBatch = new SpriteBatch(device);
         }
 
         public override void Update(int msElapsed)
         {
-            Root.Maximize();
+            //update matrix
+            var proj = Matrix.CreateOrthographic(
+                (float)Screen.GameSize.X, (float)Screen.GameSize.Y, -5, 5);
+            transformMatrix = Matrix.CreateTranslation(-(float)Screen.InGameCenter.X, -(float)Screen.InGameCenter.Y, 0)
+                * Matrix.CreateScale((float)Screen.GameScale.X, (float)Screen.GameScale.Y, 1)
+                * Matrix.CreateTranslation(Screen.HalfSize.X, Screen.HalfSize.Y, 0);
 
-            if (MainHeroControl?.Hero.Id != MainHeroGuid)
-                MainHeroControl = objects.TryGet(MainHeroGuid) as HeroControl;
 
-            foreach (var o in objects)
-                o.Value.Update(msElapsed);
+            //update all sprites + hover guy
+            var mousePos = MouseInfo.InGamePosition;
 
-            //objList.Update(objects);
+            hoverSprite = null;
+            foreach (var kvp in unitSpriteMapping)
+            {
+                var s = kvp.Value;
+                var e = s.Entity;
+
+                s.Update(msElapsed);
+
+                //update hover sprite
+                if (Vector.Abs(mousePos - e.Position) < e.Scale / 2)
+                    if (hoverSprite == null || s.DrawDepth < HoverSprite.DrawDepth)
+                        hoverSprite = s;
+            }
+
+            //re-set mainhero
+            if (mainSprite?.Entity.Id != mainHeroGuid)
+            {
+                EntitySprite sprite;
+                if (unitSpriteMapping.TryGetValue(mainHeroGuid, out sprite))
+                    mainSprite = sprite as UnitSprite;
+
+            }
+        }
+
+
+
+        //draws objects to the device
+        public void Draw()
+        {
+            objectBatch.Begin(SpriteSortMode.FrontToBack,
+                BlendState.AlphaBlend, SamplerState.PointClamp,
+                DepthStencilState.DepthRead, RasterizerState.CullNone,
+                null, transformMatrix);
+
+            //draw sprites at units' in-game positions
+            foreach (var kvp in unitSpriteMapping)
+                kvp.Value.Draw(objectBatch);
+
+            objectBatch.End();
         }
 
         public override void HandleMessage(IOMessage ioMsg)
@@ -92,7 +127,7 @@ namespace Shanism.Client.Systems
             switch (ioMsg.Type)
             {
                 case MessageType.ObjectSeen:
-                    AddObject(((ObjectSeenMessage)ioMsg).Object);
+                    AddEntity(((ObjectSeenMessage)ioMsg).Object);
                     break;
 
                 case MessageType.ObjectUnseen:
@@ -110,39 +145,39 @@ namespace Shanism.Client.Systems
         /// Adds the given game object to the index. 
         /// </summary>
         /// <param name="o"></param>
-        public void AddObject(IEntity o)
+        public void AddEntity(IEntity o)
         {
-            var objControl = objects.TryGet(o.Id);
-
-            if (objControl == null)
+            EntitySprite sprite;
+            if (!unitSpriteMapping.TryGetValue(o.Id, out sprite))
             {
                 //get the control constructor for this type of game object. 
-                var objType = o.GetType();
-                var mapping = gameObjectToControlMap
-                    .FirstOrDefault(kvp => kvp.Key.IsAssignableFrom(objType)).Value;
+                switch (o.ObjectType)
+                {
+                    case ObjectType.Hero:
+                    case ObjectType.Unit:
+                        sprite = new UnitSprite(content, (IUnit)o);
+                        break;
 
-                if (mapping == null)
-                    throw new Exception($"The object type `{objType.FullName}` cannot be mapped to an `{nameof(ObjectControl)}` type. !");
+                    case ObjectType.Doodad:
+                    case ObjectType.Effect:
+                        sprite = new EntitySprite(content, o);
+                        break;
 
-                //create a new UI control
-                objControl = mapping(o);
-                objControl.MouseDown += gameObject_MouseDown;
+                    default:
+                        throw new Exception("Missing switch case!");
+                }
 
-                //add to the dictionary
-                objects[o.Id] = objControl;
-
-                //add the UI control
-                Root.Add(objControl);
-            }
-            else
-            {
-                //TODO: see if cached, uncache it
+                unitSpriteMapping[o.Id] = sprite;
             }
         }
 
         public IEntity TryGet(uint guid)
         {
-            return objects.TryGet(guid)?.Object;
+            EntitySprite sprite;
+            if (unitSpriteMapping.TryGetValue(guid, out sprite))
+                return sprite.Entity;
+
+            return null;
         }
 
         /// <summary>
@@ -151,12 +186,7 @@ namespace Shanism.Client.Systems
         /// <param name="guid">The GUID of the object to remove. </param>
         public void RemoveObject(uint guid)
         {
-            var objControl = objects.TryGet(guid);
-            if (objControl != null)
-            {
-                Root.Remove(objControl);
-                objects.Remove(guid);
-            }
+            unitSpriteMapping.Remove(guid);
         }
 
         /// <summary>
@@ -165,29 +195,8 @@ namespace Shanism.Client.Systems
         /// <param name="guid">The GUID of the game object. </param>
         public void SetMainHero(uint guid)
         {
-            MainHeroGuid = guid;
-        }
-
-        void gameObject_MouseDown(MouseButtonArgs e)
-        {
-            ObjectClicked?.Invoke(e);
-        }
-
-        //draws objects' shadows to a buffer
-        public void DrawShadows(SpriteBatch sb)
-        {
-            var g = new Graphics(sb, Root.Location, Root.Size);
-
-            foreach (var c in Root.Controls)
-            {
-                if (c == MainHeroControl || !(c is ObjectControl))
-                    continue;
-
-                var oc = (ObjectControl)c;
-                var obj = oc.Object;
-
-                oc.Draw(g);
-            }
+            mainHeroGuid = guid;
+            MainHeroChanged?.Invoke(guid);
         }
     }
 }

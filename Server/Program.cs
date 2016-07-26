@@ -6,49 +6,93 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Threading;
+using static System.Console;
 
 namespace ShanoServer
 {
+    //  -sc:"D:\Games\War3"
     class Program
     {
-        const string defaultPath = @"D:\Shanism\Scenarios\DefaultScenario";
+        const string runCommand = "start";
 
-        static readonly Regex argRegexHelp = new Regex(@"(-|\/)(help|h|\?)");
-        static readonly Regex argRegexScenario = new Regex(@"(-|\/)(sc|scenario)");
+        static ShanoEngine engine;
+        static Thread engineThread;
 
+        static Arg scenario = new Arg
+        {
+            RegexPattern = @"^(-|/)(sc|scenario):(.+)$",
+            CaptureGroup = 3,
+            DefaultValue = @"D:/Shanism/Scenarios/DefaultScenario",
+        };
 
         static void Main(string[] args)
         {
 
-            if(args.Any(argRegexHelp.IsMatch))
+#if !DEBUG
+            var cmd = args.LastOrDefault();
+
+            if (cmd != runCommand)
             {
-                Console.WriteLine("ShanoServer help...");
-                Console.WriteLine("Parameters:");
-                Console.WriteLine("\t-? | -h | -help");
-                Console.WriteLine("\t\t\tShow this help dialog. ");
-                Console.WriteLine("\t-sc | -scenario <path>");
-                Console.WriteLine("\t\t\tUse the scenario found at the specified <path>. ");
+                printUsage();
                 return;
             }
+#endif
 
-            var scenarioPath = args
-                .SkipWhile(a => !argRegexScenario.IsMatch(a))
-                .Skip(1)
-                .FirstOrDefault();
-            
-            if(string.IsNullOrEmpty(scenarioPath))
-            {
-                Console.WriteLine("No scenario path supplied!");
-                scenarioPath = Path.GetFullPath(defaultPath);
-                Console.WriteLine("Trying to use `{0}` (which probably won't work). ", scenarioPath);
-            }
+            engineThread = startTheEngine(args, out engine);
 
-            Console.WriteLine("Starting the ShanoServer. ");
-
-            var z = new ShanoEngine(123, Path.GetFullPath(scenarioPath));
-
-            z.OpenToNetwork();
-            z.Start();
+            Read();
         }
+
+        static Thread startTheEngine(string[] args, out ShanoEngine engine)
+        {
+            var scenarioPath = Path.GetFullPath(scenario.Find(args));
+
+            WriteLine("Starting the ShanoServer");
+            WriteLine($"Scenario path: {scenarioPath}");
+
+
+            engine = new ShanoEngine();
+            engine.LoadScenario(scenarioPath);
+            engine.OpenToNetwork();
+
+            var daemon = engine.StartBackground();
+
+            WriteLine("done!");
+
+            return daemon;
+        }
+
+        struct Arg
+        {
+            public string DefaultValue;
+            public string RegexPattern;
+            public int CaptureGroup;
+
+            public string Find(string[] args)
+            {
+                var r = new Regex(RegexPattern);
+                var match = args
+                    .Select(arg => r.Match(arg))
+                    .FirstOrDefault(m => m.Success);
+
+                if (match != null)
+                    return match.Captures[CaptureGroup].Value;
+                return DefaultValue;
+            }
+        }
+
+
+        static void printUsage()
+        {
+            WriteLine("Usage:");
+            WriteLine("\tshanoserver start");
+            WriteLine("\t\tStarts the server");
+            WriteLine("");
+            WriteLine("Optional Parameters:");
+            WriteLine("\t(-|/)(sc|scenario):<path>");
+            WriteLine("\t\tUse the scenario found at the specified path. ");
+        }
+
     }
 }

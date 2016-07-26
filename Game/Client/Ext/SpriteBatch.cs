@@ -4,10 +4,7 @@ using System.Linq;
 using System.Text;
 using Shanism.Common;
 using Microsoft.Xna.Framework.Graphics;
-using Shanism.Common.Objects;
-using Shanism.Client.Textures;
-using Color = Microsoft.Xna.Framework.Color;
-using Shanism.Common.Game;
+using Shanism.Common.Util;
 
 namespace Shanism.Client
 {
@@ -25,19 +22,24 @@ namespace Shanism.Client
         /// <param name="c">The tint color.</param>
         /// <param name="depth">The depth. NYI.</param>
         public static void ShanoDraw(this SpriteBatch sb, Texture2D tex,
-            Rectangle sourceRect, Vector destPos, Vector destSz, Color c, 
+            Rectangle sourceRect, RectangleF destRect, Color c,
             float depth = 0,
+            SpriteEffects effects = SpriteEffects.None,
             float rotation = 0)
         {
-            var srcOrigin = ((Vector)sourceRect.Size / 2).ToVector2();
-            var destOrigin = (destSz / 2).ToVector2();
-            sb.Draw(tex,
-                destPos.ToVector2() + destOrigin,
+            var srcOrigin = (Vector)sourceRect.Size / 2;
+            var drawPos = destRect.Center.ToVector2();
+            var drawScale = destRect.Size / sourceRect.Size;
+
+            sb.Draw(tex, 
+                drawPos,
                 sourceRectangle: sourceRect.ToXnaRect(),
-                color: c,
-                scale: (destSz / sourceRect.Size).ToVector2(),
+                color: c.ToXnaColor(),
                 rotation: rotation,
-                origin: srcOrigin);
+                origin: srcOrigin.ToVector2(),
+                scale: drawScale.ToVector2(),
+                effects: effects,
+                layerDepth: depth);
         }
 
         /// <summary>
@@ -54,7 +56,7 @@ namespace Shanism.Client
                 sourceRectangle: tex.Bounds,
                 position: dest.Position.ToVector2(),
                 scale: (dest.Size / new Vector(tex.Width, tex.Height)).ToVector2(),
-                color: c);
+                color: c.ToXnaColor());
         }
     }
 }

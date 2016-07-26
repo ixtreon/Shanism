@@ -1,12 +1,12 @@
 ﻿using Shanism.Common.Game;
-using Shanism.Common.Objects;
+using Shanism.Common.Interfaces.Entities;
+using Shanism.Common.Interfaces.Objects;
+using Shanism.Common.StubObjects;
 using Shanism.Common.Util;
 using Shanism.Engine.Events;
 using Shanism.Engine.Objects;
+using Shanism.Engine.Objects.Items;
 using Shanism.Engine.Systems;
-using Shanism.Engine.Systems.Abilities;
-using Shanism.Engine.Systems.Buffs;
-using Shanism.Engine.Systems.Range;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -29,12 +29,12 @@ namespace Shanism.Engine.Entities
         /// <summary>
         /// Gets or sets the base hit points (life) of the unit. 
         /// </summary>
-        public double BaseLife { get; set; } = 100;
+        public double BaseMaxLife { get; set; } = 100;
 
         /// <summary>
         /// Gets or sets the base mana of the unit. 
         /// </summary>
-        public double BaseMana { get; set; } = 0;
+        public double BaseMaxMana { get; set; } = 0;
 
         /// <summary>
         /// Gets or sets the base dodge chance of the unit. 
@@ -168,11 +168,6 @@ namespace Shanism.Engine.Entities
         /// </summary>
         public Player Owner { get; private set; }
 
-        /// <summary>
-        /// Gets whether the unit is dead. 
-        /// </summary>
-        public bool IsDead { get; private set; }
-
 
         #region Subsystems
 
@@ -182,8 +177,10 @@ namespace Shanism.Engine.Entities
         internal readonly MovementSystem movement;
         internal readonly RangeSystem range;
         internal readonly VisionSystem vision;
+        readonly InventorySystem inventory;
         readonly BuffSystem buffs;
-        readonly OrdersSystem orders;
+        readonly DecaySystem decay;
+        readonly OrderSystem orders;
         readonly BehaviourSystem behaviour;
         readonly CombatSystem combat;
 
@@ -199,6 +196,8 @@ namespace Shanism.Engine.Entities
         /// Gets a collection of all buffs currently affecting this unit. 
         /// </summary>
         public IUnitBuffs Buffs => buffs;
+
+        public IUnitInventory Inventory => inventory;
 
 
         /// <summary>
@@ -241,38 +240,29 @@ namespace Shanism.Engine.Entities
         public uint OwnerId => Owner.Id;
 
         /// <summary>
-        /// Gets the IDs of all abilities of this unit.
-        /// </summary>
-        public IEnumerable<uint> AbilityIds => abilities.Select(a => a.Id).ToList();
-
-        /// <summary>
-        /// Gets the IDs of all buffs currently affecting the unit.
-        /// </summary>
-        public IEnumerable<uint> BuffIds => Buffs.Select(bi => bi.Id).ToList();
-
-        /// <summary>
         /// Gets the ability this unit is currently casting.
         /// </summary>
-        public uint? CastingAbilityId => abilities.CastingAbility?.Id;
+        public uint CastingAbilityId => abilities.CastingAbility?.Id ?? 0;
 
         /// <summary>
-        /// Gets the progress of the ability the unit is currently casting or -1 if no ability is being cast. 
+        /// Gets the progress of the ability the unit is currently casting or null if no ability is being cast. 
         /// </summary>
         public int CastingProgress => abilities.CastingProgress;
 
         /// <summary>
-        /// Gets the progress of the ability the unit is currently casting or -1 if no ability is being cast. 
+        /// Gets the progress of the ability the unit is currently casting or null if no ability is being cast. 
         /// </summary>
-        public int TotalCastingTime => abilities.CastingAbility?.CastTime ?? -1;
+        public int TotalCastingTime => abilities.CastingAbility?.CastTime ?? 0;
 
-        /// <summary>
-        /// Gets whether this unit is invulnerable.
-        /// </summary>
-        public bool Invulnerable => (States & UnitFlags.Invulnerable) != 0;
 
-        IEnumerable<IAbility> IUnit.Abilities => abilities;
+        IReadOnlyCollection<IAbility> IUnit.Abilities => abilities;
 
-        IEnumerable<IBuffInstance> IUnit.Buffs => buffs;
+        IReadOnlyCollection<IBuffInstance> IUnit.Buffs => buffs;
+
+        //IReadOnlyCollection<IItem> IUnit.BackpackItems => inventory.BackpackItems;
+
+        //IReadOnlyDictionary<EquipSlot, IItem> IUnit.EquipItems => inventory.EquippedItems
+        //    .ToDictionary(kvp => kvp.Key, kvp => (IItem)kvp.Value);     //..type system ftw
         #endregion
 
         /// <summary>
@@ -281,21 +271,22 @@ namespace Shanism.Engine.Entities
         /// unless the unit is dead. 
         /// </summary>
         public override bool HasCollision
-            => !IsDead && !States.HasFlag(UnitFlags.NoCollision);
+            => !IsDead && !States.HasFlag(StateFlags.NoCollision);
 
         /// <summary>
         /// Gets whether the unit attacks using projectiles. 
         /// </summary>
-        public bool HasRangedAttack => States.HasFlag(UnitFlags.RangedAttack);
+        public bool HasRangedAttack => States.HasFlag(StateFlags.RangedAttack);
+
 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Unit"/> class.
         /// </summary>
         protected Unit()
-            : this(Player.NeutralAggressive, 1)
+            : this(Player.Aggressive, 1)
         {
-            Scale = Constants.Units.DefaultUnitSize;
+
         }
 
         /// <summary>
@@ -305,21 +296,29 @@ namespace Shanism.Engine.Entities
         /// <param name="level">The level.</param>
         protected Unit(Player owner, int level = 1)
         {
-            Level = level;
-
-            //TODO: fix owner controlled units when owner changes
-            Owner = owner;
-            Owner?.AddControlledUnit(this);
-
-
             Systems.Add(buffs = new BuffSystem(this));
+            Systems.Add(inventory = new InventorySystem(this));
+            Systems.Add(decay = new DecaySystem(this));
             Systems.Add(abilities = new AbilitySystem(this));
             Systems.Add(movement = new MovementSystem(this));
             Systems.Add(range = new RangeSystem(this));
             Systems.Add(vision = new VisionSystem(this));
-            Systems.Add(orders = new OrdersSystem(this));
+            Systems.Add(orders = new OrderSystem(this));
             Systems.Add(behaviour = new BehaviourSystem(this));
             Systems.Add(combat = new CombatSystem(this));
+
+            Level = level;
+            SetOwner(owner);
+        }
+
+        public void SetOwner(Player newOwner)
+        {
+            if (Owner == newOwner)
+                return;
+
+            Owner?.RemoveControlledUnit(this);
+            Owner = newOwner;
+            Owner?.AddControlledUnit(this);
         }
 
         /// <summary>
@@ -334,48 +333,11 @@ namespace Shanism.Engine.Entities
                 //update generic subsystems
                 foreach (var sys in Systems)
                 {
-                    var sw = Stopwatch.StartNew();
-
-                    sys.Update(msElapsed);
-
-                    sw.Stop();
-                    PerfCounter.Log(sys.GetType().Name, sw.ElapsedTicks);
+                    UnitSystemPerfCounter.RunAndLog(sys.GetType().Name, sys.Update, msElapsed);
                 }
             }
 
             base.Update(msElapsed);
-        }
-
-        /// <summary>
-        /// Instantly kills the unit. 
-        /// </summary>
-        /// <param name="killer"></param>
-        public void Kill(Unit killer = null)
-        {
-            if (IsDead)
-                return;
-
-            // update unit state
-            Life = 0;
-            IsDead = true;
-            Buffs.Clear();
-
-
-            // give out rewards
-            if (killer != null)
-            {
-                // gold reward!
-
-                if (killer is Hero)
-                    ((Hero)killer).Experience += GetExperienceReward();
-            }
-
-            // raise the event
-            var args = new UnitDyingArgs(this, killer ?? this);
-            Death?.Invoke(args);
-
-            //run the scripts
-            Scripts.Run(s => s.OnUnitDeath(this));
         }
 
     }

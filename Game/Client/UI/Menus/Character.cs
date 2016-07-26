@@ -6,9 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common.Game;
-using Shanism.Common.Objects;
 using Shanism.Client.UI.Menus.Character;
+using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Client.UI.Menus
 {
@@ -30,7 +29,7 @@ namespace Shanism.Client.UI.Menus
             TitleText = "Character";
             ToggleAction = ClientAction.ToggleCharacterMenu;
             VisibleChanged += onVisibleChanged;
-
+            CanFocus = false;
 
             var charNameFont = Content.Fonts.FancyFont;
             var charNamePadding = Padding;
@@ -57,7 +56,7 @@ namespace Shanism.Client.UI.Menus
 
             vitalityBox = new StatBox
             {
-                AbsolutePosition = new Vector(Padding, charXpBar.Bottom + 2 * Padding),
+                Location = new Vector(Padding, charXpBar.Bottom + 2 * Padding),
                 Size = new Vector(Size.X - 2 * Padding, 0.12),
                 ParentAnchor = AnchorMode.Left | AnchorMode.Top | AnchorMode.Right,
 
@@ -71,7 +70,7 @@ namespace Shanism.Client.UI.Menus
 
             strengthBox = new StatBox
             {
-                AbsolutePosition = new Vector(Padding, vitalityBox.Bottom + Padding),
+                Location = new Vector(Padding, vitalityBox.Bottom + Padding),
                 Size = vitalityBox.Size,
                 ParentAnchor = AnchorMode.Left | AnchorMode.Top | AnchorMode.Right,
 
@@ -84,7 +83,7 @@ namespace Shanism.Client.UI.Menus
 
             agilityBox = new StatBox
             {
-                AbsolutePosition = new Vector(Padding, strengthBox.Bottom + Padding),
+                Location = new Vector(Padding, strengthBox.Bottom + Padding),
                 Size = vitalityBox.Size,
                 ParentAnchor = AnchorMode.Left | AnchorMode.Top | AnchorMode.Right,
 
@@ -97,7 +96,7 @@ namespace Shanism.Client.UI.Menus
 
             intellectBox = new StatBox
             {
-                AbsolutePosition = new Vector(Padding, agilityBox.Bottom + Padding),
+                Location = new Vector(Padding, agilityBox.Bottom + Padding),
                 Size = vitalityBox.Size,
                 ParentAnchor = AnchorMode.Left | AnchorMode.Top | AnchorMode.Right,
 

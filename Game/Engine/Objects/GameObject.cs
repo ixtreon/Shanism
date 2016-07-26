@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Shanism.Engine.Maps;
+﻿using Shanism.Engine.Maps;
 using Shanism.Common;
-using ProtoBuf;
-using Shanism.Engine.Objects;
 using Shanism.Common.Performance;
-using System.Reflection;
 using System.Collections.Concurrent;
 using Shanism.Common.Game;
-using Shanism.Common.Interfaces.Engine;
+using Shanism.Common.Interfaces.Objects;
 using Shanism.ScenarioLib;
 using Shanism.Engine.Scripting;
+using System.Threading.Tasks;
+using System;
 
 namespace Shanism.Engine
 {
@@ -38,18 +32,23 @@ namespace Shanism.Engine
         static ShanoEngine Game { get; set; }
 
         /// <summary>
-        /// Sets the game engine instance all game objects are part of.
+        /// Tries to set the game engine instance all game objects are part of.
+        /// Fails if there is another engine registered already. 
         /// </summary>
-        public static void SetEngine(ShanoEngine game)
+        public static bool TrySetEngine(ShanoEngine game)
         {
+            if (Game != null)
+                return false;
+
             Game = game;
+            return true;
         }
 
         #endregion
 
 
         /// <summary>
-        /// Gets the object type of this object. 
+        /// Gets the <see cref="Shanism.Common.Game.ObjectType"/> of this game object. 
         /// </summary>
         public abstract ObjectType ObjectType { get; }
 
@@ -61,15 +60,11 @@ namespace Shanism.Engine
         uint IGameObject.Id => Id;
 
         /// <summary>
-        /// Gets the map that contains the units in this scenario. 
+        /// Gets the map that contains the terrain and units in this scenario. 
         /// </summary>
         public IGameMap Map => Game?.Map;
 
 
-        /// <summary>
-        /// Gets the terrain map of the scenario this object is part of. 
-        /// </summary>
-        public ITerrainMap Terrain => Game?.TerrainMap;
 
         /// <summary>
         /// Gets the scenario this object is part of. 
@@ -78,7 +73,7 @@ namespace Shanism.Engine
 
 
 
-        internal PerfCounter PerfCounter => Game?.PerfCounter;
+        internal PerfCounter UnitSystemPerfCounter => Game?.UnitPerfCounter;
 
         internal IScriptRunner Scripts => Game?.Scripts;
 
@@ -97,5 +92,11 @@ namespace Shanism.Engine
         /// </summary>
         /// <param name="msElapsed"></param>
         internal virtual void Update(int msElapsed) { }
+
+        internal async Task Run(Action act)
+        {
+            await Task.Factory.StartNew(act);
+        }
+        
     }
 }

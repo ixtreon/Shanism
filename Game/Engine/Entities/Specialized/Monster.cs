@@ -1,6 +1,4 @@
 ﻿using Shanism.Engine.Entities;
-using Shanism.Engine.Systems.Abilities;
-using Shanism.Engine.Systems.Behaviours;
 using Shanism.Engine.Systems.Orders;
 using Shanism.Common.Game;
 using System;
@@ -8,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shanism.Engine.Objects.Abilities;
+using Shanism.Engine.Objects.Behaviours;
 
 namespace Shanism.Engine.Entities
 {
@@ -35,14 +35,14 @@ namespace Shanism.Engine.Entities
         /// <param name="level">The level of the monster. </param>
         /// <param name="isElite">Whether the monster gets bonus life n damage and is considered elite. </param>
         public Monster(int level, bool isElite = false)
-            : base(Player.NeutralAggressive, level)
+            : base(Player.Aggressive, level)
         {
-            AnimationName = "units/devilkin";
+            Model = "units/devilkin";
 
             IsElite = isElite;
             if(isElite)
             {
-                BaseLife = 160 + 90 * level;
+                BaseMaxLife = 160 + 90 * level;
                 BaseMinDamage = 5 + 5 * level;
                 BaseMaxDamage = BaseMinDamage + 7;
 
@@ -50,7 +50,7 @@ namespace Shanism.Engine.Entities
             }
             else
             {
-                BaseLife = 60 + 30 * level;
+                BaseMaxLife = 60 + 30 * level;
                 BaseMinDamage = 2 + 3 * level;
                 BaseMaxDamage = BaseMinDamage + 2 + level / 10;
 
@@ -62,9 +62,7 @@ namespace Shanism.Engine.Entities
             BaseDodgeChance = 10;
 
             AttackRange = 3;
-            BaseStates &= (~UnitFlags.RangedAttack);
-
-            //States.
+            BaseStates &= (~StateFlags.RangedAttack);
 
             Abilities.Add(new Attack());
             Behaviour = new AggroBehaviour(this);
@@ -78,7 +76,7 @@ namespace Shanism.Engine.Entities
             : this(prototype.Level, prototype.IsElite)
         {
             Position = prototype.Position;
-            AnimationName = prototype.AnimationName;
+            Model = prototype.Model;
         }
     }
 }

@@ -11,20 +11,27 @@ using Shanism.Common.Content;
 using Shanism.Common.Game;
 using Shanism.ScenarioLib;
 using System.Text.RegularExpressions;
+using Shanism.Common.Util;
 
-namespace Shanism.Client.Textures
+namespace Shanism.Client.Drawing
 {
     public class TextureCache
     {
         readonly Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
+        readonly Dictionary<string, TextureDef> textureDefs = new Dictionary<string, TextureDef>();
+
 
         public Texture2D Blank { get; private set; }
 
         public Texture2D DefaultIcon { get; private set; }
 
+        public Texture2D IconPack { get; private set; }
 
+        public Texture2D IconBorder { get; private set; }
 
-        public void LoadContent(ContentManager content, string contentDir, IEnumerable<TextureDef> texList)
+        public Texture2D UiCloseButton { get; private set; }
+
+        public void Load(ContentManager content, string contentDir, IEnumerable<TextureDef> texList)
         {
             content.RootDirectory = contentDir;
 
@@ -40,36 +47,32 @@ namespace Shanism.Client.Textures
                 }
             }
 
-            Blank = TryGetRaw("1");
-            DefaultIcon = TryGetIcon("default");
+            Blank = this["1"];
+
+            DefaultIcon = this["icons/default"];
+            IconBorder = this["icons/border_hover"];
+            UiCloseButton = this["ui/close"];
         }
 
+        static string normalize(string n) => 
+            ShanoPath.RemoveExtension(n)
+            .ToLowerInvariant();
 
         void loadTexture(ContentManager content, TextureDef texDef)
         {
-            var name = texDef.Name.RemoveFileExtension().ToLowerInvariant();
-
+            var name = normalize(texDef.Name);
             var tex = content.Load<Texture2D>(name);
+
+            textureDefs[name] = texDef;
             textures[name] = tex;
         }
 
-        public Texture2D this[TextureDef file]
-        {
-            get
-            {
-                return textures[file.Name.RemoveFileExtension().ToLowerInvariant()];
-            }
-        }
 
-        /// <summary>
-        /// Tries to get the texture with the given full (raw) name. 
-        /// </summary>
-        /// <param name="name">The full name of the texture. </param>
-        /// <returns>The texture with that name, or null if no such texture was found. </returns>
-        public Texture2D TryGetRaw(string name)
-        {
-            return textures.TryGet(name.ToLowerInvariant());
-        }
+        public Texture2D this[string name] => textures[normalize(name)];
+        public bool TryGet(string name, out Texture2D tex) => textures.TryGetValue(normalize(name), out tex);
+        public bool TryGet(string name, out TextureDef tex) => textureDefs.TryGetValue(normalize(name), out tex);
+        public bool Contains(string name) => textures.ContainsKey(normalize(name));
+
 
         /// <summary>
         /// Tries to get the texture with the given name relative to the Icons folder. See <see cref="TextureType"/>. 
@@ -78,17 +81,7 @@ namespace Shanism.Client.Textures
         /// <returns>The texture with that name, or null if no such texture was found. </returns>
         public Texture2D TryGetIcon(string iconName)
         {
-            return TryGetRaw(TextureType.Icon.GetDirectory(iconName));
-        }
-
-        /// <summary>
-        /// Tries to get the texture with the given name relative to the UI folder. See <see cref="TextureType"/>. 
-        /// </summary>
-        /// <param name="name">The name of the texture relative to the UI folder. </param>
-        /// <returns>The texture with that name, or null if no such texture was found. </returns>
-        public Texture2D TryGetUI(string name)
-        {
-            return TryGetRaw(TextureType.Ui.GetDirectory(name));
+            return textures.TryGet(normalize(TextureType.Icon.GetDirectory(iconName)));
         }
     }
 }

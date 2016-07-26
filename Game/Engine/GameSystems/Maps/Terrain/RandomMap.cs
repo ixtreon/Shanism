@@ -70,10 +70,15 @@ namespace Shanism.Engine.Maps
         /// </summary>
         /// <param name="rect"></param>
         /// <param name="outMap"></param>
-        public void GetMap(Rectangle rect, ref TerrainType[] outMap)
+        public void Get(Rectangle rect, ref TerrainType[] outMap)
         {
             foreach (var p in rect.Iterate())
-                outMap[(p.X - rect.X) + Shanism.Common.Constants.Terrain.ChunkSize * (p.Y - rect.Y)] = GetTerrainAt(p);
+                outMap[(p.X - rect.X) + rect.Width * (p.Y - rect.Y)] = GetTerrainAt(p);
+        }
+
+        public void SetTerrain(Point loc, TerrainType tty)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -98,7 +103,7 @@ namespace Shanism.Engine.Maps
                         var dy = Hash.GetDouble(pt.X, pt.Y, 2);
                         var loc = pt + new Vector(dx, dy);
 
-                        yield return new Doodad { AnimationName = "tree", Position = loc };
+                        yield return new Doodad { Model = "tree", Position = loc };
                     }
                 }
             }
@@ -107,7 +112,7 @@ namespace Shanism.Engine.Maps
         /// <summary>
         /// Gets the map tile at the given point. 
         /// </summary>
-        public TerrainType GetTerrain(Vector loc)
+        public TerrainType Get(Vector loc)
         {
             return GetTerrainAt(loc.Floor());
         }

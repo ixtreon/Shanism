@@ -1,4 +1,4 @@
-﻿using Shanism.Common.Objects;
+﻿using Shanism.Common.StubObjects;
 using Shanism.ScenarioLib;
 using Shanism.Editor.ViewModels;
 using System;
@@ -51,7 +51,7 @@ namespace Shanism.Editor.Views
             return kidz.Concat(kidz.SelectMany(enumerateChildren));
         }
 
-        public async void Save()
+        public void Save()
         {
             SaveModel();
         }
@@ -60,7 +60,7 @@ namespace Shanism.Editor.Views
         /// Override to implement custom loading logic. 
         /// </summary>
         /// <returns></returns>
-        protected virtual async Task LoadModel() { }
+        protected virtual Task LoadModel() { return Task.CompletedTask; }
 
         /// <summary>
         /// Made for controls to update the ViewModel 

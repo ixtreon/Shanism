@@ -12,573 +12,573 @@ namespace Shanism.Common.Util
     /// Represents a standard ARGB color value. 
     /// </summary>
     /// <seealso cref="IxSerializer.Modules.IxSerializable" />
-    public struct ShanoColor : IxSerializable
+    public struct Color : IxSerializable
     {
         #region Static Members
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {240, 248, 255}. 
         /// </summary>
-        public static readonly ShanoColor AliceBlue = new ShanoColor(240, 248, 255);
+        public static readonly Color AliceBlue = new Color(240, 248, 255);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {250, 235, 215}. 
         /// </summary>
-        public static readonly ShanoColor AntiqueWhite = new ShanoColor(250, 235, 215);
+        public static readonly Color AntiqueWhite = new Color(250, 235, 215);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {0, 255, 255}. 
         /// </summary>
-        public static readonly ShanoColor Aqua = new ShanoColor(0, 255, 255);
+        public static readonly Color Aqua = new Color(0, 255, 255);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {127, 255, 212}. 
         /// </summary>
-        public static readonly ShanoColor Aquamarine = new ShanoColor(127, 255, 212);
+        public static readonly Color Aquamarine = new Color(127, 255, 212);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {240, 255, 255}. 
         /// </summary>
-        public static readonly ShanoColor Azure = new ShanoColor(240, 255, 255);
+        public static readonly Color Azure = new Color(240, 255, 255);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {245, 245, 220}. 
         /// </summary>
-        public static readonly ShanoColor Beige = new ShanoColor(245, 245, 220);
+        public static readonly Color Beige = new Color(245, 245, 220);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 228, 196}. 
         /// </summary>
-        public static readonly ShanoColor Bisque = new ShanoColor(255, 228, 196);
+        public static readonly Color Bisque = new Color(255, 228, 196);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {0, 0, 0}. 
         /// </summary>
-        public static readonly ShanoColor Black = new ShanoColor(0, 0, 0);
+        public static readonly Color Black = new Color(0, 0, 0);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 235, 205}. 
         /// </summary>
-        public static readonly ShanoColor BlanchedAlmond = new ShanoColor(255, 235, 205);
+        public static readonly Color BlanchedAlmond = new Color(255, 235, 205);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {0, 0, 255}. 
         /// </summary>
-        public static readonly ShanoColor Blue = new ShanoColor(0, 0, 255);
+        public static readonly Color Blue = new Color(0, 0, 255);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {138, 43, 226}. 
         /// </summary>
-        public static readonly ShanoColor BlueViolet = new ShanoColor(138, 43, 226);
+        public static readonly Color BlueViolet = new Color(138, 43, 226);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {165, 42, 42}. 
         /// </summary>
-        public static readonly ShanoColor Brown = new ShanoColor(165, 42, 42);
+        public static readonly Color Brown = new Color(165, 42, 42);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {222, 184, 135}. 
         /// </summary>
-        public static readonly ShanoColor Burlywood = new ShanoColor(222, 184, 135);
+        public static readonly Color Burlywood = new Color(222, 184, 135);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {95, 158, 160}. 
         /// </summary>
-        public static readonly ShanoColor CadetBlue = new ShanoColor(95, 158, 160);
+        public static readonly Color CadetBlue = new Color(95, 158, 160);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {127, 255, 0}. 
         /// </summary>
-        public static readonly ShanoColor Chartreuse = new ShanoColor(127, 255, 0);
+        public static readonly Color Chartreuse = new Color(127, 255, 0);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {210, 105, 30}. 
         /// </summary>
-        public static readonly ShanoColor Chocolate = new ShanoColor(210, 105, 30);
+        public static readonly Color Chocolate = new Color(210, 105, 30);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 127, 80}. 
         /// </summary>
-        public static readonly ShanoColor Coral = new ShanoColor(255, 127, 80);
+        public static readonly Color Coral = new Color(255, 127, 80);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {100, 149, 237}. 
         /// </summary>
-        public static readonly ShanoColor CornflowerBlue = new ShanoColor(100, 149, 237);
+        public static readonly Color CornflowerBlue = new Color(100, 149, 237);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 248, 220}. 
         /// </summary>
-        public static readonly ShanoColor Cornsilk = new ShanoColor(255, 248, 220);
+        public static readonly Color Cornsilk = new Color(255, 248, 220);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {220, 20, 60}. 
         /// </summary>
-        public static readonly ShanoColor Crimson = new ShanoColor(220, 20, 60);
+        public static readonly Color Crimson = new Color(220, 20, 60);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {0, 255, 255}. 
         /// </summary>
-        public static readonly ShanoColor Cyan = new ShanoColor(0, 255, 255);
+        public static readonly Color Cyan = new Color(0, 255, 255);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {0, 0, 139}. 
         /// </summary>
-        public static readonly ShanoColor DarkBlue = new ShanoColor(0, 0, 139);
+        public static readonly Color DarkBlue = new Color(0, 0, 139);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {0, 139, 139}. 
         /// </summary>
-        public static readonly ShanoColor DarkCyan = new ShanoColor(0, 139, 139);
+        public static readonly Color DarkCyan = new Color(0, 139, 139);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {184, 134, 11}. 
         /// </summary>
-        public static readonly ShanoColor DarkGoldenrod = new ShanoColor(184, 134, 11);
+        public static readonly Color DarkGoldenrod = new Color(184, 134, 11);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {169, 169, 169}. 
         /// </summary>
-        public static readonly ShanoColor DarkGray = new ShanoColor(169, 169, 169);
+        public static readonly Color DarkGray = new Color(169, 169, 169);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {0, 100, 0}. 
         /// </summary>
-        public static readonly ShanoColor DarkGreen = new ShanoColor(0, 100, 0);
+        public static readonly Color DarkGreen = new Color(0, 100, 0);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {189, 183, 107}. 
         /// </summary>
-        public static readonly ShanoColor DarkKhaki = new ShanoColor(189, 183, 107);
+        public static readonly Color DarkKhaki = new Color(189, 183, 107);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {139, 0, 139}. 
         /// </summary>
-        public static readonly ShanoColor DarkMagenta = new ShanoColor(139, 0, 139);
+        public static readonly Color DarkMagenta = new Color(139, 0, 139);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {85, 107, 47}. 
         /// </summary>
-        public static readonly ShanoColor DarkOliveGreen = new ShanoColor(85, 107, 47);
+        public static readonly Color DarkOliveGreen = new Color(85, 107, 47);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 140, 0}. 
         /// </summary>
-        public static readonly ShanoColor DarkOrange = new ShanoColor(255, 140, 0);
+        public static readonly Color DarkOrange = new Color(255, 140, 0);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {153, 50, 204}. 
         /// </summary>
-        public static readonly ShanoColor DarkOrchid = new ShanoColor(153, 50, 204);
+        public static readonly Color DarkOrchid = new Color(153, 50, 204);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {139, 0, 0}. 
         /// </summary>
-        public static readonly ShanoColor DarkRed = new ShanoColor(139, 0, 0);
+        public static readonly Color DarkRed = new Color(139, 0, 0);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {233, 150, 122}. 
         /// </summary>
-        public static readonly ShanoColor DarkSalmon = new ShanoColor(233, 150, 122);
+        public static readonly Color DarkSalmon = new Color(233, 150, 122);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {143, 188, 139}. 
         /// </summary>
-        public static readonly ShanoColor DarkseaGreen = new ShanoColor(143, 188, 139);
+        public static readonly Color DarkseaGreen = new Color(143, 188, 139);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {72, 61, 139}. 
         /// </summary>
-        public static readonly ShanoColor DarkslateBlue = new ShanoColor(72, 61, 139);
+        public static readonly Color DarkslateBlue = new Color(72, 61, 139);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {47, 79, 79}. 
         /// </summary>
-        public static readonly ShanoColor DarkslateGray = new ShanoColor(47, 79, 79);
+        public static readonly Color DarkslateGray = new Color(47, 79, 79);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {0, 206, 209}. 
         /// </summary>
-        public static readonly ShanoColor DarkTurquoise = new ShanoColor(0, 206, 209);
+        public static readonly Color DarkTurquoise = new Color(0, 206, 209);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {148, 0, 211}. 
         /// </summary>
-        public static readonly ShanoColor DarkViolet = new ShanoColor(148, 0, 211);
+        public static readonly Color DarkViolet = new Color(148, 0, 211);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 20, 147}. 
         /// </summary>
-        public static readonly ShanoColor DeepPink = new ShanoColor(255, 20, 147);
+        public static readonly Color DeepPink = new Color(255, 20, 147);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {0, 191, 255}. 
         /// </summary>
-        public static readonly ShanoColor DeepSkyBlue = new ShanoColor(0, 191, 255);
+        public static readonly Color DeepSkyBlue = new Color(0, 191, 255);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {105, 105, 105}. 
         /// </summary>
-        public static readonly ShanoColor DimGray = new ShanoColor(105, 105, 105);
+        public static readonly Color DimGray = new Color(105, 105, 105);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {30, 144, 255}. 
         /// </summary>
-        public static readonly ShanoColor DodgerBlue = new ShanoColor(30, 144, 255);
+        public static readonly Color DodgerBlue = new Color(30, 144, 255);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {178, 34, 34}. 
         /// </summary>
-        public static readonly ShanoColor Firebrick = new ShanoColor(178, 34, 34);
+        public static readonly Color Firebrick = new Color(178, 34, 34);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 250, 240}. 
         /// </summary>
-        public static readonly ShanoColor FloralWhite = new ShanoColor(255, 250, 240);
+        public static readonly Color FloralWhite = new Color(255, 250, 240);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {34, 139, 34}. 
         /// </summary>
-        public static readonly ShanoColor ForestGreen = new ShanoColor(34, 139, 34);
+        public static readonly Color ForestGreen = new Color(34, 139, 34);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 0, 255}. 
         /// </summary>
-        public static readonly ShanoColor Fuchsia = new ShanoColor(255, 0, 255);
+        public static readonly Color Fuchsia = new Color(255, 0, 255);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {220, 220, 220}. 
         /// </summary>
-        public static readonly ShanoColor Gainsboro = new ShanoColor(220, 220, 220);
+        public static readonly Color Gainsboro = new Color(220, 220, 220);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {248, 248, 255}. 
         /// </summary>
-        public static readonly ShanoColor GhostWhite = new ShanoColor(248, 248, 255);
+        public static readonly Color GhostWhite = new Color(248, 248, 255);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 215, 0}. 
         /// </summary>
-        public static readonly ShanoColor Gold = new ShanoColor(255, 215, 0);
+        public static readonly Color Gold = new Color(255, 215, 0);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {218, 165, 32}. 
         /// </summary>
-        public static readonly ShanoColor Goldenrod = new ShanoColor(218, 165, 32);
+        public static readonly Color Goldenrod = new Color(218, 165, 32);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {128, 128, 128}. 
         /// </summary>
-        public static readonly ShanoColor Gray = new ShanoColor(128, 128, 128);
+        public static readonly Color Gray = new Color(128, 128, 128);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {0, 128, 0}. 
         /// </summary>
-        public static readonly ShanoColor Green = new ShanoColor(0, 128, 0);
+        public static readonly Color Green = new Color(0, 128, 0);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {173, 255, 47}. 
         /// </summary>
-        public static readonly ShanoColor GreenYellow = new ShanoColor(173, 255, 47);
+        public static readonly Color GreenYellow = new Color(173, 255, 47);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {240, 255, 240}. 
         /// </summary>
-        public static readonly ShanoColor Honeydew = new ShanoColor(240, 255, 240);
+        public static readonly Color Honeydew = new Color(240, 255, 240);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 105, 180}. 
         /// </summary>
-        public static readonly ShanoColor HotPink = new ShanoColor(255, 105, 180);
+        public static readonly Color HotPink = new Color(255, 105, 180);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {205, 92, 92}. 
         /// </summary>
-        public static readonly ShanoColor IndianRed = new ShanoColor(205, 92, 92);
+        public static readonly Color IndianRed = new Color(205, 92, 92);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {75, 0, 130}. 
         /// </summary>
-        public static readonly ShanoColor Indigo = new ShanoColor(75, 0, 130);
+        public static readonly Color Indigo = new Color(75, 0, 130);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 255, 240}. 
         /// </summary>
-        public static readonly ShanoColor Ivory = new ShanoColor(255, 255, 240);
+        public static readonly Color Ivory = new Color(255, 255, 240);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {240, 230, 140}. 
         /// </summary>
-        public static readonly ShanoColor Khaki = new ShanoColor(240, 230, 140);
+        public static readonly Color Khaki = new Color(240, 230, 140);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {230, 230, 250}. 
         /// </summary>
-        public static readonly ShanoColor Lavender = new ShanoColor(230, 230, 250);
+        public static readonly Color Lavender = new Color(230, 230, 250);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 240, 245}. 
         /// </summary>
-        public static readonly ShanoColor LavenderBlush = new ShanoColor(255, 240, 245);
+        public static readonly Color LavenderBlush = new Color(255, 240, 245);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {124, 252, 0}. 
         /// </summary>
-        public static readonly ShanoColor LawnGreen = new ShanoColor(124, 252, 0);
+        public static readonly Color LawnGreen = new Color(124, 252, 0);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 250, 205}. 
         /// </summary>
-        public static readonly ShanoColor LemonChiffon = new ShanoColor(255, 250, 205);
+        public static readonly Color LemonChiffon = new Color(255, 250, 205);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {173, 216, 230}. 
         /// </summary>
-        public static readonly ShanoColor LightBlue = new ShanoColor(173, 216, 230);
+        public static readonly Color LightBlue = new Color(173, 216, 230);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {240, 128, 128}. 
         /// </summary>
-        public static readonly ShanoColor LightCoral = new ShanoColor(240, 128, 128);
+        public static readonly Color LightCoral = new Color(240, 128, 128);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {224, 255, 255}. 
         /// </summary>
-        public static readonly ShanoColor LightCyan = new ShanoColor(224, 255, 255);
+        public static readonly Color LightCyan = new Color(224, 255, 255);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {250, 250, 210}. 
         /// </summary>
-        public static readonly ShanoColor LightGoldenrodYellow = new ShanoColor(250, 250, 210);
+        public static readonly Color LightGoldenrodYellow = new Color(250, 250, 210);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {211, 211, 211}. 
         /// </summary>
-        public static readonly ShanoColor LightGray = new ShanoColor(211, 211, 211);
+        public static readonly Color LightGray = new Color(211, 211, 211);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {144, 238, 144}. 
         /// </summary>
-        public static readonly ShanoColor LightGreen = new ShanoColor(144, 238, 144);
+        public static readonly Color LightGreen = new Color(144, 238, 144);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 182, 193}. 
         /// </summary>
-        public static readonly ShanoColor LightPink = new ShanoColor(255, 182, 193);
+        public static readonly Color LightPink = new Color(255, 182, 193);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 160, 122}. 
         /// </summary>
-        public static readonly ShanoColor LightSalmon = new ShanoColor(255, 160, 122);
+        public static readonly Color LightSalmon = new Color(255, 160, 122);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {32, 178, 170}. 
         /// </summary>
-        public static readonly ShanoColor LightSeaGreen = new ShanoColor(32, 178, 170);
+        public static readonly Color LightSeaGreen = new Color(32, 178, 170);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {135, 206, 250}. 
         /// </summary>
-        public static readonly ShanoColor LightSkyBlue = new ShanoColor(135, 206, 250);
+        public static readonly Color LightSkyBlue = new Color(135, 206, 250);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {119, 136, 153}. 
         /// </summary>
-        public static readonly ShanoColor LightSlateGray = new ShanoColor(119, 136, 153);
+        public static readonly Color LightSlateGray = new Color(119, 136, 153);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {176, 196, 222}. 
         /// </summary>
-        public static readonly ShanoColor LightSteelBlue = new ShanoColor(176, 196, 222);
+        public static readonly Color LightSteelBlue = new Color(176, 196, 222);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 255, 224}. 
         /// </summary>
-        public static readonly ShanoColor LightYellow = new ShanoColor(255, 255, 224);
+        public static readonly Color LightYellow = new Color(255, 255, 224);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {0, 255, 0}. 
         /// </summary>
-        public static readonly ShanoColor Lime = new ShanoColor(0, 255, 0);
+        public static readonly Color Lime = new Color(0, 255, 0);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {50, 205, 50}. 
         /// </summary>
-        public static readonly ShanoColor LimeGreen = new ShanoColor(50, 205, 50);
+        public static readonly Color LimeGreen = new Color(50, 205, 50);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {250, 240, 230}. 
         /// </summary>
-        public static readonly ShanoColor Linen = new ShanoColor(250, 240, 230);
+        public static readonly Color Linen = new Color(250, 240, 230);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 0, 255}. 
         /// </summary>
-        public static readonly ShanoColor Magenta = new ShanoColor(255, 0, 255);
+        public static readonly Color Magenta = new Color(255, 0, 255);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {128, 0, 0}. 
         /// </summary>
-        public static readonly ShanoColor Maroon = new ShanoColor(128, 0, 0);
+        public static readonly Color Maroon = new Color(128, 0, 0);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {102, 205, 170}. 
         /// </summary>
-        public static readonly ShanoColor MediumAquamarine = new ShanoColor(102, 205, 170);
+        public static readonly Color MediumAquamarine = new Color(102, 205, 170);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {0, 0, 205}. 
         /// </summary>
-        public static readonly ShanoColor MediumBlue = new ShanoColor(0, 0, 205);
+        public static readonly Color MediumBlue = new Color(0, 0, 205);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {186, 85, 211}. 
         /// </summary>
-        public static readonly ShanoColor MediumOrchid = new ShanoColor(186, 85, 211);
+        public static readonly Color MediumOrchid = new Color(186, 85, 211);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {147, 112, 219}. 
         /// </summary>
-        public static readonly ShanoColor MediumPurple = new ShanoColor(147, 112, 219);
+        public static readonly Color MediumPurple = new Color(147, 112, 219);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {60, 179, 113}. 
         /// </summary>
-        public static readonly ShanoColor MediumSeaGreen = new ShanoColor(60, 179, 113);
+        public static readonly Color MediumSeaGreen = new Color(60, 179, 113);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {123, 104, 238}. 
         /// </summary>
-        public static readonly ShanoColor MediumSlateBlue = new ShanoColor(123, 104, 238);
+        public static readonly Color MediumSlateBlue = new Color(123, 104, 238);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {0, 250, 154}. 
         /// </summary>
-        public static readonly ShanoColor MediumSpringGreen = new ShanoColor(0, 250, 154);
+        public static readonly Color MediumSpringGreen = new Color(0, 250, 154);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {72, 209, 204}. 
         /// </summary>
-        public static readonly ShanoColor MediumTurquoise = new ShanoColor(72, 209, 204);
+        public static readonly Color MediumTurquoise = new Color(72, 209, 204);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {199, 21, 133}. 
         /// </summary>
-        public static readonly ShanoColor MediumVioletRed = new ShanoColor(199, 21, 133);
+        public static readonly Color MediumVioletRed = new Color(199, 21, 133);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {25, 25, 112}. 
         /// </summary>
-        public static readonly ShanoColor MidnightBlue = new ShanoColor(25, 25, 112);
+        public static readonly Color MidnightBlue = new Color(25, 25, 112);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {245, 255, 250}. 
         /// </summary>
-        public static readonly ShanoColor MintCream = new ShanoColor(245, 255, 250);
+        public static readonly Color MintCream = new Color(245, 255, 250);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 228, 225}. 
         /// </summary>
-        public static readonly ShanoColor MistyRose = new ShanoColor(255, 228, 225);
+        public static readonly Color MistyRose = new Color(255, 228, 225);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 228, 181}. 
         /// </summary>
-        public static readonly ShanoColor Moccasin = new ShanoColor(255, 228, 181);
+        public static readonly Color Moccasin = new Color(255, 228, 181);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 222, 173}. 
         /// </summary>
-        public static readonly ShanoColor NavajoWhite = new ShanoColor(255, 222, 173);
+        public static readonly Color NavajoWhite = new Color(255, 222, 173);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {0, 0, 128}. 
         /// </summary>
-        public static readonly ShanoColor Navy = new ShanoColor(0, 0, 128);
+        public static readonly Color Navy = new Color(0, 0, 128);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {253, 245, 230}. 
         /// </summary>
-        public static readonly ShanoColor OldLace = new ShanoColor(253, 245, 230);
+        public static readonly Color OldLace = new Color(253, 245, 230);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {128, 128, 0}. 
         /// </summary>
-        public static readonly ShanoColor Olive = new ShanoColor(128, 128, 0);
+        public static readonly Color Olive = new Color(128, 128, 0);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {107, 142, 35}. 
         /// </summary>
-        public static readonly ShanoColor OliveDrab = new ShanoColor(107, 142, 35);
+        public static readonly Color OliveDrab = new Color(107, 142, 35);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 165, 0}. 
         /// </summary>
-        public static readonly ShanoColor Orange = new ShanoColor(255, 165, 0);
+        public static readonly Color Orange = new Color(255, 165, 0);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 69, 0}. 
         /// </summary>
-        public static readonly ShanoColor OrangeRed = new ShanoColor(255, 69, 0);
+        public static readonly Color OrangeRed = new Color(255, 69, 0);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {218, 112, 214}. 
         /// </summary>
-        public static readonly ShanoColor Orchid = new ShanoColor(218, 112, 214);
+        public static readonly Color Orchid = new Color(218, 112, 214);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {238, 232, 170}. 
         /// </summary>
-        public static readonly ShanoColor PaleGoldenrod = new ShanoColor(238, 232, 170);
+        public static readonly Color PaleGoldenrod = new Color(238, 232, 170);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {152, 251, 152}. 
         /// </summary>
-        public static readonly ShanoColor PaleGreen = new ShanoColor(152, 251, 152);
+        public static readonly Color PaleGreen = new Color(152, 251, 152);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {175, 238, 238}. 
         /// </summary>
-        public static readonly ShanoColor PaleTurquoise = new ShanoColor(175, 238, 238);
+        public static readonly Color PaleTurquoise = new Color(175, 238, 238);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {219, 112, 147}. 
         /// </summary>
-        public static readonly ShanoColor PaleVioletRed = new ShanoColor(219, 112, 147);
+        public static readonly Color PaleVioletRed = new Color(219, 112, 147);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 239, 213}. 
         /// </summary>
-        public static readonly ShanoColor PapayaWhip = new ShanoColor(255, 239, 213);
+        public static readonly Color PapayaWhip = new Color(255, 239, 213);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 218, 185}. 
         /// </summary>
-        public static readonly ShanoColor PeachPuff = new ShanoColor(255, 218, 185);
+        public static readonly Color PeachPuff = new Color(255, 218, 185);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {205, 133, 63}. 
         /// </summary>
-        public static readonly ShanoColor Peru = new ShanoColor(205, 133, 63);
+        public static readonly Color Peru = new Color(205, 133, 63);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 192, 203}. 
         /// </summary>
-        public static readonly ShanoColor Pink = new ShanoColor(255, 192, 203);
+        public static readonly Color Pink = new Color(255, 192, 203);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {221, 160, 221}. 
         /// </summary>
-        public static readonly ShanoColor Plum = new ShanoColor(221, 160, 221);
+        public static readonly Color Plum = new Color(221, 160, 221);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {176, 224, 230}. 
         /// </summary>
-        public static readonly ShanoColor PowderBlue = new ShanoColor(176, 224, 230);
+        public static readonly Color PowderBlue = new Color(176, 224, 230);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {128, 0, 128}. 
         /// </summary>
-        public static readonly ShanoColor Purple = new ShanoColor(128, 0, 128);
+        public static readonly Color Purple = new Color(128, 0, 128);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 0, 0}. 
         /// </summary>
-        public static readonly ShanoColor Red = new ShanoColor(255, 0, 0);
+        public static readonly Color Red = new Color(255, 0, 0);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {188, 143, 143}. 
         /// </summary>
-        public static readonly ShanoColor RosyBrown = new ShanoColor(188, 143, 143);
+        public static readonly Color RosyBrown = new Color(188, 143, 143);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {65, 105, 225}. 
         /// </summary>
-        public static readonly ShanoColor RoyalBlue = new ShanoColor(65, 105, 225);
+        public static readonly Color RoyalBlue = new Color(65, 105, 225);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {139, 69, 19}. 
         /// </summary>
-        public static readonly ShanoColor SaddleBrown = new ShanoColor(139, 69, 19);
+        public static readonly Color SaddleBrown = new Color(139, 69, 19);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {250, 128, 114}. 
         /// </summary>
-        public static readonly ShanoColor Salmon = new ShanoColor(250, 128, 114);
+        public static readonly Color Salmon = new Color(250, 128, 114);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {244, 164, 96}. 
         /// </summary>
-        public static readonly ShanoColor SandyBrown = new ShanoColor(244, 164, 96);
+        public static readonly Color SandyBrown = new Color(244, 164, 96);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {46, 139, 87}. 
         /// </summary>
-        public static readonly ShanoColor SeaGreen = new ShanoColor(46, 139, 87);
+        public static readonly Color SeaGreen = new Color(46, 139, 87);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 245, 238}. 
         /// </summary>
-        public static readonly ShanoColor SeaShell = new ShanoColor(255, 245, 238);
+        public static readonly Color SeaShell = new Color(255, 245, 238);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {160, 82, 45}. 
         /// </summary>
-        public static readonly ShanoColor Sienna = new ShanoColor(160, 82, 45);
+        public static readonly Color Sienna = new Color(160, 82, 45);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {192, 192, 192}. 
         /// </summary>
-        public static readonly ShanoColor Silver = new ShanoColor(192, 192, 192);
+        public static readonly Color Silver = new Color(192, 192, 192);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {135, 206, 235}. 
         /// </summary>
-        public static readonly ShanoColor SkyBlue = new ShanoColor(135, 206, 235);
+        public static readonly Color SkyBlue = new Color(135, 206, 235);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {106, 90, 205}. 
         /// </summary>
-        public static readonly ShanoColor SlateBlue = new ShanoColor(106, 90, 205);
+        public static readonly Color SlateBlue = new Color(106, 90, 205);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {112, 128, 144}. 
         /// </summary>
-        public static readonly ShanoColor SlateGray = new ShanoColor(112, 128, 144);
+        public static readonly Color SlateGray = new Color(112, 128, 144);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 250, 250}. 
         /// </summary>
-        public static readonly ShanoColor Snow = new ShanoColor(255, 250, 250);
+        public static readonly Color Snow = new Color(255, 250, 250);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {0, 255, 127}. 
         /// </summary>
-        public static readonly ShanoColor SpringGreen = new ShanoColor(0, 255, 127);
+        public static readonly Color SpringGreen = new Color(0, 255, 127);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {70, 130, 180}. 
         /// </summary>
-        public static readonly ShanoColor SteelBlue = new ShanoColor(70, 130, 180);
+        public static readonly Color SteelBlue = new Color(70, 130, 180);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {210, 180, 140}. 
         /// </summary>
-        public static readonly ShanoColor Tan = new ShanoColor(210, 180, 140);
+        public static readonly Color Tan = new Color(210, 180, 140);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {0, 128, 128}. 
         /// </summary>
-        public static readonly ShanoColor Teal = new ShanoColor(0, 128, 128);
+        public static readonly Color Teal = new Color(0, 128, 128);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {216, 191, 216}. 
         /// </summary>
-        public static readonly ShanoColor Thistle = new ShanoColor(216, 191, 216);
+        public static readonly Color Thistle = new Color(216, 191, 216);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 99, 71}. 
         /// </summary>
-        public static readonly ShanoColor Tomato = new ShanoColor(255, 99, 71);
+        public static readonly Color Tomato = new Color(255, 99, 71);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {64, 224, 208}. 
         /// </summary>
-        public static readonly ShanoColor Turquoise = new ShanoColor(64, 224, 208);
+        public static readonly Color Turquoise = new Color(64, 224, 208);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {238, 130, 238}. 
         /// </summary>
-        public static readonly ShanoColor Violet = new ShanoColor(238, 130, 238);
+        public static readonly Color Violet = new Color(238, 130, 238);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {245, 222, 179}. 
         /// </summary>
-        public static readonly ShanoColor Wheat = new ShanoColor(245, 222, 179);
+        public static readonly Color Wheat = new Color(245, 222, 179);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 255, 255}. 
         /// </summary>
-        public static readonly ShanoColor White = new ShanoColor(255, 255, 255);
+        public static readonly Color White = new Color(255, 255, 255);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {245, 245, 245}. 
         /// </summary>
-        public static readonly ShanoColor WhiteSmoke = new ShanoColor(245, 245, 245);
+        public static readonly Color WhiteSmoke = new Color(245, 245, 245);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {255, 255, 0}. 
         /// </summary>
-        public static readonly ShanoColor Yellow = new ShanoColor(255, 255, 0);
+        public static readonly Color Yellow = new Color(255, 255, 0);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {154, 205, 50}. 
         /// </summary>
-        public static readonly ShanoColor YellowGreen = new ShanoColor(154, 205, 50);
+        public static readonly Color YellowGreen = new Color(154, 205, 50);
         /// <summary>
         /// Gets a pre-defined color that has an ARGB value of {0, 0, 0, 0}. 
         /// </summary>
-        public static readonly ShanoColor Transparent = new ShanoColor(0, 0, 0, 0);
+        public static readonly Color Transparent = new Color(0, 0, 0, 0);
         #endregion
 
 
@@ -606,7 +606,7 @@ namespace Shanism.Common.Util
         /// <param name="r">The red component as a value in the range 0-255.</param>
         /// <param name="g">The blue component as a value in the range 0-255.</param>
         /// <param name="b">The green component as a value in the range 0-255.</param>
-        public ShanoColor(byte r, byte g, byte b)
+        public Color(byte r, byte g, byte b)
             : this(r, g, b, 255) { }
 
         /// <summary>
@@ -616,9 +616,29 @@ namespace Shanism.Common.Util
         /// <param name="g">The blue component as a value in the range 0-255.</param>
         /// <param name="b">The green component as a value in the range 0-255.</param>
         /// <param name="a">The alpha component as a value in the range 0-255.</param>
-        public ShanoColor(byte r, byte g, byte b, byte a)
+        public Color(byte r, byte g, byte b, byte a)
         {
             R = r; G = g; B = b; A = a;
+        }
+
+        public Color(int val)
+        {
+            unchecked
+            {
+                R = (byte)(val >> 0);
+                G = (byte)(val >> 8);
+                B = (byte)(val >> 16);
+                A = (byte)(val >> 24);
+            }
+        }
+
+        public int Pack()
+        {
+            return (R << 0)
+                | (G << 8)
+                | (B << 16)
+                | (A << 24);
+
         }
 
 
@@ -627,9 +647,9 @@ namespace Shanism.Common.Util
         /// </summary>
         /// <param name="a">The alpha component of the returned color as a value in the range 0-255.</param>
         /// <returns></returns>
-        public ShanoColor SetAlpha(byte a)
+        public Color SetAlpha(byte a)
         {
-            return new ShanoColor(R, G, B, a);
+            return new Color(R, G, B, a);
         }
 
         /// <summary>
@@ -637,12 +657,12 @@ namespace Shanism.Common.Util
         /// </summary>
         /// <param name="perc">The amount of darkening to apply. Should be an int between 0 and 100. </param>
         /// <returns></returns>
-        public ShanoColor Darken(int perc = 5)
+        public Color Darken(int perc = 5)
         {
             unchecked
             {
                 var ratio = 100 - perc;
-                return new ShanoColor((byte)(R * ratio / 100), (byte)(G * ratio / 100), (byte)(B * ratio / 100), A);
+                return new Color((byte)(R * ratio / 100), (byte)(G * ratio / 100), (byte)(B * ratio / 100), A);
             }
         }
 
@@ -651,11 +671,11 @@ namespace Shanism.Common.Util
         /// </summary>
         /// <param name="perc">The amount of brightening to apply. Should be an int between 0 and 100. </param>
         /// <returns></returns>
-        public ShanoColor Brighten(int perc = 5)
+        public Color Brighten(int perc = 5)
         {
             unchecked
             {
-                return new ShanoColor(
+                return new Color(
                     (byte)(R + (255 - R) * perc / 100),
                     (byte)(G + (255 - G) * perc / 100),
                     (byte)(B + (255 - B) * perc / 100), A);
@@ -683,5 +703,20 @@ namespace Shanism.Common.Util
             w.Write(B);
             w.Write(A);
         }
+
+        public static bool operator ==(Color a, Color b)
+        {
+            return a.R == b.R
+                && a.G == b.G
+                && a.B == b.B
+                && a.A == b.A;
+        }
+        public static bool operator !=(Color a, Color b) => !(a == b);
+
+        public override bool Equals(object obj) 
+            => (obj is Color) 
+            && ((Color)obj == this);
+
+        public override int GetHashCode() => Pack();
     }
 }

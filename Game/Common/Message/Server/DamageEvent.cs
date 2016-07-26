@@ -1,11 +1,11 @@
 ﻿using Shanism.Common.Game;
-using Shanism.Common.Objects;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Common.Message.Server
 {

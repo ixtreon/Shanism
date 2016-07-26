@@ -56,6 +56,7 @@ namespace Shanism.ScenarioLib
         public ContentConfig Content { get; protected set; }
 
 
+
         [JsonConstructor]
         protected ScenarioConfig() { }
 
@@ -77,14 +78,14 @@ namespace Shanism.ScenarioLib
             Map = new MapConfig();
             Content = new ContentConfig();
 
-            Save();
+            SaveToDisk();
         }
 
 
         /// <summary>
         /// Tries to load the config file from the given path. 
         /// </summary>
-        public static ScenarioConfig Load(string scenarioPath, out string errors)
+        public static ScenarioConfig LoadFromDisk(string scenarioPath, out string errors)
         {
             var dirPath = Path.GetFullPath(scenarioPath);
             var filePath = Path.Combine(dirPath, ScenarioFileName);
@@ -101,7 +102,7 @@ namespace Shanism.ScenarioLib
             }
             catch (Exception e)
             {
-                errors = e.Message;
+                errors = $"Error loading the config file:\n{e.Message}";
                 return null;
             }
 
@@ -139,7 +140,7 @@ namespace Shanism.ScenarioLib
 
                 return sc;
             }
-            catch (Exception e)
+            catch
             {
                 return null;
             }
@@ -148,35 +149,35 @@ namespace Shanism.ScenarioLib
         /// <summary>
         /// Saves the scenario file to the disk. 
         /// </summary>
-        public void Save()
+        public void SaveToDisk()
         {
-            File.WriteAllText(FilePath, GetText(Formatting.Indented));
+            File.WriteAllText(FilePath, SaveToString());
         }
 
         /// <summary>
-        /// Serializes this scenario to pure json. 
+        /// Serializes this scenario to a json string. 
         /// </summary>
-        public string GetText(Formatting format = Formatting.None)
+        public string SaveToString(Formatting format = Formatting.None)
         {
             return JsonConvert.SerializeObject(this, format);
         }
 
         /// <summary>
-        /// Gets a serialized json version of the scenario. 
+        /// Serializes this scenario then puts it in a byte array. 
         /// </summary>
-        public byte[] GetBytes()
+        public byte[] SaveToBytes()
         {
-            return Encoding.UTF8.GetBytes(GetText());
+            return Encoding.UTF8.GetBytes(SaveToString());
         }
 
         byte[] zippedContent;
 
         /// <summary>
-        /// Compresses all textures in the content to a byte array. 
+        /// Compresses all textures in the scenario to a byte array. 
         /// </summary>
-        public byte[] ZipContent()
+        public byte[] ZipContent(bool force = false)
         {
-            if (zippedContent == null)
+            if (zippedContent == null || force)
             {
                 var files = Content.Textures.Select(tex => new
                 {
@@ -201,6 +202,11 @@ namespace Shanism.ScenarioLib
             return zippedContent;
         }
 
+        /// <summary>
+        /// Unzips the given files to a specified directory. 
+        /// </summary>
+        /// <param name="content">The content to unzip.</param>
+        /// <param name="folder">The output folder.</param>
         public static void UnzipContent(byte[] content, string folder)
         {
             Directory.CreateDirectory(folder);
