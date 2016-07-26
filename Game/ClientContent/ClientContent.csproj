@@ -50,7 +50,6 @@
     <Content Include="Content\Icons\default.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Icons\icon-sheet.png" />
     <Content Include="Content\Icons\icons.txt" />
     <Content Include="Content\Objects\dummy.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -61,10 +60,12 @@
     <Content Include="Content\UI\close.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="ATTRIBUTIONS.txt" />
     <Content Include="README.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClientContent.mgcb" />
+    <None Include="Content\Fonts\freud.ttf" />
     <None Include="Content\Fonts\helvetica.spritefont" />
     <None Include="Content\Fonts\helvetica.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
