@@ -86,9 +86,13 @@ namespace ShanoRPGWin.UI.Scenarios
         /// </summary>
         public void Save()
         {
-            Settings.Default.ScenarioLibrary = librariesInUse
-                .Select(sc => sc.Key)
-                .Aggregate((a, b) => a + '\t' + b);
+            if (librariesInUse.Any())
+                Settings.Default.ScenarioLibrary = librariesInUse
+                    .Select(sc => sc.Key)
+                    .Aggregate((a, b) => a + '\t' + b);
+            else
+                Settings.Default.ScenarioLibrary = string.Empty;
+
             Settings.Default.Save();
         }
 
