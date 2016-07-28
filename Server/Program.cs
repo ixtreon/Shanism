@@ -23,7 +23,7 @@ namespace ShanoServer
         {
             RegexPattern = @"^(-|/)(sc|scenario):(.+)$",
             CaptureGroup = 3,
-            DefaultValue = @"D:/Shanism/Scenarios/DefaultScenario",
+            DefaultValue = @"D:/Shanism/Scenarios/MechanicsTests",
         };
 
         static void Main(string[] args)

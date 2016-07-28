@@ -83,6 +83,7 @@
     <Compile Include="Interfaces\Engine\IPlayerTicket.cs" />
     <Compile Include="Interfaces\Objects\IItem.cs" />
     <Compile Include="Message\Client\ChatMessage.cs" />
+    <Compile Include="Serialization\Ext.cs" />
     <Compile Include="Serialization\Objects\AbilitySerializer.cs" />
     <Compile Include="Serialization\Objects\BuffSerializer.cs" />
     <Compile Include="Serialization\Entities\Hero.cs" />
