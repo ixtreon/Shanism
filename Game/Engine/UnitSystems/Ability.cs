@@ -10,6 +10,7 @@ using System.Collections.Concurrent;
 using Shanism.Engine.Objects.Abilities;
 using System.Threading;
 using Shanism.Common.Game;
+using System.Diagnostics;
 
 namespace Shanism.Engine.Systems
 {
@@ -72,8 +73,9 @@ namespace Shanism.Engine.Systems
             if (castData == null)
                 return;
 
-            //interrupt casting if moving
-            if (Owner.IsMoving && !castData.Ability.CanCastWalk)
+            //interrupt casting if moving or incapacitated
+            if (Owner.IsStunned
+                || (Owner.IsMoving && !castData.Ability.CanCastWalk))
             {
                 StopCasting();
                 return;
@@ -146,6 +148,8 @@ namespace Shanism.Engine.Systems
 
         void setCastData(CastingData cd)
         {
+            Debug.Assert(cd != null);
+
             if (castData == null || !castData.Equals(cd))
             {
                 castData = cd;
@@ -161,7 +165,7 @@ namespace Shanism.Engine.Systems
         {
             throwIfAbilityNotOurs(ability);
 
-            if (ability.TargetType != AbilityTargetType.NoTarget)
+            if (!ability.CanCast())
                 return false;
 
             setCastData(new CastingData(ability, Owner.Position));
@@ -172,7 +176,7 @@ namespace Shanism.Engine.Systems
         {
             throwIfAbilityNotOurs(ability);
 
-            if (!ability.CanTargetGround)
+            if (!ability.CanCast(p))
                 return false;
 
             setCastData(new CastingData(ability, p));
@@ -183,7 +187,7 @@ namespace Shanism.Engine.Systems
         {
             throwIfAbilityNotOurs(ability);
 
-            if (!ability.CanTargetUnits)
+            if (!ability.CanCast(e))
                 return false;
 
             setCastData(new CastingData(ability, e));

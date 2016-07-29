@@ -18,8 +18,8 @@ namespace Shanism.Engine.Objects.Abilities
     {
 
         public Attack()
-            : base(AbilityTargetType.PointTarget)
         {
+            TargetType = AbilityTargetType.PointTarget;
             this.Name = "Attack";
             this.Description = "Attacks in the given direction. ";
             ManaCost = 0;

@@ -53,7 +53,7 @@ namespace Shanism.Engine.Objects.Abilities
         public string Icon { get; set; } = Shanism.Common.Constants.Content.DefaultValues.Icon;
 
         /// <summary>
-        /// Gets the currently remaining cooldown of this ability. 
+        /// Gets the current cooldown of this ability in milliseconds. 
         /// </summary>
         public int CurrentCooldown { get; internal set; }
 
@@ -77,17 +77,10 @@ namespace Shanism.Engine.Objects.Abilities
         /// </summary>
         public double CastRange { get; set; } = 15;
 
-        internal double CastRangeSquared => CastRange * CastRange;
-
         /// <summary>
         /// Gets or sets whether this ability can be cast while moving.
         /// </summary>
         public bool CanCastWalk { get; set; }
-
-        /// <summary>
-        /// Gets whether this ability is active (i.e. castable, non-passive). 
-        /// </summary>
-        public bool IsActive => TargetType != AbilityTargetType.Passive;
 
         /// <summary>
         /// Gets or sets the target types of this ability, if it is targeted. 
@@ -121,30 +114,163 @@ namespace Shanism.Engine.Objects.Abilities
             TargetType = targetType;
         }
 
+        internal override void Update(int msElapsed)
+        {
+            if (CurrentCooldown > 0)
+                CurrentCooldown = Math.Max(0, CurrentCooldown - msElapsed);
+
+            OnUpdate(msElapsed);
+        }
+
+
+        #region Property Shortcuts
+
+
+        internal double CastRangeSquared => CastRange * CastRange;
+
+        /// <summary>
+        /// Gets whether this ability is active (i.e. castable, non-passive). 
+        /// </summary>
+        public bool IsActive => TargetType != AbilityTargetType.Passive;
+
+
+        /// <summary>
+        /// Gets whether this ability requires a target. 
+        /// </summary>
+        public bool RequiresTarget => IsActive && (TargetType != AbilityTargetType.NoTarget);
+
+
+        /// <summary>
+        /// Gets whether this ability can target another unit. 
+        /// </summary>
+        public bool CanTargetUnits => (TargetType & AbilityTargetType.UnitTarget) != 0;
+
+
+        /// <summary>
+        /// Gets whether this ability can target a location the ground. 
+        /// </summary>
+        public bool CanTargetGround => (TargetType & AbilityTargetType.PointTarget) != 0;
+
+        #endregion
+
+
+        #region Virtual Methods
+
+        /// <summary>
+        /// Called whenever this ability is cast by its owner. 
+        /// </summary>
+        protected virtual void OnCast(AbilityCastArgs e) { }
+
+        /// <summary>
+        /// Called when this ability is initially learned by an unit. 
+        /// </summary>
+        protected virtual void OnLearned() { }
+
+        /// <summary>
+        /// Called when this ability is unlearned by an unit. 
+        /// Executed right before unlearning happens, 
+        /// so <see cref="Owner"/> still points to the unit who owned the ability. 
+        /// </summary>
+        protected virtual void OnUnlearned() { }
+
+        /// <summary>
+        /// Called once every frame once this ability is learned. 
+        /// </summary>
+        /// <param name="msElapsed">The time elapsed since the last frame, in milliseconds.</param>
+        protected virtual void OnUpdate(int msElapsed) { }
+
+        #endregion
+
+        /// <summary>
+        /// Determines whether this ability can be currently 
+        /// cast without any target. 
+        /// </summary>
+        public bool CanCast()
+        {
+            return canCast() && !RequiresTarget;
+        }
+
+        /// <summary>
+        /// Determines whether this ability can be currently
+        /// cast using the specified in-game location as a target.
+        /// </summary>
+        public bool CanCast(Vector v)
+        {
+            return canCast() && CanTargetGround && checkDistance(v);
+        }
+
+        /// <summary>
+        /// Determines whether this ability can be currently
+        /// cast using the specified entity as a target.
+        /// </summary>
+        public bool CanCast(Entity e)
+        {
+            return canCast() && RequiresTarget && checkDistance(e.Position);
+        }
+
+        /// <summary>
+        /// Determines whether this ability can be cast with the provided args.
+        /// </summary>
+        internal static bool CanCast(CastingData cd)
+        {
+            var ab = cd.Ability;
+
+            switch (ab.TargetType)
+            {
+                case AbilityTargetType.Passive:
+                    return false;
+
+                case AbilityTargetType.NoTarget:
+                    return true;
+
+                case AbilityTargetType.PointTarget:
+                    return cd.TargetType == AbilityTargetType.PointTarget
+                        && ab.CanCast(cd.TargetLocation);
+
+                case AbilityTargetType.UnitTarget:
+                    return cd.TargetType == AbilityTargetType.UnitTarget
+                        && ab.CanCast(cd.TargetEntity);
+
+                case AbilityTargetType.PointOrUnitTarget:
+                    if (cd.TargetType == AbilityTargetType.UnitTarget)
+                        return ab.CanCast(cd.TargetEntity);
+
+                    if (cd.TargetType == AbilityTargetType.PointTarget)
+                        return ab.CanCast(cd.TargetLocation);
+
+                    return false;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
 
         internal bool Invoke(CastingData args)
         {
             //check prerequisites (mana, cd, others?)
-            if (!CanCast(args))
+            if (!Ability.CanCast(args))
                 return false;
 
+            //run custom ability code
             var e = new AbilityCastArgs(Owner, args);
-
             OnCast(e);
 
             if (!e.Success)
                 return false;
 
-            triggerCooldowns();
+            //activate cd, mana, rotate, animate
+            CurrentCooldown = Cooldown;
+            Owner.Mana -= ManaCost;
 
             var tLoc = args.TargetLocation;
             Owner.Facing = Owner.Position.AngleTo(tLoc);
             Owner.PlayAnimation(Shanism.Common.Constants.Animations.Cast, false);
+
             return true;
         }
 
         /// <summary>
-        /// Permanently sets the owner of this ability. 
+        /// Sets the owner of this ability. 
         /// </summary>
         internal void SetOwner(Unit newOwner)
         {
@@ -161,135 +287,11 @@ namespace Shanism.Engine.Objects.Abilities
         }
 
 
-        /// <summary>
-        /// Gets whether this ability can target another unit. 
-        /// </summary>
-        public bool CanTargetUnits => TargetType.HasFlag(AbilityTargetType.UnitTarget);
-
-
-        /// <summary>
-        /// Gets whether this ability can target a location the ground. 
-        /// </summary>
-        public bool CanTargetGround => TargetType.HasFlag(AbilityTargetType.PointTarget);
-
-        /// <summary>
-        /// Called whenever this ability is cast by its owner. 
-        /// </summary>
-        protected virtual void OnCast(AbilityCastArgs e) { }
-
-        /// <summary>
-        /// Called when this ability is initially learned by an unit. 
-        /// </summary>
-        protected virtual void OnLearned()
-        {
-        }
-
-        /// <summary>
-        /// Called when this ability is unlearned by an unit. 
-        /// Executed right before unlearning happens, 
-        /// so <see cref="Owner"/> still points to the unit who owned the ability. 
-        /// </summary>
-        protected virtual void OnUnlearned()
-        {
-        }
-
-        /// <summary>
-        /// Called once every frame once this ability is learned. 
-        /// </summary>
-        /// <param name="msElapsed">The time elapsed since the last frame, in milliseconds.</param>
-        protected virtual void OnUpdate(int msElapsed) { }
-
-
-        //Can we cast the spell. Does not check target/s. 
-        bool canCast() => IsActive 
-            && (CurrentCooldown <= 0) 
-            && (Owner.Mana >= ManaCost);
-
-        /// <summary>
-        /// Determines whether this ability can be cast 
-        /// using the specified in-game location as a target.
-        /// </summary>
-        public bool CanCast(Vector v)
-        {
-            if (!canCast()) return false;
-
-            return TargetType == AbilityTargetType.NoTarget
-                || (CanTargetGround && v.DistanceTo(Owner.Position) <= CastRange);
-        }
-
-        /// <summary>
-        /// Determines whether this ability can be cast 
-        /// using the specified entity as a target.
-        /// </summary>
-        public bool CanCast(Entity e)
-        {
-            if (!canCast()) return false;
-
-            return TargetType == AbilityTargetType.NoTarget
-                || e.Position.DistanceTo(Owner.Position) <= CastRange;
-        }
-
+        bool canCast() 
+            => IsActive && CurrentCooldown <= 0 && Owner.Mana >= ManaCost;
 
         bool checkDistance(Vector tar)
             => Owner.Position.DistanceToSquared(tar) <= CastRangeSquared;
-
-        /// <summary>
-        /// Determines whether this ability can be cast 
-        /// using the specified entity as a target.
-        /// </summary>
-        internal bool CanCast(CastingData cd)
-        {
-            if (cd.Ability != this)
-                return false;
-
-            switch (TargetType)
-            {
-                case AbilityTargetType.Passive:
-                    return false;
-
-                case AbilityTargetType.NoTarget:
-                    return true;
-
-                case AbilityTargetType.PointTarget:
-                    return cd.IsGroundTarget 
-                        && checkDistance((Vector)cd.Target);
-
-                case AbilityTargetType.UnitTarget:
-                    return cd.IsEntityTarget 
-                        && checkDistance(((Entity)cd.Target).Position);
-
-                case AbilityTargetType.PointOrUnitTarget:
-                    if(cd.IsEntityTarget)
-                        return checkDistance(((Entity)cd.Target).Position);
-
-                    if(cd.IsGroundTarget)
-                        return checkDistance((Vector)cd.Target);
-
-                    return false;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        internal override void Update(int msElapsed)
-        {
-            if (CurrentCooldown > 0)
-                CurrentCooldown = Math.Max(0, CurrentCooldown - msElapsed);
-
-            OnUpdate(msElapsed);
-        }
-
-        /// <summary>
-        /// Triggers the ability cooldown and mana cost. 
-        /// </summary>
-        internal void triggerCooldowns()
-        {
-            CurrentCooldown = Cooldown;
-            Owner.Mana -= ManaCost;
-        }
-        
-
 
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.
@@ -299,9 +301,22 @@ namespace Shanism.Engine.Objects.Abilities
         /// </returns>
         public override string ToString() => Name;
 
-        public override bool Equals(object obj) => (obj is Ability)
-            && Id.Equals(((Ability)obj).Id);
+        /// <summary>
+        /// Determines whether the specified <see cref="object" />, is equal to this instance.
+        /// </summary>
+        /// <param name="obj">The <see cref="object" /> to compare with this instance.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified <see cref="object" /> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
+        public override bool Equals(object obj)
+            => (obj as Ability)?.Id.Equals(Id) ?? false;
 
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// </returns>
         public override int GetHashCode() => (int)Id;
     }
 }

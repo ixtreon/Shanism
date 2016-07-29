@@ -1,4 +1,6 @@
 ﻿using Shanism.Common;
+using Shanism.Common.Game;
+using Shanism.Engine.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,18 +13,20 @@ namespace Shanism.Engine.Objects.Abilities
     class CastingData
     {
         public readonly Ability Ability;
-        public readonly object Target;
-
-        public bool IsGroundTarget => Target is Vector;
-        public bool IsEntityTarget => Target is Entity;
+        public readonly AbilityTargetType TargetType;
+        public readonly Entity TargetEntity;
+        public readonly Vector TargetLocation;
 
         int progress = 0;
+        public int Progress => progress;
 
 
         public CastingData(Ability ab, Vector target)
         {
             Ability = ab;
-            Target = target;
+            TargetType = AbilityTargetType.PointTarget;
+            TargetEntity = null;
+            TargetLocation = target;
         }
 
         public CastingData(Ability ab, Entity target)
@@ -30,12 +34,11 @@ namespace Shanism.Engine.Objects.Abilities
             if (target == null) throw new ArgumentNullException(nameof(target));
 
             Ability = ab;
-            Target = target;
+            TargetType = AbilityTargetType.UnitTarget;
+            TargetEntity = target;
+            TargetLocation = target.Position;
         }
 
-        public int Progress => progress;
-
-        public Vector TargetLocation => (Target as Entity)?.Position ?? (Vector)Target;
 
         /// <summary>
         /// Advances the progress of the spell and returns true if casting is finished.
@@ -46,7 +49,8 @@ namespace Shanism.Engine.Objects.Abilities
 
         public override bool Equals(object obj)
             => (obj is CastingData)
-            && ((CastingData)obj).Target.Equals(Target)
+            && ((CastingData)obj).TargetLocation.Equals(TargetLocation)
+            && ((CastingData)obj).TargetEntity.Equals(TargetEntity)
             && ((CastingData)obj).Ability.Equals(Ability);
     }
 }
