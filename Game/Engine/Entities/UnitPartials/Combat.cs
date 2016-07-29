@@ -46,6 +46,11 @@ namespace Shanism.Engine.Entities
         /// <returns>The time for one attack in milliseconds. </returns>
         public int AttackCooldown => (AttacksPerSecond > 0) ? (int)(1000 / AttacksPerSecond) : int.MaxValue;
 
+        /// <summary>
+        /// Gets whether this unit is currently stunned, 
+        /// i.e. its <see cref="States"/> property contains the <see cref="StateFlags.Stunned"/> value.
+        /// </summary>
+        public bool IsStunned => (States & StateFlags.Stunned) != 0;
 
         /// <summary>
         /// Gets the multiplier for damage of the selected type inflicted on this unit. 
