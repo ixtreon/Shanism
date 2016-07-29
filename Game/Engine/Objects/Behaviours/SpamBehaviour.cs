@@ -12,40 +12,54 @@ namespace Shanism.Engine.Objects.Behaviours
     /// </summary>
     class SpamBehaviour : Behaviour
     {
-        public Ability Ability { get; private set; }
+        List<Ability> spammableAbilities;
+
+        public Ability CurrentAbility { get; private set; }
 
         public Unit TargetUnit { get; set; }
 
         public SpamBehaviour(Behaviour b)
             : base(b)
         {
-
+            Owner.abilities.OnAbilityLearned += owner_abilitiesChanged;
+            Owner.abilities.OnAbilityLost += owner_abilitiesChanged;
+            owner_abilitiesChanged(null);
         }
 
+        private void owner_abilitiesChanged(Ability a)
+        {
+            spammableAbilities = Owner
+                .GetAbilitiesOfType(AbilityTypeFlags.Spammable)
+                .ToList();
+        }
 
         public override bool TakeControl()
         {
             if (TargetUnit == null)
                 return false;
 
-            Ability = Owner
-                .GetAbilitiesOfType(AbilityTypeFlags.Spammable)
-                .FirstOrDefault(a => a.CanCast(TargetUnit));
+            CurrentAbility = null;
+            foreach (var ab in spammableAbilities)
+                if (ab.CanCast(TargetUnit))
+                {
+                    CurrentAbility = ab;
+                    break;
+                }
 
-            return Ability != null;
+            return CurrentAbility != null;
         }
 
         public override void Update(int msElapsed)
         {
-            if (Ability.CanTargetUnits)
-                Owner.TryCastAbility(Ability, TargetUnit);
-            else if (Ability.CanTargetGround)
-                Owner.TryCastAbility(Ability, TargetUnit.Position);
+            if (CurrentAbility.CanTargetUnits)
+                Owner.TryCastAbility(CurrentAbility, TargetUnit);
+            else if (CurrentAbility.CanTargetGround)
+                Owner.TryCastAbility(CurrentAbility, TargetUnit.Position);
             else
-                Owner.TryCastAbility(Ability);
+                Owner.TryCastAbility(CurrentAbility);
 
         }
 
-        public override string ToString() => $"Cast {Ability}";
+        public override string ToString() => $"Cast {CurrentAbility}";
     }
 }

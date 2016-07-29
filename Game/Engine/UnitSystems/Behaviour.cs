@@ -20,15 +20,17 @@ namespace Shanism.Engine.Systems
 
         public override void Update(int msElapsed)
         {
-            if (Owner.IsDead 
-                || Owner.Behaviour == null 
-                || Owner.States.HasFlag(StateFlags.Stunned))
+            var b = Owner.Behaviour;
+            if (Owner.IsDead || b == null)
                 return;
 
-            Owner.Behaviour.Update(msElapsed);
+            if (b.TakeControl())
+            {
+                b.Update(msElapsed);
 
-            if (!Owner.CustomOrder && Owner.Behaviour.CurrentOrder != Owner.Order)
-                Owner.SetOrder(Owner.Behaviour.CurrentOrder, false);
+                if (!Owner.CustomOrder && Owner.Order != b.CurrentOrder)
+                    Owner.SetOrder(b.CurrentOrder, false);
+            }
         }
     }
 }

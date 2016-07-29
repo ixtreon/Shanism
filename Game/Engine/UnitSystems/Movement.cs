@@ -24,6 +24,8 @@ namespace Shanism.Engine.Systems
         double _moveDistanceLeft;
 
 
+        readonly List<Entity> nearbies = new List<Entity>();
+
         public MovementSystem(Unit owner)
         {
             Owner = owner;
@@ -41,10 +43,9 @@ namespace Shanism.Engine.Systems
                 Owner.ResetAnimation();
         }
 
-        ///
         internal void SetMovementState(double direction)
         {
-            if (!(_isMoving 
+            if (!(_isMoving
                 && _moveDirection.AlmostEqualTo(direction)))
             {
                 _isMoving = true;
@@ -78,10 +79,10 @@ namespace Shanism.Engine.Systems
             var speed = Owner.MoveSpeed;
             var maxDist = speed * msElapsed / 1000;
             var suggestedDist = Math.Min(_moveDistanceLeft, maxDist);
-            
-            var newPos = resolveStep(Owner, _moveDirection, suggestedDist);
+
+            var newPos = resolveStep(_moveDirection, suggestedDist);
             var dist = newPos.DistanceTo(Owner.Position);
-            var hasMovedMuch = dist / suggestedDist > 0.25;
+            var hasMovedMuch = dist / suggestedDist > 0.1;
 
             if (hasMovedMuch)
             {
@@ -94,85 +95,84 @@ namespace Shanism.Engine.Systems
             }
         }
 
-        static Vector resolveStep(Unit owner, double angle, double dist)
+        Vector resolveStep(double angle, double dist)
         {
-            var suggestedPos = owner.Position.PolarProjection(angle, dist);
+            var suggestedPos = Owner.Position.PolarProjection(angle, dist);
 
-            if (owner.States.HasFlag(StateFlags.NoCollision))
+            if (Owner.States.HasFlag(StateFlags.NoCollision))
                 return suggestedPos;
 
             //fix terrain
-            var startP = (suggestedPos - owner.Scale).Floor();
-            var endP = (suggestedPos + owner.Scale).Ceiling();
+            var r = Owner.Scale / 2;
+            var sx = (int)Math.Floor(suggestedPos.X - r);
+            var sy = (int)Math.Floor(suggestedPos.Y - r);
+            var ex = (int)Math.Floor(suggestedPos.X + r);
+            var ey = (int)Math.Floor(suggestedPos.Y + r);
+            for (int ix = sx; ix <= ex; ix++)
+                for (int iy = sy; iy <= ey; iy++)
+                {
+                    var p = new Point(ix, iy);
+                    var tty = Owner.Map.Terrain.Get(p);
+                    if (!isTileOk(tty, Owner))
+                        suggestedPos = fixTerrain(suggestedPos, p, r);
+                }
 
-            foreach(var terrainPt in startP.IterateToInclusive(endP))
-            {
-                var tty = owner.Map.Terrain.Get(terrainPt);
-                if (isTileOk(tty, owner.CanFly, owner.CanSwim, owner.CanWalk))
-                    continue;
+            if (!isTileOk(Owner.Map.Terrain.Get(suggestedPos), Owner))
+                suggestedPos = Owner.Position;
 
-                suggestedPos = fixTerrain(suggestedPos, terrainPt, owner.Scale);
-            }
-
-            if (!isTileOk(owner.Map.Terrain.Get(suggestedPos), owner.CanFly, owner.CanSwim, owner.CanWalk))
-                suggestedPos = owner.Position;
 
             //fix objects
-            var nearbyObjects = owner.Map
-                .GetObjectsInRect(suggestedPos, new Vector((owner.Scale + Constants.Entities.MaxSize) / 2))
-                .Where(u => u != owner 
-                    && u.HasCollision);
+            nearbies.Clear();
+            Owner.Map.GetObjectsInRect(
+                suggestedPos, 
+                new Vector((Owner.Scale + Constants.Entities.MaxSize) / 2),
+                nearbies);
 
-            foreach(var obj in nearbyObjects)
-            {
-                suggestedPos = fixEntity(suggestedPos, obj, owner.Scale);
-            }
+            foreach (var obj in nearbies)
+                if(obj != Owner && obj.HasCollision)
+                    suggestedPos = fixEntity(suggestedPos, obj, r);
 
             return suggestedPos;
         }
 
-        static Vector fixEntity(Vector suggestedPos, Entity obj, double ourScale)
+        static Vector fixEntity(Vector suggestedPos, Entity obj, double r)
         {
-            var minDist = (obj.Scale + ourScale) / 2;
-            if (suggestedPos.DistanceTo(obj.Position) < minDist)
+            var er = r + obj.Scale / 2;
+            if (suggestedPos.DistanceToSquared(obj.Position) < er * er)
             {
                 var ang = obj.Position.AngleTo(suggestedPos);
-                suggestedPos = obj.Position.PolarProjection(ang, minDist);
+                suggestedPos = obj.Position.PolarProjection(ang, er);
             }
 
             return suggestedPos;
         }
 
-        static Vector fixTerrain(Vector suggestedPos, Point terrainPt, double ourScale)
+        static Vector fixTerrain(Vector suggestedPos, Point terrainPt, double r)
         {
             var closestPoint = suggestedPos.Clamp(terrainPt, terrainPt + Point.One);
             var distSq = suggestedPos.DistanceToSquared(closestPoint);
 
-            var minDist = ourScale / 2;
-            if (distSq < minDist * minDist)
+            if (distSq < r * r)
             {
                 var ang = closestPoint.AngleTo(suggestedPos);
-                suggestedPos = closestPoint.PolarProjection(ang, minDist);
+                suggestedPos = closestPoint.PolarProjection(ang, r);
             }
 
             return suggestedPos;
         }
 
-        static bool isTileOk(TerrainType tt, bool canFly, bool canSwim, bool canWalk)
+        static bool isTileOk(TerrainType tt, Unit u)
         {
-            //no map, no walk
-            if (tt == TerrainType.None)
+            if (tt == TerrainType.None) //no map, no ok
                 return false;
 
-            if (canFly)
+            if (u.CanFly)               //if u fly all is ok
                 return true;
 
-            //water is cool if swim
             if (tt == TerrainType.Water || tt == TerrainType.DeepWater)
-                return canSwim;
+                return u.CanSwim;       //water is cool if swim
 
-            //otherwise should walk..
-            return canWalk;
+            return true;    //otherwise can just sit there..
         }
     }
 }

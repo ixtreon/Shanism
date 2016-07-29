@@ -24,6 +24,7 @@ namespace Shanism.Engine.Objects.Behaviours
 
         public event Action OnReturnFinished;
 
+        double distanceSquared => MaxDistance * MaxDistance;
 
         public ReturnBehaviour(Behaviour b, Vector origin, double maxDistance) 
             : base(b)
@@ -35,18 +36,17 @@ namespace Shanism.Engine.Objects.Behaviours
 
         public override bool TakeControl()
         {
-            return Returning || Owner.Position.DistanceTo(OriginPosition) > MaxDistance;
+            return Returning 
+                || Owner.Position.DistanceToSquared(OriginPosition) > distanceSquared;
         }
 
 
         public override void Update(int msElapsed)
         {
-            var returnOrder = new MoveLocation(OriginPosition, 0.05);
-
             //issue the return order if needed
             if (!Returning)
             {
-                CurrentOrder = returnOrder;
+                CurrentOrder = new MoveLocation(OriginPosition, 0.05);
                 Returning = true;
                 OnReturnStarted?.Invoke();
             }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
+using System.Diagnostics;
 
 namespace Shanism.Engine.Objects.Behaviours
 {
@@ -22,10 +23,8 @@ namespace Shanism.Engine.Objects.Behaviours
 
         public override bool TakeControl()
         {
-            foreach (var b in Behaviours)
-                if (b.TakeControl())
-                    return true;
-            return false;
+            CurrentBehaviour = AskForControl();
+            return (CurrentBehaviour != null);
         }
 
         public void Add(Behaviour b)
@@ -40,39 +39,27 @@ namespace Shanism.Engine.Objects.Behaviours
 
         public override void Update(int msElapsed)
         {
-            // get the active behaviour (if any)
-            Behaviour activeBehaviour = null;
+            Debug.Assert(CurrentBehaviour != null);     //shouldn't be here
+
+            CurrentBehaviour.Update(msElapsed);
+            CurrentOrder = CurrentBehaviour.CurrentOrder;
+        }
+
+        protected Behaviour AskForControl()
+        {
             foreach (var b in Behaviours)
                 if (b.TakeControl())
-                {
-                    activeBehaviour = b;
-                    break;
-                }
-
-            if (activeBehaviour != null)
-            {
-                activeBehaviour.Update(msElapsed);
-
-                CurrentBehaviour = activeBehaviour;
-                CurrentOrder = activeBehaviour.CurrentOrder;
-            }
-            else
-            {
-                CurrentBehaviour = null;
-                CurrentOrder = null;
-            }
+                    return b;
+            return null;
         }
 
-        public IEnumerator<Behaviour> GetEnumerator()
-        {
-            return Behaviours.GetEnumerator();
-        }
+        public IEnumerator<Behaviour> GetEnumerator() 
+            => Behaviours.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return Behaviours.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() 
+            => Behaviours.GetEnumerator();
 
-        public override string ToString() => CurrentBehaviour?.ToString() ?? "<none>";
+        public override string ToString() 
+            => CurrentBehaviour?.ToString() ?? "<none>";
     }
 }

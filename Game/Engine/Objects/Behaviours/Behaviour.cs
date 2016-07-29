@@ -6,16 +6,21 @@ namespace Shanism.Engine.Objects.Behaviours
 {
     /// <summary>
     /// Represents a base class for the creation of unit behaviours. 
+    /// At each tick the behaviour selects whether to act by calling the <see cref="TakeControl"/> method.
+    /// If that method returns true the behaviour updates its state (see <see cref="Update(int)"/>,
+    /// and updates its 'suggestion' for the unit's current order (see <see cref="CurrentOrder"/>. 
+    /// </summary>
     /// 
+    /// <example>
     /// For example, heroes have entirely passive behaviours since they react to player events (if using WASD). 
     /// NPCs on the other hand have more complex behaviours which specify their actions. 
-    /// </summary>
+    /// </example>
     public abstract class Behaviour
     {
         /// <summary>
         /// Gets the unit this behaviour controls. 
         /// </summary>
-        protected Unit Owner { get; }
+        protected readonly Unit Owner;
 
         /// <summary>
         /// Gets the current order suggested by the behaviour. 
@@ -29,15 +34,6 @@ namespace Shanism.Engine.Objects.Behaviours
         protected Behaviour(Unit owner)
         {
             this.Owner = owner;
-
-            this.Owner.ObjectSeen += OnObjectSeen;
-            this.Owner.DamageReceived += OnDamageReceived;
-        }
-
-        private void OnObjectSeen(Entity obj)
-        {
-            if (obj is Unit)
-                OnUnitInVisionRange((Unit)obj);
         }
 
         /// <summary>
@@ -49,20 +45,8 @@ namespace Shanism.Engine.Objects.Behaviours
         { }
 
         /// <summary>
-        /// The event fired whenever the controlled unit takes damage. 
+        /// Returns whether the current behaviour should take control of its owner. 
         /// </summary>
-        protected virtual void OnDamageReceived(UnitDamagedArgs args) { }
-
-        /// <summary>
-        /// The event fired whenever a unit comes in range. 
-        /// </summary>
-        protected virtual void OnUnitInVisionRange(Unit unit) { }
-
-        /// <summary>
-        /// Returns whether the current behaviour should take control of the character. 
-        /// </summary>
-        /// <param name="msElapsed">The time elapsed since the last update, in milliseconds. </param>
-        /// <returns></returns>
         public abstract bool TakeControl();
 
         /// <summary>
@@ -70,9 +54,5 @@ namespace Shanism.Engine.Objects.Behaviours
         /// </summary>
         /// <param name="msElapsed">The time elapsed since the last update, in milliseconds. </param>
         public abstract void Update(int msElapsed);
-
-        //public virtual void OnStopped() { }
-
-        //public virtual void OnStarted() { }
     }
 }

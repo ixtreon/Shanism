@@ -12,11 +12,17 @@ namespace Shanism.Engine.GameSystems
 {
     class RangeSystem : GameSystem
     {
-        public override string SystemName => "Range Events";
+        //limit the maximum updates per second
+        //as this tends to be the heaviest system
+        //10 updates per second should be perfectly fine.
+        const int MaxFPS = 10;
+
 
         readonly MapSystem map;
 
-        readonly Counter c = new Counter(1000 / 20);    //25 fps max
+        readonly Counter updateCounter = new Counter(1000 / MaxFPS);
+
+        public override string SystemName => "Range Events";
 
         public RangeSystem(MapSystem map)
         {
@@ -25,7 +31,7 @@ namespace Shanism.Engine.GameSystems
 
         internal override void Update(int msElapsed)
         {
-            if (c.Tick(msElapsed))
+            if (updateCounter.Tick(msElapsed))
             {
                 //query tree for range events
                 foreach (var u in map.Units)

@@ -48,6 +48,9 @@ namespace Shanism.Engine.Objects.Behaviours
                 FreeReturnBehaviour,
             });
 
+            Owner.ObjectSeen += onEntitySeen;
+            Owner.DamageReceived += onDamageReceived;
+
             ForceReturnBehaviour.OnReturnStarted += ReturnBehaviour_OnReturnStarted;
             ForceReturnBehaviour.OnReturnFinished += ReturnBehaviour_OnReturnFinished;
         }
@@ -79,12 +82,13 @@ namespace Shanism.Engine.Objects.Behaviours
 
             Unit maxAggroGuy = null;
             double maxAggro = double.MinValue;
-            double aggroDist = double.MaxValue;
+            double maxAggroDist = double.MaxValue;
 
             foreach (var kvp in aggroTable)
             {
                 var u = kvp.Key;
-                var d = Owner.Position.DistanceToSquared(u.Position);
+                var uAggro = kvp.Value;
+                var d = Owner.Position.DistanceTo(u.Position);
 
                 if (u.IsDead || d > ReturnRange)
                 {
@@ -92,20 +96,21 @@ namespace Shanism.Engine.Objects.Behaviours
                     continue;
                 }
 
-                if (kvp.Value < maxAggro)
+                if (uAggro < maxAggro)
                     continue;
 
-                if (kvp.Value.Equals(maxAggro) && d > aggroDist)
+                if (uAggro.Equals(maxAggro) && d > maxAggroDist)
                     continue;
 
                 maxAggroGuy = u;
-                maxAggro = kvp.Value;
-                aggroDist = d;
+                maxAggro = uAggro;
+                maxAggroDist = d;
             }
 
             // remove dead targets. 
             foreach (var u in toRemove)
                 aggroTable.Remove(u);
+            toRemove.Clear();
 
             return maxAggroGuy;
         }
@@ -114,31 +119,35 @@ namespace Shanism.Engine.Objects.Behaviours
         /// Updates the aggro table whenever damage is received. 
         /// </summary>
         /// <param name="args"></param>
-        protected override void OnDamageReceived(UnitDamagedArgs args)
+        void onDamageReceived(UnitDamagedArgs args)
         {
-            //add or update the damage source's entry in the table
             var damageSource = args.DamagingUnit;
             var dmgAmount = args.FinalDamage;
 
             double curAggro;
             if (aggroTable.TryGetValue(damageSource, out curAggro))
-                aggroTable[damageSource] = curAggro + dmgAmount;
-            else
-                aggroTable[damageSource] = dmgAmount;
+                curAggro = 0;
+
+            aggroTable[damageSource] = curAggro + dmgAmount;
         }
 
         /// <summary>
         /// Adds to the aggro table units that come into range. 
         /// </summary>
-        protected override void OnUnitInVisionRange(Unit unit)
+        void onEntitySeen(Entity e)
         {
+            var u = e as Unit;
+            if (u == null)
+                return;
+
+
             if (ForceReturnBehaviour.Returning)
                 return;
 
             //add it to the aggro table if it's a hero
-            if (unit.Owner.IsEnemyOf(Owner))
-                if(!aggroTable.ContainsKey(unit))
-                    aggroTable.Add(unit, 0);
+            if (u.Owner.IsEnemyOf(Owner))
+                if(!aggroTable.ContainsKey(u))
+                    aggroTable.Add(u, 0);
         }
 
         Vector ReturnPosition
@@ -151,10 +160,9 @@ namespace Shanism.Engine.Objects.Behaviours
             }
         }
 
-        public override void Update(int msElapsed)
+        public override bool TakeControl()
         {
-            FollowBehaviour.Distance = SpamBehaviour.Ability?.CastRange ?? 1;
-
+            FollowBehaviour.Distance = SpamBehaviour.CurrentAbility?.CastRange ?? 1;
 
             //keep track of most aggressive targets
             var newTarget = updateTarget();
@@ -174,6 +182,13 @@ namespace Shanism.Engine.Objects.Behaviours
                 ForceReturnBehaviour.OriginPosition =
                 FreeReturnBehaviour.OriginPosition = Owner.Position;
             }
+
+
+            return base.TakeControl();
+        }
+
+        public override void Update(int msElapsed)
+        {
 
             base.Update(msElapsed);
         }
