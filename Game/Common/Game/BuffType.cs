@@ -9,7 +9,7 @@ namespace Shanism.Common.Game
     /// <summary>
     /// Indicates the way a buff stacks on its target in the context of a single caster. 
     /// </summary>
-    public enum BuffStackType
+    public enum BuffStackType : byte
     {
         /// <summary>
         /// A buff that has a number of stacks that expire independently. 

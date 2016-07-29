@@ -12,11 +12,29 @@ namespace Shanism.Common.Interfaces.Objects
     /// </summary>
     public interface IBuff : IGameObject
     {
+
+        /// <summary>
+        /// Gets the total duration of the buff, in miliseconds. 
+        /// If this value is nonpositive the buff lasts indefinitely. 
+        /// </summary>
+        int FullDuration { get; }
+
+        /// <summary>
+        /// Gets the unit states that are applied to units affected by this buff. 
+        /// </summary>
+        StateFlags UnitStates { get; }
+
+        /// <summary>
+        /// Gets the type of this buff. 
+        /// </summary>
+        BuffStackType StackType { get; }
+
         /// <summary>
         /// Gets whether this buff has an icon 
         /// and is displayed in the default buff bar. 
         /// </summary>
         bool HasIcon { get; }
+
 
         /// <summary>
         /// Gets the icon of the buff. 
@@ -28,29 +46,11 @@ namespace Shanism.Common.Interfaces.Objects
         /// </summary>
         string Name { get; }
 
+
         /// <summary>
         /// Gets the formatted description of this buff. 
         /// </summary>
         string Description { get; }
-
-        /// <summary>
-        /// Gets the type of this buff. 
-        /// </summary>
-        BuffStackType StackType { get; }
-
-        /// <summary>
-        /// Gets the total duration of the buff, in miliseconds. 
-        /// If this value is nonpositive the buff lasts indefinitely. 
-        /// </summary>
-        int FullDuration { get; }
-
-
-        /// <summary>
-        /// Gets the unit states that are applied to units affected by this buff. 
-        /// </summary>
-        StateFlags UnitStates { get; }
-
-
 
         /// <summary>
         /// Gets the life modifier of this buff. 
@@ -82,11 +82,12 @@ namespace Shanism.Common.Interfaces.Objects
         /// </summary>
         double Dodge { get; }
 
-
         /// <summary>
         /// Gets the movement speed modifier of this buff. 
         /// </summary>
         double MoveSpeed { get; }
+
+
         /// <summary>
         /// Gets the movement speed percentage modifier of this buff. 
         /// </summary>
@@ -95,6 +96,8 @@ namespace Shanism.Common.Interfaces.Objects
         /// Gets the attack speed percentage modifier of this buff. 
         /// </summary>
         int AttackSpeedPercentage { get; }
+
+
         /// <summary>
         /// Gets the mnimum damage modifier of this buff. 
         /// </summary>
