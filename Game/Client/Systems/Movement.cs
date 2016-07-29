@@ -30,7 +30,14 @@ namespace Shanism.Client.Systems
                 var dx = Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveRight)) - Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveLeft));
                 var dy = Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveDown)) - Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveUp));
 
-                newMovementState = new MovementState(dx, dy);
+                if (dx != 0 || dy != 0)
+                {
+                    var keysAngle = Math.Atan2(dy, dx);
+
+                    var mouseAngle = MouseInfo.UiPosition.Angle;
+
+                    newMovementState = new MovementState(keysAngle);
+                }
             }
 
             if (newMovementState != movementState)

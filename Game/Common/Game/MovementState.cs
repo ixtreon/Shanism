@@ -46,6 +46,12 @@ namespace Shanism.Common.Game
             angle = Math.Atan2(dy, dx);
         }
 
+        public MovementState(double angle)
+        {
+            this.isMoving = true;
+            this.angle = angle;
+        }
+
         /// <summary>
         /// Implements logical equality. 
         /// </summary>

@@ -1,4 +1,5 @@
 ﻿using Shanism.Common.Message;
+using Shanism.Common.Message.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,9 @@ namespace Shanism.Client.Systems
     /// </summary>
     abstract class ClientSystem
     {
+        ////to be renamed to "ClientFrame"
+        //public static MoveMessage CurrentState;
+
 
         public event Action<IOMessage> MessageSent;
 
