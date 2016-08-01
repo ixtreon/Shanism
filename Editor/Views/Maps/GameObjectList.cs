@@ -50,20 +50,18 @@ namespace Shanism.Editor.Views.Maps
             if (Model?.Scenario == null)
                 return Task.CompletedTask;
 
-            return Task.Run(() =>
-            {
-                var units = Model.Scenario.DefinedEntities
+            var units = Model.Scenario.DefinedEntities
                 .Where(o => o is IUnit);
 
-                var doodads = Model.Scenario.DefinedEntities
+            var doodads = Model.Scenario.DefinedEntities
                 .Where(o => o is IDoodad);
 
-                if (units.Any())
-                    AddObjects("Custom Units", units, true);
-                if (doodads.Any())
-                    AddObjects("Custom Doodads", doodads, false);
-            });
+            if (units.Any())
+                AddObjects("Custom Units", units, true);
+            if (doodads.Any())
+                AddObjects("Custom Doodads", doodads, false);
 
+            return Task.CompletedTask;
         }
 
         void AddObjects(string name, IEnumerable<IEntity> objects, bool canOwn)

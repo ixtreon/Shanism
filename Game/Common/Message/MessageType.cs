@@ -78,16 +78,6 @@ namespace Shanism.Common.Message
         DamageEvent,
 
         /// <summary>
-        /// A message sent by the server when the client sees an object. 
-        /// </summary>
-        ObjectSeen,
-
-        /// <summary>
-        /// A message sent by the server when an object disappears from the client's view. 
-        /// </summary>
-        ObjectUnseen,
-
-        /// <summary>
         /// A message sent by the server when an object changes its animation. 
         /// </summary>
         ObjectAnimation,
@@ -95,10 +85,6 @@ namespace Shanism.Common.Message
 
         ObjectData,
 
-        /// <summary>
-        /// Sent by the engine to inform about scenario objects. 
-        /// </summary>
         GameFrame,
-        ClientFrame,
     }
 }

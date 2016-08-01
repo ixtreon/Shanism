@@ -25,7 +25,50 @@ namespace Shanism.Engine.Entities
         public override ObjectType ObjectType => ObjectType.Unit;
 
 
-        #region Base (Combat) Stats
+
+        /// <summary>
+        /// Gets the owner of this unit. 
+        /// </summary>
+        public Player Owner { get; private set; }
+
+        /// <summary>
+        /// Gets the level of the unit. 
+        /// </summary>
+        public int Level { get; protected internal set; }
+
+        /// <summary>
+        /// Gets or sets the life percentage of this unit
+        /// as a number between 0 and 1. 
+        /// </summary>
+        public double LifePercentage { get; set; } = 1;
+
+        /// <summary>
+        /// Gets or sets the mana percentage of this unit
+        /// as a number between 0 and 1. 
+        /// </summary>
+        public double ManaPercentage { get; set; } = 1;
+
+        // move to base/current pairs
+
+        /// <summary>
+        /// Gets the current mana regeneration rate of the unit, in mana points per second.  
+        /// </summary>
+        public double ManaRegen { get; protected internal set; }
+
+        /// <summary>
+        /// Gets the current life regeneration rate of the unit, in life points per second.  
+        /// </summary>
+        public double LifeRegen { get; protected internal set; }
+
+
+
+        #region Stats Base Values
+
+        /// <summary>
+        /// Gets the base states of the unit. 
+        /// </summary>
+        public StateFlags BaseStates { get; protected set; } = StateFlags.None;
+
         /// <summary>
         /// Gets or sets the base hit points (life) of the unit. 
         /// </summary>
@@ -35,31 +78,6 @@ namespace Shanism.Engine.Entities
         /// Gets or sets the base mana of the unit. 
         /// </summary>
         public double BaseMaxMana { get; set; } = 0;
-
-        /// <summary>
-        /// Gets or sets the base dodge chance of the unit. 
-        /// </summary>
-        public double BaseDodgeChance { get; set; } = 0;
-
-        /// <summary>
-        /// Gets or sets the base chance of dealing a critical strike for this unit. 
-        /// </summary>
-        public double BaseCritChance { get; set; } = 0;
-
-        /// <summary>
-        /// Gets or sets the base defense of the unit. 
-        /// </summary>
-        public double BaseDefense { get; set; } = 0;
-
-        /// <summary>
-        /// Gets or sets the base magic damage of the unit. 
-        /// </summary>
-        public double BaseMagicDamage { get; set; } = 0;
-
-        /// <summary>
-        /// Gets or sets the base movement speed of the units in squares per second. 
-        /// </summary>
-        public double BaseMoveSpeed { get; set; } = 10;
 
         /// <summary>
         /// Gets or sets the base minimum damage inflicted by the unit. 
@@ -76,30 +94,41 @@ namespace Shanism.Engine.Entities
         /// </summary>
         public double BaseAttacksPerSecond { get; set; } = 0.75;
 
+        /// <summary>
+        /// Gets or sets the base defense of the unit. 
+        /// </summary>
+        public double BaseDefense { get; set; } = 0;
+
+        /// <summary>
+        /// Gets or sets the base dodge chance of the unit. 
+        /// </summary>
+        public double BaseDodgeChance { get; set; } = 0;
+
+        /// <summary>
+        /// Gets or sets the base chance of dealing a critical strike for this unit. 
+        /// </summary>
+        public double BaseCritChance { get; set; } = 0;
+
+        /// <summary>
+        /// Gets or sets the base magic damage of the unit. 
+        /// </summary>
+        public double BaseMagicDamage { get; set; } = 0;
+
+        /// <summary>
+        /// Gets or sets the base movement speed of the units in squares per second. 
+        /// </summary>
+        public double BaseMoveSpeed { get; set; } = 10;
+
 
         #endregion
 
 
-        #region Current Stats
+        #region Stats Current Values
 
         /// <summary>
-        /// Gets or sets the life percentage of this unit
-        /// as a number between 0 and 1. 
+        /// Gets the enumeration of states currently affecting the unit. 
         /// </summary>
-        public double LifePercentage { get; set; } = 1;
-
-        /// <summary>
-        /// Gets or sets the mana percentage of this unit
-        /// as a number between 0 and 1. 
-        /// </summary>
-        public double ManaPercentage { get; set; } = 1;
-
-
-        /// <summary>
-        /// Gets the level of the unit. 
-        /// </summary>
-        public int Level { get; protected internal set; }
-
+        public StateFlags States { get; protected internal set; }
 
         /// <summary>
         /// Gets the maximum life of the unit. 
@@ -107,24 +136,10 @@ namespace Shanism.Engine.Entities
         public double MaxLife { get; protected internal set; }
 
         /// <summary>
-        /// Gets the current life regeneration rate of the unit, in life points per second.  
-        /// </summary>
-        public double LifeRegen { get; protected internal set; }
-
-        /// <summary>
         /// Gets the maximum mana of the unit. 
         /// </summary>
         public double MaxMana { get; protected internal set; }
 
-        /// <summary>
-        /// Gets the current mana regeneration rate of the unit, in mana points per second.  
-        /// </summary>
-        public double ManaRegen { get; protected internal set; }
-
-        /// <summary>
-        /// Gets the time this unit takes between successive attacks. 
-        /// </summary>
-        public double AttacksPerSecond { get; protected internal set; }
         /// <summary>
         /// Gets the minimum damage of the unit's attack. 
         /// </summary>
@@ -133,6 +148,11 @@ namespace Shanism.Engine.Entities
         /// Gets the maximum damage of the unit's attack. 
         /// </summary>
         public double MaxDamage { get; protected internal set; }
+
+        /// <summary>
+        /// Gets the time this unit takes between successive attacks. 
+        /// </summary>
+        public double AttacksPerSecond { get; protected internal set; }
 
         /// <summary>
         /// Gets the current defense of the unit which provides reduction
@@ -160,13 +180,14 @@ namespace Shanism.Engine.Entities
         /// Gets the current attack range of the unit. 
         /// </summary>
         public double AttackRange { get; protected internal set; }
-        #endregion
-
 
         /// <summary>
-        /// Gets the owner of this unit. 
+        /// Gets the current movement speed of the unit. 
         /// </summary>
-        public Player Owner { get; private set; }
+        public double MoveSpeed { get; protected internal set; }
+
+        #endregion
+
 
 
         #region Subsystems
@@ -176,9 +197,9 @@ namespace Shanism.Engine.Entities
         internal readonly AbilitySystem abilities;
         internal readonly MovementSystem movement;
         internal readonly RangeSystem range;
-        internal readonly VisionSystem vision;
         readonly InventorySystem inventory;
         readonly BuffSystem buffs;
+        readonly VisionSystem vision;
         readonly DecaySystem decay;
         readonly OrderSystem orders;
         readonly BehaviourSystem behaviour;
@@ -225,10 +246,12 @@ namespace Shanism.Engine.Entities
             get { return ManaPercentage * MaxMana; }
             set
             {
-                if (MaxMana > 0)
-                    ManaPercentage = value / MaxMana;
-                else
+                if (value < 0)
+                    ManaPercentage = 0;
+                else if (value > MaxMana)
                     ManaPercentage = 1;
+                else
+                    ManaPercentage = value / MaxMana;
             }
         }
 
@@ -332,9 +355,7 @@ namespace Shanism.Engine.Entities
             {
                 //update generic subsystems
                 foreach (var sys in Systems)
-                {
                     UnitSystemPerfCounter.RunAndLog(sys.GetType().Name, sys.Update, msElapsed);
-                }
             }
 
             base.Update(msElapsed);

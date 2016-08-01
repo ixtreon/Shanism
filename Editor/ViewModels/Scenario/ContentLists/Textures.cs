@@ -130,7 +130,7 @@ namespace Shanism.Editor.ViewModels
                 using (var stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
                     return (Bitmap)Image.FromStream(stream);
             }
-            catch (Exception e)
+            catch
             {
                 return null;
             }

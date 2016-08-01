@@ -41,7 +41,7 @@ namespace Shanism.Engine.Objects.Buffs
         /// <summary>
         /// Gets or sets the name of the buff. 
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the raw description of the buff. 

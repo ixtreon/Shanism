@@ -143,7 +143,7 @@ namespace Shanism.Engine.Systems
             return false;
         }
 
-        public void Update(int msElapsed)
+        public override void Update(int msElapsed)
         {
             // update items, inventory?
         }

@@ -14,6 +14,7 @@ using Color = Microsoft.Xna.Framework.Color;
 using GameTime = Microsoft.Xna.Framework.GameTime;
 using Shanism.Common.Interfaces.Entities;
 using Shanism.Client.Drawing;
+using Shanism.Common.Message.Client;
 
 namespace Shanism.Client
 {
@@ -22,7 +23,7 @@ namespace Shanism.Client
     /// </summary>
     class ClientEngine : IClientEngine
     {
-        public static bool ShowDebugStats = false;
+        public static bool ShowDebugStats;
 
 
         readonly string playerName;
@@ -58,6 +59,8 @@ namespace Shanism.Client
 
         bool isConnected;
 
+        public ClientState State { get; } = new ClientState();
+
 
         public event Action<IOMessage> MessageSent;
 
@@ -87,6 +90,10 @@ namespace Shanism.Client
 
             this.server = server;
 
+            //game manager
+            Game = new SystemGod(graphicsDevice, Content, server, State);
+            Game.MessageSent += sendMessage;
+
             server.MessageSent += server_MessageSent;
         }
 
@@ -107,10 +114,6 @@ namespace Shanism.Client
 
             //shaders
             shaders = new ShaderContainer(ContentManager);
-
-            //game manager
-            Game = new SystemGod(graphicsDevice, Content);
-            Game.MessageSent += sendMessage;
 
             // ??? 
             graphicsDevice.RasterizerState = new RasterizerState
@@ -304,7 +307,7 @@ namespace Shanism.Client
                 $"UI Hover: {Control.HoverControl.GetType().Name}",
                 $"UI Focus: {Control.FocusControl?.GetType().Name }",
 
-                server.GetPerfData(),
+                server.GetDebugString(),
             });
         }
 

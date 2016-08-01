@@ -179,8 +179,7 @@ namespace Shanism.Engine.Objects.Behaviours
                 && CurrentBehaviour == null
                 && ReturnPosition.DistanceTo(Owner.Position) > 2 * FreeReturnBehaviour.MaxDistance)
             {
-                ForceReturnBehaviour.OriginPosition =
-                FreeReturnBehaviour.OriginPosition = Owner.Position;
+                ReturnPosition = Owner.Position;
             }
 
 

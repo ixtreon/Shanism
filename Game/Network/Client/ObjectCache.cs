@@ -13,65 +13,24 @@ using Shanism.Common.Message.Server;
 using Shanism.Common.Serialization;
 using System.IO;
 using Shanism.Common.Interfaces.Objects;
+using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Network.Client
 {
     /// <summary>
     /// Holds all GameObjects sent by the server and performs RangeQueries for the client. 
     /// </summary>
-    class ObjectCache : IObjectCache
+    class ObjectCache
     {
-        readonly NetworkSerializer serializer = new NetworkSerializer();
-
+        //grows to infinity...
         readonly Dictionary<uint, ObjectStub> _objectCache = new Dictionary<uint, ObjectStub>();
 
-        readonly HashSet<uint> _unitsSeen = new HashSet<uint>();
+        public HashSet<EntityStub> VisibleEntities { get; } = new HashSet<EntityStub>();
 
-
-        public IGameObject SeeObject(PlayerStatusMessage msg)
+        internal void ReadServerFrame(ClientSerializer serializer, GameFrameMessage msg)
         {
-            return getOrAdd(msg.HeroId, ObjectType.Hero);
+            VisibleEntities.Clear();
+            serializer.ReadServerFrame(msg, _objectCache, VisibleEntities);
         }
-
-        IGameObject getOrAdd(uint objId, ObjectType objType)
-        {
-            ObjectStub obj;
-            if (!TryGetValue(objId, out obj))
-            {
-                obj = serializer.Create(objId, objType);
-                Add(objId, obj);
-            }
-
-            _unitsSeen.Add(obj.Id);
-
-            return obj;
-        }
-
-        public IGameObject SeeObject(ObjectSeenMessage msg)
-        {
-            if (msg.ObjectType > ObjectType.Hero)
-                throw new ArgumentException(nameof(msg), $"Did not expect to \"see\" a {msg.ObjectType}... ");
-
-            //get or create the object in the cache
-            return getOrAdd(msg.ObjectId, msg.ObjectType);
-        }
-
-        public bool TryGetValue(uint id, out ObjectStub obj)
-            => _objectCache.TryGetValue(id, out obj);
-
-        public void Add(uint id, ObjectStub obj)
-            => _objectCache.Add(id, obj);
-
-
-        public bool UnseeObject(ObjectUnseenMessage msg)
-        {
-            return _unitsSeen.Remove(msg.ObjectId);
-        }
-
-        internal void UpdateGame(GameFrameMessage msg)
-        {
-            serializer.ReadObjectStream(this, msg);
-        }
-
     }
 }

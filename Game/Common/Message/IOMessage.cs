@@ -22,20 +22,16 @@ namespace Shanism.Common.Message
     //client
     [ProtoInclude((int)MessageType.HandshakeInit, typeof(HandshakeInitMessage))]
     [ProtoInclude((int)MessageType.MapRequest, typeof(MapRequestMessage))]
-    [ProtoInclude((int)MessageType.Action, typeof(ActionMessage))]
-    [ProtoInclude((int)MessageType.MoveUpdate, typeof(MoveMessage))]
+    [ProtoInclude((int)MessageType.ClientChat, typeof(Client.ChatMessage))]
 
     //server
     [ProtoInclude((int)MessageType.HandshakeReply, typeof(HandshakeReplyMessage))]
     [ProtoInclude((int)MessageType.PlayerStatusUpdate, typeof(PlayerStatusMessage))]
     [ProtoInclude((int)MessageType.MapReply, typeof(MapDataMessage))]
-    [ProtoInclude((int)MessageType.ObjectSeen, typeof(ObjectSeenMessage))]
-    [ProtoInclude((int)MessageType.ObjectUnseen, typeof(ObjectUnseenMessage))]
+    [ProtoInclude((int)MessageType.ServerChat, typeof(Server.ChatMessage))]
     [ProtoInclude((int)MessageType.DamageEvent, typeof(DamageEventMessage))]
 
     //common?
-    [ProtoInclude((int)MessageType.ServerChat, typeof(Server.ChatMessage))]
-    [ProtoInclude((int)MessageType.ClientChat, typeof(Client.ChatMessage))]
 
     //network
     [ProtoInclude((int)MessageType.GameFrame, typeof(GameFrameMessage))]

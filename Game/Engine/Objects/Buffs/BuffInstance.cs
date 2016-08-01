@@ -187,12 +187,6 @@ namespace Shanism.Engine.Objects.Buffs
 
         }
 
-        internal void Apply()
-        {
-            Prototype.OnApplied(this);
-        }
-
-
         internal override void Update(int msElapsed)
         {
             if (Prototype.IsTimed)

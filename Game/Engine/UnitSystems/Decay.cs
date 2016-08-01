@@ -9,7 +9,7 @@ namespace Shanism.Engine.Systems
 {
     class DecaySystem : UnitSystem
     {
-        public const int DefaultDecayPeriod = 1000;
+        public const int DefaultDecayPeriod = 15000;
 
         public int DecayPeriod { get; set; } = DefaultDecayPeriod;
 

@@ -15,7 +15,7 @@ namespace Shanism.Common.Message.Server
         public override MessageType Type => MessageType.PlayerStatusUpdate;
 
         [ProtoMember(1)]
-        public readonly uint HeroId = 0;
+        public readonly uint HeroId;
 
 
         PlayerStatusMessage() { }

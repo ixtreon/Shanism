@@ -30,7 +30,7 @@ namespace Shanism.Engine.GameSystems.Maps
         }
 
         readonly Vector center, range;
-        readonly double minRange;
+        readonly double minimumRange;
         readonly bool canSplit;
         readonly List<Node> leafNodes = new List<Node>();
 
@@ -39,17 +39,17 @@ namespace Shanism.Engine.GameSystems.Maps
         QuadTree<T> botLeft, botRight, topLeft, topRight;
 
 
-        public QuadTree(Vector center, Vector range, double minRange = DefaultMinimumRange)
+        public QuadTree(Vector center, Vector range, double minimumRange = DefaultMinimumRange)
         {
             if (range.X <= 0 || range.Y <= 0)
                 throw new ArgumentOutOfRangeException(nameof(range));
-            if (minRange < 0)
-                throw new ArgumentOutOfRangeException(nameof(minRange));
+            if (minimumRange < 0)
+                throw new ArgumentOutOfRangeException(nameof(minimumRange));
 
             this.center = center;
             this.range = range;
-            this.minRange = minRange;
-            this.canSplit = (range.X > minRange * 2) && (range.Y > minRange * 2);
+            this.minimumRange = minimumRange;
+            this.canSplit = (range.X > minimumRange * 2) && (range.Y > minimumRange * 2);
         }
 
         public RectangleF Bounds => new RectangleF(center - range, range * 2);
@@ -281,17 +281,14 @@ namespace Shanism.Engine.GameSystems.Maps
                     return topRight;
             }
         }
-        bool hasBranches = false;
+
         void initBranches()
         {
-            //if (hasBranches) return;
-            //hasBranches = true;
-
             var nr = range / 2;
-            botLeft = new QuadTree<T>(center + new Vector(-nr.X, -nr.Y), nr, minRange);
-            topLeft = new QuadTree<T>(center + new Vector(-nr.X, nr.Y), nr, minRange);
-            botRight = new QuadTree<T>(center + new Vector(nr.X, -nr.Y), nr, minRange);
-            topRight = new QuadTree<T>(center + new Vector(nr.X, nr.Y), nr, minRange);
+            botLeft = new QuadTree<T>(center + new Vector(-nr.X, -nr.Y), nr, minimumRange);
+            topLeft = new QuadTree<T>(center + new Vector(-nr.X, nr.Y), nr, minimumRange);
+            botRight = new QuadTree<T>(center + new Vector(nr.X, -nr.Y), nr, minimumRange);
+            topRight = new QuadTree<T>(center + new Vector(nr.X, nr.Y), nr, minimumRange);
         }
 
         IEnumerable<Node> getNodes()

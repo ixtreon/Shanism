@@ -3,7 +3,6 @@ using Shanism.Common;
 using Shanism.Common.Serialization;
 using Shanism.Common.StubObjects;
 using Shanism.Engine.Entities;
-using Shanism.Engine.Serialization;
 using Shanism.Network.Client;
 using System.IO;
 using System.Linq;

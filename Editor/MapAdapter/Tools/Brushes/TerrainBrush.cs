@@ -26,8 +26,6 @@ namespace Shanism.Editor.MapAdapter
 
         Point lastBrushPlaced = new Point(int.MaxValue);
 
-        bool isPlacing;
-
         public TerrainBrush(IEditorEngine engine, TerrainType tty, int sz, bool isCircle)
             : base(engine)
         {

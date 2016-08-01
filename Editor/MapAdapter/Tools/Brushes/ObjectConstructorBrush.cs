@@ -71,7 +71,6 @@ namespace Shanism.Editor.MapAdapter
             //add to client engine
             @object.Position = lastPlacedPos = inGamePos;
             Engine.AddObject(@object);
-            var msg = new ObjectSeenMessage(@object);
 
             //add to scenario config
             var oc = constructor.Clone();
@@ -80,8 +79,7 @@ namespace Shanism.Editor.MapAdapter
 
             //create a fresh instance of that object constructor
             recreateObject();
-
-            return msg;
+            return null;
         }
     }
 }

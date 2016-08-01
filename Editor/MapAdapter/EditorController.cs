@@ -26,12 +26,38 @@ namespace Shanism.Editor.MapAdapter
     class EditorController : IReceptor, IEditorEngine
     {
 
+
+        readonly EditorControl Control;
+
+        readonly SelectionTool selectionTool;
+
+
+        readonly HashSet<Entity> _startupObjects = new HashSet<Entity>();
+
+        readonly HashSet<IEntity> visibleObjects = new HashSet<IEntity>();
+        /// <summary>
+        /// The unit that is always at the center of the screen. 
+        /// </summary>
+        readonly HeroStub God;
+
+
+        public uint Id { get; } = 0;
+
+        public string Name { get; } = "ShanoEdit";
+
+
+        public IReadOnlyCollection<IEntity> VisibleEntities => visibleObjects;
+
+
+        public ScenarioViewModel ScenarioView { get; private set; }
+
+
         Vector inGameWindowSize = Constants.Client.WindowSize;
 
         /// <summary>
         /// Whether the map is currently being dragged around
         /// </summary>
-        bool isPanningMap = false;
+        bool isPanningMap;
 
         /// <summary>
         /// The in-game point where panning started. 
@@ -44,19 +70,6 @@ namespace Shanism.Editor.MapAdapter
 
         ObjectCreator Creator;
 
-        readonly HashSet<Entity> _startupObjects = new HashSet<Entity>();
-
-        readonly EditorControl Control;
-
-        readonly SelectionTool selectionTool;
-
-        /// <summary>
-        /// The unit that is always at the center of the screen. 
-        /// </summary>
-        readonly HeroStub God;
-
-        public ScenarioViewModel ScenarioView { get; private set; }
-
 
         public event Action MapChanged;
 
@@ -67,9 +80,11 @@ namespace Shanism.Editor.MapAdapter
 
         MapConfig map => config.Map;
 
-        public MapTool CurrentTool => currentTool;
+        MapTool CurrentTool => currentTool;
 
         public IEnumerable<Entity> StartupObjects => _startupObjects;
+
+
 
         public event Action<IEnumerable<Entity>> SelectionChanged
         {
@@ -83,8 +98,7 @@ namespace Shanism.Editor.MapAdapter
 
             setTool(selectionTool);
 
-
-            God = new HeroStub { Id = 100 };
+            God = new HeroStub { Id = 1 };
 
             Control = c;
             Control.Resize += updateClientSize;
@@ -101,6 +115,7 @@ namespace Shanism.Editor.MapAdapter
 
         public void LoadScenario(ScenarioViewModel sc)
         {
+
             ScenarioView = sc;
 
             //Start the client
@@ -109,37 +124,28 @@ namespace Shanism.Editor.MapAdapter
             //send the scenario datas
             var scData = config.SaveToBytes();
             var contentData = config.ZipContent();
-            IOMessage msg = new HandshakeReplyMessage(true, scData, contentData);
-            MessageSent(msg);
+            MessageSent(new HandshakeReplyMessage(true, Id, scData, contentData));
 
             //objectconstr/creator
             Creator = new ObjectCreator(ScenarioView.Scenario);
 
-            // Create God aka the camera
+            // Reset the entities, create god (aka the camera)
+            visibleObjects.Clear();
             God.Position = sc.Scenario.Config.Map.Size / 2;
-
-            //send obj seen
-            msg = new ObjectSeenMessage(God);
-            MessageSent(msg);
-
-            //send obj owned
-            msg = new PlayerStatusMessage(God.Id);
-            MessageSent(msg);
+            visibleObjects.Add(God);
+            MessageSent(new PlayerStatusMessage(God.Id));
 
             //resend map
             resendMap();
 
-            //resend units
-            foreach (var u in _startupObjects.ToList())
-                RemoveObject(u);
-
-            var ocs = ScenarioView.Scenario.Config.Map.Objects.ToList();
-
-            foreach (var oc in ocs)   //LMAOOOO
+            //recreate startup objects
+            _startupObjects.Clear();
+            var ocs = ScenarioView.Scenario.Config.Map.Objects.ToList();    //LMAOOOO
+            foreach (var oc in ocs)   
             {
                 var o = CreateObject(oc);
-                if (o != null)
-                    AddObject(o);
+                if (o != null && _startupObjects.Add(o))
+                    visibleObjects.Add(o);
                 else
                     ScenarioView.Scenario.Config.Map.Objects.Remove(oc);
             }
@@ -163,21 +169,24 @@ namespace Shanism.Editor.MapAdapter
         /// Adds the given object to the <see cref="_startupObjects"/> list
         /// and sends an <see cref="ObjectSeenMessage"/> message to the game client. 
         /// </summary>
-        public bool AddObject(Entity o)
+        public bool AddObject(Entity e)
         {
-            if (_startupObjects.Add(o))
+            if (_startupObjects.Add(e))
             {
-                onMessageSent(new ObjectSeenMessage(o));
+                visibleObjects.Add(e);
+                MapChanged?.Invoke();
                 return true;
             }
+
             return false;
         }
 
-        public bool RemoveObject(Entity o)
+        public bool RemoveObject(Entity e)
         {
-            if (_startupObjects.Remove(o))
+            if (_startupObjects.Remove(e))
             {
-                onMessageSent(new ObjectUnseenMessage(o.Id, true));
+                visibleObjects.Remove(e);
+                MapChanged?.Invoke();
                 return true;
             }
 
@@ -276,7 +285,7 @@ namespace Shanism.Editor.MapAdapter
             Keyboard.Update();
         }
 
-        public string GetPerfData()
+        public string GetDebugString()
         {
             return "All is OK!";
         }

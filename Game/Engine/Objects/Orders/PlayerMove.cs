@@ -10,7 +10,7 @@ using Shanism.Engine.Entities;
 namespace Shanism.Engine.Systems.Orders
 {
     /// <summary>
-    /// An order that instructs the given unit to follow a <see cref="MovementState"/>. 
+    /// An order that instructs the given unit to go to a target location.
     /// </summary>
     class PlayerMoveOrder : IMoveOrder
     {

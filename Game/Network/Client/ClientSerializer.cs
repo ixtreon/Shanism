@@ -1,28 +1,33 @@
-﻿using Shanism.Common;
-using Shanism.Common.Game;
-using Shanism.Common.Interfaces.Objects;
+﻿using Shanism.Common.Game;
 using Shanism.Common.Message.Network;
 using Shanism.Common.StubObjects;
 using Shanism.Common.Serialization;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using Shanism.Common.Interfaces.Entities;
+using System;
+using Shanism.Common.Message.Client;
 
 namespace Shanism.Network.Client
 {
-    public class NetworkSerializer
+    public class ClientSerializer
     {
-        GameSerializer serializer = new GameSerializer();
+        readonly GameSerializer serializer = new GameSerializer();
 
-        public ObjectStub Create(uint id, ObjectType ty)
-            => serializer.Create(new ObjectHeader { Id = id, Type = ty });
-
-        public void ReadObjectStream(IObjectCache objCache, GameFrameMessage msg)
+        public GameFrameMessage WriteClientFrame(ClientState state)
         {
-            var l = new List<ObjectStub>();
+            using (var ms = new MemoryStream())
+            {
+                ProtoBuf.Serializer.Serialize(ms, state);
 
+                var bytes = ms.ToArray();
+                return new GameFrameMessage(bytes);
+            }
+        }
+
+        public void ReadServerFrame(GameFrameMessage msg, 
+            IDictionary<uint, ObjectStub> objCache, ICollection<EntityStub> visibleObjects)
+        {
             using (var ms = new MemoryStream(msg.Data))
             using (var r = new BinaryReader(ms))
             {
@@ -46,36 +51,15 @@ namespace Shanism.Network.Client
 
                     //save to update list
                     if (obj is EntityStub)
-                        l.Add(obj);
+                        visibleObjects.Add((EntityStub)obj);
                 }
                 if (ms.Length != ms.Position)
                     Log.Default.Warning("ServerFrame stream was longer than expected!");
             }
-
-            foreach (var obj in l)
-                UpdateObjectIds(objCache, obj);
         }
 
-        public void UpdateObjectIds(IObjectCache cache, IGameObject obj)
-        {
-            switch (obj.ObjectType)
-            {
-                case ObjectType.Hero:
-                    var h = (HeroStub)obj;
+        public ObjectStub Create(ObjectType objType, uint objId)
+            => serializer.Create(objType, objId);
 
-
-                    goto case ObjectType.Unit;
-
-                case ObjectType.Unit:
-                    var u = (UnitStub)obj;
-
-
-                    goto case ObjectType.Doodad;
-
-                case ObjectType.Doodad:
-                case ObjectType.Effect:
-                    break;
-            }
-        }
     }
 }

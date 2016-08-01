@@ -10,11 +10,10 @@ using Shanism.Common.StubObjects;
 
 namespace Shanism.Common.Serialization
 {
-    class EntitySerializer : ObjectSerializer
+    class EntitySerializer : ISerializer
     {
         public override void Write(BinaryWriter w, IGameObject obj)
         {
-            base.Write(w, obj);
             var e = (IEntity)obj;
 
             w.Write(e.Name ?? string.Empty);
@@ -32,7 +31,6 @@ namespace Shanism.Common.Serialization
 
         public override void Read(BinaryReader r, IGameObject obj)
         {
-            base.Read(r, obj);
             var e = (EntityStub)obj;
 
             e.Name = r.ReadString();

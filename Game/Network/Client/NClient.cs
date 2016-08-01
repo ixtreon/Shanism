@@ -22,17 +22,22 @@ namespace Shanism.Network.Client
     /// </summary>
     public class NClient : NPeer, IReceptor
     {
-        public readonly string PlayerName;
+        public uint Id { get; private set; }
+
+        public string Name { get; }
+
 
         readonly ObjectCache objects = new ObjectCache();
 
+        readonly ClientSerializer serializer = new ClientSerializer();
 
         bool isConnected;
-
 
         public IHero MainHero { get; private set; }
 
         public IShanoClient GameClient { get; private set; }
+
+        public IReadOnlyCollection<IEntity> VisibleEntities => objects.VisibleEntities;
 
         public event Action<IOMessage> MessageSent;
 
@@ -49,7 +54,7 @@ namespace Shanism.Network.Client
         public NClient(string hostAddress, string name)
             : base(new NetClient(new NetPeerConfiguration(AppIdentifier)))
         {
-            PlayerName = name;
+            Name = name;
 
             //initiate a connection
             var conn = NetClient.Connect(hostAddress, NetworkPort);
@@ -59,7 +64,7 @@ namespace Shanism.Network.Client
         {
             this.GameClient = client;
 
-            //event handling lol
+            //beam events thru the network
             client.MessageSent += SendMessage;
         }
 
@@ -69,54 +74,47 @@ namespace Shanism.Network.Client
             isConnected = true;
 
             //send a handshake init to the server
-            // no matter if the client requested it or not, lel
-            var ioMsg = new HandshakeInitMessage(PlayerName);
+            var ioMsg = new HandshakeInitMessage(Name);
             SendMessage(ioMsg);
         }
 
-        //do stuff when the link drops. (forcefully or not)
         internal override void OnDisconnected(NetConnection conn)
         {
             isConnected = false;
+
+            //do stuff when the link drops (whatever the reason)
+
             Log.Default.Info("Disconnected");
         }
 
-
+        //got a message from the server
         internal override void HandleDataMessage(NetIncomingMessage msg)
         {
+            //parse it as an IOMessage
             var ioMsg = msg.ToIOMessage();
-
             if (ioMsg == null)
             {
-                Log.Default.Warning($"Received a faulty message of length {msg.LengthBytes}. ");
+                Log.Default.Warning($"Received a faulty message of length {msg.LengthBytes}.");
                 return;
             }
 
-
             switch (ioMsg.Type)
             {
-
-                case MessageType.ObjectUnseen:
-                    objects.UnseeObject((ObjectUnseenMessage)ioMsg);
-
-                    MessageSent(ioMsg);
-                    break;
-
-                case MessageType.ObjectSeen:
-                    var obj = objects.SeeObject((ObjectSeenMessage)ioMsg) as IEntity;
-
-                    if (obj != null)
-                        MessageSent(new ObjectSeenMessage(obj));
-                    break;
-
+                //a server game frame
                 case MessageType.GameFrame:
-                    objects.UpdateGame((GameFrameMessage)ioMsg);
+                    objects.ReadServerFrame(serializer, (GameFrameMessage)ioMsg);
                     break;
+
+                //grab the player id from a handshake reply message
+                case MessageType.HandshakeReply:
+                    Id = ((HandshakeReplyMessage)ioMsg).PlayerId;
+
+                    goto case MessageType.PlayerStatusUpdate;
 
                 //relay all other messages to the IClient
-                case MessageType.HandshakeReply:
                 case MessageType.PlayerStatusUpdate:
                 case MessageType.MapReply:
+                    Log.Default.Info($"Received a {ioMsg.Type}. ");
                     MessageSent(ioMsg);
                     break;
 
@@ -124,9 +122,6 @@ namespace Shanism.Network.Client
                     Log.Default.Warning($"Unrecognized message type: {ioMsg.Type}");
                     return;
             }
-
-            if (ioMsg.Type != MessageType.GameFrame)
-                Log.Default.Info($"Received a {ioMsg.Type}. ");
         }
 
         void SendMessage(IOMessage ioMsg)
@@ -151,10 +146,14 @@ namespace Shanism.Network.Client
 
         public void UpdateServer(int msElapsed)
         {
+            //send client frame
+            var msg = serializer.WriteClientFrame(GameClient.State);
+            SendMessage(msg, NetDeliveryMethod.UnreliableSequenced);
+
             Update(msElapsed);
         }
 
-        public string GetPerfData()
+        public string GetDebugString()
         {
             return string.Empty;
         }

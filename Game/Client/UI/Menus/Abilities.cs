@@ -20,7 +20,7 @@ namespace Shanism.Client.UI
 
         public IHero Target { get; set; }
 
-        int _currentPage = 0;
+        int _currentPage;
 
         SortedSet<SpellButton> spellButtons = new SortedSet<SpellButton>(
             new GenericComparer<SpellButton>((x, y) => string.Compare(x.Ability.Name, y.Ability.Name, StringComparison.Ordinal)));

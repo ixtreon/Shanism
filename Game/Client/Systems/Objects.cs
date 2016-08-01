@@ -23,8 +23,9 @@ namespace Shanism.Client.Systems
 
         readonly AssetList content;
 
-        readonly Dictionary<uint, EntitySprite> unitSpriteMapping = new Dictionary<uint, EntitySprite>();
+        readonly Dictionary<uint, EntitySprite> unitSpriteDict = new Dictionary<uint, EntitySprite>();
 
+        readonly HashSet<uint> visibleUnits = new HashSet<uint>();
 
 
         uint mainHeroGuid;
@@ -35,11 +36,6 @@ namespace Shanism.Client.Systems
         SpriteBatch objectBatch;
         Matrix transformMatrix;
 
-
-        /// <summary>
-        /// Gets the GUID of the main hero. 
-        /// </summary>
-        public uint MainHeroGuid => mainHeroGuid;
 
 
         /// <summary>
@@ -55,7 +51,6 @@ namespace Shanism.Client.Systems
 
         public EntitySprite HoverSprite => hoverSprite;
 
-        public IEnumerable<IEntity> Entities => unitSpriteMapping.Select(kvp => kvp.Value.Entity);
 
         public event Action<uint> MainHeroChanged;
 
@@ -81,25 +76,56 @@ namespace Shanism.Client.Systems
             //update all sprites + hover guy
             var mousePos = MouseInfo.InGamePosition;
 
-            hoverSprite = null;
-            foreach (var kvp in unitSpriteMapping)
+            foreach (var kvp in unitSpriteDict)
+                kvp.Value.RemoveFlag = true;
+
+            foreach (var e in Server.VisibleEntities)
             {
-                var s = kvp.Value;
-                var e = s.Entity;
+                EntitySprite sprite;
+                if (!unitSpriteDict.TryGetValue(e.Id, out sprite))
+                {
+                    switch (e.ObjectType)
+                    {
+                        case ObjectType.Hero:
+                        case ObjectType.Unit:
+                            sprite = new UnitSprite(content, (IUnit)e);
+                            break;
 
-                s.Update(msElapsed);
+                        case ObjectType.Doodad:
+                        case ObjectType.Effect:
+                            sprite = new EntitySprite(content, e);
+                            break;
 
-                //update hover sprite
-                if (Vector.Abs(mousePos - e.Position) < e.Scale / 2)
-                    if (hoverSprite == null || s.DrawDepth < HoverSprite.DrawDepth)
-                        hoverSprite = s;
+                        default:
+                            throw new Exception("Missing switch case!");
+                    }
+
+                    unitSpriteDict[e.Id] = sprite;
+                }
+
+                sprite.Update(msElapsed);
+                sprite.RemoveFlag = false;
             }
+
+            hoverSprite = null;
+            foreach (var e in Server.VisibleEntities)
+                if (Vector.Abs(mousePos - e.Position) < e.Scale / 2)
+                {
+                    hoverSprite = unitSpriteDict[e.Id];
+                    break;
+                }
+
+                    //remove old sprites
+                    const int CleanupFactor = 10;
+            if (unitSpriteDict.Count > CleanupFactor * Server.VisibleEntities.Count)
+                foreach (var kvp in unitSpriteDict.Where(kvp => kvp.Value.RemoveFlag).ToList())
+                    unitSpriteDict.Remove(kvp.Key);
 
             //re-set mainhero
             if (mainSprite?.Entity.Id != mainHeroGuid)
             {
                 EntitySprite sprite;
-                if (unitSpriteMapping.TryGetValue(mainHeroGuid, out sprite))
+                if (unitSpriteDict.TryGetValue(mainHeroGuid, out sprite))
                     mainSprite = sprite as UnitSprite;
 
             }
@@ -116,8 +142,9 @@ namespace Shanism.Client.Systems
                 null, transformMatrix);
 
             //draw sprites at units' in-game positions
-            foreach (var kvp in unitSpriteMapping)
-                kvp.Value.Draw(objectBatch);
+            foreach (var kvp in unitSpriteDict)
+                if(!kvp.Value.RemoveFlag)
+                    kvp.Value.Draw(objectBatch);
 
             objectBatch.End();
         }
@@ -126,14 +153,6 @@ namespace Shanism.Client.Systems
         {
             switch (ioMsg.Type)
             {
-                case MessageType.ObjectSeen:
-                    AddEntity(((ObjectSeenMessage)ioMsg).Object);
-                    break;
-
-                case MessageType.ObjectUnseen:
-                    RemoveObject(((ObjectUnseenMessage)ioMsg).ObjectId);
-                    break;
-
                 case MessageType.PlayerStatusUpdate:
                     SetMainHero(((PlayerStatusMessage)ioMsg).HeroId);
                     break;
@@ -145,36 +164,18 @@ namespace Shanism.Client.Systems
         /// Adds the given game object to the index. 
         /// </summary>
         /// <param name="o"></param>
-        public void AddEntity(IEntity o)
+        void AddEntity(IEntity o)
         {
             EntitySprite sprite;
-            if (!unitSpriteMapping.TryGetValue(o.Id, out sprite))
+            if (!unitSpriteDict.TryGetValue(o.Id, out sprite))
             {
-                //get the control constructor for this type of game object. 
-                switch (o.ObjectType)
-                {
-                    case ObjectType.Hero:
-                    case ObjectType.Unit:
-                        sprite = new UnitSprite(content, (IUnit)o);
-                        break;
-
-                    case ObjectType.Doodad:
-                    case ObjectType.Effect:
-                        sprite = new EntitySprite(content, o);
-                        break;
-
-                    default:
-                        throw new Exception("Missing switch case!");
-                }
-
-                unitSpriteMapping[o.Id] = sprite;
             }
         }
 
         public IEntity TryGet(uint guid)
         {
             EntitySprite sprite;
-            if (unitSpriteMapping.TryGetValue(guid, out sprite))
+            if (unitSpriteDict.TryGetValue(guid, out sprite))
                 return sprite.Entity;
 
             return null;
@@ -184,9 +185,9 @@ namespace Shanism.Client.Systems
         /// Removes a game object by its GUID. 
         /// </summary>
         /// <param name="guid">The GUID of the object to remove. </param>
-        public void RemoveObject(uint guid)
+        void Remove(uint guid)
         {
-            unitSpriteMapping.Remove(guid);
+            unitSpriteDict.Remove(guid);
         }
 
         /// <summary>

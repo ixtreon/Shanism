@@ -121,7 +121,7 @@ namespace Shanism.Network
             //check if the server accepts it
             var receptor = engine.AcceptClient(client);
             var accepted = (receptor != null);  //TODO: make an actual check
-            Log.Default.Info($"[{peerConnection.RemoteEndPoint.Address}] Requested handshake. Accept? {accepted}");
+            Log.Default.Info($"Player {msg.PlayerName} ({peerConnection.RemoteEndPoint.Address}) wants to join. Accepted? {accepted}");
 
             //if so, add to our list, too
             if (accepted)

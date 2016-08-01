@@ -85,11 +85,8 @@ namespace Shanism.Editor.MapAdapter
                 TypeName = Object.GetType().FullName,
             });
 
-            var msg = new ObjectSeenMessage(Object);
-
             recreateObject(Object.GetType().FullName);
-
-            return msg;
+            return null;
         }
     }
 }

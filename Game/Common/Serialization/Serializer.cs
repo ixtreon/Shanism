@@ -15,7 +15,7 @@ namespace Shanism.Common.Serialization
     /// </summary>
     public class GameSerializer
     {
-        readonly ObjectSerializer[] serializers = new ObjectSerializer[16];
+        readonly ISerializer[] serializers = new ISerializer[16];
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameSerializer"/> class.
@@ -40,6 +40,9 @@ namespace Shanism.Common.Serialization
         public void Write(BinaryWriter w, IGameObject obj, ObjectType ty)
         {
             var s = serializers[(int)ty];
+
+            w.Write(obj.Id);
+            w.Write((byte)ty);
             s.Write(w, obj);
         }
 
@@ -50,7 +53,13 @@ namespace Shanism.Common.Serialization
         /// <returns>The next object's header.</returns>
         public ObjectHeader ReadHeader(BinaryReader r)
         {
-            return ObjectSerializer.ReadHeader(r);
+            var id = r.ReadUInt32();
+            var ty = (ObjectType)r.ReadByte();
+            return new ObjectHeader
+            {
+                Id = id,
+                Type = ty,
+            };
         }
 
         /// <summary>
@@ -58,11 +67,13 @@ namespace Shanism.Common.Serialization
         /// </summary>
         /// <param name="h">The header which specifies the type of game object.</param>
         /// <returns>A fresh game object compatible with the header.</returns>
-        public ObjectStub Create(ObjectHeader h)
+        public ObjectStub Create(ObjectHeader h) => Create(h.Type, h.Id);
+
+        public ObjectStub Create(ObjectType type, uint id)
         {
-            var s = serializers[(int)h.Type];
-            var o = s.Create(h.Id);
-            o.ObjectType = h.Type;
+            var s = serializers[(int)type];
+            var o = s.Create(id);
+            o.ObjectType = type;
             return o;
         }
 

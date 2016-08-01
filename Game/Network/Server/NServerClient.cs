@@ -4,6 +4,8 @@ using Shanism.Common.Message.Server;
 using Lidgren.Network;
 using System;
 using Shanism.Common.Util;
+using Shanism.Common.Message.Client;
+using Shanism.Common.Message.Network;
 
 namespace Shanism.Network.Server
 {
@@ -16,6 +18,8 @@ namespace Shanism.Network.Server
     /// </summary>
     public class NServerClient : IShanoClient
     {
+        readonly EngineSerializer serializer = new EngineSerializer();
+
 
         /// <summary>
         /// Gets the underlying NetConnection. 
@@ -32,13 +36,14 @@ namespace Shanism.Network.Server
         /// <summary>
         /// The receptor serving this connection
         /// </summary>
-        INetReceptor gameReceptor;
+        IReceptor gameReceptor;
 
         /// <summary>
         /// Gets the name of the client. 
         /// </summary>
         public string Name { get; }
 
+        public ClientState State { get; private set; }
 
         public event Action<IOMessage> MessageSent;
 
@@ -49,7 +54,8 @@ namespace Shanism.Network.Server
         public bool IsPlaying => gameReceptor != null;
 
 
-        public NServerClient(NetServer serv, NetConnection conn, string name)
+        public NServerClient(NetServer serv, 
+            NetConnection conn, string name)
         {
             Server = serv;
             ConnectionHandle = conn;
@@ -62,7 +68,7 @@ namespace Shanism.Network.Server
         /// <summary>
         /// Hooks up the net client to the server receptor's events.
         /// </summary>
-        public void Initialize(INetReceptor receptor)
+        public void Initialize(IReceptor receptor)
         {
             gameReceptor = receptor;
 
@@ -79,8 +85,8 @@ namespace Shanism.Network.Server
                 return;
             }
 
-            //send gameframe
-            var msg = gameReceptor.GetCurrentFrame();
+            //send a GameFrame
+            var msg = serializer.WriteServerFrame(gameReceptor);
             sendMessage(msg, NetDeliveryMethod.Unreliable);
         }
 
@@ -95,17 +101,7 @@ namespace Shanism.Network.Server
                 case MessageType.HandshakeReply:
                 case MessageType.PlayerStatusUpdate:
                 case MessageType.MapReply:
-                case MessageType.ObjectUnseen:
                     sendMessage(msg);
-                    break;
-
-                // special handling for objectseen which contains 
-                // a direct reference to a gameobject
-                case MessageType.ObjectSeen:
-                    //TODO: send both objectdata and objectseen
-                    var seenMsg = (ObjectSeenMessage)msg;
-
-                    sendMessage(seenMsg);
                     break;
             }
             sendMessage(msg);
@@ -115,8 +111,17 @@ namespace Shanism.Network.Server
 
         internal void handleClientMessage(IOMessage msg)
         {
-            Log.Default.Info($"{StringId} Received a {msg.Type}");
-            MessageSent?.Invoke(msg);
+            switch (msg.Type)
+            {
+                case MessageType.GameFrame:
+                    serializer.TryReadClientFrame((GameFrameMessage)msg, State);
+                    break;
+
+                default:
+                    Log.Default.Info($"[{Id}] Received a {msg.Type}");
+                    MessageSent?.Invoke(msg);
+                    break;
+            }
         }
 
 
@@ -127,9 +132,7 @@ namespace Shanism.Network.Server
         {
             Server.SendMessage(msg.ToNetMessage(Server), ConnectionHandle, deliveryMethod);
             if(msg.Type != MessageType.GameFrame)
-                Log.Default.Info($"{StringId} Sent a {msg.Type}");
+                Log.Default.Info($"[{Id}] Sent a {msg.Type}");
         }
-
-        string StringId => $"[#{Id}]";
     }
 }

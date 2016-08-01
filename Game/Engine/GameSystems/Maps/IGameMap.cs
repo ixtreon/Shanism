@@ -44,7 +44,6 @@ namespace Shanism.Engine.Maps
         /// <summary>
         /// Returns all entities with locations within the specified rectangle. 
         /// </summary>
-        /// <param name="rect">The rectangle to return units within. </param>
         /// <returns>All entities within the specified rectangle. </returns>
         IEnumerable<Entity> GetObjectsInRect(Vector center, Vector range);
 

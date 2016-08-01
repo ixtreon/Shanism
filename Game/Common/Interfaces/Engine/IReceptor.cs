@@ -1,7 +1,5 @@
-﻿using Shanism.Common.Message;
-using Shanism.Common.Message.Network;
-using Shanism.Common.Message.Server;
-using Shanism.Common.StubObjects;
+﻿using Shanism.Common.Interfaces.Entities;
+using Shanism.Common.Message;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +16,19 @@ namespace Shanism.Common
     public interface IReceptor
     {
         /// <summary>
+        /// Gets the unique identifier of this player.
+        /// </summary>
+        uint Id { get; }
+
+        /// <summary>
+        /// Gets the name of the player.
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
         /// The event raised whenever the server sends a message to the player. 
         /// </summary>
         event Action<IOMessage> MessageSent;
-
 
         /// <summary>
         /// Causes the underlying game server to update. 
@@ -30,8 +37,11 @@ namespace Shanism.Common
         /// <param name="msElapsed">The time elapsed since the last invocation of this method. </param>
         void UpdateServer(int msElapsed);
 
-        string GetPerfData();
+        /// <summary>
+        /// Returns a string with data useful for debugging.
+        /// </summary>
+        string GetDebugString();
 
-        //GameFrameMessage GetCurrentFrame();
+        IReadOnlyCollection<IEntity> VisibleEntities { get; }
     }
 }

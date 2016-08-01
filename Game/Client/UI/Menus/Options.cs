@@ -12,11 +12,11 @@ namespace Shanism.Client.UI.Menus
     class OptionsWindow : Window
     {
 
-        FlowPanel mainPanel;
-        Button btnAccept, btnCancel;
+        readonly FlowPanel mainPanel;
+        readonly Button btnApply;
 
-        CheckBox vSync;
-        SliderLabel renderSize;
+        readonly CheckBox vSync;
+        readonly SliderLabel renderSize;
 
 
         public OptionsWindow()
@@ -28,19 +28,19 @@ namespace Shanism.Client.UI.Menus
             TitleText = "Options";
             VisibleChanged += onVisibleChanged;
 
-            Add(btnAccept = new Button
+            Add(btnApply = new Button
             {
                 Location = Size - Button.DefaultSize - LargePadding,
                 ParentAnchor = AnchorMode.Right | AnchorMode.Bottom,
 
                 Text = "Apply",
             });
-            btnAccept.MouseUp += BtnAccept_MouseUp;
+            btnApply.MouseUp += BtnAccept_MouseUp;
 
             Add(mainPanel = new FlowPanel
             {
                 Location = new Vector(LargePadding, TitleHeight + LargePadding),
-                Size = Size - LargePadding * 2 - new Vector(0, TitleHeight + Padding + btnAccept.Size.Y),
+                Size = Size - LargePadding * 2 - new Vector(0, TitleHeight + Padding + btnApply.Size.Y),
                 ParentAnchor = AnchorMode.All,
 
                 Direction = FlowDirection.Vertical,

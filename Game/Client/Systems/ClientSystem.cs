@@ -1,4 +1,5 @@
-﻿using Shanism.Common.Message;
+﻿using Shanism.Common;
+using Shanism.Common.Message;
 using Shanism.Common.Message.Client;
 using System;
 using System.Collections.Generic;
@@ -14,18 +15,18 @@ namespace Shanism.Client.Systems
     /// </summary>
     abstract class ClientSystem
     {
-        ////to be renamed to "ClientFrame"
-        //public static MoveMessage CurrentState;
+        public IReceptor Server;
+
+        public ClientState ClientState;
 
 
         public event Action<IOMessage> MessageSent;
 
+        internal void SendMessage(IOMessage msg) => MessageSent?.Invoke(msg);
 
         public virtual void HandleMessage(IOMessage ioMsg) { }
 
         public virtual void Update(int msElapsed) { }
-
-        internal void SendMessage(IOMessage msg) => MessageSent?.Invoke(msg);
     }
 
 }

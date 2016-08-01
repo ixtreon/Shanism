@@ -6,22 +6,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shanism.Common.Message.Server;
+using System.IO;
 
 namespace Shanism.Common.Message.Network
 {
+    /// <summary>
+    /// A custom message type containing an array of bytes.
+    /// Used when beaming the client/server frames. 
+    /// </summary>
     [ProtoContract]
     public class GameFrameMessage : IOMessage
     {
+        public override MessageType Type => MessageType.GameFrame;
+
         [ProtoMember(1)]
         public readonly byte[] Data;
-
-
-        public override MessageType Type { get { return MessageType.GameFrame; } }
 
         GameFrameMessage() { }
 
         public GameFrameMessage(byte[] datas)
-            : this()
         {
             Data = datas;
         }

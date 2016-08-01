@@ -49,21 +49,10 @@ namespace Shanism.Engine.Systems.Orders
             //move the unit
             Direction = uLoc.AngleTo(TargetLocation);
             unit.movement.SetMovementState(Direction, dist);
-
-            //var potential =Vector.Zero;
-
-            //var nearbyUnits = unit.Map.GetObjectsInRange(unit.Position, 10)
-            //    .Where(u => u.HasCollision);
-
-
-            //keep on
             return true;
         }
 
-        void addForce(Vector potential, Vector pos, Vector target, double power)
-        {
-            potential += (1);
-        }
+
 
         public static bool operator ==(MoveLocation o1, MoveLocation o2)
         {

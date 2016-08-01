@@ -58,6 +58,7 @@ namespace Shanism.Client.Drawing
         double minDepth => Screen.GameBounds.Bottom;
         double depthRange => Screen.GameBounds.Height;
 
+        public bool RemoveFlag { get; set; }
 
         public EntitySprite(AssetList content, IEntity obj)
         {

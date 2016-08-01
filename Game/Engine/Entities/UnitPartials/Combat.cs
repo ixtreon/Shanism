@@ -74,11 +74,6 @@ namespace Shanism.Engine.Entities
             }
         }
 
-        double getCritMultiplier(DamageType dmgType, double roll)
-        {
-            return 1;
-        }
-
         /// <summary>
         /// Gets the experience rewarded when the unit is killed. 
         /// </summary>
@@ -148,7 +143,7 @@ namespace Shanism.Engine.Entities
                 return false;
 
             // TODO: Damage amplifiers (crit, +magic)
-            var isCrit = !flags.HasFlag(DamageFlags.NoCrit) && (Rnd.Next(0, 100) < target.CritChance);
+            // var isCrit = !flags.HasFlag(DamageFlags.NoCrit) && (Rnd.Next(0, 100) < target.CritChance);
 
 
             // raise the pre-damage event

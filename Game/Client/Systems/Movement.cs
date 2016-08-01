@@ -13,9 +13,6 @@ namespace Shanism.Client.Systems
 {
     class MoveSystem : ClientSystem
     {
-        MovementState movementState;
-
-
         public override void Update(int msElapsed)
         {
             updateMovement();
@@ -23,29 +20,26 @@ namespace Shanism.Client.Systems
 
         void updateMovement()
         {
-            var newMovementState = MovementState.Stand;
-
-            if (Control.FocusControl.IsRootControl)
+            if (!Control.FocusControl.IsRootControl)
             {
-                var dx = Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveRight)) - Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveLeft));
-                var dy = Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveDown)) - Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveUp));
-
-                if (dx != 0 || dy != 0)
-                {
-                    var keysAngle = Math.Atan2(dy, dx);
-
-                    var mouseAngle = MouseInfo.UiPosition.Angle;
-
-                    newMovementState = new MovementState(keysAngle);
-                }
+                ClientState.IsMoving = false;
+                return;
             }
 
-            if (newMovementState != movementState)
+            var dx = Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveRight)) - Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveLeft));
+            var dy = Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveDown)) - Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveUp));
+            if (dx == 0 && dy == 0)
             {
-                movementState = newMovementState;
-
-                SendMessage(new MoveMessage(newMovementState));
+                ClientState.IsMoving = false;
+                return;
             }
+
+
+            var keysAngle = Math.Atan2(dy, dx);
+            var mouseAngle = MouseInfo.UiPosition.Angle;
+
+            ClientState.IsMoving = true;
+            ClientState.MoveAngle = (float)keysAngle;
         }
     }
 }

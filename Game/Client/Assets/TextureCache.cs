@@ -81,7 +81,7 @@ namespace Shanism.Client.Drawing
         /// <returns>The texture with that name, or null if no such texture was found. </returns>
         public Texture2D TryGetIcon(string iconName)
         {
-            return textures.TryGet(normalize(TextureType.Icon.GetDirectory(iconName)));
+            return textures.TryGet(normalize($"icons/{iconName}"));
         }
     }
 }

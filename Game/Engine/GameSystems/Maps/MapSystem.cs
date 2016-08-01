@@ -21,7 +21,7 @@ namespace Shanism.Engine.Maps
         /// <summary>
         /// The minimum cell size of the QuadTree. 
         /// </summary>
-        const double TreeMinCellSize = 2;
+        const double TreeMinCellSize = 4;
 
 
         public override string SystemName => "Map";

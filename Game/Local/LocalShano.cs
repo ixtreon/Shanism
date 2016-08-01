@@ -25,13 +25,12 @@ namespace Shanism.Local
 
         readonly IClientInstance client;
 
-        readonly INetReceptor receptor;
+        readonly IReceptor receptor;
 
         /// <summary>
         /// Creates a new local game instance, putting the provided hero in the map with the specified seed. 
         /// </summary>
         /// <param name="mapSeed">The map seed. </param>
-        /// <param name="h">The hero to play with. </param>
         public LocalShano(string playerName, int mapSeed, string scenarioPath)
         {
             //create the local server and client

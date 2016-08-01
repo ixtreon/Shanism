@@ -12,7 +12,7 @@ namespace Shanism.Common
     /// A game engine as seen by the clients. 
     /// 
     /// Acts as a gateway to new players willing to join the game. 
-    /// Pairs each accepted client to a corresponding <see cref="INetReceptor"/> to play. 
+    /// Pairs each accepted client to a corresponding <see cref="IReceptor"/> to play. 
     /// </summary>
     public interface IShanoEngine
     {
@@ -21,7 +21,7 @@ namespace Shanism.Common
         /// Decides whether to accept the given client to the server. 
         /// If the client is accepted returns the network receptor to use for communication with the server. Otherwise returns null. 
         /// </summary>
-        INetReceptor AcceptClient(IShanoClient c);
+        IReceptor AcceptClient(IShanoClient c);
 
         void StartPlaying(IReceptor rec);
 

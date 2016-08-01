@@ -22,7 +22,7 @@ namespace Shanism.Engine.Objects.Abilities
     /// </summary>
     /// <seealso cref="GameObject" />
     /// <seealso cref="IAbility" />
-    public abstract class Ability : GameObject, IAbility
+    public abstract class Ability : GameObject, IAbility, IEquatable<Ability>
     {
 
 
@@ -287,7 +287,7 @@ namespace Shanism.Engine.Objects.Abilities
         }
 
 
-        bool canCast() 
+        bool canCast()
             => IsActive && CurrentCooldown <= 0 && Owner.Mana >= ManaCost;
 
         bool checkDistance(Vector tar)
@@ -309,7 +309,7 @@ namespace Shanism.Engine.Objects.Abilities
         ///   <c>true</c> if the specified <see cref="object" /> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
         public override bool Equals(object obj)
-            => (obj as Ability)?.Id.Equals(Id) ?? false;
+            => Equals(obj as Ability);
 
         /// <summary>
         /// Returns a hash code for this instance.
@@ -318,5 +318,8 @@ namespace Shanism.Engine.Objects.Abilities
         /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
         /// </returns>
         public override int GetHashCode() => (int)Id;
+
+        public bool Equals(Ability other)
+            => other?.Id == Id;
     }
 }

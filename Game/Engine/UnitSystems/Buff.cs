@@ -59,6 +59,7 @@ namespace Shanism.Engine.Systems
         {
             var newBuff = new BuffInstance(buff, caster, Owner);
             buffs.Add(newBuff);
+            buff.OnApplied(newBuff);
 
             var existingBuffs = buffs
                 .Where(oldBuff => oldBuff.Equals(newBuff))

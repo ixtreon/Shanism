@@ -48,9 +48,16 @@ namespace Shanism.Engine.Objects.Abilities
 
 
         public override bool Equals(object obj)
-            => (obj is CastingData)
-            && ((CastingData)obj).TargetLocation.Equals(TargetLocation)
-            && ((CastingData)obj).TargetEntity.Equals(TargetEntity)
-            && ((CastingData)obj).Ability.Equals(Ability);
+        {
+            var other = obj as CastingData;
+            if (other == null)
+                return false;
+
+            return obj != null
+                && Ability.Equals(other.Ability)
+                && TargetType == other.TargetType
+                && TargetLocation.Equals(other.TargetLocation)
+                && TargetEntity == other.TargetEntity;
+        }
     }
 }

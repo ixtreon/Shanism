@@ -38,8 +38,6 @@ namespace Shanism.Engine
         const int MSPF = 1000 / FPS;
 
 
-        readonly ConcurrentSet<MapChunkId> generatedChunks = new ConcurrentSet<MapChunkId>();
-
         /// <summary>
         /// A list of all receptors (human players) currently in game. 
         /// </summary>
@@ -79,7 +77,7 @@ namespace Shanism.Engine
         /// </summary>
         public double GameTime { get; private set; }
 
-        public string PerformanceData { get; private set; }
+        public string DebugString { get; private set; }
 
 
         /// <summary>
@@ -118,25 +116,27 @@ namespace Shanism.Engine
 
         public void LoadScenario(string scenarioDir, int? mapSeed = null)
         {
+            string errors;
+            if(!TryLoadScenario(scenarioDir, mapSeed ?? Rnd.Next(), out errors))
+                throw new ScenarioLoadException(scenarioDir, errors);
+        }
+
+        public bool TryLoadScenario(string scenarioDir, int mapSeed, out string errors)
+        {
             //compile the scenario
             scenarioDir = Path.GetFullPath(scenarioDir);
-            string scenarioCompileErrors;
-            var result = Scenario.Load(scenarioDir, out scenarioCompileErrors, out scenario);
+            var result = Scenario.Load(scenarioDir, out errors, out scenario);
             if (result != Scenario.ScenarioCompilationResult.Success)
-                throw new ScenarioLoadException(scenarioDir, scenarioCompileErrors);
-
+                return false;
 
             //initialize map + objects, scripts  
-            map.LoadScenario(Scenario, mapSeed ?? Rnd.Next());
+            map.LoadScenario(Scenario, mapSeed);
             scripts.LoadScenario(Scenario);
 
             //fire the OnGameStart script event
             Scripts.Run(cs => cs.OnGameStart());
-        }
-         
-        static void createStartupObjects(Scenario sc, MapSystem map)
-        {
 
+            return true;
         }
 
 
@@ -146,7 +146,7 @@ namespace Shanism.Engine
         /// Accepts the given client to the server.
         /// Returns the network receptor responsible for it. 
         /// </summary>
-        public INetReceptor AcceptClient(IShanoClient c)
+        public IReceptor AcceptClient(IShanoClient c)
         {
             var pl = new ShanoReceptor(this, c);
 
@@ -226,7 +226,7 @@ namespace Shanism.Engine
 
             if (perfResetCounter.Tick(msElapsed))
             {
-                PerformanceData = $"{GamePerfCounter.GetPerformanceData()}\n\n"
+                DebugString = $"{GamePerfCounter.GetPerformanceData()}\n\n"
                     + $"{UnitPerfCounter.GetPerformanceData()}\n\n";
 
                 UnitPerfCounter.Reset();
@@ -235,6 +235,9 @@ namespace Shanism.Engine
 
             foreach (var sys in systems)
                 GamePerfCounter.RunAndLog(sys.SystemName, sys.Update, msElapsed);
+
+            foreach (var kvp in Players)
+                kvp.Value.Update(msElapsed);
         }
 
 

@@ -35,66 +35,17 @@ namespace Shanism.Client.Systems
 
         public override void Update(int msElapsed)
         {
-
             //cast abilities if button is held
-            if (MouseInfo.RightDown)
+            IAbility ab;
+            if (MouseInfo.RightDown
+                && (ab = Interface.CurrentAbility) != null)
             {
-                ActionMessage msg;
-                if (tryCastAbility(Interface.CurrentAbility, MouseInfo.RightJustPressed, out msg))
-                    SendMessage(msg);
+                ClientState.ActionId = ab.Id;
+                ClientState.ActionTargetId = 0;        //TODO: implement 
+                ClientState.ActionTargetLoc = MouseInfo.InGamePosition;
             }
-        }
-
-
-        /// <summary>
-        /// Makes some client-side checks before generating an <see cref="ActionMessage"/>
-        /// for the activation of a given ability. 
-        /// </summary>
-        /// <param name="ab">The ab.</param>
-        /// <param name="displayErrors">if set to <c>true</c> [display errors].</param>
-        /// <param name="msg">The MSG.</param>
-        /// <returns></returns>
-        bool tryCastAbility(IAbility ab, bool displayErrors, out ActionMessage msg)
-        {
-            msg = null;
-            if (ab == null || ab.TargetType == AbilityTargetType.Passive)
-                return false;
-
-            //get target object and ground location
-            var targetGuid = Objects.MainHeroGuid;
-            var targetLoc = MouseInfo.InGamePosition;
-
-
-            //cooldown
-            if (ab.CurrentCooldown > 0)
-            {
-                if (displayErrors)
-                    Interface.FloatingText.AddLabel(targetLoc, $"{ab.CurrentCooldown / 1000.0:0.0} sec!", Color.Red, FloatingTextStyle.Top);
-                return false;
-            }
-
-            //target
-            if (ab.TargetType != AbilityTargetType.NoTarget 
-                && targetLoc.DistanceTo(Hero.Position) > ab.CastRange)
-            {
-                if (displayErrors)
-                {
-                    Interface.FloatingText.AddLabel(targetLoc, "Out of range", Color.Red, FloatingTextStyle.Top);
-                    Interface.RangeIndicator.Show(ab.CastRange);
-                }
-                return false;
-            }
-
-            //mana
-            if (Hero.Mana < ab.ManaCost)
-            {
-                if (displayErrors)
-                    Interface.FloatingText.AddLabel(targetLoc, "Not enough mana", Color.Red, FloatingTextStyle.Top);
-                return false;
-            }
-
-            msg = new ActionMessage(ab.Id, targetGuid, targetLoc);
-            return true;
+            else
+                ClientState.ActionId = 0;
         }
 
     }

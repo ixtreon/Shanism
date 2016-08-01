@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Shanism.Common.Interfaces.Entities;
 using Shanism.Client.Drawing;
+using Shanism.Common.Message.Client;
 
 namespace Shanism.Client
 {
@@ -20,6 +21,8 @@ namespace Shanism.Client
     // A top level control, contains all the client systems
     class SystemGod : Control
     {
+        readonly ClientState clientState;
+        readonly IReceptor server;
 
         readonly List<ClientSystem> systems = new List<ClientSystem>();
 
@@ -31,22 +34,16 @@ namespace Shanism.Client
         /// Lists and draws objects. 
         /// </summary>
         readonly ObjectSystem objects;
-
         Terrain terrain;
-
         Interface @interface;
-
-
         /// <summary>
         /// Listens for ability casts and informs the server. 
         /// </summary>
         ActionSystem actions;
-
         /// <summary>
         /// Listens for key presses and informs the server. 
         /// </summary>
         MoveSystem movement;
-
         /// <summary>
         /// Listens for chat messages and sends them to the chatbox
         /// </summary>
@@ -56,9 +53,12 @@ namespace Shanism.Client
         #endregion
 
 
-        public SystemGod(GraphicsDevice device, AssetList content)
+        public SystemGod(GraphicsDevice device, AssetList content, 
+            IReceptor server, ClientState clientState)
         {
+            this.server = server;
             this.device = device;
+            this.clientState = clientState;
 
             Location = Vector.Zero;
             CanFocus = true;
@@ -105,8 +105,11 @@ namespace Shanism.Client
             systems.Add(actions = new ActionSystem(@interface, objects));
 
             foreach (var sys in systems)
+            {
+                sys.Server = server;
+                sys.ClientState = clientState;
                 sys.MessageSent += (m) => MessageSent?.Invoke(m);
-
+            }
             //controls
             ClearControls();
             Add(@interface.Root);

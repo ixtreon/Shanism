@@ -8,10 +8,6 @@ namespace Shanism.Engine.Entities
 {
     partial class Unit
     {
-        /// <summary>
-        /// Gets the current movement speed of the unit. 
-        /// </summary>
-        public double MoveSpeed { get; protected internal set; }
 
         /// <summary>
         /// Gets whether this guy can walk on any terrain 

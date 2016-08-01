@@ -19,6 +19,7 @@ namespace Shanism.Client
     public interface IClientEngine : IShanoClient
     {
 
+
         TextureCache Textures { get; }
 
         /// <summary>
@@ -61,7 +62,7 @@ namespace Shanism.Client
         /// <summary>
         /// Toggles the visibility of the default UI.
         /// </summary>
-        /// <param name="visible">if set to <c>true</c> the UI gets visible.</param>
+        /// <param name="isDesignMode">if set to <c>true</c> the UI gets invisible.</param>
         void SetDesignMode(bool isDesignMode);
 
         /// <summary>

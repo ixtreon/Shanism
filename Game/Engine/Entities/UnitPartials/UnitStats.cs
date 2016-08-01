@@ -122,10 +122,10 @@ namespace Shanism.Engine.Entities
 
         static void writeInt(byte[] bytes, int offset, int intValue)
         {
-            bytes[0] = (byte)(intValue >> 24);
-            bytes[1] = (byte)(intValue >> 16);
-            bytes[2] = (byte)(intValue >> 8);
-            bytes[3] = (byte)intValue;
+            bytes[offset + 0] = (byte)(intValue >> 24);
+            bytes[offset + 1] = (byte)(intValue >> 16);
+            bytes[offset + 2] = (byte)(intValue >> 8);
+            bytes[offset + 3] = (byte)intValue;
         }
 
         static int readInt(byte[] bytes, int offset)

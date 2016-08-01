@@ -93,10 +93,35 @@ namespace Shanism.Engine
         /// <param name="msElapsed"></param>
         internal virtual void Update(int msElapsed) { }
 
-        internal async Task Run(Action act)
-        {
-            await Task.Factory.StartNew(act);
-        }
-        
+        /// <summary>
+        /// Determines whether the specified <see cref="object" /> points to an entity with the same id. 
+        /// </summary>
+        /// <param name="obj">The <see cref="object" /> to compare with this instance.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified <see cref="object" /> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
+        public override bool Equals(object obj) =>
+            (obj is Entity) && ((Entity)obj).Id == Id;
+
+
+        public static bool operator ==(GameObject a, GameObject b)
+            => a?.Id == b?.Id;
+
+        public static bool operator !=(GameObject a, GameObject b)
+            => a?.Id != b?.Id;
+
+        /// <summary>
+        /// Returns the hash code for this instance.
+        /// </summary>
+        /// <returns>A 32-bit signed integer hash code.</returns>
+        public override int GetHashCode() => Id.GetHashCode();
+
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
+        public override string ToString() => $"{ObjectType} #{Id}";
     }
 }

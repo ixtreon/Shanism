@@ -28,5 +28,8 @@ namespace Shanism.Common
         /// </summary>
         event Action<IOMessage> MessageSent;
 
+
+        ClientState State { get; }
+
     }
 }

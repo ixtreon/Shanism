@@ -5,7 +5,7 @@ using Shanism.Common.Game;
 
 namespace Shanism.Common.Serialization
 {
-    class BuffInstanceSerializer : ObjectSerializer
+    class BuffInstanceSerializer : ISerializer
     {
         public override ObjectStub Create(uint id) => new BuffInstanceStub(id);
 

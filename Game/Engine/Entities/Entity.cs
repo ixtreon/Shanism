@@ -21,8 +21,6 @@ namespace Shanism.Engine
     /// </summary>
     public abstract class Entity : GameObject, IEntity
     {
-
-
         /// <summary>
         /// The size of the *texture*. 
         /// TODO: make it a Vector. 
@@ -57,11 +55,6 @@ namespace Shanism.Engine
         }
 
         /// <summary>
-        /// Gets the orientation of the object. 
-        /// </summary>
-        public double Orientation { get; set; }
-
-        /// <summary>
         /// Gets a value indicating whether this collides with other entities on the map. 
         /// </summary>
         public abstract bool HasCollision { get; }
@@ -70,7 +63,12 @@ namespace Shanism.Engine
         /// Gets the object type of this entity.
         /// </summary>
         public abstract override ObjectType ObjectType { get; }
-        
+
+
+        /// <summary>
+        /// Gets the orientation of the object. 
+        /// </summary>
+        public double Orientation { get; set; }
 
         /// <summary>
         /// Gets or sets the custom data for this entity. 
@@ -174,38 +172,11 @@ namespace Shanism.Engine
             OnUpdate(msElapsed);
         }
 
-
         /// <summary>
         /// Override to implement custom update functionality. 
         /// </summary>
         public virtual void OnUpdate(int msElapsed) { }
 
         public virtual void OnSpawned() { }
-
-        /// <summary>
-        /// Returns the hash code for this instance.
-        /// </summary>
-        /// <returns>A 32-bit signed integer hash code.</returns>
-        public override int GetHashCode() => (int)Id;
-
-
-        /// <summary>
-        /// Determines whether the specified <see cref="object" /> points to an entity with the same id. 
-        /// </summary>
-        /// <param name="obj">The <see cref="object" /> to compare with this instance.</param>
-        /// <returns>
-        ///   <c>true</c> if the specified <see cref="object" /> is equal to this instance; otherwise, <c>false</c>.
-        /// </returns>
-        public override bool Equals(object obj) =>
-            (obj is Entity) && ((Entity)obj).Id == Id;
-
-
-        /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
-        /// </returns>
-        public override string ToString() => $"{ObjectType} #{Id}";
     }
 }
