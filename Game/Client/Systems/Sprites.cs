@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Shanism.Client.Systems
 {
-    class ObjectSystem : ClientSystem
+    class SpriteSystem : ClientSystem
     {
         const uint NoHeroGuid = 0;
 
@@ -39,7 +39,7 @@ namespace Shanism.Client.Systems
 
 
         /// <summary>
-        /// Gets the main hero, if it is available. 
+        /// Gets the player's main hero, if it exists. 
         /// </summary>
         public IHero MainHero => mainSprite?.Entity as IHero;
 
@@ -48,14 +48,13 @@ namespace Shanism.Client.Systems
         /// </summary>
         public UnitSprite MainHeroSprite => mainSprite;
 
-
+        /// <summary>
+        /// Gets the sprite currently under the cursor.
+        /// </summary>
         public EntitySprite HoverSprite => hoverSprite;
 
 
-        public event Action<uint> MainHeroChanged;
-
-
-        public ObjectSystem(GraphicsDevice device, AssetList content)
+        public SpriteSystem(GraphicsDevice device, AssetList content)
         {
             this.device = device;
             this.content = content;
@@ -65,9 +64,7 @@ namespace Shanism.Client.Systems
 
         public override void Update(int msElapsed)
         {
-            //update matrix
-            var proj = Matrix.CreateOrthographic(
-                (float)Screen.GameSize.X, (float)Screen.GameSize.Y, -5, 5);
+            //update the transformation matrix
             transformMatrix = Matrix.CreateTranslation(-(float)Screen.InGameCenter.X, -(float)Screen.InGameCenter.Y, 0)
                 * Matrix.CreateScale((float)Screen.GameScale.X, (float)Screen.GameScale.Y, 1)
                 * Matrix.CreateTranslation(Screen.HalfSize.X, Screen.HalfSize.Y, 0);
@@ -84,23 +81,7 @@ namespace Shanism.Client.Systems
                 EntitySprite sprite;
                 if (!unitSpriteDict.TryGetValue(e.Id, out sprite))
                 {
-                    switch (e.ObjectType)
-                    {
-                        case ObjectType.Hero:
-                        case ObjectType.Unit:
-                            sprite = new UnitSprite(content, (IUnit)e);
-                            break;
-
-                        case ObjectType.Doodad:
-                        case ObjectType.Effect:
-                            sprite = new EntitySprite(content, e);
-                            break;
-
-                        default:
-                            throw new Exception("Missing switch case!");
-                    }
-
-                    unitSpriteDict[e.Id] = sprite;
+                    unitSpriteDict[e.Id] = sprite = createSprite(e);
                 }
 
                 sprite.Update(msElapsed);
@@ -115,8 +96,8 @@ namespace Shanism.Client.Systems
                     break;
                 }
 
-                    //remove old sprites
-                    const int CleanupFactor = 10;
+            //remove old sprites
+            const int CleanupFactor = 20;
             if (unitSpriteDict.Count > CleanupFactor * Server.VisibleEntities.Count)
                 foreach (var kvp in unitSpriteDict.Where(kvp => kvp.Value.RemoveFlag).ToList())
                     unitSpriteDict.Remove(kvp.Key);
@@ -131,6 +112,28 @@ namespace Shanism.Client.Systems
             }
         }
 
+        private EntitySprite createSprite(IEntity e)
+        {
+            EntitySprite sprite;
+            switch (e.ObjectType)
+            {
+                case ObjectType.Hero:
+                case ObjectType.Unit:
+                    sprite = new UnitSprite(content, (IUnit)e);
+                    break;
+
+                case ObjectType.Doodad:
+                case ObjectType.Effect:
+                    sprite = new EntitySprite(content, e);
+                    break;
+
+                default:
+                    throw new Exception("Missing switch case!");
+            }
+
+            return sprite;
+        }
+
 
 
         //draws objects to the device
@@ -143,7 +146,7 @@ namespace Shanism.Client.Systems
 
             //draw sprites at units' in-game positions
             foreach (var kvp in unitSpriteDict)
-                if(!kvp.Value.RemoveFlag)
+                if (!kvp.Value.RemoveFlag)
                     kvp.Value.Draw(objectBatch);
 
             objectBatch.End();
@@ -197,7 +200,6 @@ namespace Shanism.Client.Systems
         public void SetMainHero(uint guid)
         {
             mainHeroGuid = guid;
-            MainHeroChanged?.Invoke(guid);
         }
     }
 }

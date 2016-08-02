@@ -53,6 +53,7 @@ namespace Shanism.Network.Client
                     if (obj is EntityStub)
                         visibleObjects.Add((EntityStub)obj);
                 }
+
                 if (ms.Length != ms.Position)
                     Log.Default.Warning("ServerFrame stream was longer than expected!");
             }

@@ -44,19 +44,6 @@ namespace Shanism.Client.Input
         }
 
 
-        public string ToShortString()
-        {
-            if (Key == Keys.None)
-                return "N/A";
-
-            var ans = "";
-            if (Control)    ans += "C";
-            if (Alt)        ans += "A";
-            if (Shift)      ans += "S";
-            ans += KeyMap.GetChar(Key, false)?.ToString().ToUpper() ?? Key.ToString();
-            return ans;
-        }
-
         public static bool operator ==(Keybind a, Keybind b)
         {
             return a.Key == b.Key && a.Modifiers == b.Modifiers;
@@ -84,8 +71,22 @@ namespace Shanism.Client.Input
                 return "N/A";
 
             if (Modifiers != ModifierKeys.None)
-                return Modifiers.ToString() + "+" + Key.ToString();
+                return $"{Modifiers}+{Key}";
+
             return Key.ToString();
+        }
+
+        public string ToShortString(string noneString = "")
+        {
+            if (Key == Keys.None)
+                return noneString;
+
+            var ans = "";
+            if (Control) ans += "C";
+            if (Alt) ans += "A";
+            if (Shift) ans += "S";
+            ans += KeyMap.GetChar(Key, false)?.ToString().ToUpper() ?? Key.ToString();
+            return ans;
         }
 
         public override int GetHashCode()

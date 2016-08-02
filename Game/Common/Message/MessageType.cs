@@ -12,22 +12,13 @@ namespace Shanism.Common.Message
     /// </summary>
     public enum MessageType
     {
-        /// <summary>
-        /// A message sent by the server to relay chat messages. 
-        /// </summary>
-        ServerChat = 2,
-
-        /// <summary>
-        /// A message sent by the client to relay chat messages. 
-        /// </summary>
-        ClientChat,
 
         ///-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
         /// <summary>
         /// A message sent by the client to the server to initiate a handshake. 
         /// </summary>
-        HandshakeInit,
+        HandshakeInit = 2,
 
         /// <summary>
         /// A message sent by the client to request a map chunk. 
@@ -35,14 +26,9 @@ namespace Shanism.Common.Message
         MapRequest,
 
         /// <summary>
-        /// A message sent by the client to update its state
+        /// A message sent by the client to relay chat messages. 
         /// </summary>
-        MoveUpdate,
-
-        /// <summary>
-        /// A message sent by the client to perform an action. 
-        /// </summary>
-        Action,
+        ClientChat,
 
         ///-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -63,28 +49,25 @@ namespace Shanism.Common.Message
         MapReply,
 
         /// <summary>
-        /// A message sent by the server containing a full update of an object's state. 
-        /// </summary>
-        FullUpdate,
-
-        /// <summary>
-        /// A message sent by the server containing a partial update of am object's state. 
-        /// </summary>
-        PartialUpdate,
-
-        /// <summary>
         /// A message sent by the server to inform of a nearby unit being damaged. 
         /// </summary>
         DamageEvent,
+
+        /// <summary>
+        /// A message sent by the server to relay chat messages. 
+        /// </summary>
+        ServerChat,
 
         /// <summary>
         /// A message sent by the server when an object changes its animation. 
         /// </summary>
         ObjectAnimation,
 
+        /// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-        ObjectData,
-
+        /// <summary>
+        /// A message send by both the client and the server. A generic frame. 
+        /// </summary>
         GameFrame,
     }
 }

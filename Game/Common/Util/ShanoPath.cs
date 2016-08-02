@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace Shanism.Common.Util
 {
     /// <summary>
-    /// Contains methods for handling paths inside animations. 
-    /// Paths are Unix-like, always using a forward-slash for delimiter.  
+    /// Contains methods for handling paths inside animations and textures.
+    /// Paths are Unix-like, always using a forward-slash ('/') for delimiter.  
     /// </summary>
     public static class ShanoPath
     {

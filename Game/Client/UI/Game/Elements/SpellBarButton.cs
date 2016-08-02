@@ -67,7 +67,7 @@ namespace Shanism.Client.UI
             base.OnDraw(g);
 
             var str = "";
-            if (CurrentKeybind != Keys.None)
+            if (CurrentKeybind.Key != Keys.None)
                 str = CurrentKeybind.ToShortString() ?? "?";
 
             //draw keybind
@@ -76,11 +76,7 @@ namespace Shanism.Client.UI
 
         protected override void OnUpdate(int msElapsed)
         {
-            CurrentKeybind = getKeybind(BarId, ButtonId);
+            CurrentKeybind = Settings.Current.Keybinds[BarId, ButtonId];
         }
-
-
-        static Keybind getKeybind(int barId, int btnId)
-            => Settings.Current.Keybinds.TryGet(barId, btnId) ?? Keybind.None;
     }
 }

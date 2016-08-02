@@ -70,7 +70,7 @@ namespace Shanism.Client.UI.Menus.Keybinds
 
         void onKeyPressed(Keybind k)
         {
-            if (k != Keys.Escape)
+            if (k.Key != Keys.Escape)
             {
                 var kb = new Keybind(KeyboardInfo.Modifiers, k.Key);
                 Settings.Current.Keybinds[Action] = kb;
@@ -81,12 +81,11 @@ namespace Shanism.Client.UI.Menus.Keybinds
 
         protected override void OnUpdate(int msElapsed)
         {
-            var kb = Settings.Current.Keybinds.TryGet(Action);
+            var kb = Settings.Current.Keybinds[Action];
 
-            lblValue.Text = kb?.ToShortString() ?? NoKeybindString;
-
+            lblValue.Text = kb.ToShortString(NoKeybindString);
             lblText.TextColor = HasHover ? Color.Goldenrod.Brighten(20) : Color.Goldenrod;
-            ToolTip = kb?.ToString() ?? string.Empty;
+            ToolTip = kb.ToString();
 
             if (HasFocus)
                 BackColor = Color.Black.SetAlpha((int)Ticker.Default.GetValue(150, 200));

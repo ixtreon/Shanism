@@ -36,7 +36,7 @@ namespace Shanism.Client.UI.Common
                 Value = Target.Mana;
                 MaxValue = Target.MaxMana;
                 ForeColor = Color.Lerp(ColorPalette[0], ColorPalette[1], (float)(MaxValue / Value).Clamp(0, 1));
-                ToolTip = "{0:+0.0;-0.0;0}/sec".F(Target.ManaRegen);
+                ToolTip = $"{Target.ManaRegen:+0.0;-0.0;0}/sec";
             }
 
             base.OnUpdate(msElapsed);

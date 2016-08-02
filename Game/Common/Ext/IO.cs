@@ -14,7 +14,7 @@ namespace Shanism.Common
         {
             var absSegments = ShanoPath.SplitPath(absolutePath);
             var dirSegments = ShanoPath.SplitPath(folder);
-            int commonPrefix = getCommonPrefix(absSegments, dirSegments);
+            var commonPrefix = getCommonPrefix(absSegments, dirSegments);
 
             var sb = new StringBuilder();
 

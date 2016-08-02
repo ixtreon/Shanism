@@ -77,7 +77,6 @@ namespace Shanism.Common.Content
                 return Span;
 
             var w = Span.Width > 0 ? Span.Width : 1;
-            var h = Span.Height > 0 ? Span.Height  : 1;
 
             var x = Span.X + (frame % w);
             var y = Span.Y + (frame / w);

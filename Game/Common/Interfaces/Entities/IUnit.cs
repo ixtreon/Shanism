@@ -1,5 +1,4 @@
 ﻿using Shanism.Common.Game;
-using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -157,13 +156,11 @@ namespace Shanism.Common.Interfaces.Entities
         /// <summary>
         /// Gets the collection of buffs currently affecting this unit. 
         /// </summary>
-        [ProtoIgnore]
         IReadOnlyCollection<IBuffInstance> Buffs { get; }
 
         /// <summary>
         /// Gets all abilities this unit possesses. 
         /// </summary>
-        [ProtoIgnore]
         IReadOnlyCollection<IAbility> Abilities { get; }
         #endregion
     }

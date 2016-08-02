@@ -162,7 +162,7 @@ namespace Shanism.Editor
             if (Model != null)
             {
                 var editPostfix = Model.IsDirty ? " *" : "";
-                Text = "{0} - {1}{2}".F(Model.Scenario.Config.Name, WindowTitle, editPostfix);
+                Text = $"{Model.Scenario.Config.Name} - {WindowTitle}{editPostfix}";
             }
             else
             {

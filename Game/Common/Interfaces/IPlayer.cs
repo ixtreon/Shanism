@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Shanism.Common.StubObjects
 {
     /// <summary>
-    /// An in-game player as seen by a client. 
+    /// An in-game player as seen by a client. Unused
     /// </summary>
     public interface IPlayer
     {

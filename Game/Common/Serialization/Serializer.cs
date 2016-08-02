@@ -15,7 +15,7 @@ namespace Shanism.Common.Serialization
     /// </summary>
     public class GameSerializer
     {
-        readonly ISerializer[] serializers = new ISerializer[16];
+        readonly SerializerBase[] serializers = new SerializerBase[16];
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameSerializer"/> class.

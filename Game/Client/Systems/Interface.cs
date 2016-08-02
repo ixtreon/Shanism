@@ -27,7 +27,7 @@ namespace Shanism.Client.Systems
     {
         readonly Root root;
 
-        readonly ObjectSystem objects;
+        readonly SpriteSystem objects;
 
         UnitSprite _curHeroSprite;
 
@@ -42,7 +42,7 @@ namespace Shanism.Client.Systems
         readonly SpriteBatch interfaceBatch;
 
 
-        public Interface(GraphicsDevice device, ObjectSystem objManager, IChatProvider chatProvider)
+        public Interface(GraphicsDevice device, SpriteSystem objManager, IChatProvider chatProvider)
         {
             interfaceBatch = new SpriteBatch(device);
             objects = objManager;

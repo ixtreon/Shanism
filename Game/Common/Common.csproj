@@ -82,20 +82,19 @@
   <ItemGroup>
     <Compile Include="Content\AnimationStyle.cs" />
     <Compile Include="Game\EquipSlot.cs" />
-    <Compile Include="Interfaces\Engine\IPlayerTicket.cs" />
     <Compile Include="Interfaces\Objects\IItem.cs" />
     <Compile Include="Message\Client\ChatMessage.cs" />
     <Compile Include="MBWTFState\ClientState.cs" />
     <Compile Include="Serialization\Ext.cs" />
+    <Compile Include="Serialization\SerializerBase.cs" />
     <Compile Include="Serialization\Objects\AbilitySerializer.cs" />
     <Compile Include="Serialization\Objects\BuffSerializer.cs" />
     <Compile Include="Serialization\Entities\Hero.cs" />
     <Compile Include="Serialization\Entities\Unit.cs" />
     <Compile Include="Serialization\Entities\Entity.cs" />
-    <Compile Include="Serialization\Object.cs" />
+    <Compile Include="Serialization\ObjectHeader.cs" />
     <Compile Include="Serialization\Serializer.cs" />
     <Compile Include="Util\Color.cs" />
-    <Compile Include="Game\DamageResult.cs" />
     <Compile Include="Content\AnimationDef.cs" />
     <Compile Include="Content\TextureDef.cs" />
     <Compile Include="Ext\Collections.cs" />
@@ -105,7 +104,6 @@
     <Compile Include="Ext\Strings.cs" />
     <Compile Include="Game\BuffType.cs" />
     <Compile Include="Game\DamageType.cs" />
-    <Compile Include="Game\Faction.cs" />
     <Compile Include="Interfaces\Objects\IGameObject.cs" />
     <Compile Include="Math\RectangleF.cs" />
     <Compile Include="Message\Network\GameFrame.cs" />
@@ -117,18 +115,14 @@
     <Compile Include="Objects\Entities\UnitStub.cs" />
     <Compile Include="Objects\Entities\EntityStub.cs" />
     <Compile Include="Objects\ObjectStub.cs" />
-    <Compile Include="Performance\PerfCounter.cs" />
+    <Compile Include="Util\PerfCounter.cs" />
     <Compile Include="Util\ShanoPath.cs" />
-    <Compile Include="Util\ConcurrentSet.cs" />
-    <Compile Include="Util\GenericBackBuffer.cs" />
-    <Compile Include="Util\GenericEqualityComparer.cs" />
-    <Compile Include="Maps\MapChunkDef.cs" />
+    <Compile Include="Maps\ChunkId.cs" />
     <Compile Include="Game\ObjectType.cs" />
     <Compile Include="Game\OrderType.cs" />
-    <Compile Include="Interfaces\Engine\IReceptor.cs" />
+    <Compile Include="Interfaces\Base\IReceptor.cs" />
     <Compile Include="Interfaces\Objects\IBuff.cs" />
     <Compile Include="Interfaces\Entities\IEffect.cs" />
-    <Compile Include="ShadowCalc\ShadowGuy.cs" />
     <Compile Include="Game\UnitFlags.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Ext\General.cs" />
@@ -149,19 +143,17 @@
     <Compile Include="Interfaces\Objects\IAbility.cs" />
     <Compile Include="Interfaces\Objects\IBuffInstance.cs" />
     <Compile Include="Interfaces\Entities\IDoodad.cs" />
-    <Compile Include="Interfaces\Engine\IShanoEngine.cs" />
+    <Compile Include="Interfaces\Base\IShanoEngine.cs" />
     <Compile Include="Interfaces\Entities\IEntity.cs" />
     <Compile Include="Interfaces\IPlayer.cs" />
     <Compile Include="Interfaces\Entities\IUnit.cs" />
     <Compile Include="Interfaces\Entities\IHero.cs" />
     <Compile Include="Maps\TerrainType.cs" />
-    <Compile Include="Interfaces\Client\IShanoClient.cs" />
+    <Compile Include="Interfaces\Base\IShanoClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\Counter.cs" />
     <Compile Include="Util\GenericId.cs" />
     <Compile Include="Util\Hash.cs" />
-    <Compile Include="Util\NullComparer.cs" />
-    <Compile Include="Util\StatsDict.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

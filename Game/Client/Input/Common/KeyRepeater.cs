@@ -23,67 +23,51 @@ namespace Shanism.Client.Input
 
 
         /// <summary>
-        /// Gets or sets the current key that is being held. 
+        /// The current keybind that is being held. 
         /// </summary>
-        public Keybind CurrentKey { get; private set; }
-
+        Keybind _keyCombo;
 
         /// <summary>
-        /// Gets the current character that is being repeated. 
+        /// The current character that is being repeated. 
         /// </summary>
-        public char? CurrentChar { get; private set; }
+        char? _currentChar;
 
         /// <summary>
         /// The time left before the currently held character is repeated again. 
         /// </summary>
-        int CurrentDelay { get; set; }
+        int _repeatDelay;
 
         /// <summary>
         /// The event raised whenever a character is to be displayed. 
         /// </summary>
         public event Action<Keybind, char?> KeyRepeated;
 
+        bool hasChar => _currentChar.HasValue;
+
+
         public void Update(int msElapsed)
         {
-            //if current key was released, set it to none
-            if (!KeyboardInfo.IsDown(CurrentKey))
-                CurrentKey = Keybind.None;
-
-            //if no key, nothing can be done
-            if (CurrentKey == Keys.None)
+            if (!hasChar)
                 return;
 
-            //repeat the previously held key
-            CurrentDelay -= msElapsed;
-            if (CurrentDelay <= 0)
+            //repeat the previously held char
+            _repeatDelay -= msElapsed;
+            if (_repeatDelay <= 0)
             {
-                CurrentDelay = KeyRepeatDelay;
-                KeyRepeated?.Invoke(CurrentKey, CurrentChar);
+                _repeatDelay = KeyRepeatDelay;
+                KeyRepeated?.Invoke(_keyCombo, _currentChar);
             }
         }
 
         public void SetKey(Keybind k)
         {
-            CurrentKey = k;
-            CurrentDelay = KeyInitialDelay;
-            CurrentChar = getChar();
+            _repeatDelay = KeyInitialDelay;
+            _keyCombo = k;
+            _currentChar = KeyMap.GetChar(_keyCombo.Key, _keyCombo.Modifiers.HasFlag(ModifierKeys.Shift));
 
-            // fire the event on button press
-            if (CurrentKey != Keybind.None)
-                KeyRepeated?.Invoke(CurrentKey, CurrentChar);
+            // fire the event once on button press
+            if (hasChar)
+                KeyRepeated?.Invoke(_keyCombo, _currentChar);
         }
-
-        char? getChar(Keybind k)
-        {
-            return KeyMap.GetChar(k.Key, k.Modifiers.HasFlag(ModifierKeys.Shift));
-        }
-
-
-        /// <summary>
-        /// Gets the current character corresponding to the <see cref="CurrentKey"/>
-        /// </summary>
-        /// <returns>The character that is pressed, or '\0' if no character was found. </returns>
-        char? getChar()
-            => getChar(CurrentKey);
     }
 }

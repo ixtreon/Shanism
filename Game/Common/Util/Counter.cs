@@ -60,7 +60,7 @@ namespace Shanism.Common
         /// <param name="newMax">The new maximum this counter can reach. </param>
         public void Reset(int? newMax = null)
         {
-            if (newMax < 0) throw new ArgumentException("The value of '{0}' ({1}) must be a non-negative integer!".F(nameof(newMax), newMax));
+            if (newMax < 0) throw new ArgumentException($"The value of '{nameof(newMax)}' ({newMax}) must be a non-negative integer!");
 
             Value = 0;
             MaxValue = Math.Max(1, newMax ?? MaxValue);

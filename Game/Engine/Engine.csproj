@@ -24,7 +24,7 @@
     <WarningLevel>2</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <DocumentationFile>bin\Debug\Shanism.Engine.xml</DocumentationFile>
-    <CodeAnalysisRuleSet>..\..\Shanism.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -114,6 +114,7 @@
     <Compile Include="Noise\White.cs" />
     <Compile Include="Objects\Abilities\Aura.cs" />
     <Compile Include="Objects\Abilities\CastingData.cs" />
+    <Compile Include="Players\Alliance.cs" />
     <Compile Include="Objects\Buffs\Stunned.cs" />
     <Compile Include="Events\AbilityCastArgs.cs" />
     <Compile Include="GameSystems\GameSystem.cs" />

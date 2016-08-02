@@ -21,12 +21,12 @@ namespace Shanism.Client.Systems
         FloatingTextProvider ErrorTextProvider => Interface.FloatingText;
 
         readonly Interface Interface;
-        readonly ObjectSystem Objects;
+        readonly SpriteSystem Objects;
 
         public IHero Hero { get; set; }
 
 
-        public ActionSystem(Interface ui, ObjectSystem objects)
+        public ActionSystem(Interface ui, SpriteSystem objects)
         {
             Interface = ui;
             Objects = objects;

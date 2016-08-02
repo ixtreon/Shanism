@@ -10,15 +10,6 @@ using System.Threading.Tasks;
 
 namespace Shanism.Common.Serialization
 {
-    abstract class ISerializer
-    {
-        public abstract ObjectStub Create(uint id);
-
-        public abstract void Write(BinaryWriter w, IGameObject obj);
-
-        public abstract void Read(BinaryReader r, IGameObject obj);
-    }
-
     public struct ObjectHeader
     {
         public uint Id;

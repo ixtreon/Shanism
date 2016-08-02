@@ -10,7 +10,7 @@ using Shanism.Common.StubObjects;
 
 namespace Shanism.Common.Serialization
 {
-    class EntitySerializer : ISerializer
+    class EntitySerializer : SerializerBase
     {
         public override void Write(BinaryWriter w, IGameObject obj)
         {

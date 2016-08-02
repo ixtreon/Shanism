@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -7,10 +6,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Shanism.Common.Performance
+namespace Shanism.Common.Util
 {
     /// <summary>
-    /// Provides a breakdown of the performance of an application.. 
+    /// Used to get a breakdown of the performance of an application.
     /// </summary>
     public class PerfCounter
     {
@@ -18,7 +17,10 @@ namespace Shanism.Common.Performance
 
         static readonly Stopwatch Stopwatch = Stopwatch.StartNew();
 
+
         readonly Dictionary<string, long> stats = new Dictionary<string, long>();
+
+        public IReadOnlyDictionary<string, long> Stats => stats;
 
 
 
@@ -30,9 +32,6 @@ namespace Shanism.Common.Performance
             stats.Clear();
         }
 
-
-        public IReadOnlyDictionary<string, long> Stats => stats;
-
         /// <summary>
         /// Logs the time taken to run the given benchmarked category. 
         /// </summary>
@@ -43,15 +42,6 @@ namespace Shanism.Common.Performance
                 stats[category] = t + timeTaken;
             else
                 stats[category] = timeTaken;
-        }
-
-        public long Data(string category)
-        {
-            long ticks;
-            if (stats.TryGetValue(category, out ticks))
-                return ticks;
-
-            return 0;
         }
 
         public void RunAndLog(string categoryName, Action act)

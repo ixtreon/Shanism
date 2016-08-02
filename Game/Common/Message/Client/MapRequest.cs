@@ -13,13 +13,13 @@ namespace Shanism.Common.Message.Client
         
 
         [ProtoMember(1)]
-        public MapChunkId Chunk;
+        public ChunkId Chunk;
 
         public override MessageType Type { get { return MessageType.MapRequest; } }
 
         MapRequestMessage() { }
 
-        public MapRequestMessage(MapChunkId chunk)
+        public MapRequestMessage(ChunkId chunk)
             : this()
         {
             this.Chunk = chunk;

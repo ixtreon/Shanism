@@ -89,10 +89,12 @@ namespace Shanism.Client.UI.Chat
 
 
             keyRepeater.KeyRepeated += onKeyRepeated;
-            this.KeyPressed += onKeyPressed;
+
+            KeyPressed += keyRepeater.SetKey;
+            KeyReleased += (k) => keyRepeater.SetKey(Keybind.None);
         }
 
-        private void onKeyRepeated(Keybind k, char? c)
+        void onKeyRepeated(Keybind k, char? c)
         {
             switch (k.Key)
             {
@@ -195,11 +197,6 @@ namespace Shanism.Client.UI.Chat
                         writeChar(c.Value);
                     break;
             }
-        }
-
-        void onKeyPressed(Keybind k)
-        {
-            keyRepeater.SetKey(k);
         }
 
         void writeChar(char c)

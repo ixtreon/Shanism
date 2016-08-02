@@ -33,7 +33,7 @@ namespace Shanism.Client
         /// <summary>
         /// Lists and draws objects. 
         /// </summary>
-        readonly ObjectSystem objects;
+        readonly SpriteSystem objects;
         Terrain terrain;
         Interface @interface;
         /// <summary>
@@ -66,7 +66,7 @@ namespace Shanism.Client
 
             GameActionActivated += onActionActivated;
 
-            objects = new ObjectSystem(device, Content);
+            objects = new SpriteSystem(device, Content);
             Reload();
         }
 

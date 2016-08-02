@@ -38,12 +38,12 @@ namespace Shanism.Client.Map
         /// <summary>
         /// Contains a map of all available chunks. 
         /// </summary>
-        readonly Dictionary<MapChunkId, TerrainChunk> ChunksAvailable = new Dictionary<MapChunkId, TerrainChunk>();
+        readonly Dictionary<ChunkId, TerrainChunk> ChunksAvailable = new Dictionary<ChunkId, TerrainChunk>();
 
         /// <summary>
         /// Contains a map of all chunk requests made so far. 
         /// </summary>
-        readonly Dictionary<MapChunkId, long> chunkRequests = new Dictionary<MapChunkId, long>();
+        readonly Dictionary<ChunkId, long> chunkRequests = new Dictionary<ChunkId, long>();
 
 
         readonly BasicEffect effect;
@@ -123,7 +123,7 @@ namespace Shanism.Client.Map
 
         void setMap(MapDataMessage msg)
         {
-            foreach (var ch in MapChunkId.ChunksBetween(msg.Span.Position, msg.Span.FarPosition - 1))
+            foreach (var ch in ChunkId.ChunksBetween(msg.Span.Position, msg.Span.FarPosition - 1))
             {
                 var chunkData = ChunksAvailable.TryGet(ch);
 
@@ -141,7 +141,7 @@ namespace Shanism.Client.Map
         {
             TerrainChunk chunkData;
 
-            foreach (var ch in MapChunkId.ChunksBetween(msg.Span.Position, msg.Span.FarPosition))
+            foreach (var ch in ChunkId.ChunksBetween(msg.Span.Position, msg.Span.FarPosition))
             {
                 var overlap = ch.Span.IntersectWith(msg.Span);
 
@@ -156,13 +156,16 @@ namespace Shanism.Client.Map
         /// <summary>
         /// Sends a request to the server for the given chunk. 
         /// </summary>
-        bool tryRequestChunk(MapChunkId chunk)
+        bool tryRequestChunk(ChunkId chunk)
         {
             if (ChunksAvailable.ContainsKey(chunk))
                 return false;
 
             //make sure we don't spam the server
-            var lastRequest = chunkRequests.TryGetVal(chunk) ?? long.MinValue;
+            long lastRequest;
+            if (!chunkRequests.TryGetValue(chunk, out lastRequest))
+                lastRequest = long.MinValue;
+
             var timeNow = Environment.TickCount;
             if (timeNow - SpamInterval < lastRequest)
                 return false;
@@ -189,7 +192,7 @@ namespace Shanism.Client.Map
             }
         }
 
-        void destroyChunk(MapChunkId id)
+        void destroyChunk(ChunkId id)
         {
             TerrainChunk chunk;
             if (ChunksAvailable.TryGetValue(id, out chunk))
@@ -201,12 +204,12 @@ namespace Shanism.Client.Map
 
 
 
-        IEnumerable<MapChunkId> EnumerateNearbyChunks(int bonusRange = 0)
+        IEnumerable<ChunkId> EnumerateNearbyChunks(int bonusRange = 0)
         {
-            var lowLeft = CameraPosition - Screen.GameSize / 2 - MapChunkId.ChunkSize * bonusRange;
-            var upRight = CameraPosition + Screen.GameSize / 2 + MapChunkId.ChunkSize * bonusRange;
+            var lowLeft = CameraPosition - Screen.GameSize / 2 - ChunkId.ChunkSize * bonusRange;
+            var upRight = CameraPosition + Screen.GameSize / 2 + ChunkId.ChunkSize * bonusRange;
 
-            return MapChunkId.ChunksBetween(lowLeft, upRight).ToList();
+            return ChunkId.ChunksBetween(lowLeft, upRight).ToList();
         }
 
     }

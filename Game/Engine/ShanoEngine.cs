@@ -1,23 +1,23 @@
-﻿using Shanism.Engine.Maps;
-using Shanism.Common;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using Shanism.Common.Performance;
+﻿using Shanism.Common;
+using Shanism.Common.Game;
 using Shanism.Common.Util;
+using Shanism.Engine.Common;
+using Shanism.Engine.Exceptions;
+using Shanism.Engine.GameSystems;
+using Shanism.Engine.Maps;
 using Shanism.Engine.Network;
 using Shanism.Engine.Players;
 using Shanism.Engine.Scripting;
-using Shanism.Engine.Common;
 using Shanism.ScenarioLib;
-using Shanism.Engine.Exceptions;
-using Shanism.Common.Game;
-using Shanism.Engine.GameSystems;
-using System.Text;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading;
 
 namespace Shanism.Engine
 {
@@ -109,7 +109,7 @@ namespace Shanism.Engine
 
             //register this server as the parent of all objects. 
             //quite hacky by nature
-            if (!GameObject.TrySetEngine(this))
+            if (!GameObject.TrySetGame(this))
                 throw new SingleServerException();
         }
 

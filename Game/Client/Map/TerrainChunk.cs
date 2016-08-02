@@ -28,7 +28,7 @@ namespace Shanism.Client.Map
         readonly VertexPositionTexture[] vertexData;
 
 
-        public MapChunkId Id { get; }
+        public ChunkId Id { get; }
 
         public int Timestamp { get; }
 
@@ -44,7 +44,7 @@ namespace Shanism.Client.Map
         public int Area => Width * Height;
 
 
-        public TerrainChunk(GraphicsDevice device, MapChunkId chunk, Texture2D tex, TerrainType[] msgTiles, Rectangle msgSpan)
+        public TerrainChunk(GraphicsDevice device, ChunkId chunk, Texture2D tex, TerrainType[] msgTiles, Rectangle msgSpan)
         {
             this.texture = tex;
             vertexData = new VertexPositionTexture[6 * Area];

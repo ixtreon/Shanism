@@ -1,6 +1,6 @@
 ﻿using Shanism.Engine.Maps;
 using Shanism.Common;
-using Shanism.Common.Performance;
+using Shanism.Common.Util;
 using System.Collections.Concurrent;
 using Shanism.Common.Game;
 using Shanism.Common.Interfaces.Objects;
@@ -19,23 +19,13 @@ namespace Shanism.Engine
     {
         #region Static Members
 
-        static readonly ConcurrentDictionary<uint, GameObject> idDict = new ConcurrentDictionary<uint, GameObject>();
-
-        /// <summary>
-        /// Gets the GameObject with the given Id, or null if it doesn't exist. 
-        /// </summary>
-        public static GameObject GetById(uint id)
-        {
-            return idDict.TryGet(id);
-        }
-
         static ShanoEngine Game { get; set; }
 
         /// <summary>
         /// Tries to set the game engine instance all game objects are part of.
         /// Fails if there is another engine registered already. 
         /// </summary>
-        public static bool TrySetEngine(ShanoEngine game)
+        public static bool TrySetGame(ShanoEngine game)
         {
             if (Game != null)
                 return false;
@@ -43,7 +33,6 @@ namespace Shanism.Engine
             Game = game;
             return true;
         }
-
         #endregion
 
 
@@ -83,7 +72,6 @@ namespace Shanism.Engine
         protected GameObject()
         {
             Id = Shanism.Common.Util.GenericId<GameObject>.GetNew();
-            idDict[Id] = this;
         }
 
 

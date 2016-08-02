@@ -207,6 +207,7 @@ namespace Shanism.Client.UI
         public event Action<ClientAction> GameActionActivated;
 
         public event Action<Keybind> KeyPressed;
+        public event Action<Keybind> KeyReleased;
 
         #endregion
 
@@ -498,9 +499,15 @@ namespace Shanism.Client.UI
             var focus = FocusControl;
             if (focus != null)
             {
+
+                foreach (var k in KeyboardInfo.JustReleasedKeys)
+                    if (!k.IsModifier())
+                        focus.KeyReleased?.Invoke(new Keybind(KeyboardInfo.Modifiers, k));
+
                 //order is important: 
                 // keys first so action.chat 
                 // doesnt activate chat.enterkey which closes chat bar
+                // lololol
                 foreach (var k in KeyboardInfo.JustPressedKeys)
                     if (!k.IsModifier())
                         focus.KeyPressed?.Invoke(new Keybind(KeyboardInfo.Modifiers, k));

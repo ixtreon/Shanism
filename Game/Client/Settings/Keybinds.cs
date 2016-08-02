@@ -10,15 +10,12 @@ using System.Threading.Tasks;
 
 namespace Shanism.Client
 {
-    //unused
     class KeybindSettings
     {
-
         [JsonProperty]
         Dictionary<ClientAction, Keybind> rawKeybinds = new Dictionary<ClientAction, Keybind>();
 
-
-        public IEnumerable<KeyValuePair<ClientAction, Keybind>> BoundActions => rawKeybinds;
+        public IReadOnlyDictionary<ClientAction, Keybind> BoundActions => rawKeybinds;
 
         [JsonConstructor]
         KeybindSettings() { }
@@ -57,29 +54,28 @@ namespace Shanism.Client
         /// <returns></returns>
         public Keybind this[ClientAction act]
         {
-            get { return rawKeybinds.TryGetVal(act) ?? Keybind.None; }
+            get
+            {
+                Keybind val;
+                if (rawKeybinds.TryGetValue(act, out val))
+                    return val;
+                return Keybind.None;
+            }
+
             set { setKeybind(act, value); }
         }
 
         public Keybind this[int barId, int keyId]
         {
-            get { return rawKeybinds.TryGetVal(AbilityGameAction.FromId(barId, keyId)) ?? Keybind.None; }
-            set
+            get
             {
-                var act = AbilityGameAction.FromId(barId, keyId);
-                setKeybind(act, value);
+                Keybind val;
+                if (rawKeybinds.TryGetValue(ClientAbilityActions.FromId(barId, keyId), out val))
+                    return val;
+                return Keybind.None;
             }
-        }
 
-        public Keybind? TryGet(ClientAction act)
-        {
-            return rawKeybinds.TryGetVal(act);
-        }
-
-        public Keybind? TryGet(int barId, int keyId)
-        {
-            var aid = AbilityGameAction.FromId(barId, keyId);
-            return rawKeybinds.TryGetVal(aid);
+            set { setKeybind(ClientAbilityActions.FromId(barId, keyId), value); }
         }
 
         void setKeybind(ClientAction act, Keybind button)
@@ -104,7 +100,7 @@ namespace Shanism.Client
         }
     }
 
-    static class AbilityGameAction
+    static class ClientAbilityActions
     {
         const int MaxButtonsPerBar = 20;
 

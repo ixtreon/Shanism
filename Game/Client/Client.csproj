@@ -93,7 +93,7 @@
     <Compile Include="Systems\Actions.cs" />
     <Compile Include="Systems\Chat.cs" />
     <Compile Include="Systems\Movement.cs" />
-    <Compile Include="Systems\Objects.cs" />
+    <Compile Include="Systems\Sprites.cs" />
     <Compile Include="UI\Chat\ChatBox.cs" />
     <Compile Include="UI\Chat\IChatProvider.cs" />
     <Compile Include="UI\CombatText\RangeIndicator.cs" />

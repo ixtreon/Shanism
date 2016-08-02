@@ -54,7 +54,7 @@ namespace Shanism.Engine.Objects.Range
         public RangeEvent(double range, Entity target = null, RangeEventCallback eventHandler = null)
         {
             if (range <= 0 || range > Constants.RangeEvents.MaxRangeUnits)
-                throw new ArgumentOutOfRangeException("Distance must be between 0 and {0}".F(Constants.RangeEvents.MaxRangeUnits));
+                throw new ArgumentOutOfRangeException($"Distance must be between 0 and {Constants.RangeEvents.MaxRangeUnits}");
 
             Range = range;
             RangeSquared = range * range;

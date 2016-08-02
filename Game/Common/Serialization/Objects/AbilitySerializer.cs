@@ -5,7 +5,7 @@ using Shanism.Common.Game;
 
 namespace Shanism.Common.Serialization
 {
-    class AbilitySerializer : ISerializer
+    class AbilitySerializer : SerializerBase
     {
         public override ObjectStub Create(uint id) => new AbilityStub(id);
 

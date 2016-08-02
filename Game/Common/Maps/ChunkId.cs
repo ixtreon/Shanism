@@ -10,7 +10,7 @@ namespace Shanism.Common.Game
     /// A map chunk identifier. Wrapper for a point. 
     /// </summary>
     [ProtoContract]
-    public struct MapChunkId : IEquatable<MapChunkId>
+    public struct ChunkId : IEquatable<ChunkId>
     {
         /// <summary>
         /// Gets the size of a chunk. 
@@ -22,7 +22,7 @@ namespace Shanism.Common.Game
         /// Gets the map id of the chunk. 
         /// </summary>
         [ProtoMember(1)]
-        public readonly Point ChunkId;
+        public readonly Point Id;
 
 
         /// <summary>
@@ -33,35 +33,35 @@ namespace Shanism.Common.Game
         /// <summary>
         /// Gets the bottom left point of the chunk. 
         /// </summary>
-        public Point BottomLeft => ChunkId * ChunkSize;
+        public Point BottomLeft => Id * ChunkSize;
 
         /// <summary>
         /// Gets the top right point of the chunk. 
         /// </summary>
-        public Point TopRight => (ChunkId + 1) * ChunkSize;
+        public Point TopRight => (Id + 1) * ChunkSize;
 
         /// <summary>
         /// Gets the center of the chunk. 
         /// </summary>
-        public Point Center => ChunkId * ChunkSize + ChunkSize / 2;
+        public Point Center => Id * ChunkSize + ChunkSize / 2;
 
 
         /// <summary>
-        /// Creates a new MapChunk with the specified <see cref="ChunkId"/>. 
+        /// Creates a new MapChunk with the specified <see cref="Id"/>. 
         /// </summary>
-        public MapChunkId(int idX, int idY)
+        public ChunkId(int idX, int idY)
         {
-            ChunkId = new Point(idX, idY);
+            Id = new Point(idX, idY);
         }
 
         /// <summary>
         /// Returns the chunk that contains the given in-game point. 
         /// </summary>
-        public static MapChunkId ChunkOf(Vector pos)
+        public static ChunkId ChunkOf(Vector pos)
         {
             var x = (int)Math.Floor(pos.X / ChunkSize.X);
             var y = (int)Math.Floor(pos.Y / ChunkSize.Y);
-            return new MapChunkId(x, y);
+            return new ChunkId(x, y);
         }
 
         /// <summary>
@@ -71,14 +71,14 @@ namespace Shanism.Common.Game
         /// <param name="lowerLeft"></param>
         /// <param name="upperRight"></param>
         /// <returns></returns>
-        public static IEnumerable<MapChunkId> ChunksBetween(Vector lowerLeft, Vector upperRight)
+        public static IEnumerable<ChunkId> ChunksBetween(Vector lowerLeft, Vector upperRight)
         {
-            var lowBin = ChunkOf(lowerLeft).ChunkId;
-            var hiBin = ChunkOf(upperRight).ChunkId;
+            var lowBin = ChunkOf(lowerLeft).Id;
+            var hiBin = ChunkOf(upperRight).Id;
 
             for (int ix = lowBin.X; ix <= hiBin.X; ix++)
                 for (int iy = lowBin.Y; iy <= hiBin.Y; iy++)
-                    yield return new MapChunkId(ix, iy);
+                    yield return new ChunkId(ix, iy);
         }
 
         /// <summary>
@@ -87,16 +87,16 @@ namespace Shanism.Common.Game
         /// <returns>
         /// A <see cref="string" /> that represents this instance.
         /// </returns>
-        public override string ToString() => ChunkId.ToString();
+        public override string ToString() => Id.ToString();
 
-        public static bool operator ==(MapChunkId a, MapChunkId b)
+        public static bool operator ==(ChunkId a, ChunkId b)
         {
-            return a.ChunkId == b.ChunkId;
+            return a.Id == b.Id;
         }
 
-        public static bool operator !=(MapChunkId a, MapChunkId b)
+        public static bool operator !=(ChunkId a, ChunkId b)
         {
-            return a.ChunkId != b.ChunkId;
+            return a.Id != b.Id;
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace Shanism.Common.Game
         /// </returns>
         public override int GetHashCode()
         {
-            return ChunkId.GetHashCode();
+            return Id.GetHashCode();
         }
 
         /// <summary>
@@ -119,9 +119,9 @@ namespace Shanism.Common.Game
         /// </returns>
         public override bool Equals(object obj)
         {
-            if (!(obj is MapChunkId))
+            if (!(obj is ChunkId))
                 return false;
-            return (MapChunkId)obj == this;
+            return (ChunkId)obj == this;
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace Shanism.Common.Game
         /// <returns>
         /// true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.
         /// </returns>
-        public bool Equals(MapChunkId other)
+        public bool Equals(ChunkId other)
         {
             return this == other;
         }
