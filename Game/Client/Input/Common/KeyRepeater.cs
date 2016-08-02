@@ -42,13 +42,18 @@ namespace Shanism.Client.Input
         /// </summary>
         public event Action<Keybind, char?> KeyRepeated;
 
-        bool hasChar => _keyCombo != Keybind.None;
+        public event Action<Keybind, char?> KeyPressed;
+
+        bool hasKey => _keyCombo != Keybind.None;
 
 
         public void Update(int msElapsed)
         {
-            if (!hasChar || !KeyboardInfo.IsDown(_keyCombo))
+            if (!hasKey || !KeyboardInfo.IsDown(_keyCombo))
+            {
+                _keyCombo = Keybind.None;
                 return;
+            }
 
             //repeat the previously held char
             _repeatDelay -= msElapsed;
@@ -59,15 +64,15 @@ namespace Shanism.Client.Input
             }
         }
 
-        public void SetKey(Keybind k)
+        public void PressKey(Keybind k)
         {
             _repeatDelay = KeyInitialDelay;
             _keyCombo = k;
             _currentChar = KeyMap.GetChar(_keyCombo.Key, _keyCombo.Modifiers.HasFlag(ModifierKeys.Shift));
 
             // fire the event once on button press
-            if (hasChar)
-                KeyRepeated?.Invoke(_keyCombo, _currentChar);
+            if (hasKey)
+                KeyPressed?.Invoke(_keyCombo, _currentChar);
         }
     }
 }

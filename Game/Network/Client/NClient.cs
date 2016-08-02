@@ -22,6 +22,9 @@ namespace Shanism.Network.Client
     /// </summary>
     public class NClient : NPeer, IReceptor
     {
+        //
+        const int FPS = 60;
+
         public uint Id { get; private set; }
 
         public string Name { get; }
@@ -146,11 +149,17 @@ namespace Shanism.Network.Client
 
         public void UpdateServer(int msElapsed)
         {
-            //send client frame
+            Update(msElapsed);
+        }
+
+        public override void Update(int msElapsed)
+        {
+            //read incoming messages 
+            base.Update(msElapsed);
+            
+            //send clientframe
             var msg = serializer.WriteClientFrame(GameClient.State);
             SendMessage(msg, NetDeliveryMethod.UnreliableSequenced);
-
-            Update(msElapsed);
         }
 
         public string GetDebugString()

@@ -504,10 +504,7 @@ namespace Shanism.Client.UI
                     if (!k.IsModifier())
                         focus.KeyReleased?.Invoke(new Keybind(KeyboardInfo.Modifiers, k));
 
-                //order is important: 
-                // keys first so action.chat 
-                // doesnt activate chat.enterkey which closes chat bar
-                // lololol
+
                 foreach (var k in KeyboardInfo.JustPressedKeys)
                     if (!k.IsModifier())
                         focus.KeyPressed?.Invoke(new Keybind(KeyboardInfo.Modifiers, k));

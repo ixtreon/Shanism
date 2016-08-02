@@ -16,12 +16,11 @@ namespace Shanism.Client.UI.Chat
         const int CursorBlinkRate = 1000;
         const int MaxLineHistory = 256;
 
-        private int _cursorPosition;
-        private int _selectionLength;
-        private string _currentText;
 
-        private int cursorBlink;
-
+        int _cursorPosition;
+        int _selectionLength;
+        string _currentText;
+        int cursorBlink;
         double[] textPositions;
 
 
@@ -29,10 +28,10 @@ namespace Shanism.Client.UI.Chat
 
         public Color ForeColor { get; set; }
 
-
         public Color CursorColor { get; set; }
 
         public Color SelectionColor { get; set; }
+
 
         public string CurrentText
         {
@@ -47,11 +46,6 @@ namespace Shanism.Client.UI.Chat
             }
         }
 
-        //public int CursorPosition
-        //{
-        //    get { return _cursorPosition; }
-        //    private set { _cursorPosition = value.Clamp(0, CurrentText.Length); }
-        //}
 
         public int SelectionLength
         {
@@ -68,9 +62,10 @@ namespace Shanism.Client.UI.Chat
 
         readonly LinkedList<string> messageHistory = new LinkedList<string>();
 
+        readonly KeyRepeater keyRepeater = new KeyRepeater();
+
         LinkedListNode<string> currentMsgHistoryNode;
 
-        readonly KeyRepeater keyRepeater = new KeyRepeater();
 
         public event Action<string> ChatSent;
 
@@ -78,26 +73,31 @@ namespace Shanism.Client.UI.Chat
         {
             Font = Content.Fonts.NormalFont;
             CurrentText = string.Empty;
-
             CanFocus = true;
             Size = new Vector(0.5, Font.HeightUi);
-            //KeyboardInfo.ChatProvider.CharPressed += ChatProvider_CharPressed;
-
             CursorColor = Color.LightBlue;
             ForeColor = Color.LightBlue;
             SelectionColor = Color.White.SetAlpha(150);
 
+
+            KeyPressed += keyRepeater.PressKey;
+            keyRepeater.KeyPressed += onKeyRepeated;
             keyRepeater.KeyRepeated += onKeyRepeated;
 
-            KeyPressed += (k) =>
-            {
-                if(HasFocus)
-                    keyRepeater.SetKey(k);
+        }
 
+        protected override void OnUpdate(int msElapsed)
+        {
+            BackColor = Color.Black.SetAlpha(HasFocus ? 125 : 75);
 
-            };
+            //update cursor
+            if (HasFocus)
+                cursorBlink = (cursorBlink + msElapsed) % CursorBlinkRate;
 
-            KeyReleased += (k) => keyRepeater.SetKey(Keybind.None);
+            //update repeated keys
+            keyRepeater.Update(msElapsed);
+
+            base.OnUpdate(msElapsed);
         }
 
         void onKeyRepeated(Keybind k, char? c)
@@ -265,7 +265,6 @@ namespace Shanism.Client.UI.Chat
             //background
             base.OnDraw(g);
 
-
             //selection
             if (SelectionLength != 0)
             {
@@ -309,20 +308,6 @@ namespace Shanism.Client.UI.Chat
                 var pos = new Vector((float)textPositions[_cursorPosition], 0) + Padding;
                 g.Draw(Content.Textures.Blank, pos, CursorSize, CursorColor);
             }
-        }
-
-        protected override void OnUpdate(int msElapsed)
-        {
-            BackColor = Color.Black.SetAlpha(HasFocus ? 125 : 75);
-
-            //update cursor
-            if (HasFocus)
-                cursorBlink = (cursorBlink + msElapsed) % CursorBlinkRate;
-
-            //update repeated keys
-            keyRepeater.Update(msElapsed);
-
-            base.OnUpdate(msElapsed);
         }
     }
 }

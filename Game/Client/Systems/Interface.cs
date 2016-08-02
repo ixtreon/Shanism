@@ -124,7 +124,9 @@ namespace Shanism.Client.Systems
             switch (ga)
             {
                 case ClientAction.Chat:
-                    root.ChatBar.SetFocus();
+                    if (!root.ChatBar.HasFocus)
+                        root.ChatBar.SetFocus();
+
                     break;
 
                 default:
