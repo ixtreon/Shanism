@@ -42,12 +42,12 @@ namespace Shanism.Client.Input
         /// </summary>
         public event Action<Keybind, char?> KeyRepeated;
 
-        bool hasChar => _currentChar.HasValue;
+        bool hasChar => _keyCombo != Keybind.None;
 
 
         public void Update(int msElapsed)
         {
-            if (!hasChar)
+            if (!hasChar || !KeyboardInfo.IsDown(_keyCombo))
                 return;
 
             //repeat the previously held char

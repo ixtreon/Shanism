@@ -43,7 +43,7 @@ namespace Shanism.Network.Server
         /// </summary>
         public string Name { get; }
 
-        public ClientState State { get; private set; }
+        public ClientState State { get; private set; } = new ClientState();
 
         public event Action<IOMessage> MessageSent;
 
@@ -114,7 +114,10 @@ namespace Shanism.Network.Server
             switch (msg.Type)
             {
                 case MessageType.GameFrame:
-                    serializer.TryReadClientFrame((GameFrameMessage)msg, State);
+                    ClientState newState;
+                    if (serializer.TryReadClientFrame((GameFrameMessage)msg, out newState))
+                        State = newState;
+
                     break;
 
                 default:

@@ -39,16 +39,24 @@ namespace Shanism.Network.Server
             }
         }
 
-        public bool TryReadClientFrame(GameFrameMessage msg, ClientState state)
+        public bool TryReadClientFrame(GameFrameMessage msg, out ClientState state)
         {
+            ClientState state2;
             try
             {
                 using (var ms = new MemoryStream(msg.Data))
-                    ProtoBuf.Serializer.Merge(ms, state);
+                    state2 = ProtoBuf.Serializer.Deserialize<ClientState>(ms);
+
+                var state3 = new ClientState();
+                using (var ms = new MemoryStream(msg.Data))
+                    ProtoBuf.Serializer.Merge(ms, state3);
+
+                state = state2;
                 return true;
             }
             catch
             {
+                state = null;
                 return false;
             }
         }
@@ -63,7 +71,7 @@ namespace Shanism.Network.Server
         {
             var writeAsType = nearbyEntity.ObjectType;
 
-            if ((nearbyEntity as IHero)?.OwnerId != playerId)
+            if (nearbyEntity is IHero && ((IHero)nearbyEntity).OwnerId != playerId)
                 writeAsType = ObjectType.Unit;
 
             c.Add(new ObjectData { Object = nearbyEntity, Type = writeAsType });

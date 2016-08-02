@@ -41,26 +41,19 @@ namespace Shanism.Engine
         /// </summary>
         public abstract ObjectType ObjectType { get; }
 
-        /// <summary>
-        /// Gets the unique ID of this object. 
-        /// </summary>
-        public readonly uint Id;
+        public uint Id { get; }
 
-        uint IGameObject.Id => Id;
+
 
         /// <summary>
         /// Gets the map that contains the terrain and units in this scenario. 
         /// </summary>
         public IGameMap Map => Game?.Map;
 
-
-
         /// <summary>
         /// Gets the scenario this object is part of. 
         /// </summary>
         public Scenario Scenario => Game?.Scenario;
-
-
 
         internal PerfCounter UnitSystemPerfCounter => Game?.UnitPerfCounter;
 

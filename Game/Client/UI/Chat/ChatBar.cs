@@ -87,10 +87,16 @@ namespace Shanism.Client.UI.Chat
             ForeColor = Color.LightBlue;
             SelectionColor = Color.White.SetAlpha(150);
 
-
             keyRepeater.KeyRepeated += onKeyRepeated;
 
-            KeyPressed += keyRepeater.SetKey;
+            KeyPressed += (k) =>
+            {
+                if(HasFocus)
+                    keyRepeater.SetKey(k);
+
+
+            };
+
             KeyReleased += (k) => keyRepeater.SetKey(Keybind.None);
         }
 

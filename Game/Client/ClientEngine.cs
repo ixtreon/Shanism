@@ -89,12 +89,20 @@ namespace Shanism.Client
                 server.MessageSent -= server_MessageSent;
 
             this.server = server;
-
-            //game manager
-            Game = new SystemGod(graphicsDevice, Content, server, State);
-            Game.MessageSent += sendMessage;
-
             server.MessageSent += server_MessageSent;
+
+            tryInitGame();
+        }
+
+        void tryInitGame()
+        {
+            if (Game == null
+                && server != null
+                && graphicsDevice != null)
+            {
+                Game = new SystemGod(graphicsDevice, Content, server, State);
+                Game.MessageSent += sendMessage;
+            }
         }
 
         void server_MessageSent(IOMessage msg)
@@ -120,6 +128,8 @@ namespace Shanism.Client
             {
                 CullMode = CullMode.CullClockwiseFace,
             };
+
+            tryInitGame();
         }
 
         void IClientEngine.Update(GameTime gameTime)

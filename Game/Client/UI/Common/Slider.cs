@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Color = Microsoft.Xna.Framework.Color;
+
 namespace Shanism.Client.UI.Common
 {
     class Slider : ProgressBar
@@ -18,6 +20,8 @@ namespace Shanism.Client.UI.Common
         public double MaxValue { get; set; } = 1;
 
         public event Action<Slider> ValueChanged;
+
+        public new Color ForeColor { get; set; } = Color.Goldenrod;
 
         public double Value
         {
@@ -50,6 +54,19 @@ namespace Shanism.Client.UI.Common
 
                 ValueChanged?.Invoke(this);
             }
+        }
+
+        protected override void OnUpdate(int msElapsed)
+        {
+            if (HoverControl == this)
+                base.ForeColor = ForeColor.Darken();
+            else
+                base.ForeColor = ForeColor;
+        }
+
+        public override void OnDraw(Graphics g)
+        {
+            base.OnDraw(g);
         }
 
     }
