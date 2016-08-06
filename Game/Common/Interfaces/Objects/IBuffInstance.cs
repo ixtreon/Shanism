@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace Shanism.Common.Interfaces.Objects
 {
-    public interface IBuffInstance : IBuff
+    public interface IBuffInstance : IGameObject
     {
         /// <summary>
         /// Gets the time remaining before this buff expires. 
         /// </summary>
         int DurationLeft { get; }
+
+        IBuff Prototype { get; }
     }
 }

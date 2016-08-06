@@ -12,40 +12,9 @@ namespace Shanism.Common.Interfaces.Entities
     /// <seealso cref="IUnit" />
     public interface IHero : IUnit
     {
-        /// <summary>
-        /// Gets the current strength of the unit. 
-        /// </summary>
-        double Strength { get; }
-        /// <summary>
-        /// Gets the current agility of the unit. 
-        /// </summary>
-        double Agility { get; }
-        /// <summary>
-        /// Gets the current vitality of the unit. 
-        /// </summary>
-        double Vitality { get; }
-        /// <summary>
-        /// Gets the current intellect of the unit. 
-        /// </summary>
-        double Intellect { get; }
+        IHeroAttributes BaseAttributes { get; }
 
-
-        /// <summary>
-        /// Gets the base strength of the unit. 
-        /// </summary>
-        double BaseStrength { get; }
-        /// <summary>
-        /// Gets the base agility of the unit. 
-        /// </summary>
-        double BaseAgility { get; }
-        /// <summary>
-        /// Gets the base vitality of the unit. 
-        /// </summary>
-        double BaseVitality { get; }
-        /// <summary>
-        /// Gets the base intellect of the unit. 
-        /// </summary>
-        double BaseIntellect { get; }
+        IHeroAttributes Attributes { get; }
 
         /// <summary>
         /// Gets the current experience of the hero. 

@@ -5,7 +5,9 @@ using System.Text;
 
 namespace Shanism.Common.Game
 {
-    
+    /// <summary>
+    /// An enumeration of the types of terrain.
+    /// </summary>
     public enum TerrainType : byte
     {
         Dirt = 0,
@@ -19,16 +21,18 @@ namespace Shanism.Common.Game
 
         None = 63,
     }
+
+    /// <summary>
+    /// Provides extensions for the <see cref="TerrainType"/> enum.
+    /// </summary>
     public static class TerrainTypeExt
     {
+        /// <summary>
+        /// Determines whether this terrain is OK for swimming.
+        /// </summary>
         public static bool IsWater(this TerrainType t)
         {
             return t == TerrainType.Water || t == TerrainType.DeepWater;
-        }
-
-        public static bool IsGround(this TerrainType t)
-        {
-            return t != TerrainType.Water && t != TerrainType.DeepWater;
         }
     }
 

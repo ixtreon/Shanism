@@ -82,9 +82,11 @@
   <ItemGroup>
     <Compile Include="Content\AnimationStyle.cs" />
     <Compile Include="Game\EquipSlot.cs" />
+    <Compile Include="Interfaces\Base\IGame.cs" />
     <Compile Include="Interfaces\Objects\IItem.cs" />
     <Compile Include="Message\Client\ChatMessage.cs" />
     <Compile Include="MBWTFState\ClientState.cs" />
+    <Compile Include="Objects\BuffStub.cs" />
     <Compile Include="Serialization\Ext.cs" />
     <Compile Include="Serialization\SerializerBase.cs" />
     <Compile Include="Serialization\Objects\AbilitySerializer.cs" />
@@ -108,7 +110,7 @@
     <Compile Include="Math\RectangleF.cs" />
     <Compile Include="Message\Network\GameFrame.cs" />
     <Compile Include="Objects\AbilityStub.cs" />
-    <Compile Include="Objects\BuffStub.cs" />
+    <Compile Include="Objects\BuffInstanceStub.cs" />
     <Compile Include="Objects\Entities\DoodadStub.cs" />
     <Compile Include="Objects\Entities\EffectStub.cs" />
     <Compile Include="Objects\Entities\HeroStub.cs" />
@@ -145,7 +147,7 @@
     <Compile Include="Interfaces\Entities\IDoodad.cs" />
     <Compile Include="Interfaces\Base\IShanoEngine.cs" />
     <Compile Include="Interfaces\Entities\IEntity.cs" />
-    <Compile Include="Interfaces\IPlayer.cs" />
+    <Compile Include="Interfaces\Base\IPlayer.cs" />
     <Compile Include="Interfaces\Entities\IUnit.cs" />
     <Compile Include="Interfaces\Entities\IHero.cs" />
     <Compile Include="Maps\TerrainType.cs" />
@@ -154,6 +156,7 @@
     <Compile Include="Util\Counter.cs" />
     <Compile Include="Util\GenericId.cs" />
     <Compile Include="Util\Hash.cs" />
+    <Compile Include="Util\Stats.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
@@ -162,9 +165,7 @@
     <None Include="..\..\key.snk" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interfaces\Network\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\lib\IxSerializer\IxSerializer.csproj">
       <Project>{41be9dd9-644c-4a90-8d47-667b4323df7a}</Project>

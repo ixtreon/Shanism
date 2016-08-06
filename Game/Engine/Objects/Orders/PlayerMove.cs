@@ -14,11 +14,11 @@ namespace Shanism.Engine.Systems.Orders
     /// </summary>
     class PlayerMoveOrder : IMoveOrder
     {
-        public double Direction { get; set; }
+        public float Direction { get; set; }
 
         public Vector TargetLocation { get; private set; }
 
-        public PlayerMoveOrder(double direction) 
+        public PlayerMoveOrder(float direction) 
         {
             Direction = direction;
             TargetLocation = Vector.Zero;

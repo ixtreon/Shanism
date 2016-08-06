@@ -209,7 +209,7 @@ namespace Shanism.Engine.Objects.Abilities
         }
 
         /// <summary>
-        /// Determines whether this ability can be cast with the provided args.
+        /// Determines whether an ability can be cast with the provided args.
         /// </summary>
         internal static bool CanCast(CastingData cd)
         {
@@ -245,8 +245,15 @@ namespace Shanism.Engine.Objects.Abilities
             }
         }
 
+        /// <summary>
+        /// Tries to cast the given spell
+        /// </summary>
+        /// <param name="args">The arguments.</param>
+        /// <returns></returns>
         internal bool Invoke(CastingData args)
         {
+            Debug.Assert(args.Ability == this);
+
             //check prerequisites (mana, cd, others?)
             if (!Ability.CanCast(args))
                 return false;

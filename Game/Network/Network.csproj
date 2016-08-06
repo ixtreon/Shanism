@@ -83,7 +83,6 @@
     <Compile Include="Common\NPeer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\NServerClient.cs" />
-    <Compile Include="Server\ObjectTracker.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\lib\IxLog\IxLog.csproj">

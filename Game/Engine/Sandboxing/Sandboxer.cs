@@ -69,7 +69,9 @@ namespace Shanism.Engine
 
 
             var engine = new ShanoEngine();
-            engine.LoadScenario("sad", 123);
+            string compileErrors;
+            if (!engine.TryLoadScenario("sad", 123, out compileErrors))
+                throw new Exception(compileErrors);
 
             var dtys = ass.DefinedTypes;
             var tys = ass.GetTypesDescending<IGameObject>()

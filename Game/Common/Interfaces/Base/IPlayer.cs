@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shanism.Common.StubObjects
+namespace Shanism.Common
 {
     /// <summary>
     /// An in-game player as seen by a client. Unused

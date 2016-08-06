@@ -1,12 +1,12 @@
 ﻿using Shanism.Engine.Entities;
 using Shanism.Engine.Players;
-using Shanism.Common.StubObjects;
 using Shanism.Common.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using Shanism.Common;
 
 namespace Shanism.Engine
 {
@@ -142,7 +142,6 @@ namespace Shanism.Engine
         /// <summary>
         /// Creates a new computer player with the given name. 
         /// </summary>
-        /// <param name="name"></param>
         Player(string name)
         {
             Id = GenericId<Player>.GetNew();
@@ -173,10 +172,7 @@ namespace Shanism.Engine
         /// </summary>
         /// <param name="u"></param>
         /// <returns></returns>
-        public bool IsEnemyOf(Unit u)
-        {
-            return IsEnemyOf(u.Owner);
-        }
+        public bool IsEnemyOf(Unit u) => IsEnemyOf(u.Owner);
 
         /// <summary>
         /// Sets the main hero of a player. 
@@ -190,7 +186,6 @@ namespace Shanism.Engine
             _mainHero = h;
             MainHeroChanged?.Invoke(_mainHero);
         }
-
 
         /// <summary>
         /// Adds a unit owned by this player to the player's list. 

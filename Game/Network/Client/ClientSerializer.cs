@@ -25,6 +25,12 @@ namespace Shanism.Network.Client
             }
         }
 
+        /// <summary>
+        /// Reads the server frame saving all visible units. 
+        /// </summary>
+        /// <param name="msg">The MSG.</param>
+        /// <param name="objCache">The object cache.</param>
+        /// <param name="visibleObjects">The visible objects.</param>
         public void ReadServerFrame(GameFrameMessage msg, 
             IDictionary<uint, ObjectStub> objCache, ICollection<EntityStub> visibleObjects)
         {

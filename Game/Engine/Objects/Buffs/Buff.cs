@@ -8,6 +8,7 @@ using Shanism.Common.Game;
 using Shanism.Common;
 using Shanism.Common.Util;
 using Shanism.Common.Interfaces.Objects;
+using Shanism.Engine.Entities;
 
 namespace Shanism.Engine.Objects.Buffs
 {
@@ -24,9 +25,14 @@ namespace Shanism.Engine.Objects.Buffs
         public override ObjectType ObjectType => ObjectType.Buff;
 
 
-        int _moveSpeed;
+        int _moveSpeedPerc;
         string _rawDescription;
 
+        internal readonly UnitStats unitStats = new UnitStats();
+        internal readonly HeroAttributes heroStats = new HeroAttributes();
+
+        IUnitStats IBuff.Stats => unitStats;
+        IHeroAttributes IBuff.Attributes => heroStats;
 
         /// <summary>
         /// Gets or sets whether this buff has an icon and shows in the default buff bar. 
@@ -53,8 +59,7 @@ namespace Shanism.Engine.Objects.Buffs
             get { return _rawDescription; }
             set
             {
-                _rawDescription = value;
-                Description = _rawDescription.FormatWith(this);
+                Description = (_rawDescription = value).FormatWith(this);
             }
         }
 
@@ -62,90 +67,6 @@ namespace Shanism.Engine.Objects.Buffs
         /// Gets the formatted description of this buff. 
         /// </summary>
         public string Description { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the life modifier of this buff. 
-        /// </summary>
-        public double MaxLife { get; set; }
-
-        /// <summary>
-        /// Gets or sets the mana modifier of this buff. 
-        /// </summary>
-        public double MaxMana { get; set; }
-
-        /// <summary>
-        /// Gets or sets the life regen modifier of this buff. 
-        /// </summary>
-        public double LifeRegen { get; set; }
-
-        /// <summary>
-        /// Gets or sets the mana regen modifier of this buff. 
-        /// </summary>
-        public double ManaRegen { get; set; }
-
-        /// <summary>
-        /// Gets or sets the defense provided by this buff. 
-        /// </summary>
-        public double Defense { get; set; }
-
-        /// <summary>
-        /// Gets or sets the dodge (evasion) modifier provided by this buff. 
-        /// </summary>
-        public double Dodge { get; set; }
-
-        /// <summary>
-        /// Gets or sets the critical strike chance modifier provided by this buff. 
-        /// </summary>
-        public double Crit { get; set; }
-
-        /// <summary>
-        /// Gets or sets the movement speed modifier of this buff. 
-        /// </summary>
-        public double MoveSpeed { get; set; }
-
-        /// <summary>
-        /// Gets or sets the movement speed percentage modifier of this buff. 
-        /// </summary>
-        public int MoveSpeedPercentage
-        {
-            get { return _moveSpeed; }
-            set { _moveSpeed = Math.Max(-100, Math.Min(100, value)); }
-        }
-
-        /// <summary>
-        /// Gets or sets the attack speed percentage modifier of this buff. 
-        /// </summary>
-        public int AttackSpeedPercentage { get; set; }
-
-        /// <summary>
-        /// Gets or sets the mnimum damage modifier of this buff. 
-        /// </summary>
-        public double MinDamage { get; set; }
-
-        /// <summary>
-        /// Gets or sets the maximum damage modifier of this buff. 
-        /// </summary>
-        public double MaxDamage { get; set; }
-
-        /// <summary>
-        /// Gets or sets the strength modifier of this buff. 
-        /// </summary>
-        public double Strength { get; set; }
-
-        /// <summary>
-        /// Gets or sets the vitality modifier of this buff. 
-        /// </summary>
-        public double Vitality { get; set; }
-
-        /// <summary>
-        /// Gets or sets the agility modifier of this buff. 
-        /// </summary>
-        public double Agility { get; set; }
-
-        /// <summary>
-        /// Gets or sets the intellect modifier of this buff. 
-        /// </summary>
-        public double Intellect { get; set; }
 
         /// <summary>
         /// Gets or sets the total duration of the buff, in miliseconds. 
@@ -169,13 +90,147 @@ namespace Shanism.Engine.Objects.Buffs
         /// <summary>
         /// Gets or sets the unit states that are applied to units affected by this buff. 
         /// </summary>
-        public StateFlags UnitStates { get; set; }
+        public StateFlags StateFlags { get; set; }
 
 
         /// <summary>
         /// Gets whether this buff is timed or indefinite. 
         /// </summary>
         public bool IsTimed => FullDuration > 0;
+
+
+        #region UnitStats
+        /// <summary>
+        /// Gets or sets the life modifier of this buff. 
+        /// </summary>
+        public float MaxLife
+        {
+            get { return unitStats[UnitStat.MaxLife]; }
+            set { unitStats[UnitStat.MaxLife] = value; }
+        }
+        /// <summary>
+        /// Gets or sets the mana modifier of this buff. 
+        /// </summary>
+        public float MaxMana
+        {
+            get { return unitStats[UnitStat.MaxMana]; }
+            set { unitStats[UnitStat.MaxMana] = value; }
+        }
+        /// <summary>
+        /// Gets or sets the life regen modifier of this buff. 
+        /// </summary>
+        public float LifeRegen
+        {
+            get { return unitStats[UnitStat.LifeRegen]; }
+            set { unitStats[UnitStat.LifeRegen] = value; }
+        }
+        /// <summary>
+        /// Gets or sets the mana regen modifier of this buff. 
+        /// </summary>
+        public float ManaRegen
+        {
+            get { return unitStats[UnitStat.ManaRegen]; }
+            set { unitStats[UnitStat.ManaRegen] = value; }
+        }
+        /// <summary>
+        /// Gets or sets the mnimum damage modifier of this buff. 
+        /// </summary>
+        public float MinDamage
+        {
+            get { return unitStats[UnitStat.MinDamage]; }
+            set { unitStats[UnitStat.MinDamage] = value; }
+        }
+        /// <summary>
+        /// Gets or sets the maximum damage modifier of this buff. 
+        /// </summary>
+        public float MaxDamage
+        {
+            get { return unitStats[UnitStat.MaxDamage]; }
+            set { unitStats[UnitStat.MaxDamage] = value; }
+        }
+        /// <summary>
+        /// Gets or sets the defense provided by this buff. 
+        /// </summary>
+        public float Defense
+        {
+            get { return unitStats[UnitStat.Defense]; }
+            set { unitStats[UnitStat.Defense] = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the movement speed modifier of this buff. 
+        /// </summary>
+        public float MoveSpeed
+        {
+            get { return unitStats[UnitStat.MoveSpeed]; }
+            set { unitStats[UnitStat.MoveSpeed] = value; }
+        }
+        /// <summary>
+        /// Gets or sets the movement speed percentage modifier of this buff. 
+        /// </summary>
+        public int MoveSpeedPercentage
+        {
+            get { return _moveSpeedPerc; }
+            set { _moveSpeedPerc = Math.Max(-100, Math.Min(100, value)); }
+        }
+
+        /// <summary>
+        /// Gets or sets the attack speed percentage modifier of this buff. 
+        /// </summary>
+        public int AttackSpeedPercentage { get; set; }
+
+        #endregion
+
+        /// <summary>
+        /// Gets or sets the dodge (evasion) modifier provided by this buff. 
+        /// </summary>
+        public int Dodge { get; set; }
+
+        /// <summary>
+        /// Gets or sets the critical strike chance modifier provided by this buff. 
+        /// </summary>
+        public int Crit { get; set; }
+
+
+        #region HeroStats
+
+        /// <summary>
+        /// Gets or sets the strength modifier of this buff.
+        /// </summary>
+        public float Strength
+        {
+            get { return heroStats[HeroAttribute.Strength]; }
+            set { heroStats[HeroAttribute.Strength] = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the vitality modifier of this buff.
+        /// </summary>
+        public float Vitality
+        {
+            get { return heroStats[HeroAttribute.Vitality]; }
+            set { heroStats[HeroAttribute.Vitality] = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the agility modifier of this buff.
+        /// </summary>
+        public float Agility
+        {
+            get { return heroStats[HeroAttribute.Agility]; }
+            set { heroStats[HeroAttribute.Agility] = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the intellect modifier of this buff.
+        /// </summary>
+        public float Intellect
+        {
+            get { return heroStats[HeroAttribute.Intellect]; }
+            set { heroStats[HeroAttribute.Intellect] = value; }
+        }
+
+        #endregion
 
 
         /// <summary>
@@ -187,6 +242,7 @@ namespace Shanism.Engine.Objects.Buffs
 
 
 
+        #region Virtual Methods
 
         /// <summary>
         /// The method executed whenever a buff expires from a target. 
@@ -212,6 +268,9 @@ namespace Shanism.Engine.Objects.Buffs
         /// <param name="buff"></param>
         public virtual void OnApplied(BuffInstance buff) { }
 
+        #endregion
+
+
         /// <summary>
         /// Returns a hash code for this instance.
         /// </summary>
@@ -227,7 +286,7 @@ namespace Shanism.Engine.Objects.Buffs
         /// <returns>
         ///   <c>true</c> if the specified <see cref="object" /> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object obj) => (obj is Buff) 
+        public override bool Equals(object obj) => (obj is Buff)
             && ((Buff)obj).Id == Id;
 
     }

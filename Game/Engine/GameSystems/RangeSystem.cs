@@ -10,6 +10,9 @@ using System.Text;
 
 namespace Shanism.Engine.GameSystems
 {
+    /// <summary>
+    /// Raises the events of type <see cref="RangeEvent"/> defined for all units on the provided game map. 
+    /// </summary>
     class RangeSystem : GameSystem
     {
         //limit the maximum updates per second
@@ -17,12 +20,13 @@ namespace Shanism.Engine.GameSystems
         //10 updates per second should be perfectly fine.
         const int MaxFPS = 10;
 
+        public override string SystemName => "Range Events";
+
 
         readonly MapSystem map;
 
         readonly Counter updateCounter = new Counter(1000 / MaxFPS);
 
-        public override string SystemName => "Range Events";
 
         public RangeSystem(MapSystem map)
         {
@@ -35,76 +39,8 @@ namespace Shanism.Engine.GameSystems
             {
                 //query tree for range events
                 foreach (var u in map.Units)
-                {
-                    var nearbies = u.nearbyEntities;
-
-                    var maxRange = u.range.MaxEventRange;
-                    map.GetObjectsInRect(u.Position, new Vector(maxRange), nearbies);
-
-                    foreach (var o in nearbies)
-                        updateUnit(u, o);
-                }
+                    u.range.FireEvents();
             }
-        }
-
-
-
-        static void updateUnit(Unit origin, Entity nearbyObject)
-        {
-            double dOld, dNew;
-            refreshDistances(origin, nearbyObject, out dOld, out dNew);
-
-            //short-circuit if change not "big enough"
-            if (Math.Abs(dOld - dNew) < 1e-5)
-                return;
-
-            //get the type of event
-            double minD, maxD;
-            RangeEventTriggerType tty;
-            if (dOld < dNew)
-            {
-                minD = dOld;
-                maxD = dNew;
-                tty = RangeEventTriggerType.Leave;
-            }
-            else
-            {
-                minD = dNew;
-                maxD = dOld;
-                tty = RangeEventTriggerType.Enter;
-            }
-
-            //raise relevant events
-            foreach (var ev in origin.range.SortedEvents)
-            {
-                if (ev.RangeSquared < minD)
-                    continue;
-
-                if (ev.RangeSquared > maxD)
-                    break;
-
-                ev.Raise(nearbyObject, tty);
-            }
-        }
-
-        static void refreshDistances(Unit origin, Entity nearbyObject, out double dOld, out double dNew)
-        {
-            var nearDists = origin.nearbyDistances;
-
-            //get old distance
-            if (!nearDists.TryGetValue(nearbyObject, out dOld))
-                dOld = double.MaxValue;
-
-            //get new distance
-            if (nearbyObject.IsDestroyed)
-            {
-                dNew = double.MaxValue;
-                nearDists.Remove(nearbyObject);
-                return;
-            }
-
-            dNew = nearbyObject.Position.DistanceToSquared(origin.Position);
-            nearDists[nearbyObject] = dNew;
         }
     }
 }

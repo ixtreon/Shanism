@@ -12,6 +12,8 @@ namespace Shanism.Client.UI.Game
 {
     class BuffBox : Control
     {
+        static readonly Color shadeColor = Color.Black.SetAlpha(150);
+
         public new double Size
         {
             get { return base.Size.X; }
@@ -21,16 +23,26 @@ namespace Shanism.Client.UI.Game
         public IBuffInstance Buff { get; set; }
 
         Texture2D buffTexture;
+        float shadeRatio;
+
 
         public BuffBox()
         {
-            ToolTip = "asdasdasdasd";
+            ToolTip = "wut";
         }
 
         protected override void OnUpdate(int msElapsed)
         {
-            if (Buff != null)
-                buffTexture = Content.Textures.TryGetIcon(Buff.Icon) ?? Content.Textures.DefaultIcon;
+            //update icon
+            if (Buff.Prototype.Icon != buffTexture?.Name)
+                buffTexture = Content.Textures.TryGetIcon(Buff.Prototype.Icon) 
+                    ?? Content.Textures.DefaultIcon;
+
+            //update cooldown shade
+            if (Buff.Prototype.FullDuration > 0)
+                shadeRatio = 0;
+            else
+                shadeRatio = (float)Buff.DurationLeft / Buff.Prototype.FullDuration;
         }
 
         public override void OnDraw(Graphics g)
@@ -41,11 +53,11 @@ namespace Shanism.Client.UI.Game
             if(buffTexture != null)
                 g.Draw(buffTexture, Vector.Zero, base.Size, Color.White);
 
-            if(Buff.FullDuration > 0)
+            if(shadeRatio > 0)
             {
-                var shSize = base.Size * new Vector(1, (double)Buff.DurationLeft / Buff.FullDuration);
+                var shSize = base.Size * new Vector(1, shadeRatio);
                 var shPos = base.Size - shSize;
-                g.Draw(Content.Textures.Blank, shPos, shSize, Color.Black.SetAlpha(150));
+                g.Draw(Content.Textures.Blank, shPos, shSize, shadeColor);
             }
         }
     }

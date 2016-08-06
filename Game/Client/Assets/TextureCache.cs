@@ -75,7 +75,7 @@ namespace Shanism.Client.Drawing
 
 
         /// <summary>
-        /// Tries to get the texture with the given name relative to the Icons folder. See <see cref="TextureType"/>. 
+        /// Tries to get the texture with the given name relative to the Icons folder. 
         /// </summary>
         /// <param name="iconName">The name of the texture relative to the Icons folder. </param>
         /// <returns>The texture with that name, or null if no such texture was found. </returns>

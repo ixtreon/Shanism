@@ -1,7 +1,6 @@
 ﻿using Shanism.Engine.Maps;
 using Shanism.Common;
 using Shanism.Common.Util;
-using System.Collections.Concurrent;
 using Shanism.Common.Game;
 using Shanism.Common.Interfaces.Objects;
 using Shanism.ScenarioLib;
@@ -19,7 +18,7 @@ namespace Shanism.Engine
     {
         #region Static Members
 
-        static ShanoEngine Game { get; set; }
+        internal static ShanoEngine currentGame { get; private set; }
 
         /// <summary>
         /// Tries to set the game engine instance all game objects are part of.
@@ -27,10 +26,10 @@ namespace Shanism.Engine
         /// </summary>
         public static bool TrySetGame(ShanoEngine game)
         {
-            if (Game != null)
+            if (currentGame != null)
                 return false;
 
-            Game = game;
+            currentGame = game;
             return true;
         }
         #endregion
@@ -41,30 +40,41 @@ namespace Shanism.Engine
         /// </summary>
         public abstract ObjectType ObjectType { get; }
 
+        /// <summary>
+        /// Gets the unique ID of the game object.
+        /// </summary>
         public uint Id { get; }
 
-
+        #region Game Shortcuts
 
         /// <summary>
         /// Gets the map that contains the terrain and units in this scenario. 
         /// </summary>
-        public IGameMap Map => Game?.Map;
+        public IGameMap Map => currentGame?.Map;
 
         /// <summary>
         /// Gets the scenario this object is part of. 
         /// </summary>
-        public Scenario Scenario => Game?.Scenario;
+        public Scenario Scenario => currentGame?.Scenario;
 
-        internal PerfCounter UnitSystemPerfCounter => Game?.UnitPerfCounter;
+        /// <summary>
+        /// Gets the game this object is part of. 
+        /// </summary>
+        public IGame Game => currentGame;
 
-        internal IScriptRunner Scripts => Game?.Scripts;
+
+        internal PerfCounter UnitSystemPerfCounter => currentGame?.UnitPerfCounter;
+
+        internal IScriptRunner Scripts => currentGame?.Scripts;
+        
+        #endregion
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameObject"/> class.
         /// </summary>
         protected GameObject()
         {
-            Id = Shanism.Common.Util.GenericId<GameObject>.GetNew();
+            Id = GenericId<GameObject>.GetNew();
         }
 
 

@@ -3,10 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Collections;
 using Shanism.Common;
-using System.Collections.Concurrent;
 using Shanism.Engine.Objects.Abilities;
 using System.Threading;
 using Shanism.Common.Game;
@@ -14,13 +12,23 @@ using System.Diagnostics;
 
 namespace Shanism.Engine.Systems
 {
+    /// <summary>
+    /// Keeps and updates the abilities of an unit. Keeps track of casting abilties. 
+    /// </summary>
+    /// <seealso cref="Shanism.Engine.Systems.UnitSystem" />
+    /// <seealso cref="Shanism.Engine.Systems.IUnitAbilities" />
     class AbilitySystem : UnitSystem, IUnitAbilities
     {
 
+        readonly Unit Owner;
+
         /// <summary>
-        /// Contains a mapping between ability ids and the abilities themselves. 
+        /// Ability ids mapped to the abilities themselves. 
         /// </summary>
         readonly Dictionary<uint, Ability> abilities = new Dictionary<uint, Ability>();
+
+
+        CastingData castData;
 
         /// <summary>
         /// The event raised just after a spell was cast. 
@@ -38,24 +46,11 @@ namespace Shanism.Engine.Systems
         public event Action<Ability> OnAbilityLost;
 
 
-        readonly Unit Owner;
-
 
         public Ability CastingAbility => castData?.Ability;
 
         public int CastingProgress => castData?.Progress ?? 0;
 
-        public int Count => abilities.Count;
-
-        CastingData castData;
-
-        public IEnumerable<Ability> Spellbook => abilities.Select(o => o.Value);
-
-
-
-        int ICollection<Ability>.Count => abilities.Count;
-
-        bool ICollection<Ability>.IsReadOnly => false;
 
 
 
@@ -64,10 +59,11 @@ namespace Shanism.Engine.Systems
             Owner = u;
         }
 
+
         public override void Update(int msElapsed)
         {
-            foreach (var ab in Spellbook)
-                ab.Update(msElapsed);
+            foreach (var kvp in abilities)
+                kvp.Value.Update(msElapsed);
 
             //continue only if casting
             if (castData == null)
@@ -86,10 +82,20 @@ namespace Shanism.Engine.Systems
                 return;
 
             //cast the spell if no other spell was cast in the meantime
-            InvokeAbility(castData);
+            //execute and check custom ability handlers
+            if (castData.Invoke())
+                OnAbilityCast?.Invoke();
+
             StopCasting();
         }
 
+
+
+        #region ICollection<T> implementation
+
+        public int Count => abilities.Count;
+
+        bool ICollection<Ability>.IsReadOnly => false;
 
         /// <summary>
         /// Adds the given ability to the spellbook of this hero. 
@@ -99,7 +105,6 @@ namespace Shanism.Engine.Systems
         {
             if (a.Owner != null)
                 throw new InvalidOperationException($"The ability {a} already belongs to the unit {Owner}.");
-
 
             abilities[a.Id] = a;
             a.SetOwner(Owner);
@@ -123,6 +128,7 @@ namespace Shanism.Engine.Systems
             }
             return result;
         }
+
         public void Clear()
         {
             foreach (var kvp in abilities)
@@ -133,17 +139,35 @@ namespace Shanism.Engine.Systems
             abilities.Clear();
         }
 
-        public bool Contains(Ability item)
+        public bool Contains(Ability item) 
+            => abilities.ContainsKey(item.Id);
+
+        void ICollection<Ability>.CopyTo(Ability[] array, int arrayIndex)
+            => abilities.Values.CopyTo(array, arrayIndex);
+
+        IEnumerator<Ability> IEnumerable<Ability>.GetEnumerator() => abilities.Values.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => abilities.Values.GetEnumerator();
+
+
+
+        /// <summary>
+        /// Tries to get the value of the given ability from this unit's spell book. 
+        /// Returns null if the ability is not found. 
+        /// </summary>
+        /// <param name="abilityId">The ID of the ability to look for. </param>
+        public Ability TryGet(uint abilityId)
         {
-            return abilities.ContainsKey(item.Id);
+            return abilities.TryGet(abilityId);
         }
+        #endregion
 
         #region Casting
 
         public void StopCasting()
         {
             castData = null;
-            Owner.States &= ~StateFlags.Casting;
+            Owner.StateFlags &= ~StateFlags.Casting;
         }
 
         void setCastData(CastingData cd)
@@ -153,7 +177,7 @@ namespace Shanism.Engine.Systems
             if (castData == null || !castData.Equals(cd))
             {
                 castData = cd;
-                Owner.States |= StateFlags.Casting;
+                Owner.StateFlags |= StateFlags.Casting;
             }
         }
 
@@ -197,34 +221,6 @@ namespace Shanism.Engine.Systems
         #endregion
 
 
-        /// <summary>
-        /// Activates (casts) the specified ability. 
-        /// </summary>
-        internal bool InvokeAbility(CastingData cd)
-        {
-            //execute and check custom ability handlers
-            var ab = cd.Ability;
-            var result = ab.Invoke(cd);
-
-            if (result)
-            {
-                OnAbilityCast?.Invoke();
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Tries to get the value of the given ability from this unit's spell book. 
-        /// Returns null if the ability is not found. 
-        /// </summary>
-        /// <param name="abilityId">The ID of the ability to look for. </param>
-        public Ability TryGet(uint abilityId)
-        {
-            return abilities.TryGet(abilityId);
-        }
-
         void throwIfAbilityNotOurs(Ability ability)
         {
             if (ability?.Owner != Owner)
@@ -233,16 +229,6 @@ namespace Shanism.Engine.Systems
 
 
         #region IEnumerable<Ability> Implementation
-        IEnumerator<Ability> IEnumerable<Ability>.GetEnumerator() => abilities.Values.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => abilities.Values.GetEnumerator();
-
-
-
-        void ICollection<Ability>.CopyTo(Ability[] array, int arrayIndex)
-        {
-            throw new NotImplementedException();
-        }
         #endregion
 
 

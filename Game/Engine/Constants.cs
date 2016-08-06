@@ -60,7 +60,7 @@ namespace Shanism.Engine
             /// <summary>
             /// The damage reduction per point of defense. 
             /// </summary>
-            public const double DamageReductionPerDefense = 0.05;
+            public const float DamageReductionPerDefense = 0.05f;
         }
 
         public static class Heroes
@@ -69,21 +69,21 @@ namespace Shanism.Engine
             public static class Attributes
             {
                 //Strength gives damage and defense
-                public const double DamagePerStrength = 1;
-                public const double DefensePerStrength = 2;
+                public const float DamagePerStrength = 1;
+                public const float DefensePerStrength = 2;
 
                 //vitality gives mana and life
-                public const double LifePerVitality = 10;
-                public const double ManaPerVitality = 4;
+                public const float LifePerVitality = 10;
+                public const float ManaPerVitality = 4;
 
                 //int gives magic damage and regen
-                public const double LifeRegPerInt = 0.10;
-                public const double ManaRegPerInt = 0.10;
-                public const double MagicDamagePerInt = 1;
+                public const float LifeRegPerInt = 0.10f;
+                public const float ManaRegPerInt = 0.10f;
+                public const float MagicDamagePerInt = 1;
 
                 //agility gives attack speed, dodge (precision? crit?)
-                public const double AtkSpeedPerAgility = 1;        // as percentage;
-                public const double DodgePerAgility = 0.1;         // as percentage;
+                public const float AtkSpeedPerAgility = 1;        // as percentage;
+                public const float DodgePerAgility = 0.1f;         // as percentage;
             }
 
             public static class Experience

@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Shanism.Common.Message.Client;
 using Shanism.Common.Message;
 using Shanism.Common.Message.Server;
-using Shanism.Common.StubObjects;
 using Shanism.Common.Message.Network;
 using Shanism.Common.Interfaces.Entities;
 
@@ -25,6 +24,7 @@ namespace Shanism.Network.Client
         //
         const int FPS = 60;
 
+
         public uint Id { get; private set; }
 
         public string Name { get; }
@@ -33,6 +33,8 @@ namespace Shanism.Network.Client
         readonly ObjectCache objects = new ObjectCache();
 
         readonly ClientSerializer serializer = new ClientSerializer();
+
+        readonly Counter clientFrameCounter = new Counter(1000 / FPS);
 
         bool isConnected;
 
@@ -156,10 +158,13 @@ namespace Shanism.Network.Client
         {
             //read incoming messages 
             base.Update(msElapsed);
-            
+
             //send clientframe
-            var msg = serializer.WriteClientFrame(GameClient.State);
-            SendMessage(msg, NetDeliveryMethod.UnreliableSequenced);
+            if (clientFrameCounter.Tick(msElapsed))
+            {
+                var msg = serializer.WriteClientFrame(GameClient.State);
+                SendMessage(msg, NetDeliveryMethod.UnreliableSequenced);
+            }
         }
 
         public string GetDebugString()

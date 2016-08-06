@@ -12,7 +12,7 @@ using Shanism.Common.Message.Server;
 namespace Shanism.Common
 {
     /// <summary>
-    /// A prpospective client looking to play on the server.
+    /// A prospective client looking to play on the server.
     ///  
     /// It could be either a local or remote (network'd) one. 
     /// </summary>

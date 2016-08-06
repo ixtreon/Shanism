@@ -38,10 +38,9 @@ namespace Shanism.Common.Util
         public void Log(string category, long timeTaken)
         {
             long t;
-            if (stats.TryGetValue(category, out t))
-                stats[category] = t + timeTaken;
-            else
-                stats[category] = timeTaken;
+            if (!stats.TryGetValue(category, out t))
+                t = 0;
+            stats[category] = t + timeTaken;
         }
 
         public void RunAndLog(string categoryName, Action act)

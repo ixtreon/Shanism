@@ -1,5 +1,4 @@
-﻿using Shanism.Engine.Entities;
-using Shanism.Engine.Systems.Orders;
+﻿using Shanism.Engine.Systems.Orders;
 using Shanism.Common;
 using Shanism.Common.Game;
 using Shanism.Common.Message.Client;
@@ -13,7 +12,7 @@ using Shanism.Engine.Objects.Abilities;
 
 namespace Shanism.Engine.Entities
 {
-    //The part of the unit class which deals with order handling, such as moving and attacking. 
+    //The part of the unit class which deals with orders such as moving and attacking. 
     partial class Unit
     {
         /// <summary>
@@ -51,7 +50,7 @@ namespace Shanism.Engine.Entities
         /// <summary>
         /// Gets the type of the unit's current order. 
         /// </summary>
-        public virtual OrderType OrderType => Order?.Type ?? OrderType.Stand;
+        public OrderType OrderType => Order?.Type ?? OrderType.Stand;
 
         /// <summary>
         /// Gets whether this unit is currently moving. 
@@ -61,7 +60,7 @@ namespace Shanism.Engine.Entities
         /// <summary>
         /// Gets the direction in which this unit is moving, if it is moving. 
         /// </summary>
-        public double MoveDirection => (Order as IMoveOrder)?.Direction ?? 0;
+        public float MoveDirection => (Order as IMoveOrder)?.Direction ?? 0;
 
         #endregion
 

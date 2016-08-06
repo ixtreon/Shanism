@@ -1,7 +1,5 @@
 ﻿using Shanism.Common;
-using Shanism.Common.Game;
 using Shanism.Common.Util;
-using Shanism.Engine.Common;
 using Shanism.Engine.Exceptions;
 using Shanism.Engine.GameSystems;
 using Shanism.Engine.Maps;
@@ -11,9 +9,7 @@ using Shanism.Engine.Scripting;
 using Shanism.ScenarioLib;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -25,7 +21,7 @@ namespace Shanism.Engine
     /// The game engine lies here.
     /// </summary>
     /// <seealso cref="IShanoEngine" />
-    public class ShanoEngine : IShanoEngine
+    public class ShanoEngine : IShanoEngine, IGame
     {
         /// <summary>
         /// The frames per second we aim to run at. 
@@ -41,7 +37,7 @@ namespace Shanism.Engine
         /// <summary>
         /// A list of all receptors (human players) currently in game. 
         /// </summary>
-        internal readonly ConcurrentDictionary<IShanoClient, ShanoReceptor> Players = new ConcurrentDictionary<IShanoClient, ShanoReceptor>();
+        internal readonly ConcurrentDictionary<string, ShanoReceptor> Players = new ConcurrentDictionary<string, ShanoReceptor>();
 
 
         internal readonly PerfCounter UnitPerfCounter = new PerfCounter();
@@ -51,7 +47,7 @@ namespace Shanism.Engine
 
         readonly List<GameSystem> systems = new List<GameSystem>();
 
-        readonly MapSystem map;
+        internal readonly MapSystem map;
         readonly NetworkSystem network;
         readonly ScriptingSystem scripts;
         readonly RangeSystem rangeQt;
@@ -114,13 +110,6 @@ namespace Shanism.Engine
         }
 
 
-        public void LoadScenario(string scenarioDir, int? mapSeed = null)
-        {
-            string errors;
-            if(!TryLoadScenario(scenarioDir, mapSeed ?? Rnd.Next(), out errors))
-                throw new ScenarioLoadException(scenarioDir, errors);
-        }
-
         public bool TryLoadScenario(string scenarioDir, int mapSeed, out string errors)
         {
             //compile the scenario
@@ -140,19 +129,17 @@ namespace Shanism.Engine
         }
 
 
-        #region IEngine implementation
-
+        #region IShanoEngine implementation
         /// <summary>
         /// Accepts the given client to the server.
         /// Returns the network receptor responsible for it. 
         /// </summary>
         public IReceptor AcceptClient(IShanoClient c)
         {
-            var pl = new ShanoReceptor(this, c);
+            if (!Players.TryAdd(c.Name, null))
+                return null;
 
-            // TODO: do some checks on player join?
-
-            return pl;
+            return new ShanoReceptor(this, c);
         }
 
         public void StartPlaying(IReceptor rec)
@@ -160,15 +147,22 @@ namespace Shanism.Engine
             var pl = rec as ShanoReceptor;
             if (pl == null)
                 throw new ArgumentException(nameof(rec), $"The receptor must be of type `{nameof(ShanoReceptor)}` as returned by this engine!");
-            pl.SendHandshake(true);
 
             addPlayer(pl);
+            pl.SendHandshake(true);
+        }
+
+        /// <summary>
+        /// Starts the network module which allows remote players to connect to the server. 
+        /// </summary>
+        public void OpenToNetwork()
+        {
+            network.Restart(this);
         }
 
         #endregion
 
         #region Server Controls
-
         /// <summary>
         /// Starts running the main game loop on the current thread. 
         /// </summary>
@@ -203,18 +197,41 @@ namespace Shanism.Engine
         {
             IsRunning = false;
         }
-
-        /// <summary>
-        /// Starts the network module which allows remote players to connect to the server. 
-        /// </summary>
-        public void OpenToNetwork()
-        {
-            network.Restart(this);
-        }
-
-
         #endregion
 
+
+        #region IGame implementation
+        /// <summary>
+        /// Gets all players currently connected to the game.
+        /// </summary>
+        IEnumerable<IPlayer> IGame.Players
+            => Players.Select(kvp => kvp.Value.Player);
+
+        int IGame.PlayerCount => Players.Count;
+
+        /// <summary>
+        /// Sends a system message to all currently connected players.
+        /// </summary>
+        /// <param name="msg">The message to send.</param>
+        public void SendSystemMessage(string msg)
+        {
+            foreach (var kvp in Players)
+                kvp.Value.SendSystemMessage(msg);
+        }
+
+        /// <summary>
+        /// Sends a system message to the specified player.
+        /// </summary>
+        /// <param name="pl">The player to send the message to.</param>
+        /// <param name="msg">The message to send.</param>
+        public void SendSystemMessage(IPlayer pl, string msg)
+        {
+            ShanoReceptor receptor;
+            if (!Players.TryGetValue(pl.Name, out receptor))
+                return;     //silently fail?!
+            receptor.SendSystemMessage(msg);
+        }
+        #endregion
 
         /// <summary>
         /// Performs a single update of the game state. 
@@ -247,7 +264,10 @@ namespace Shanism.Engine
         /// <param name="pl"></param>
         void addPlayer(ShanoReceptor pl)
         {
-            Players[pl.Client] = pl;
+            if (!Players.ContainsKey(pl.Name) || Players[pl.Name] != null)
+                throw new Exception();
+
+            Players[pl.Name] = pl;
 
             Scripts.Run(s => s.OnPlayerJoined(pl.Player));
         }

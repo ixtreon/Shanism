@@ -33,6 +33,13 @@ namespace Shanism.Engine.Entities
         public override ObjectType ObjectType => ObjectType.Hero;
 
 
+        readonly HeroAttributes baseAttributes = new HeroAttributes(10);
+        internal readonly HeroAttributes attributes = new HeroAttributes();
+
+
+        IHeroAttributes IHero.BaseAttributes => baseAttributes;
+        IHeroAttributes IHero.Attributes => attributes;
+
         /// <summary>
         /// The total experience of the hero. 
         /// </summary>
@@ -41,8 +48,7 @@ namespace Shanism.Engine.Entities
         /// <summary>
         /// Gets the experience needed to reach the next level. 
         /// </summary>
-        public int ExperienceNeeded
-            => XpPerLevel * Level;
+        public int ExperienceNeeded => XpPerLevel * Level;
 
         /// <summary>
         /// The current experience of the hero.
@@ -63,43 +69,59 @@ namespace Shanism.Engine.Entities
             }
         }
 
+        #region Base Stats
         /// <summary>
         /// Gets or sets the base strength of the hero. 
         /// </summary>
-        public double BaseStrength { get; set; } = 10;
+        public float BaseStrength
+        {
+            get { return baseAttributes[HeroAttribute.Strength]; }
+            set { baseAttributes[HeroAttribute.Strength] = value; }
+        }
         /// <summary>
         /// Gets or sets the base vitality of the hero. 
         /// </summary>
-        public double BaseVitality { get; set; } = 10;
+        public float BaseVitality
+        {
+            get { return baseAttributes[HeroAttribute.Vitality]; }
+            set { baseAttributes[HeroAttribute.Vitality] = value; }
+        }
         /// <summary>
         /// Gets or sets the base intellect of the hero. 
         /// </summary>
-        public double BaseIntellect { get; set; } = 10;
+        public float BaseIntellect
+        {
+            get { return baseAttributes[HeroAttribute.Intellect]; }
+            set { baseAttributes[HeroAttribute.Intellect] = value; }
+        }
         /// <summary>
         /// Gets or sets the base agility of the hero. 
         /// </summary>
-        public double BaseAgility { get; set; } = 10;
+        public float BaseAgility
+        {
+            get { return baseAttributes[HeroAttribute.Agility]; }
+            set { baseAttributes[HeroAttribute.Agility] = value; }
+        }
+        #endregion
 
-
-
+        #region Current Stats
         /// <summary>
         /// Gets the current strength of the hero. 
         /// </summary>
-        public double Strength { get; internal set; }
+        public float Strength => attributes[HeroAttribute.Strength];
         /// <summary>
         /// Gets the current vitality of the hero. 
         /// </summary>
-        public double Vitality { get; internal set; }
+        public float Vitality => attributes[HeroAttribute.Vitality];
         /// <summary>
         /// Gets the current intellect of the hero. 
         /// </summary>
-        public double Intellect { get; internal set; }
+        public float Intellect => attributes[HeroAttribute.Intellect];
         /// <summary>
         /// Gets the current agility of the hero. 
         /// </summary>
-        public double Agility { get; internal set; }
-
-        
+        public float Agility => attributes[HeroAttribute.Agility];
+        #endregion
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Hero"/> class.
@@ -114,6 +136,13 @@ namespace Shanism.Engine.Entities
 
             BaseMaxLife = 100;
             BaseMaxMana = 5;
+        }
+
+        internal void updateHeroStats()
+        {
+            attributes.Set(baseAttributes);
+            foreach (var b in Buffs)
+                attributes.Add(b.Prototype.heroStats);
         }
     }
 }

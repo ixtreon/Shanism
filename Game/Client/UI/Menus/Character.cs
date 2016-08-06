@@ -132,31 +132,46 @@ namespace Shanism.Client.UI.Menus
             charName.Text = Target.Name;
             charXpBar.Target = Target;
 
-            vitalityBox.SetStatValue(Target.BaseVitality, Target.Vitality);
+            var maxLife = Target.Stats[UnitStat.MaxLife];
+            var lifeRegen = Target.Stats[UnitStat.LifeRegen];
+            vitalityBox.SetStatValue(Target.BaseAttributes[HeroAttribute.Vitality], Target.Attributes[HeroAttribute.Vitality]);
             vitalityBox.SetLabelValue(0,
-                $"{Target.Life:0} / {Target.MaxLife:0}",
-                $"{Target.Life:0.00} / {Target.MaxLife:0.00}");
-            vitalityBox.SetLabelValue(1, $"{Target.LifeRegen:+0.0;-0.0;0}", $"{Target.LifeRegen:+0.0;-0.0;0} / sec");
+                $"{Target.Life:0} / {maxLife:0}",
+                $"{Target.Life:0.00} / {maxLife:0.00}");
+            vitalityBox.SetLabelValue(1, 
+                $"{lifeRegen:+0.0;-0.0;0}", 
+                $"{lifeRegen:+0.0;-0.0;0} / sec");
 
-            strengthBox.SetStatValue(Target.BaseStrength, Target.Strength);
-            strengthBox.SetLabelValue(0, $"{Target.MinDamage} - {Target.MaxDamage}", "");
+            var minDmg = Target.Stats[UnitStat.MinDamage];
+            var maxDmg = Target.Stats[UnitStat.MaxDamage];
+            strengthBox.SetStatValue(Target.BaseAttributes[HeroAttribute.Strength], Target.Attributes[HeroAttribute.Strength]);
+            strengthBox.SetLabelValue(0, 
+                $"{minDmg} - {maxDmg}", 
+                "");
 
-            agilityBox.SetStatValue(Target.BaseAgility, Target.Agility);
-            agilityBox.SetLabelValue(0, 0, 0, "%");
+            var attacksPerSec = Target.Stats[UnitStat.AttacksPerSecond];
+            var dodge = 0f;
+            agilityBox.SetStatValue(Target.BaseAttributes[HeroAttribute.Agility], Target.Attributes[HeroAttribute.Agility]);
+            agilityBox.SetLabelValue(0, 
+                $"{dodge:0}%", 
+                $"{dodge:0.00}%");
             agilityBox.SetLabelValue(1, 
-                $"{Target.AttackCooldown / 1000.0:0.0}", 
-                $"{Target.AttackCooldown / 1000.0:0.0} sec / attack.\n{1000.0 / Target.AttackCooldown:0.0} attacks / sec");
-            //intellectBox.SetLabelValue(0, 0, Target.MaxMana);
+                $"{attacksPerSec / 1000f:0.0}", 
+                $"{1f / attacksPerSec:0.0} sec / attack.\n{attacksPerSec:0.0} attacks / sec");
 
-            intellectBox.SetStatValue(Target.BaseIntellect, Target.Intellect);
+            var maxMana = Target.Stats[UnitStat.MaxMana];
+            var manaRegen = Target.Stats[UnitStat.ManaRegen];
+            var magicDmg = Target.Stats[UnitStat.MagicDamage];
+            intellectBox.SetStatValue(Target.BaseAttributes[HeroAttribute.Intellect], Target.Attributes[HeroAttribute.Intellect]);
             intellectBox.SetLabelValue(0,
-                $"{Target.Mana:0} / {Target.MaxMana:0}",
-                $"{Target.Mana:0.00} / {Target.MaxMana:0.00}");
-            intellectBox.SetLabelValue(1, $"{Target.ManaRegen:+0.0;-0.0;0}", $"{Target.ManaRegen:+0.0;-0.0;0} / sec");
-            intellectBox.SetLabelValue(2, 0, Target.MagicDamage);
-
-            //lblCharName.Text = Target?.Owner.Name ?? string.Empty;
-            //lblCharName.Left = (Size.X - lblCharName.Size.X) / 2;
+                $"{Target.Mana:0} / {maxMana:0}",
+                $"{Target.Mana:0.00} / {maxMana:0.00}");
+            intellectBox.SetLabelValue(1, 
+                $"{manaRegen:+0.0;-0.0;0}", 
+                $"{manaRegen:+0.0;-0.0;0} / sec");
+            intellectBox.SetLabelValue(2, 
+                $"{magicDmg}",
+                "");
         }
     }
 }

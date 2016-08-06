@@ -27,12 +27,12 @@ namespace Shanism.Engine.Systems.Orders
         /// </summary>
         public Vector TargetLocation { get; }
 
-        public double Direction { get; private set; }
+        public float Direction { get; private set; }
 
         public MoveLocation(Vector target, double distanceThreshold = 0.05)
         {
             DistanceThrehsold = distanceThreshold;
-            Direction = double.NaN; //wat
+            Direction = float.NaN; //wat
             TargetLocation = target;
         }
 
@@ -47,7 +47,7 @@ namespace Shanism.Engine.Systems.Orders
                 return false;
 
             //move the unit
-            Direction = uLoc.AngleTo(TargetLocation);
+            Direction = (float)uLoc.AngleTo(TargetLocation);
             unit.movement.SetMovementState(Direction, dist);
             return true;
         }

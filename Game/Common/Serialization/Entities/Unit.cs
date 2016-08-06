@@ -27,33 +27,23 @@ namespace Shanism.Common.Serialization
             w.Write(u.Level);
             w.Write(u.IsDead);
             w.Write((byte)u.OrderType);
-            w.Write((short)u.States);
-            w.Write((float)u.VisionRange);
+            w.Write((short)u.StateFlags);
+            w.Write(u.VisionRange);
 
-            //life & mana
-            w.Write((float)u.Life);
-            w.Write((float)u.MaxLife);
-            w.Write((float)u.LifeRegen);
-            w.Write((float)u.Mana);
-            w.Write((float)u.MaxMana);
-            w.Write((float)u.ManaRegen);
+            //stats
+            w.Write(u.Life);
+            w.Write(u.Mana);
+            u.Stats.Write(w);
 
             //movement
             w.Write(u.IsMoving);
-            w.Write((float)u.MoveDirection);
-            w.Write((float)u.MoveSpeed);
-
-            //combat
-            w.Write(u.AttackCooldown);
-            w.Write((float)u.Defense);
-            w.Write((float)u.MinDamage);
-            w.Write((float)u.MaxDamage);
-            w.Write((float)u.MagicDamage);
+            w.Write(u.MoveDirection);
 
             //casting
             w.Write(u.CastingAbilityId);
             w.Write(u.CastingProgress);
             w.Write(u.TotalCastingTime);
+
 
             //buffs
             var nBuffs = (byte)u.Buffs.Count;
@@ -80,28 +70,17 @@ namespace Shanism.Common.Serialization
             u.Level = r.ReadInt32();
             u.IsDead = r.ReadBoolean();
             u.OrderType = (OrderType)r.ReadByte();
-            u.States = (StateFlags)r.ReadInt16();
+            u.StateFlags = (StateFlags)r.ReadInt16();
             u.VisionRange = r.ReadSingle();
 
             //life & mana
             u.Life = r.ReadSingle();
-            u.MaxLife = r.ReadSingle();
-            u.LifeRegen = r.ReadSingle();
             u.Mana = r.ReadSingle();
-            u.MaxMana = r.ReadSingle();
-            u.ManaRegen = r.ReadSingle();
+            u.Stats.Read(r);
 
             //movement
             u.IsMoving = r.ReadBoolean();
             u.MoveDirection = r.ReadSingle();
-            u.MoveSpeed = r.ReadSingle();
-
-            //combat
-            u.AttackCooldown = r.ReadInt32();
-            u.Defense = r.ReadSingle();
-            u.MinDamage = r.ReadSingle();
-            u.MaxDamage = r.ReadSingle();
-            u.MagicDamage = r.ReadSingle();
 
             //casting
             u.CastingAbilityId = r.ReadUInt32();

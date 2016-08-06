@@ -12,22 +12,32 @@ namespace Shanism.Common
         /// <summary>
         /// Clamps the given integer between the two supplied values.
         /// </summary>
-        /// <param name="i">The value to clamp.</param>
+        /// <param name="val">The value to clamp.</param>
         /// <param name="minVal">The minimum value.</param>
         /// <param name="maxVal">The maximum value.</param>
         /// <returns></returns>
-        public static int Clamp(this int i, int minVal, int maxVal) 
-            => Math.Min(maxVal, Math.Max(minVal, i));
+        public static int Clamp(this int val, int minVal, int maxVal) 
+            => Math.Min(maxVal, Math.Max(minVal, val));
 
         /// <summary>
-        /// Clamps the specified minimum value.
+        /// Clamps the given double-precision float between the two supplied values.
         /// </summary>
-        /// <param name="i">The i.</param>
+        /// <param name="val">The value to clamp.</param>
         /// <param name="minVal">The minimum value.</param>
         /// <param name="maxVal">The maximum value.</param>
         /// <returns></returns>
-        public static double Clamp(this double i, double minVal, double maxVal) 
-            => Math.Min(maxVal, Math.Max(minVal, i));
+        public static double Clamp(this double val, double minVal, double maxVal)
+            => Math.Min(maxVal, Math.Max(minVal, val));
+
+        /// <summary>
+        /// Clamps the given single-precision float between the two supplied values.
+        /// </summary>
+        /// <param name="val">The value to clamp.</param>
+        /// <param name="minVal">The minimum value.</param>
+        /// <param name="maxVal">The maximum value.</param>
+        /// <returns></returns>
+        public static float Clamp(this float val, float minVal, float maxVal)
+            => Math.Min(maxVal, Math.Max(minVal, val));
 
 
         public static bool AlmostEqualTo(this double a, double b, double epsilon = 1E-3)

@@ -98,7 +98,7 @@
     <Compile Include="Common\DamageFlags.cs" />
     <Compile Include="Common\ObjectCreator.cs" />
     <Compile Include="Common\Rnd.cs" />
-    <Compile Include="Entities\UnitPartials\UnitStats.cs" />
+    <Compile Include="Entities\UnitPartials\Stats.cs" />
     <Compile Include="Events\PlayerChatArgs.cs" />
     <Compile Include="Events\UnitArgs.cs" />
     <Compile Include="Exceptions\ScenarioLoadException.cs" />
@@ -155,7 +155,6 @@
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="UnitSystems\Buff.cs" />
     <Compile Include="Entities\UnitPartials\Orders.cs" />
-    <Compile Include="Entities\UnitPartials\States.cs" />
     <Compile Include="Objects\Abilities\Attack.cs" />
     <Compile Include="Objects\Behaviours\SpamBehaviour.cs" />
     <Compile Include="Objects\Behaviours\Behaviour.cs" />

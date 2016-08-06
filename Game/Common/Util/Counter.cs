@@ -8,6 +8,7 @@ namespace Shanism.Common
 {
     /// <summary>
     /// A simple counter that resets at a given max value. 
+    /// Is not thread-safe. 
     /// </summary>
     public class Counter
     {

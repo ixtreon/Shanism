@@ -15,8 +15,9 @@ using Shanism.Common.Interfaces.Entities;
 namespace Shanism.Engine.Players
 {
     /// <summary>
-    /// Represents a client connected to the engine. 
+    /// Represents (the internal parts of) a client connected to the engine. 
     /// Handles all messages coming from the given client.  
+    /// Tightly coupled with the <see cref="Player"/> class. 
     /// </summary>
     class ShanoReceptor : IReceptor
     {
@@ -95,17 +96,15 @@ namespace Shanism.Engine.Players
                     if (seenFromUnit.Owner.IsHuman)
                         seenFromPlayers.Add(seenFromUnit.Owner);
 
-            //first send to scripts
+            //send to nearby players (TODO)
+            var outMsg = new Shanism.Common.Message.Server.ChatMessage(text, Player);
+            //foreach (var pl in seenFromPlayers)
+            //    pl.SendMessage(outMsg);
+            SendMessage(outMsg);
+
+            //finally send to scripts
             var ev = new Events.PlayerChatArgs(Player, text);
             Engine.Scripts.Run(s => s.OnPlayerChatMessage(ev));
-
-            if (ev.Propagate)
-            {
-                var outMsg = new Shanism.Common.Message.Server.ChatMessage(text, Player);
-                //foreach (var pl in seenFromPlayers)
-                //    pl.SendMessage(outMsg);
-                SendMessage(outMsg);
-            }
         }
 
 
@@ -150,8 +149,17 @@ namespace Shanism.Engine.Players
             }
         }
 
+        /// <summary>
+        /// Sends a chat message to the given player.
+        /// </summary>
+        /// <param name="msg">The MSG.</param>
+        internal void SendSystemMessage(string msg)
+        {
+            SendMessage(new Shanism.Common.Message.Server.ChatMessage(msg, null));
+        }
 
-        public void SendHandshake(bool isSuccessful)
+
+        internal void SendHandshake(bool isSuccessful)
         {
             if (!isSuccessful)
             {

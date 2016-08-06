@@ -92,7 +92,7 @@ namespace Shanism.Client.UI
             {
                 Size = BuffSize,
                 Buff = b,
-                ToolTip = b.Name + "\n\n" + b.Description,
+                ToolTip = $"{b.Prototype.Name}\n\n{b.Prototype.Description}",
             };
             Add(bc);
             return bc;

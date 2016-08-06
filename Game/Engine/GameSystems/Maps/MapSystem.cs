@@ -1,11 +1,8 @@
 ﻿using Shanism.Common;
 using Shanism.Engine.Entities;
 using System;
-using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Shanism.ScenarioLib;
 using Shanism.Engine.Common;
 using Shanism.Engine.GameSystems.Maps;

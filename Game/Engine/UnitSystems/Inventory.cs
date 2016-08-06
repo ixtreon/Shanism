@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Engine.Common;
 using Shanism.Common.Game;
-using Shanism.Engine.Objects;
 using Shanism.Engine.Entities;
 using Shanism.Common;
 using Shanism.Engine.Objects.Items;
-using System.Collections.Concurrent;
 using Shanism.Engine.Maps;
 
 namespace Shanism.Engine.Systems
@@ -18,7 +15,7 @@ namespace Shanism.Engine.Systems
     class InventorySystem : UnitSystem, IUnitInventory
     {
 
-        static void CreateItemOnGround(IGameMap map, Vector pos, Item it)
+        static void CreateItemOnGround(MapSystem map, Vector pos, Item it)
             => map.Add(new GameItem(it, pos));
 
 
@@ -115,7 +112,7 @@ namespace Shanism.Engine.Systems
         public void SwapItems(int backpackSlotA, int backpackSlotB)
             => backpack.Swap(backpackSlotA, backpackSlotB);
 
-        void dropItem(Item it) => CreateItemOnGround(Owner.Map, Owner.Position, it);
+        void dropItem(Item it) => CreateItemOnGround(GameObject.currentGame.map, Owner.Position, it);
 
         public bool DropItem(int slotId)
         {

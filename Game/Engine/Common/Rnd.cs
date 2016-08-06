@@ -41,9 +41,19 @@ namespace Shanism.Engine
         /// A double-precision value greater than or equal to minValue and less than maxValue;
         /// </returns>
         public static double NextDouble(double minValue = 0, double maxValue = 1)
-        {
-            return rnd.NextDouble() * (maxValue - minValue) + minValue;
-        }
+            => rnd.NextDouble() * (maxValue - minValue) + minValue;
+
+
+        /// <summary>
+        /// Returns a random number within a specified range. 
+        /// </summary>
+        /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
+        /// <param name="maxValue">The exclusive upper bound of the random number returned. maxValue must be greater than or equal to minValue.</param>
+        /// <returns>
+        /// A single-precision value greater than or equal to minValue and less than maxValue;
+        /// </returns>
+        public static float NextFloat(float minValue = 0, float maxValue = 1)
+            => (float)rnd.NextDouble() * (maxValue - minValue) + minValue;
 
         /// <summary>
         /// Generates a random angle between 0 and 2*PI. 

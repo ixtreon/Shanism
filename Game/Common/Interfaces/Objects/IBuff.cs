@@ -19,10 +19,6 @@ namespace Shanism.Common.Interfaces.Objects
         /// </summary>
         int FullDuration { get; }
 
-        /// <summary>
-        /// Gets the unit states that are applied to units affected by this buff. 
-        /// </summary>
-        StateFlags UnitStates { get; }
 
         /// <summary>
         /// Gets the type of this buff. 
@@ -46,47 +42,26 @@ namespace Shanism.Common.Interfaces.Objects
         /// </summary>
         string Name { get; }
 
-
         /// <summary>
         /// Gets the formatted description of this buff. 
         /// </summary>
         string Description { get; }
 
-        /// <summary>
-        /// Gets the life modifier of this buff. 
-        /// </summary>
-        double MaxLife { get; }
 
         /// <summary>
-        /// Gets the mana modifier of this buff. 
+        /// Gets the unit states that are applied to units affected by this buff. 
         /// </summary>
-        double MaxMana { get; }
+        StateFlags StateFlags { get; }
 
         /// <summary>
-        /// Gets the life regen modifier of this buff. 
+        /// Gets the unit stat modifiers of this buff.
         /// </summary>
-        double LifeRegen { get; }
+        IUnitStats Stats { get; }
 
         /// <summary>
-        /// Gets the mana regen modifier of this buff. 
+        /// Gets the hero attribute modifiers of this buff.
         /// </summary>
-        double ManaRegen { get; }
-
-        /// <summary>
-        /// Gets the defense provided by this buff. 
-        /// </summary>
-        double Defense { get; }
-
-        /// <summary>
-        /// Gets the dodge (evasion) modifier provided by this buff. 
-        /// </summary>
-        double Dodge { get; }
-
-        /// <summary>
-        /// Gets the movement speed modifier of this buff. 
-        /// </summary>
-        double MoveSpeed { get; }
-
+        IHeroAttributes Attributes { get; }
 
         /// <summary>
         /// Gets the movement speed percentage modifier of this buff. 
@@ -96,32 +71,5 @@ namespace Shanism.Common.Interfaces.Objects
         /// Gets the attack speed percentage modifier of this buff. 
         /// </summary>
         int AttackSpeedPercentage { get; }
-
-
-        /// <summary>
-        /// Gets the mnimum damage modifier of this buff. 
-        /// </summary>
-        double MinDamage { get; }
-        /// <summary>
-        /// Gets the maximum damage modifier of this buff. 
-        /// </summary>
-        double MaxDamage { get; }
-
-        /// <summary>
-        /// Gets the strength modifier of this buff. 
-        /// </summary>
-        double Strength { get; }
-        /// <summary>
-        /// Gets the vitality modifier of this buff. 
-        /// </summary>
-        double Vitality { get; }
-        /// <summary>
-        /// Gets the agility modifier of this buff. 
-        /// </summary>
-        double Agility { get; }
-        /// <summary>
-        /// Gets the intellect modifier of this buff. 
-        /// </summary>
-        double Intellect { get; }
     }
 }

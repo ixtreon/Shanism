@@ -23,7 +23,7 @@ namespace Shanism.Engine.Systems
             //dead units have no orders
             if (Owner.IsDead
                 || Owner.Order == null
-                || Owner.States.HasFlag(StateFlags.Stunned))
+                || Owner.StateFlags.HasFlag(StateFlags.Stunned))
                 return;
 
             if (!Owner.Order.Update(Owner, msElapsed))

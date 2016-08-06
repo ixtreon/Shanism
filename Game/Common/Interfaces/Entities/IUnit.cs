@@ -38,95 +38,36 @@ namespace Shanism.Common.Interfaces.Entities
         /// <summary>
         /// Gets the unit state flags that currently affect this unit. 
         /// </summary>
-        StateFlags States { get; }
+        StateFlags StateFlags { get; }
 
         /// <summary>
         /// Gets the vision range of this unit. 
         /// </summary>
-        double VisionRange { get; }
+        float VisionRange { get; }
 
         #endregion
-
-        #region Life & Mana
 
         /// <summary>
         /// Gets the current life of this unit. 
         /// </summary>
-        double Life { get; }
-
-        /// <summary>
-        /// Gets the maximum life of this unit. 
-        /// </summary>
-        double MaxLife { get; }
-
-        /// <summary>
-        /// Gets the life regeneration of this unit in points per seecond. 
-        /// </summary>
-        double LifeRegen { get; }
-
-
+        float Life { get; }
         /// <summary>
         /// Gets the current mana of this unit. 
         /// </summary>
-        double Mana { get; }
-
-        /// <summary>
-        /// Gets the maximum mana of this unit. 
-        /// </summary>
-        double MaxMana { get; }
-
-        /// <summary>
-        /// Gets the mana regeneration of this unit in points per seecond. 
-        /// </summary>
-        double ManaRegen { get; }
-
-        #endregion
-
-        #region Movement
-
+        float Mana { get; }
         /// <summary>
         /// Gets whether the unit is currently moving. 
         /// </summary>
         bool IsMoving { get; }
-
         /// <summary>
         /// Gets the direction in which this unit is moving, if <see cref="IsMoving"/> is true. 
         /// </summary>
-        double MoveDirection { get; }
+        float MoveDirection { get; }
 
-        /// <summary>
-        /// Gets the movement speed of this unit. 
-        /// </summary>
-        double MoveSpeed { get; }
-        #endregion
+        IUnitStats BaseStats { get; }
 
-        #region Combat
+        IUnitStats Stats { get; }
 
-        /// <summary>
-        /// Gets the attack cooldown of this unit in milliseconds. 
-        /// </summary>
-        int AttackCooldown { get; }
-
-        /// <summary>
-        /// Gets the defense of this unit. 
-        /// </summary>
-        double Defense { get; }
-
-        /// <summary>
-        /// Gets the minimum damage dealt by this unit. 
-        /// </summary>
-        double MinDamage { get; }
-
-        /// <summary>
-        /// Gets the maximum damage dealt by this unit. 
-        /// </summary>
-        double MaxDamage { get; }
-
-        /// <summary>
-        /// Gets the bonus magic damage this unit deals. 
-        /// </summary>
-        double MagicDamage { get; }
-        #endregion
 
         #region Casting
 
@@ -169,12 +110,7 @@ namespace Shanism.Common.Interfaces.Entities
     {
         public static bool IsCasting(this IUnit u)
         {
-            return (u.States & StateFlags.Casting) == StateFlags.Casting;
-        }
-
-        public static bool IsInvulnerable(this IUnit u)
-        {
-            return (u.States & StateFlags.Invulnerable) == StateFlags.Invulnerable;
+            return (u.StateFlags & StateFlags.Casting) == StateFlags.Casting;
         }
     }
 }

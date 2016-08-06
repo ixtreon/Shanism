@@ -21,7 +21,7 @@ namespace Shanism.Engine.Entities
         /// <summary>
         /// Gets or sets the speed of the projectile in game units per second. 
         /// </summary>
-        public double Speed = 3;
+        public double Speed = 20;
 
         /// <summary>
         /// Gets or sets the direction (in radians) this projectile is traveling at. 

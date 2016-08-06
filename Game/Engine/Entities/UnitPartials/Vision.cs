@@ -3,25 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common;
-using Shanism.Common.Util;
 using Shanism.Common.Message;
-using Shanism.Engine.Objects.Range;
 using Shanism.Engine.Players;
 
 namespace Shanism.Engine.Entities
 {
     partial class Unit
     {
-        //used by range events
-        internal readonly Dictionary<Entity, double> nearbyDistances = new Dictionary<Entity, double>();
-
-        internal readonly HashSet<Entity> nearbyEntities = new HashSet<Entity>();
-
         //used by the vision system
         readonly HashSet<Entity> objectsSeen = new HashSet<Entity>();
 
-        double _visionRange = 20;
+        float _visionRange = 20;
 
 
         /// <summary>
@@ -48,7 +40,7 @@ namespace Shanism.Engine.Entities
         /// <summary>
         /// Gets or sets the vision range of the unit. 
         /// </summary>
-        public double VisionRange
+        public float VisionRange
         {
             get { return _visionRange; }
 

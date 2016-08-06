@@ -34,9 +34,10 @@ namespace Shanism.Engine.Events
         /// Gets or sets the base amount of damage the attacker deals
         /// before any resistance or armor is factored in. 
         /// </summary>
-        public double BaseDamage { get; set; }
+        public float BaseDamage { get; set; }
 
-        internal UnitDamagingArgs(Unit attacker, Unit receiver, DamageType type, DamageFlags flags, double baseDamage)
+        internal UnitDamagingArgs(Unit attacker, Unit receiver, 
+            DamageType type, DamageFlags flags, float baseDamage)
             : base(attacker)
         {
             DamagingUnit = attacker;

@@ -34,9 +34,6 @@ namespace Shanism.Network
 
         internal NetServer NetServer { get { return (NetServer)peer; } }
 
-        internal ObjectTracker ObjectTracker { get; } = new ObjectTracker();
-
-
 
         public NServer(IShanoEngine engine)
             : base(new NetServer(new NetPeerConfiguration(AppIdentifier) { Port = NetworkPort }))
@@ -50,13 +47,9 @@ namespace Shanism.Network
         {
             base.Update(msElapsed);
 
-            //mark all objects' serialized state as outdated
-            ObjectTracker.Default.Update(msElapsed);
-
             //update all netclients
             foreach (var client in clients.Values)
                 client.Update(msElapsed);
-
         }
 
 
@@ -109,7 +102,7 @@ namespace Shanism.Network
         /// <summary>
         /// Parses an incoming <see cref="HandshakeInitMessage"></see> by handing it over to the server. 
         /// <para/>
-        /// If the server successfully accepts the user it returns a <see cref="IGameReceptor"/> object
+        /// If the server successfully accepts the user it returns a <see cref="IReceptor"/> object
         /// which is added to the server's list of connected peers. Otherwise the connection is dropped.  
         /// </summary>
         void handleHandshake(NetConnection peerConnection, HandshakeInitMessage msg)

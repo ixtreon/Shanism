@@ -89,11 +89,17 @@ namespace Shanism.Common.Game
         /// </returns>
         public override string ToString() => Id.ToString();
 
+        /// <summary>
+        /// Checks whether the two chunks have the same IDs. 
+        /// </summary>
         public static bool operator ==(ChunkId a, ChunkId b)
         {
             return a.Id == b.Id;
         }
 
+        /// <summary>
+        /// Checks whether the two chunks have the different IDs. 
+        /// </summary>
         public static bool operator !=(ChunkId a, ChunkId b)
         {
             return a.Id != b.Id;

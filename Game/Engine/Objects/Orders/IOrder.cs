@@ -36,7 +36,7 @@ namespace Shanism.Engine.Systems.Orders
         /// <summary>
         /// The direction this order moves the unit at.  
         /// </summary>
-        double Direction { get; }
+        float Direction { get; }
 
         /// <summary>
         /// The final location suggested by the order. 

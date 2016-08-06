@@ -72,7 +72,7 @@ namespace Shanism.Engine.Systems
 
         public override void Update(int msElapsed)
         {
-            if (!_isMoving || Owner.States.HasFlag(StateFlags.Stunned))
+            if (!_isMoving || Owner.StateFlags.HasFlag(StateFlags.Stunned))
                 return;
 
             //get the suggested move position
@@ -99,7 +99,7 @@ namespace Shanism.Engine.Systems
         {
             var suggestedPos = Owner.Position.PolarProjection(angle, dist);
 
-            if (Owner.States.HasFlag(StateFlags.NoCollision))
+            if (Owner.StateFlags.HasFlag(StateFlags.NoCollision))
                 return suggestedPos;
 
             //fix terrain

@@ -24,7 +24,7 @@ namespace Shanism.Engine.Objects.Buffs
             MaxStacks = 0;
             FullDuration = msDuration;
 
-            UnitStates = StateFlags.Stunned;
+            StateFlags = StateFlags.Stunned;
         }
     }
 }

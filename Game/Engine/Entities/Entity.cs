@@ -17,7 +17,7 @@ namespace Shanism.Engine
 {
     /// <summary>
     /// A base class for all objects that show on the game map. 
-    /// Currently this includes effects, doodads, units and heroes (a type of unit). 
+    /// Currently this includes effects, doodads, units and heroes. 
     /// </summary>
     public abstract class Entity : GameObject, IEntity
     {
@@ -27,7 +27,7 @@ namespace Shanism.Engine
         /// </summary>
         double _scale = Constants.Entities.DefaultSize;
 
-        
+
         /// <summary>
         /// Gets the list of units that see this entity. 
         /// </summary>
@@ -118,7 +118,10 @@ namespace Shanism.Engine
         /// <summary>
         /// Initializes a new instance of the <see cref="Entity"/> class.
         /// </summary>
-        protected Entity() { }
+        protected Entity()
+        {
+
+        }
 
 
         /// <summary>
@@ -126,6 +129,7 @@ namespace Shanism.Engine
         /// </summary>
         /// <param name="base">The entity that is to be cloned. </param>
         protected Entity(Entity @base)
+            : this()
         {
             Name = @base.Name;
             Position = @base.Position;

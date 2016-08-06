@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Shanism.Common;
-using System.Collections.Concurrent;
 
 namespace Shanism.Engine.Objects.Behaviours
 {

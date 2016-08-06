@@ -38,13 +38,13 @@ namespace Shanism.Client.UI.Common
             ToolTip = string.Empty;
             if (Target.IsDead)
                 MaxValue = 0;
-            else if (Target.States.HasFlag(StateFlags.Invulnerable))
+            else if (Target.StateFlags.HasFlag(StateFlags.Invulnerable))
                 MaxValue = Value = 1;
             else
             {
                 Value = Target.Life;
-                MaxValue = Target.MaxLife;
-                ToolTip = $"{Target.LifeRegen:+0.0;-0.0;0}/sec";
+                MaxValue = Target.Stats[UnitStat.MaxLife];
+                ToolTip = $"{Target.Stats[UnitStat.LifeRegen]:+0.0;-0.0;0}/sec";
                 switch (ColorStyle)
                 {
                     case BarColorStyle.Fixed:

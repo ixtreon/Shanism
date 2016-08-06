@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Shanism.Engine.GameSystems.Maps
 {
-    public class QuadTree<T>
+    class QuadTree<T>
     {
         const int SplitTreshold = 16;
         public const int DefaultMinimumRange = 0;
@@ -62,14 +62,10 @@ namespace Shanism.Engine.GameSystems.Maps
             => new[] { topLeft, botLeft, topRight, botRight };
 
         public void Add(T item, Vector pos)
-        {
-            add(new Node(item, pos));
-        }
+            => add(new Node(item, pos));
 
         public bool Remove(T item, Vector oldPos)
-        {
-            return remove(new Node(item, oldPos));
-        }
+            => remove(new Node(item, oldPos));
 
         public bool Update(T item, Vector oldPos, Vector newPos)
         {
@@ -81,7 +77,6 @@ namespace Shanism.Engine.GameSystems.Maps
 
         public void Clear()
         {
-
             if (isLeaf)
                 leafNodes.Clear();
             else
@@ -115,12 +110,12 @@ namespace Shanism.Engine.GameSystems.Maps
                     leafNodes.Clear();
                 }
 
-                Debug.Assert(actualCount == count);
+                Debug.Assert(countNodes() == count);
                 return;
             }
 
             addToBranch(n);
-            Debug.Assert(actualCount == count);
+            Debug.Assert(countNodes() == count);
         }
 
 
@@ -132,11 +127,11 @@ namespace Shanism.Engine.GameSystems.Maps
                 {
                     count--;
 
-                    Debug.Assert(actualCount == count);
+                    Debug.Assert(countNodes() == count);
                     return true;
                 }
 
-                Debug.Assert(actualCount == count);
+                Debug.Assert(countNodes() == count);
                 return false;
             }
 
@@ -153,17 +148,13 @@ namespace Shanism.Engine.GameSystems.Maps
                     isLeaf = true;
                 }
 
-                Debug.Assert(actualCount == count);
+                Debug.Assert(countNodes() == count);
                 return true;
             }
 
-            Debug.Assert(actualCount == count);
+            Debug.Assert(countNodes() == count);
             return false;
         }
-
-        int actualCount => isLeaf ? leafNodes.Count
-            : topLeft.count + topRight.count + botLeft.count + botRight.count;
-
 
         bool replace(Node oldNode, Node newNode)
         {
@@ -192,10 +183,6 @@ namespace Shanism.Engine.GameSystems.Maps
             newBr.add(newNode);
             return true;
         }
-
-        bool isInside(Vector o, Vector r, Vector p)
-            => Math.Abs(o.X - p.X) <= r.X
-            && Math.Abs(o.Y - p.Y) <= r.Y;
 
         public ICollection<T> Query(Vector orign, Vector range)
         {
@@ -257,12 +244,16 @@ namespace Shanism.Engine.GameSystems.Maps
         }
 
 
+        int countNodes() => isLeaf 
+            ? leafNodes.Count
+            : topLeft.count + topRight.count + botLeft.count + botRight.count;
 
-        void addToBranch(Node n)
-        {
-            var br = getBranch(n.Position);
-            br.add(n);
-        }
+        void addToBranch(Node n) 
+            => getBranch(n.Position).add(n);
+
+        bool isInside(Vector o, Vector r, Vector p)
+            => Math.Abs(o.X - p.X) <= r.X
+            && Math.Abs(o.Y - p.Y) <= r.Y;
 
         QuadTree<T> getBranch(Vector pos)
         {
@@ -304,8 +295,6 @@ namespace Shanism.Engine.GameSystems.Maps
                 foreach (var e in topRight.getNodes()) yield return e;
             }
         }
-
-        //public IEnumerable<T> NodeElements => getNodes().Select(n => n.Item);
 
         public IEnumerable<Node> Nodes => getNodes();
 

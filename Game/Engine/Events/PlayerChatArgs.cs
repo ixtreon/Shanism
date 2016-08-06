@@ -19,12 +19,6 @@ namespace Shanism.Engine.Events
         /// </summary>
         public string Message { get; }
 
-        /// <summary>
-        /// Gets or sets whether the chat message is further propagated to the engine for normal processing. 
-        /// If set to false the chat message won't show to other players, for example. 
-        /// </summary>
-        public bool Propagate { get; set; } = true;
-
 
         internal PlayerChatArgs(Player pl, string msg)
         {

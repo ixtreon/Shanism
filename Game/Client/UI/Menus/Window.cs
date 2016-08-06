@@ -163,7 +163,7 @@ namespace Shanism.Client.UI.Common
         #endregion
 
         #region Drag to move
-        Vector? dragLoc = null;
+        Vector? dragLoc;
 
         void onTitleBarMouseMove(MouseArgs ev)
         {

@@ -10,7 +10,7 @@ namespace Shanism.Common.Message.Server
     [ProtoContract]
     public class ChatMessage : IOMessage
     {
-        const int SystemMessageId = Util.GenericId<bool>.None;
+        const uint SystemMessageId = Util.GenericId<bool>.None;
 
         public override MessageType Type => MessageType.ServerChat;
 
@@ -19,7 +19,7 @@ namespace Shanism.Common.Message.Server
         /// The Guid of the sender, or 0 if this is a system message. 
         /// </summary>
         [ProtoMember(1)]
-        public readonly int SenderGuid;
+        public readonly uint SenderGuid;
 
         [ProtoMember(2)]
         public readonly string Message;
@@ -31,7 +31,11 @@ namespace Shanism.Common.Message.Server
         public ChatMessage(string message, IPlayer sender)
             : this()
         {
-            SenderGuid = (int?)sender?.Id ?? SystemMessageId;
+            if (sender == null)
+                SenderGuid = SystemMessageId;
+            else
+                SenderGuid = sender.Id;
+
             Message = message;
         }
     }

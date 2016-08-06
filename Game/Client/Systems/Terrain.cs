@@ -1,11 +1,9 @@
-﻿using Shanism.Client;
-using Shanism.Common;
+﻿using Shanism.Common;
 using Shanism.Common.Game;
 using Shanism.Common.Message;
 using Shanism.Common.Message.Server;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

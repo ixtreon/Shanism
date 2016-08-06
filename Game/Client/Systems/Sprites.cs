@@ -73,30 +73,36 @@ namespace Shanism.Client.Systems
             //update all sprites + hover guy
             var mousePos = MouseInfo.InGamePosition;
 
+            //set the `remove` flag
             foreach (var kvp in unitSpriteDict)
                 kvp.Value.RemoveFlag = true;
 
+            //prepare hover sprite
+            double hoverMinDist = double.MaxValue;
+            hoverSprite = null;
+
+            //go thru the freshly visible entities
             foreach (var e in Server.VisibleEntities)
             {
+                //get or create the sprite
                 EntitySprite sprite;
                 if (!unitSpriteDict.TryGetValue(e.Id, out sprite))
-                {
                     unitSpriteDict[e.Id] = sprite = createSprite(e);
-                }
 
+                //update the sprite
                 sprite.Update(msElapsed);
                 sprite.RemoveFlag = false;
+
+                //update the hover sprite
+                var d = mousePos.DistanceTo(e.Position);
+                if (d < e.Scale / 2 && d < hoverMinDist)
+                {
+                    hoverSprite = sprite;
+                    hoverMinDist = d;
+                }
             }
 
-            hoverSprite = null;
-            foreach (var e in Server.VisibleEntities)
-                if (Vector.Abs(mousePos - e.Position) < e.Scale / 2)
-                {
-                    hoverSprite = unitSpriteDict[e.Id];
-                    break;
-                }
-
-            //remove old sprites
+            //remove old sprites when too many of 'em
             const int CleanupFactor = 20;
             if (unitSpriteDict.Count > CleanupFactor * Server.VisibleEntities.Count)
                 foreach (var kvp in unitSpriteDict.Where(kvp => kvp.Value.RemoveFlag).ToList())

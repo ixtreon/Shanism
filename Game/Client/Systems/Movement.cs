@@ -35,14 +35,11 @@ namespace Shanism.Client.Systems
             }
 
 
-            var keysAngle = Math.Atan2(dy, dx);
-            var mouseAngle = MouseInfo.UiPosition.Angle;
+            var moveAngle = (float)(Math.Atan2(dy, dx));
+            //var moveAngle = (float)(Math.Atan2(dx, -dy) + MouseInfo.UiPosition.Angle);
 
             ClientState.IsMoving = true;
-            if (dx == 0 && dy == -1)
-                ClientState.MoveAngle = (float)(Math.Atan2(dx, -dy) + mouseAngle);
-            else
-                ClientState.MoveAngle = (float)keysAngle;
+            ClientState.MoveAngle = moveAngle;
         }
     }
 }

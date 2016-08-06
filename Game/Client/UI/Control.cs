@@ -132,7 +132,7 @@ namespace Shanism.Client.UI
         }
 
         /// <summary>
-        /// Gets or sets the size of the control in UI coordinates. 
+        /// Gets or sets the size of the control in UI units. 
         /// </summary>
         public Vector Size
         {
@@ -499,6 +499,8 @@ namespace Shanism.Client.UI
             var focus = FocusControl;
             if (focus != null)
             {
+                //release, then press
+                //actions before keys
 
                 foreach (var k in KeyboardInfo.JustReleasedKeys)
                     if (!k.IsModifier())

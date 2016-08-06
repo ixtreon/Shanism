@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Shanism.Engine.Objects.Abilities;
 using Shanism.Engine.Objects.Behaviours;
+using Shanism.Common;
 
 namespace Shanism.Engine.Entities
 {
@@ -46,7 +47,7 @@ namespace Shanism.Engine.Entities
                 BaseMinDamage = 5 + 5 * level;
                 BaseMaxDamage = BaseMinDamage + 7;
 
-                BaseDefense = 2 + 0.3 * level;
+                BaseDefense = 2 + 0.3f * level;
             }
             else
             {
@@ -54,14 +55,14 @@ namespace Shanism.Engine.Entities
                 BaseMinDamage = 2 + 3 * level;
                 BaseMaxDamage = BaseMinDamage + 2 + level / 10;
 
-                BaseDefense = 1 + 0.2 * level;
+                BaseDefense = 1 + 0.2f * level;
             }
 
-            BaseAttacksPerSecond = 1.75;
+            BaseAttacksPerSecond = 1.75f;
             BaseMoveSpeed = 10;
             BaseDodgeChance = 10;
 
-            AttackRange = 3;
+            baseUnitStats[UnitStat.AttackRange] = 3;
             BaseStates &= (~StateFlags.RangedAttack);
 
             Abilities.Add(new Attack());

@@ -1,4 +1,5 @@
-﻿using Shanism.Engine.Entities;
+﻿using Shanism.Common;
+using Shanism.Engine.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Shanism.Engine.Systems
 {
-    class CombatSystem : UnitSystem
+    class StatsSystem : UnitSystem
     {
         readonly Unit Owner;
 
 
-        public CombatSystem(Unit target)
+        public StatsSystem(Unit target)
         {
             Owner = target;
         }
@@ -28,150 +29,123 @@ namespace Shanism.Engine.Systems
                 return;
 
             updateStats(Owner);
-
-            regenLife(Owner, msElapsed);
-
             if (Owner is Hero)
                 updateHeroStats((Hero)Owner);
+
+            regenLife(Owner, msElapsed);
         }
 
 
         static void regenLife(Unit target, int msElapsed)
         {
-            //life regen affects current life
-            var curLife = target.Life;
-            var lifeDelta = target.LifeRegen * msElapsed / 1000;
-            var newLife = Math.Min(target.MaxLife, curLife + lifeDelta);
+            //mana & life regen as % of max
+            var lifeDelta = (target.LifeRegen / target.MaxLife) * msElapsed / 1000;
+            var newLife = Math.Min(target.LifePercentage + lifeDelta, 1);
 
+            // can die by HP degen
             if (lifeDelta < 0 && newLife < 0)
             {
+                target.LifePercentage = 0;
+
                 var killer = rollForKiller(target);
                 target.Kill(killer);
+                return;
             }
 
-            target.Life = newLife;
+            //mana regen in % of max mana
+            if (target.MaxMana > 0)
+            {
+                var manaDelta = (target.ManaRegen / target.MaxMana) * msElapsed / 1000;
+                var newMana = (target.ManaPercentage + manaDelta).Clamp(0, 1);
 
-            var manaDelta = target.ManaRegen * msElapsed / 1000;
-            var newMana = Math.Min(target.MaxMana, target.Mana + manaDelta);
-            target.Mana = newMana;
+                target.LifePercentage = newLife;
+                target.ManaPercentage = newMana;
+            }
         }
 
         /// <summary>
         /// Updates the stats of the target unit based on the current buffs. 
-        /// LINQing this method negatively affects performance under .NET 4.5.2
         /// </summary>
         static void updateStats(Unit target)
         {
             //stats affected by buffs
+            target.refreshStats();
 
-            //sum
-            var maxLife = target.BaseMaxLife;
-            var maxMana = target.BaseMaxMana;
-
-            var minDamage = target.BaseMinDamage;
-            var maxDamage = target.BaseMaxDamage;
-            var defense = target.BaseDefense;
-            var magicDamage = target.BaseMagicDamage;
-
-            var lifeRegen = Constants.Units.BaseLifeRegen;
-            var manaRegen = Constants.Units.BaseManaRegen;
-
-            //sum + percentage
-            var moveSpeed = target.BaseMoveSpeed;
-            var bonusMoveSpeed = 1.0;
-            var attacksPerSecond = target.BaseAttacksPerSecond;
-            var bonusAtkSpeed = 1.0;
-
-            //negative percentage (diminishing stacks)
+            //percentage
+            var bonusMoveSpeed = 1f;
+            var bonusAtkSpeed = 1f;
+            //negative percentage
             var negativeDodgeChance = (100 - target.BaseDodgeChance);
             var negativeCritChance = (100 - target.BaseCritChance);
-
             //flags
             var states = target.BaseStates;
 
             //per-buff values
             foreach (var b in target.Buffs)
             {
-                //sum
-                maxLife += b.MaxLife;
-                maxMana += b.MaxMana;
-
-                minDamage += b.MinDamage;
-                maxDamage += b.MaxDamage;
-                defense += b.Defense;
-                //magicDamage += b.MagicDamage;     //TODO
-
-                lifeRegen += b.LifeRegen;
-                manaRegen += b.ManaRegen;
-
-                //sum + percentage
-                moveSpeed += b.MoveSpeed;
-                bonusMoveSpeed += (b.MoveSpeedPercentage / 100.0);
-                //attacksPerSecond += ...
-                bonusAtkSpeed += (b.AttackSpeedPercentage / 100.0);
-
-                //negative percentage
-                negativeDodgeChance = negativeDodgeChance * (100 - b.Dodge) / 100;
-                //negativeCritChance = negativeCritChance * (100 - b.Crit) / 100;       //TODO
-
-                //flags
-                states |= b.UnitStates;
+                //sum of percentages
+                bonusMoveSpeed += (b.Prototype.MoveSpeedPercentage / 100f);
+                bonusAtkSpeed += (b.Prototype.AttackSpeedPercentage / 100f);
+                //product of (negative) percentage
+                negativeDodgeChance = negativeDodgeChance * (100 - b.Prototype.Dodge) / 100;
+                //OR-ed together
+                states |= b.Prototype.StateFlags;
             }
 
-            target.MaxLife = maxLife;
-            target.MaxMana = maxMana;
-
-            target.MinDamage = minDamage;
-            target.MaxDamage = maxDamage;
-            target.Defense = defense;
-            target.MagicDamage = magicDamage;
-
-            target.LifeRegen = lifeRegen;
-            target.ManaRegen = manaRegen;
-
-
-            target.MoveSpeed = Math.Max(0, (double)(moveSpeed * bonusMoveSpeed));
-            target.AttacksPerSecond = Math.Max(0, (double)(attacksPerSecond * bonusAtkSpeed));
-
+            target.unitStats[UnitStat.MoveSpeed] *= bonusMoveSpeed;
+            target.unitStats[UnitStat.AttacksPerSecond] *= bonusAtkSpeed;
 
             target.DodgeChance = 100 - negativeDodgeChance;
             target.CritChance = 100 - negativeCritChance;
 
-
-            target.States = states;
+            target.StateFlags = states;
         }
+
+        static readonly float[] statModMults =
+        {
+            Constants.Heroes.Attributes.LifePerVitality,
+            Constants.Heroes.Attributes.ManaPerVitality,
+
+            Constants.Heroes.Attributes.LifeRegPerInt,
+            Constants.Heroes.Attributes.ManaRegPerInt,
+            Constants.Heroes.Attributes.MagicDamagePerInt,
+
+            Constants.Heroes.Attributes.DamagePerStrength,
+            Constants.Heroes.Attributes.DamagePerStrength,
+            Constants.Heroes.Attributes.DefensePerStrength,
+            
+            0,
+            Constants.Heroes.Attributes.AtkSpeedPerAgility,
+            Constants.Heroes.Attributes.DodgePerAgility,
+        };
+
+        static readonly int[] statTypes =
+        {
+            HeroAttribute.Vitality,
+            HeroAttribute.Vitality,
+
+            HeroAttribute.Intellect,
+            HeroAttribute.Intellect,
+            HeroAttribute.Intellect,
+
+            HeroAttribute.Strength,
+            HeroAttribute.Strength,
+            HeroAttribute.Strength,
+
+            HeroAttribute.Agility,
+            HeroAttribute.Agility,
+            HeroAttribute.Agility,
+        };
 
         static void updateHeroStats(Hero target)
         {
+            target.updateHeroStats();
 
-            target.Strength = target.BaseStrength;
-            target.Vitality = target.BaseVitality;
-            target.Intellect = target.BaseIntellect;
-            target.Agility = target.BaseAgility;
-
-            foreach (var b in target.Buffs)
+            for (int i = 0; i < UnitStat.Count; i++)
             {
-                target.Strength += b.Strength;
-                target.Vitality += b.Vitality;
-                target.Intellect += b.Intellect;
-                target.Agility += b.Agility;
+                var attrMod = target.attributes[statTypes[i]] * statModMults[i];
+                target.unitStats.Add(i, attrMod);
             }
-
-            target.MinDamage += target.Strength * Constants.Heroes.Attributes.DamagePerStrength;
-            target.MaxDamage += target.Strength * Constants.Heroes.Attributes.DamagePerStrength;
-            target.Defense += target.Strength * Constants.Heroes.Attributes.DefensePerStrength;
-
-            target.Defense += target.Agility * Constants.Heroes.Attributes.AtkSpeedPerAgility;
-            target.Defense += target.Agility * Constants.Heroes.Attributes.DodgePerAgility;
-
-            target.MaxLife += target.Vitality * Constants.Heroes.Attributes.LifePerVitality;
-            target.MaxMana += target.Vitality * Constants.Heroes.Attributes.ManaPerVitality;
-
-            target.LifeRegen += target.Intellect * Constants.Heroes.Attributes.LifeRegPerInt;
-            target.ManaRegen += target.Intellect * Constants.Heroes.Attributes.ManaRegPerInt;
-
-            target.MagicDamage += target.Intellect * Constants.Heroes.Attributes.MagicDamagePerInt;
-            target.ManaRegen += target.Intellect * Constants.Heroes.Attributes.ManaRegPerInt;
         }
 
 
@@ -180,7 +154,7 @@ namespace Shanism.Engine.Systems
             //get life degen from each source
             var dmgs = new Dictionary<Unit, double>();
             foreach (var b in target.Buffs)
-                dmgs[b.Caster ?? target] -= b.LifeRegen;
+                dmgs[b.Caster ?? target] -= b.Prototype.LifeRegen;
 
             //leave only positive degeneration
             foreach (var kvp in dmgs.Where(kvp => kvp.Value < 0).ToList())

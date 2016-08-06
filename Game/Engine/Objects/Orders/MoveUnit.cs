@@ -27,7 +27,7 @@ namespace Shanism.Engine.Systems.Orders
         /// </summary>
         public bool KeepFollowing { get; set; }
 
-        public double Direction { get; private set; }
+        public float Direction { get; private set; }
 
         public Vector TargetLocation { get; private set; }
 
@@ -58,7 +58,7 @@ namespace Shanism.Engine.Systems.Orders
                 return KeepFollowing;
 
             //and move it
-            Direction = uLoc.AngleTo(targetLoc);
+            Direction = (float)uLoc.AngleTo(targetLoc);
             unit.movement.SetMovementState(Direction, distanceLeft);
 
             //keep on

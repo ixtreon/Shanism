@@ -7,7 +7,7 @@ namespace Shanism.Common.Game
     /// <summary>
     /// A generic <see cref="IComparer{T}"/> which uses a lambda function to compare elements. 
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type to compare.</typeparam>
     /// <seealso cref="System.Collections.Generic.IComparer{T}" />
     public class GenericComparer<T> : IComparer<T>, IComparer
     {
@@ -16,7 +16,7 @@ namespace Shanism.Common.Game
         /// <summary>
         /// Initializes a new instance of the <see cref="GenericComparer{T}"/> class.
         /// </summary>
-        /// <param name="compareFunc">The compare function.</param>
+        /// <param name="compareFunc">The function to compare elements of the type.</param>
         public GenericComparer(Func<T, T, int> compareFunc)
         {
             this.compareFunc = compareFunc;

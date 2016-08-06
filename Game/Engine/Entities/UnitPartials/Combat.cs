@@ -48,9 +48,9 @@ namespace Shanism.Engine.Entities
 
         /// <summary>
         /// Gets whether this unit is currently stunned, 
-        /// i.e. its <see cref="States"/> property contains the <see cref="StateFlags.Stunned"/> value.
+        /// i.e. its <see cref="StateFlags"/> property contains the <see cref="StateFlags.Stunned"/> value.
         /// </summary>
-        public bool IsStunned => (States & StateFlags.Stunned) != 0;
+        public bool IsStunned => (StateFlags & StateFlags.Stunned) != 0;
 
         /// <summary>
         /// Gets the multiplier for damage of the selected type inflicted on this unit. 
@@ -61,7 +61,7 @@ namespace Shanism.Engine.Entities
         /// A unit with positive armor will then have a multiplier between 0 and 1,
         /// and one with negative armor will have a multiplier greater than 1. 
         /// </example>
-        double getArmorMultiplier(DamageType damageType)
+        float getArmorMultiplier(DamageType damageType)
         {
             switch (damageType)
             {
@@ -124,17 +124,17 @@ namespace Shanism.Engine.Entities
         /// <param name="amount">The amount of damage to deal. </param>
         /// <param name="flags">A DamageFlags instance specifying additional rules when dealing damage. </param>
         /// <returns></returns>
-        public bool DamageUnit(Unit target, DamageType dmgType, double amount, DamageFlags flags = DamageFlags.None)
+        public bool DamageUnit(Unit target, DamageType dmgType, float amount, DamageFlags flags = DamageFlags.None)
         {
             //Check target alive
             if (target.IsDead)
                 return false;
 
             // Check target can take damage
-            if (dmgType == DamageType.Physical && target.States.HasFlag(StateFlags.PhysicalImmune))
+            if (dmgType == DamageType.Physical && target.StateFlags.HasFlag(StateFlags.PhysicalImmune))
                 return false;
 
-            if (dmgType == DamageType.Magical && target.States.HasFlag(StateFlags.MagicImmune))
+            if (dmgType == DamageType.Magical && target.StateFlags.HasFlag(StateFlags.MagicImmune))
                 return false;
 
             // Check target dodging
@@ -178,7 +178,7 @@ namespace Shanism.Engine.Entities
         /// <param name="amount">The amount of damage dealt by the attacker. </param>
         /// <param name="dmgType">The type of damage dealt. </param>
         /// <returns></returns>
-        public double GetFinalDamage(double amount, DamageType dmgType)
+        public float GetFinalDamage(float amount, DamageType dmgType)
         {
             return amount * getArmorMultiplier(dmgType);
         }
@@ -187,9 +187,9 @@ namespace Shanism.Engine.Entities
         /// Gets a random value between <see cref="MinDamage"/> and <see cref="MaxDamage"/>
         /// </summary>
         /// <returns></returns>
-        public double DamageRoll()
+        public float DamageRoll()
         {
-            return Rnd.NextDouble(MinDamage, MaxDamage);
+            return Rnd.NextFloat(MinDamage, MaxDamage);
         }
     }
 }

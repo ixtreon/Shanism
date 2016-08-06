@@ -41,7 +41,7 @@ namespace Shanism.Client.Systems
                 && (ab = Interface.CurrentAbility) != null)
             {
                 ClientState.ActionId = ab.Id;
-                ClientState.ActionTargetId = 0;        //TODO: implement 
+                ClientState.ActionTargetId = Objects.HoverSprite?.Entity.Id ?? 0;        //TODO: implement 
                 ClientState.ActionTargetLoc = MouseInfo.InGamePosition;
             }
             else

@@ -98,7 +98,7 @@ namespace Shanism.Editor.MapAdapter
 
             setTool(selectionTool);
 
-            God = new HeroStub { Id = 1 };
+            God = new HeroStub(1);
 
             Control = c;
             Control.Resize += updateClientSize;

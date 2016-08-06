@@ -53,11 +53,23 @@ namespace Shanism.Engine.Objects.Abilities
             if (other == null)
                 return false;
 
-            return obj != null
-                && Ability.Equals(other.Ability)
-                && TargetType == other.TargetType
+            return Ability.Equals(other.Ability)
                 && TargetLocation.Equals(other.TargetLocation)
                 && TargetEntity == other.TargetEntity;
         }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 23 + Ability.GetHashCode();
+                hash = hash * 23 + TargetLocation.GetHashCode();
+                hash = hash * 23 + TargetEntity?.GetHashCode() ?? 0;
+                return hash;
+            }
+        }
+
+        public bool Invoke() => Ability.Invoke(this);
     }
 }

@@ -45,7 +45,10 @@ namespace Shanism.Engine.Common
 
             Player owner;
             if (e is Unit && Player.TryParse(oc.Owner, out owner))
-                ((Unit)e).SetOwner(Player.Aggressive);
+            {
+                var life  = 42;
+                ((Unit)e).Owner = owner;
+            }
 
             //set animation
             if (!string.IsNullOrEmpty(oc.Model))

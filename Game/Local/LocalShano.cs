@@ -35,18 +35,22 @@ namespace Shanism.Local
         {
             //create the local server and client
             engine = new ShanoEngine();
-            engine.LoadScenario(scenarioPath, mapSeed);
-
             client = ShanoGame.CreateClient(playerName);
 
-            receptor = engine.AcceptClient(client.Engine);
+            //start the server
+            string compileErrors;
+            if (!engine.TryLoadScenario(scenarioPath, mapSeed, out compileErrors))
+            {
+                throw new Exception(compileErrors);
+            }
 
+            //connect the client
+            receptor = engine.AcceptClient(client.Engine);
             client.GameLoaded += () =>
             {
                 client.SetServer(receptor);
                 engine.StartPlaying(receptor);
             };
-
             client.Run();
         }
 
