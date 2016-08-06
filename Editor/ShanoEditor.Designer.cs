@@ -52,14 +52,14 @@ namespace Shanism.Editor
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.scenarioLoadProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.scenarioTree = new Shanism.Editor.ScenarioTree();
             this.modelsView = new Shanism.Editor.Views.AnimationsView();
             this.texView = new Shanism.Editor.Views.TexturesView();
             this.mapView = new Shanism.Editor.Views.MapView();
-            this.detailsView = new Shanism.Editor.Views.ScenarioView();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.scenarioLoadProgressBar = new System.Windows.Forms.ToolStripProgressBar();
+            this.scenarioView1 = new Shanism.Editor.Views.ScenarioView();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -238,53 +238,13 @@ namespace Shanism.Editor
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.scenarioView1);
             this.splitContainer1.Panel2.Controls.Add(this.modelsView);
             this.splitContainer1.Panel2.Controls.Add(this.texView);
             this.splitContainer1.Panel2.Controls.Add(this.mapView);
-            this.splitContainer1.Panel2.Controls.Add(this.detailsView);
             this.splitContainer1.Size = new System.Drawing.Size(789, 462);
             this.splitContainer1.SplitterDistance = 166;
             this.splitContainer1.TabIndex = 4;
-            // 
-            // scenarioTree
-            // 
-            this.scenarioTree.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.scenarioTree.HideSelection = false;
-            this.scenarioTree.Location = new System.Drawing.Point(0, 0);
-            this.scenarioTree.Name = "scenarioTree";
-            this.scenarioTree.Size = new System.Drawing.Size(166, 462);
-            this.scenarioTree.TabIndex = 0;
-            // 
-            // modelsView
-            // 
-            this.modelsView.Location = new System.Drawing.Point(190, 259);
-            this.modelsView.Name = "modelsView";
-            this.modelsView.Size = new System.Drawing.Size(379, 173);
-            this.modelsView.TabIndex = 6;
-            // 
-            // texView
-            // 
-            this.texView.Location = new System.Drawing.Point(3, 3);
-            this.texView.Name = "texView";
-            this.texView.Size = new System.Drawing.Size(256, 240);
-            this.texView.TabIndex = 5;
-            // 
-            // mapView
-            // 
-            this.mapView.Location = new System.Drawing.Point(265, 3);
-            this.mapView.MinimumSize = new System.Drawing.Size(310, 240);
-            this.mapView.Name = "mapView";
-            this.mapView.Size = new System.Drawing.Size(351, 240);
-            this.mapView.TabIndex = 4;
-            // 
-            // detailsView
-            // 
-            this.detailsView.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.detailsView.Location = new System.Drawing.Point(3, 219);
-            this.detailsView.MinimumSize = new System.Drawing.Size(0, 240);
-            this.detailsView.Name = "detailsView";
-            this.detailsView.Size = new System.Drawing.Size(181, 240);
-            this.detailsView.TabIndex = 3;
             // 
             // statusStrip1
             // 
@@ -308,6 +268,46 @@ namespace Shanism.Editor
             this.scenarioLoadProgressBar.Size = new System.Drawing.Size(100, 16);
             this.scenarioLoadProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.scenarioLoadProgressBar.Visible = false;
+            // 
+            // scenarioTree
+            // 
+            this.scenarioTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.scenarioTree.HideSelection = false;
+            this.scenarioTree.Location = new System.Drawing.Point(0, 0);
+            this.scenarioTree.Name = "scenarioTree";
+            this.scenarioTree.Size = new System.Drawing.Size(166, 462);
+            this.scenarioTree.TabIndex = 0;
+            // 
+            // modelsView
+            // 
+            this.modelsView.Location = new System.Drawing.Point(117, 70);
+            this.modelsView.Name = "modelsView";
+            this.modelsView.Size = new System.Drawing.Size(379, 173);
+            this.modelsView.TabIndex = 6;
+            // 
+            // texView
+            // 
+            this.texView.Location = new System.Drawing.Point(3, 3);
+            this.texView.Name = "texView";
+            this.texView.Size = new System.Drawing.Size(256, 240);
+            this.texView.TabIndex = 5;
+            // 
+            // mapView
+            // 
+            this.mapView.Location = new System.Drawing.Point(265, 3);
+            this.mapView.MinimumSize = new System.Drawing.Size(310, 240);
+            this.mapView.Name = "mapView";
+            this.mapView.Size = new System.Drawing.Size(351, 240);
+            this.mapView.TabIndex = 4;
+            // 
+            // scenarioView1
+            // 
+            this.scenarioView1.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.scenarioView1.Location = new System.Drawing.Point(31, 178);
+            this.scenarioView1.MinimumSize = new System.Drawing.Size(0, 240);
+            this.scenarioView1.Name = "scenarioView1";
+            this.scenarioView1.Size = new System.Drawing.Size(512, 240);
+            this.scenarioView1.TabIndex = 7;
             // 
             // ShanoEditorForm
             // 
@@ -357,7 +357,6 @@ namespace Shanism.Editor
         private System.Windows.Forms.ToolStripMenuItem dasToolStripMenuItem1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private ScenarioTree scenarioTree;
-        private ScenarioView detailsView;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private MapView mapView;
@@ -365,6 +364,7 @@ namespace Shanism.Editor
         private AnimationsView modelsView;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripProgressBar scenarioLoadProgressBar;
+        private ScenarioView scenarioView1;
     }
 }
 

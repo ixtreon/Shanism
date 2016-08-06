@@ -20,8 +20,9 @@ namespace Shanism.Editor.Views
             txtName.Enabled =
             txtDescription.Enabled = (Model != null);
 
-            txtName.Text = Model.Scenario.Config.Name ?? "";
-            txtDescription.Text = Model.Scenario.Config.Description ?? "";
+            txtName.Text = Model.Scenario.Config.Name ?? string.Empty;
+            txtDescription.Text = Model.Scenario.Config.Description ?? string.Empty;
+            txtAuthor.Text = Model.Scenario.Config.Author ?? string.Empty;
 
             return Task.CompletedTask;
         }
@@ -30,6 +31,7 @@ namespace Shanism.Editor.Views
         {
             Model.Scenario.Config.Name = txtName.Text;
             Model.Scenario.Config.Description = txtDescription.Text;
+            Model.Scenario.Config.Author = txtAuthor.Text;
         }
 
         public ScenarioView()
@@ -43,6 +45,11 @@ namespace Shanism.Editor.Views
         }
 
         private void txtDescription_TextChanged(object sender, EventArgs e)
+        {
+            MarkAsChanged();
+        }
+
+        private void txtAuthor_TextChanged(object sender, EventArgs e)
         {
             MarkAsChanged();
         }

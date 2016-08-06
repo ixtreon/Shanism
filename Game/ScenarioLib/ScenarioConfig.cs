@@ -37,6 +37,9 @@ namespace Shanism.ScenarioLib
         [JsonProperty]
         public string Name { get; set; }
 
+        [JsonProperty]
+        public string Author { get; set; }
+
         /// <summary>
         /// Gets the description of the scenario. 
         /// </summary>
