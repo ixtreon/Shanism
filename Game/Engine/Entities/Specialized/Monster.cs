@@ -1,5 +1,4 @@
 ﻿using Shanism.Engine.Entities;
-using Shanism.Engine.Systems.Orders;
 using Shanism.Common.Game;
 using System;
 using System.Collections.Generic;
@@ -7,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shanism.Engine.Objects.Abilities;
-using Shanism.Engine.Objects.Behaviours;
+using Shanism.Engine.Objects.Orders;
 using Shanism.Common;
 
 namespace Shanism.Engine.Entities
@@ -62,11 +61,11 @@ namespace Shanism.Engine.Entities
             BaseMoveSpeed = 10;
             BaseDodgeChance = 10;
 
-            baseUnitStats[UnitStat.AttackRange] = 3;
+            baseStats[UnitStat.AttackRange] = 3;
             BaseStates &= (~StateFlags.RangedAttack);
 
             Abilities.Add(new Attack());
-            Behaviour = new AggroBehaviour(this);
+            CurrentOrder = new Stand(this);
         }
 
         /// <summary>

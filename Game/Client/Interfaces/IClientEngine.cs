@@ -46,18 +46,13 @@ namespace Shanism.Client
         void Draw(GameTime gameTime);
 
         /// <summary>
-        /// Informs the client of changes to the size of
-        /// the main game window. 
+        /// Sets the size of the game-window buffers in pixels.
         /// </summary>
         /// <param name="sz">The new size of the window.</param>
         void SetWindowSize(Point sz);
 
-        /// <summary>
-        /// Modifies the current state of the in-game camera. 
-        /// </summary>
-        /// <param name="cameraPos">The new center of the camera, in in-game coordinates.</param>
-        /// <param name="windowSz">The new window size, in in-game units.</param>
-        void SetCameraParams(Vector? cameraPos = null, IEntity lockedEntity = null, Vector? windowSz = null);
+
+        void MoveCamera(Vector? inGamePos, Vector? inGameSz);
 
         /// <summary>
         /// Toggles the visibility of the default UI.

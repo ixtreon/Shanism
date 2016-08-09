@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 using System.Collections;
 using System.Diagnostics;
 
-namespace Shanism.Engine.Objects.Behaviours
+namespace Shanism.Engine.Objects.Orders
 {
-    class BehaviourList : Behaviour, IEnumerable<Behaviour>
+    class OrderList : Order, IEnumerable<Order>
     {
-        protected List<Behaviour> Behaviours = new List<Behaviour>();
+        protected List<Order> Behaviours = new List<Order>();
 
-        public Behaviour CurrentBehaviour { get; protected set; }
+        public Order CurrentBehaviour { get; protected set; }
 
-        public BehaviourList(Unit u)
+        public OrderList(Unit u)
             : base(u)
         {
 
@@ -27,12 +27,12 @@ namespace Shanism.Engine.Objects.Behaviours
             return (CurrentBehaviour != null);
         }
 
-        public void Add(Behaviour b)
+        public void Add(Order b)
         {
             Behaviours.Add(b);
         }
 
-        public void AddRange(IEnumerable<Behaviour> b)
+        public void AddRange(IEnumerable<Order> b)
         {
             Behaviours.AddRange(b);
         }
@@ -42,10 +42,10 @@ namespace Shanism.Engine.Objects.Behaviours
             Debug.Assert(CurrentBehaviour != null);     //shouldn't be here
 
             CurrentBehaviour.Update(msElapsed);
-            CurrentOrder = CurrentBehaviour.CurrentOrder;
+            CurrentState = CurrentBehaviour.CurrentState;
         }
 
-        protected Behaviour AskForControl()
+        protected Order AskForControl()
         {
             foreach (var b in Behaviours)
                 if (b.TakeControl())
@@ -53,7 +53,7 @@ namespace Shanism.Engine.Objects.Behaviours
             return null;
         }
 
-        public IEnumerator<Behaviour> GetEnumerator() 
+        public IEnumerator<Order> GetEnumerator() 
             => Behaviours.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() 

@@ -92,8 +92,8 @@ namespace Shanism.Engine.Systems
                 states |= b.Prototype.StateFlags;
             }
 
-            target.unitStats[UnitStat.MoveSpeed] *= bonusMoveSpeed;
-            target.unitStats[UnitStat.AttacksPerSecond] *= bonusAtkSpeed;
+            target.stats[UnitStat.MoveSpeed] *= bonusMoveSpeed;
+            target.stats[UnitStat.AttacksPerSecond] *= bonusAtkSpeed;
 
             target.DodgeChance = 100 - negativeDodgeChance;
             target.CritChance = 100 - negativeCritChance;
@@ -144,7 +144,7 @@ namespace Shanism.Engine.Systems
             for (int i = 0; i < UnitStat.Count; i++)
             {
                 var attrMod = target.attributes[statTypes[i]] * statModMults[i];
-                target.unitStats.Add(i, attrMod);
+                target.stats.Add(i, attrMod);
             }
         }
 

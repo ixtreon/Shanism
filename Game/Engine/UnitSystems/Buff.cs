@@ -57,6 +57,9 @@ namespace Shanism.Engine.Systems
         /// <param name="caster">The caster of the buff. </param>
         public BuffInstance Apply(Unit caster, Buff buff)
         {
+            if (buff == null)
+                return null;
+
             var newBuff = new BuffInstance(buff, caster, Owner);
             buffs.Add(newBuff);
             buff.OnApplied(newBuff);

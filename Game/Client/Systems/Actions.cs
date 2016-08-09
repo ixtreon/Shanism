@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Input;
 using Shanism.Client.Input;
 using Shanism.Client.UI;
 using Shanism.Client.UI.CombatText;
+using Shanism.Common;
 using Shanism.Common.Game;
 using Shanism.Common.Interfaces.Entities;
 using Shanism.Common.Interfaces.Objects;
@@ -35,17 +36,35 @@ namespace Shanism.Client.Systems
 
         public override void Update(int msElapsed)
         {
+            if (Objects.MainHero == null)
+                return;
+
             //cast abilities if button is held
-            IAbility ab;
             if (MouseInfo.RightDown
-                && (ab = Interface.CurrentAbility) != null)
+                && Interface.CurrentAbility != null
+                && Interface.CurrentAbility.TargetType != AbilityTargetType.Passive)
             {
-                ClientState.ActionId = ab.Id;
-                ClientState.ActionTargetId = Objects.HoverSprite?.Entity.Id ?? 0;        //TODO: implement 
-                ClientState.ActionTargetLoc = MouseInfo.InGamePosition;
+                ClientState.ActionId = Interface.CurrentAbility.Id;
+                ClientState.ActionTargetId = Objects.HoverSprite?.Entity.Id ?? 0; 
+                ClientState.ActionTargetLoc = getCastTargetLocation();
             }
             else
                 ClientState.ActionId = 0;
+        }
+
+        Vector getCastTargetLocation()
+        {
+            var m = MouseInfo.InGamePosition;
+            if (!Settings.Current.ExtendCast)
+                return m;
+
+            var r = Interface.CurrentAbility.CastRange;
+            var o = Objects.MainHero.Position;
+            var d = m - o;
+            var l = d.Length();
+            if (l <= r)
+                return m;
+            return o + d * (r / l);
         }
 
     }

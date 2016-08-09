@@ -1,6 +1,7 @@
 using Shanism.Common.Util;
 using System.Collections.Generic;
 using Shanism.Common.Interfaces.Objects;
+using System;
 
 namespace Shanism.Common.Interfaces.Entities
 {
@@ -30,6 +31,7 @@ namespace Shanism.Common.Interfaces.Entities
         /// Gets or sets the animation of this entity. 
         /// The resulting animation may not be present on the client. 
         /// </summary>
+        [Obsolete]
         string Animation { get; }
 
 
@@ -39,6 +41,7 @@ namespace Shanism.Common.Interfaces.Entities
         /// </summary>
         double Orientation { get; }
 
+        [Obsolete]
         bool LoopAnimation { get; }
 
         /// <summary>

@@ -6,7 +6,6 @@ using Shanism.Common.Message;
 using Shanism.Common.Message.Network;
 using Shanism.Common.Message.Server;
 using Shanism.Common.Message.Client;
-using Shanism.Engine.Systems.Orders;
 using Shanism.Common.Game;
 using Shanism.Engine.Entities;
 using System.Collections.Generic;
@@ -140,9 +139,9 @@ namespace Shanism.Engine.Players
             {
                 //movement
                 if (Client.State.IsMoving)
-                    MainHero.OrderMove(Client.State.MoveAngle);
+                    MainHero.MovementState = new MovementState(Client.State.MoveAngle);
                 else
-                    MainHero.ClearOrder();
+                    MainHero.MovementState = MovementState.Stand;
 
                 //actions
                 MainHero.TryCastAbility(Client.State);

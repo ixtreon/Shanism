@@ -173,7 +173,7 @@ namespace Shanism.Engine
         /// <param name="msElapsed"></param>
         internal override void Update(int msElapsed)
         {
-            OnUpdate(msElapsed);
+            Scripts.Enqueue(() => OnUpdate(msElapsed));
         }
 
         /// <summary>

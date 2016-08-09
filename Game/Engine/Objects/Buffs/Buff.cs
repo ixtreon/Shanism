@@ -79,7 +79,7 @@ namespace Shanism.Engine.Objects.Buffs
         /// that can applied to a single target by a given unit. 
         /// If set to 0 the buff can be stacked infinitely. 
         /// </summary>
-        public int MaxStacks { get; set; } = 0;
+        public int MaxStacks { get; set; } = 1;
 
 
         /// <summary>

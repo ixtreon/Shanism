@@ -62,10 +62,12 @@ namespace Shanism.Editor.MapAdapter
         /// <summary>
         /// The in-game point where panning started. 
         /// </summary>
-        Vector mapPanningStart;
+        Vector mapPanStartPos;
+        Vector mapPanGodPos;
 
         MapTool currentTool;
 
+        Vector mouseScreenPosition = Vector.Zero;
         Vector mousePositionInGame = Vector.Zero;
 
         ObjectCreator Creator;
@@ -141,7 +143,7 @@ namespace Shanism.Editor.MapAdapter
             //recreate startup objects
             _startupObjects.Clear();
             var ocs = ScenarioView.Scenario.Config.Map.Objects.ToList();    //LMAOOOO
-            foreach (var oc in ocs)   
+            foreach (var oc in ocs)
             {
                 var o = CreateObject(oc);
                 if (o != null && _startupObjects.Add(o))
@@ -231,7 +233,7 @@ namespace Shanism.Editor.MapAdapter
             var h = Math.Sqrt(area / ratio);
             var w = h * ratio;
             inGameWindowSize = new Vector(w, h);
-            Client?.SetCameraParams(null, God, inGameWindowSize);
+            Client?.MoveCamera(null, inGameWindowSize);
         }
 
         public void ResizeMap(Point newSize)
@@ -304,17 +306,17 @@ namespace Shanism.Editor.MapAdapter
                 Control.Cursor = Cursors.NoMove2D;
 
                 isPanningMap = true;
-                mapPanningStart = mousePositionInGame;
+                mapPanStartPos = new Vector(e.X, e.Y);
+                mapPanGodPos = God.Position;
             };
 
             Control.MouseMove += (o, e) =>
             {
                 if (isPanningMap)
                 {
-                    var d = mapPanningStart - mousePositionInGame;
-                    var newPos = (God.Position + d).Clamp(Vector.Zero, map.Size);
+                    var d = Client.ScreenToGame(new Vector(e.X, e.Y)) - Client.ScreenToGame(mapPanStartPos);
 
-                    God.Position = newPos;
+                    God.Position = mapPanGodPos - d;
                 }
             };
 
@@ -331,7 +333,7 @@ namespace Shanism.Editor.MapAdapter
             {
                 var ratio = (1 - (double)e.Delta / 120 * zoomFactor);
                 inGameWindowSize *= ratio;
-                Client.SetCameraParams(null, God, inGameWindowSize);
+                Client.MoveCamera(null, inGameWindowSize);
             };
         }
 
@@ -340,12 +342,14 @@ namespace Shanism.Editor.MapAdapter
         {
             Control.MouseDown += (o, e) =>
             {
-                mousePositionInGame = Client.ScreenToGame(new Vector(e.X, e.Y));
+                mouseScreenPosition = new Vector(e.X, e.Y);
+                mousePositionInGame = Client.ScreenToGame(mouseScreenPosition);
                 CurrentTool.OnMouseDown(e.Button, mousePositionInGame);
             };
             Control.MouseMove += (o, e) =>
             {
-                mousePositionInGame = Client.ScreenToGame(new Vector(e.X, e.Y));
+                mouseScreenPosition = new Vector(e.X, e.Y);
+                mousePositionInGame = Client.ScreenToGame(mouseScreenPosition);
                 CurrentTool.OnMouseMove(e.Button, mousePositionInGame);
             };
             Control.MouseUp += (o, e) =>

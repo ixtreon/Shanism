@@ -62,45 +62,44 @@ namespace Shanism.Client
         /// <summary>
         /// Gets the camera center point in in-game coordinates. 
         /// </summary>
-        public static Vector InGameCenter => _lockedEntity?.Position ?? _inGameCenter;
+        public static Vector GameCenter => _pannedLocation;
 
 
-        static Vector _inGameCenter;
-        static IEntity _lockedEntity;
+        static Vector _pannedLocation;
 
-
-
-        public static void SetCamera(Point? windowSz,
-            Vector? inGameSz = null,
-            Vector? cameraCenter = null,
-            IEntity lockedEntity = null)
+        public static void SetWindowSize(Point windowSz)
         {
-            if (windowSz.HasValue)
-            {
-                Size = windowSz.Value;
-                HalfSize = Size / 2;
+            Size = windowSz;
+            HalfSize = Size / 2;
 
-                UiScale = Math.Min(Size.X, Size.Y) / 2;
-                FontScale = UiScale / DefaultUiScale;
-            }
-
-            if (lockedEntity != null)
-                _lockedEntity = lockedEntity;
-            else if (cameraCenter != null)
-                _inGameCenter = cameraCenter.Value;
-
-            if (inGameSz != null)
-                GameSize = inGameSz.Value;
-                
-            GameBounds = new RectangleF(InGameCenter - GameSize / 2, GameSize);
+            UiScale = Math.Min(Size.X, Size.Y) / 2;
+            FontScale = UiScale / DefaultUiScale;
         }
+
+        public static void MoveCamera(Vector inGameCenter)
+        {
+            _pannedLocation = inGameCenter;
+
+            GameBounds = new RectangleF(GameCenter - GameSize / 2, GameSize);
+        }
+
+        public static void MoveCamera(Vector inGameCenter,
+            Vector inGameSz)
+        {
+            GameSize = inGameSz;
+            _pannedLocation = inGameCenter;
+
+
+            GameBounds = new RectangleF(GameCenter - GameSize / 2, GameSize);
+        }
+
 
         /// <summary>
         /// Gets the screen co-ordinates of the given in-game point. 
         /// </summary>
         public static Vector GameToScreen(Vector p)
         {
-            return (p - InGameCenter) * GameScale + HalfSize;
+            return (p - GameCenter) * GameScale + HalfSize;
         }
 
         /// <summary>
@@ -108,7 +107,7 @@ namespace Shanism.Client
         /// </summary>
         public static Vector ScreenToGame(Vector position)
         {
-            return (position - HalfSize) / GameScale + InGameCenter;
+            return (position - HalfSize) / GameScale + GameCenter;
         }
 
 

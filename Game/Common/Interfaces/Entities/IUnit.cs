@@ -30,10 +30,8 @@ namespace Shanism.Common.Interfaces.Entities
         /// </summary>
         bool IsDead { get; }
 
-        /// <summary>
-        /// Gets the type of this unit's current order. 
-        /// </summary>
-        OrderType OrderType { get; }
+
+        MovementState MovementState { get; }
 
         /// <summary>
         /// Gets the unit state flags that currently affect this unit. 
@@ -55,14 +53,6 @@ namespace Shanism.Common.Interfaces.Entities
         /// Gets the current mana of this unit. 
         /// </summary>
         float Mana { get; }
-        /// <summary>
-        /// Gets whether the unit is currently moving. 
-        /// </summary>
-        bool IsMoving { get; }
-        /// <summary>
-        /// Gets the direction in which this unit is moving, if <see cref="IsMoving"/> is true. 
-        /// </summary>
-        float MoveDirection { get; }
 
         IUnitStats BaseStats { get; }
 

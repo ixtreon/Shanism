@@ -293,5 +293,9 @@ namespace Shanism.Engine
             }
         }
 
+        public void RestartScenario()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

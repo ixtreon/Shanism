@@ -58,7 +58,7 @@ namespace Shanism.Client.UI.CombatText
             if (isForced && !isBlinkShown(durationLeft))
                 return;
 
-            var gamePos = Screen.InGameCenter - range;
+            var gamePos = Screen.GameCenter - range;
             var screenPos = Screen.GameToScreen(gamePos);
             var screenDiameter = Screen.GameScale * (2 * range);
             var rekt = new RectangleF(screenPos, screenDiameter);

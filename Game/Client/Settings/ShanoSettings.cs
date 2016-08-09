@@ -65,6 +65,8 @@ namespace Shanism.Client
 
         public bool QuickButtonPress { get; set; } = true;
 
+        public bool ExtendCast { get; set; } = true;
+
 
         public bool VSync { get; set; } = false;
         public float RenderSize { get; set; } = 1.0f;

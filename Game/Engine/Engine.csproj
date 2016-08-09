@@ -114,6 +114,11 @@
     <Compile Include="Noise\White.cs" />
     <Compile Include="Objects\Abilities\Aura.cs" />
     <Compile Include="Objects\Abilities\CastingData.cs" />
+    <Compile Include="Objects\Orders\Hold.cs" />
+    <Compile Include="Objects\Orders\MoveAttack.cs" />
+    <Compile Include="Objects\Orders\MoveToGround.cs" />
+    <Compile Include="Objects\Orders\FollowUnit.cs" />
+    <Compile Include="Objects\Orders\MoveDirection.cs" />
     <Compile Include="Players\Alliance.cs" />
     <Compile Include="Objects\Buffs\Stunned.cs" />
     <Compile Include="Events\AbilityCastArgs.cs" />
@@ -128,7 +133,7 @@
     <Compile Include="GameSystems\Scripting\IScriptRunner.cs" />
     <Compile Include="GameSystems\Scripting\ScriptingSystem.cs" />
     <Compile Include="Sandboxing\Sandboxer.cs" />
-    <Compile Include="UnitSystems\Behaviour.cs" />
+    <Compile Include="UnitSystems\OrderSystem.cs" />
     <Compile Include="UnitSystems\Ability.cs" />
     <Compile Include="UnitSystems\Decay.cs" />
     <Compile Include="UnitSystems\Interfaces\IUnitBuffs.cs" />
@@ -156,12 +161,12 @@
     <Compile Include="UnitSystems\Buff.cs" />
     <Compile Include="Entities\UnitPartials\Orders.cs" />
     <Compile Include="Objects\Abilities\Attack.cs" />
-    <Compile Include="Objects\Behaviours\SpamBehaviour.cs" />
-    <Compile Include="Objects\Behaviours\Behaviour.cs" />
-    <Compile Include="Objects\Behaviours\AggroBehaviour.cs" />
-    <Compile Include="Objects\Behaviours\BehaviourList.cs" />
-    <Compile Include="Objects\Behaviours\FollowBehaviour.cs" />
-    <Compile Include="Objects\Behaviours\ReturnBehaviour.cs" />
+    <Compile Include="Objects\Orders\SpamCast.cs" />
+    <Compile Include="Objects\Orders\Order.cs" />
+    <Compile Include="Objects\Orders\Stand.cs" />
+    <Compile Include="Objects\Orders\OrderList.cs" />
+    <Compile Include="Objects\Orders\MoveToUnit.cs" />
+    <Compile Include="Objects\Orders\Return.cs" />
     <Compile Include="Objects\Buffs\BuffInstance.cs" />
     <Compile Include="GameSystems\Scripting\CustomScript.cs" />
     <Compile Include="UnitSystems\Inventory.cs" />
@@ -177,18 +182,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Objects\Abilities\Ability.cs" />
-    <Compile Include="Objects\Orders\MoveLocation.cs" />
-    <Compile Include="Objects\Orders\MoveUnit.cs" />
-    <Compile Include="Objects\Orders\PlayerMove.cs" />
-    <Compile Include="Objects\Orders\Stand.cs" />
-    <Compile Include="Objects\Orders\IOrder.cs" />
     <Compile Include="ShanoEngine.cs" />
     <Compile Include="Entities\Unit.cs" />
     <Compile Include="Entities\Hero.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Objects\GameObject.cs" />
-    <Compile Include="UnitSystems\Order.cs" />
     <Compile Include="UnitSystems\Range.cs" />
     <Compile Include="UnitSystems\Vision.cs" />
   </ItemGroup>

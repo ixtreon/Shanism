@@ -65,7 +65,7 @@ namespace Shanism.Client.Systems
         public override void Update(int msElapsed)
         {
             //update the transformation matrix
-            transformMatrix = Matrix.CreateTranslation(-(float)Screen.InGameCenter.X, -(float)Screen.InGameCenter.Y, 0)
+            transformMatrix = Matrix.CreateTranslation(-(float)Screen.GameCenter.X, -(float)Screen.GameCenter.Y, 0)
                 * Matrix.CreateScale((float)Screen.GameScale.X, (float)Screen.GameScale.Y, 1)
                 * Matrix.CreateTranslation(Screen.HalfSize.X, Screen.HalfSize.Y, 0);
 

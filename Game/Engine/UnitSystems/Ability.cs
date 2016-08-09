@@ -71,7 +71,7 @@ namespace Shanism.Engine.Systems
 
             //interrupt casting if moving or incapacitated
             if (Owner.IsStunned
-                || (Owner.IsMoving && !castData.Ability.CanCastWalk))
+                || (Owner.MovementState.IsMoving && !castData.Ability.CanCastWalk))
             {
                 StopCasting();
                 return;

@@ -119,7 +119,7 @@ namespace Shanism.Engine.Objects.Abilities
             if (CurrentCooldown > 0)
                 CurrentCooldown = Math.Max(0, CurrentCooldown - msElapsed);
 
-            OnUpdate(msElapsed);
+            Scripts.Enqueue(() => OnUpdate(msElapsed));
         }
 
 

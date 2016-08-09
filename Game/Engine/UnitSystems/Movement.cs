@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Shanism.Engine.Systems
 {
     /// <summary>
-    /// Provides a common way to order units moving around. 
+    /// Updates the unit's current movementstate. See <see cref="Unit.MovementState"/>.
     /// </summary>
     class MovementSystem : UnitSystem
     {
@@ -19,11 +19,6 @@ namespace Shanism.Engine.Systems
 
         readonly Unit Owner;
 
-        bool _isMoving;
-        double _moveDirection;
-        double _moveDistanceLeft;
-
-
         readonly List<Entity> nearbies = new List<Entity>();
 
         public MovementSystem(Unit owner)
@@ -31,62 +26,29 @@ namespace Shanism.Engine.Systems
             Owner = owner;
         }
 
-
-        /// <summary>
-        /// Causes the unit to stop. 
-        /// </summary>
-        internal void Stop()
-        {
-            _isMoving = false;
-
-            if (Owner.Animation == MoveAnimation)
-                Owner.ResetAnimation();
-        }
-
-        internal void SetMovementState(double direction)
-        {
-            if (!(_isMoving
-                && _moveDirection.AlmostEqualTo(direction)))
-            {
-                _isMoving = true;
-                _moveDirection = direction;
-                _moveDistanceLeft = double.MaxValue;
-
-                Owner.PlayAnimation(MoveAnimation, true);
-            }
-        }
-
-        internal void SetMovementState(double direction, double maxDistance)
-        {
-            if (!(_isMoving
-                && _moveDirection.AlmostEqualTo(direction)
-                && maxDistance.AlmostEqualTo(_moveDistanceLeft)))
-            {
-                _isMoving = true;
-                _moveDirection = direction;
-                _moveDistanceLeft = maxDistance;
-
-                Owner.PlayAnimation(MoveAnimation, true);
-            }
-        }
-
         public override void Update(int msElapsed)
         {
-            if (!_isMoving || Owner.StateFlags.HasFlag(StateFlags.Stunned))
+            var state = Owner.MovementState;
+            if (Owner.IsStunned || !state.IsMoving)
                 return;
+
 
             //get the suggested move position
             var speed = Owner.MoveSpeed;
-            var maxDist = speed * msElapsed / 1000;
-            var suggestedDist = Math.Min(_moveDistanceLeft, maxDist);
+            var dist = speed * msElapsed / 1000;
+            if (state.HasMaxDistance)
+                dist = Math.Min(state.MaxDistance, dist);
 
-            var newPos = resolveStep(_moveDirection, suggestedDist);
-            var dist = newPos.DistanceTo(Owner.Position);
-            var hasMovedMuch = dist / suggestedDist > 0.1;
+            //fix collision
+            var finalPos = resolveStep(state.MoveDirection, dist);
+
+            //only continue if we moved at least a bit.
+            var finalDist = (float)finalPos.DistanceTo(Owner.Position);
+            var hasMovedMuch = finalDist / dist > 0.1;
 
             if (hasMovedMuch)
             {
-                Owner.Position = newPos;
+                Owner.Position = finalPos;
             }
             else
             {

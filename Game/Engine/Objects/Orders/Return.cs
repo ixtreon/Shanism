@@ -1,15 +1,14 @@
-﻿using Shanism.Engine.Systems.Orders;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shanism.Common;
 
-namespace Shanism.Engine.Objects.Behaviours
+namespace Shanism.Engine.Objects.Orders
 {
 
-    class ReturnBehaviour : Behaviour
+    class ReturnOrder : Order
     {
         public Vector OriginPosition { get; set; }
 
@@ -26,7 +25,7 @@ namespace Shanism.Engine.Objects.Behaviours
 
         double distanceSquared => MaxDistance * MaxDistance;
 
-        public ReturnBehaviour(Behaviour b, Vector origin, double maxDistance) 
+        public ReturnOrder(Order b, Vector origin, double maxDistance) 
             : base(b)
         {
             OriginPosition = origin;
@@ -46,16 +45,17 @@ namespace Shanism.Engine.Objects.Behaviours
             //issue the return order if needed
             if (!Returning)
             {
-                CurrentOrder = new MoveLocation(OriginPosition, 0.05);
                 Returning = true;
                 OnReturnStarted?.Invoke();
             }
+            var ang = (float)Owner.Position.AngleTo(OriginPosition);
+            CurrentState = new MovementState(ang);
 
             //if returning and back at the origin, say we are back. 
             if (Owner.Position.DistanceTo(OriginPosition) < 0.1)
             {
                 Returning = false;
-                CurrentOrder = new Stand();
+                CurrentState = MovementState.Stand;
                 OnReturnFinished?.Invoke();
             }
         }

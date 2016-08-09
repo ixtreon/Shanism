@@ -1,8 +1,8 @@
-﻿using Shanism.Engine.Entities;
-using Shanism.Engine.Systems.Orders;
+﻿using Shanism.Common;
+using Shanism.Engine.Entities;
 using Shanism.Engine.Events;
 
-namespace Shanism.Engine.Objects.Behaviours
+namespace Shanism.Engine.Objects.Orders
 {
     /// <summary>
     /// Represents a base class for the creation of unit behaviours. 
@@ -15,23 +15,23 @@ namespace Shanism.Engine.Objects.Behaviours
     /// For example, heroes have entirely passive behaviours since they react to player events (if using WASD). 
     /// NPCs on the other hand have more complex behaviours which specify their actions. 
     /// </example>
-    public abstract class Behaviour
+    public abstract class Order
     {
         /// <summary>
         /// Gets the unit this behaviour controls. 
         /// </summary>
-        protected readonly Unit Owner;
+        protected Unit Owner { get; }
 
         /// <summary>
-        /// Gets the current order suggested by the behaviour. 
+        /// Gets the current state suggested by the order. 
         /// </summary>
-        public IOrder CurrentOrder { get; protected set; }
+        public MovementState CurrentState { get; protected set; } = MovementState.Stand;
 
         /// <summary>
         /// Creates a new behaviour for the given unit. 
         /// </summary>
         /// <param name="owner"></param>
-        protected Behaviour(Unit owner)
+        protected Order(Unit owner)
         {
             this.Owner = owner;
         }
@@ -40,12 +40,13 @@ namespace Shanism.Engine.Objects.Behaviours
         /// Creates a new behaviour for the same unit. 
         /// </summary>
         /// <param name="b"></param>
-        protected Behaviour(Behaviour b)
+        protected Order(Order b)
          : this(b.Owner)
         { }
 
         /// <summary>
-        /// Returns whether the current behaviour should take control of its owner. 
+        /// Returns whether the current order wants to currently act. 
+        /// Returns null if the order is complete and will never act.
         /// </summary>
         public abstract bool TakeControl();
 

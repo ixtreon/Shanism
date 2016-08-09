@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using Shanism.Engine.Entities;
 using Shanism.Engine.Objects.Abilities;
 
-namespace Shanism.Engine.Objects.Behaviours
+namespace Shanism.Engine.Objects.Orders
 {
     /// <summary>
     /// A behaviour that casts spammable abilities on the specified target, if that is possible. 
     /// </summary>
-    class SpamBehaviour : Behaviour
+    class SpamBehaviour : Order
     {
         List<Ability> spammableAbilities;
 
@@ -18,7 +18,7 @@ namespace Shanism.Engine.Objects.Behaviours
 
         public Unit TargetUnit { get; set; }
 
-        public SpamBehaviour(Behaviour b)
+        public SpamBehaviour(Order b)
             : base(b)
         {
             Owner.abilities.OnAbilityLearned += owner_abilitiesChanged;
@@ -38,15 +38,19 @@ namespace Shanism.Engine.Objects.Behaviours
             if (TargetUnit == null)
                 return false;
 
+            if (CurrentAbility != null 
+                && CurrentAbility == Owner.CastingAbility)
+                return true;
+
+            //check for any ability we could cast
             CurrentAbility = null;
             foreach (var ab in spammableAbilities)
                 if (ab.CanCast(TargetUnit))
                 {
                     CurrentAbility = ab;
-                    break;
+                    return true;
                 }
-
-            return CurrentAbility != null;
+            return false;
         }
 
         public override void Update(int msElapsed)
@@ -57,7 +61,7 @@ namespace Shanism.Engine.Objects.Behaviours
                 Owner.TryCastAbility(CurrentAbility, TargetUnit.Position);
             else
                 Owner.TryCastAbility(CurrentAbility);
-
+            CurrentState = Shanism.Common.MovementState.Stand;
         }
 
         public override string ToString() => $"Cast {CurrentAbility}";

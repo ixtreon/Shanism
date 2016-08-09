@@ -56,5 +56,10 @@ namespace Shanism.Engine.Scripting
             SynchronizationContext.SetSynchronizationContext(syncContext);
             syncContext.ExecutePendingWorkItems();
         }
+
+        public void Enqueue(Action act)
+        {
+            syncContext.Post(act);
+        }
     }
 }

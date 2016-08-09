@@ -153,8 +153,9 @@ namespace Shanism.Client
                 KeyboardInfo.Update(msElapsed);
                 MouseInfo.Update(msElapsed);
 
-                //camera
-                Screen.SetCamera(null, cameraCenter: Game.MainHero?.Position);
+                //pan camera to the hero
+                if(Game.MainHero != null)
+                    Screen.MoveCamera(Game.MainHero.Position);
 
                 //ui, objects
                 Game.Update(msElapsed);
@@ -227,11 +228,11 @@ namespace Shanism.Client
             if (sz.X == 0 || sz.Y == 0 || sz == Screen.Size)
                 return;
 
-            Screen.SetCamera(sz);
+            Screen.SetWindowSize(sz);
         }
 
-        void IClientEngine.SetCameraParams(Vector? cameraPos, IEntity lockedEntity, Vector? windowSz)
-            => Screen.SetCamera(null, windowSz, cameraPos, lockedEntity);
+        void IClientEngine.MoveCamera(Vector? inGameCenter, Vector? inGameSz)
+            => Screen.MoveCamera(inGameCenter ?? Screen.GameCenter, inGameSz ?? Screen.GameSize);
 
         void IClientEngine.SetDesignMode(bool isDesignMode)
         {

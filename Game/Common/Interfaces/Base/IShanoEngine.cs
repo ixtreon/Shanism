@@ -26,6 +26,9 @@ namespace Shanism.Common
         void StartPlaying(IReceptor rec);
 
 
+
         void OpenToNetwork();
+
+        void RestartScenario();
     }
 }

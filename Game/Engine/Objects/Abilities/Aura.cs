@@ -21,11 +21,11 @@ namespace Shanism.Engine.Objects.Abilities
         /// <summary>
         /// An aura that targets neutral units. 
         /// </summary>
-        Neutral = 2 << 0,
+        Neutral = 1 << 1,
         /// <summary>
         /// An aura that targets hostile (enemy) units. 
         /// </summary>
-        Hostile = 3 << 0,
+        Hostile = 1 << 2,
 
 
         /// <summary>

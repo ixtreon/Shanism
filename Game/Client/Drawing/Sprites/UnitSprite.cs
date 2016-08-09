@@ -24,11 +24,19 @@ namespace Shanism.Client.Drawing
         {
             base.Update(msElapsed);
 
-            var m = Unit.IsMoving ? (double?)Unit.MoveDirection : null;
-
             //update unit orientation
-            if (Unit.IsMoving)
-                setEntityOrientation((float)Unit.MoveDirection);
+            if (Unit.MovementState.IsMoving)
+            {
+                SetOrientation(Unit.MovementState.MoveDirection);
+                SetAnimation("move", true);
+            }
+            else if (Unit.IsCasting())
+            {
+                SetOrientation((float)Input.MouseInfo.UiPosition.Angle);
+                SetAnimation("attack", false);
+            }
+            else if (AnimationName == "move")
+                SetAnimation(string.Empty, true);
 
             //tint black if dead
             if (Unit.IsDead)

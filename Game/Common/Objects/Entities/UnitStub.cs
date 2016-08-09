@@ -41,13 +41,10 @@ namespace Shanism.Common.StubObjects
         public float Mana { get; set; }
 
 
-        public OrderType OrderType { get; set; }
+        public MovementState MovementState { get; set; } = MovementState.Stand;
 
         public StateFlags StateFlags { get; set; }
 
-        public bool IsMoving { get; set; }
-
-        public float MoveDirection { get; set; }
 
         public float VisionRange { get; set; }
 

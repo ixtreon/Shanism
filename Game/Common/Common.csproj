@@ -82,6 +82,7 @@
   <ItemGroup>
     <Compile Include="Content\AnimationStyle.cs" />
     <Compile Include="Game\EquipSlot.cs" />
+    <Compile Include="Game\MovementState.cs" />
     <Compile Include="Interfaces\Base\IGame.cs" />
     <Compile Include="Interfaces\Objects\IItem.cs" />
     <Compile Include="Message\Client\ChatMessage.cs" />
@@ -121,7 +122,6 @@
     <Compile Include="Util\ShanoPath.cs" />
     <Compile Include="Maps\ChunkId.cs" />
     <Compile Include="Game\ObjectType.cs" />
-    <Compile Include="Game\OrderType.cs" />
     <Compile Include="Interfaces\Base\IReceptor.cs" />
     <Compile Include="Interfaces\Objects\IBuff.cs" />
     <Compile Include="Interfaces\Entities\IEffect.cs" />

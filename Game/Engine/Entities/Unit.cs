@@ -2,6 +2,8 @@
 using Shanism.Common.Game;
 using Shanism.Common.Interfaces.Entities;
 using Shanism.Common.Interfaces.Objects;
+using Shanism.Engine.Objects.Abilities;
+using Shanism.Engine.Objects.Orders;
 using Shanism.Engine.Systems;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,6 +22,7 @@ namespace Shanism.Engine.Entities
         /// </summary>
         public override ObjectType ObjectType => ObjectType.Unit;
 
+        private const int DefaultReturnRange = 50;
 
         Player _owner;
 
@@ -72,10 +75,10 @@ namespace Shanism.Engine.Entities
 
         void updateUnitStats()
         {
-            unitStats.Set(baseUnitStats);
+            stats.Set(baseStats);
             foreach (var b in buffs)
             {
-                unitStats.Add(b.Prototype.unitStats);
+                stats.Add(b.Prototype.unitStats);
 
             }
         }
@@ -91,8 +94,7 @@ namespace Shanism.Engine.Entities
         readonly BuffSystem buffs;
         readonly VisionSystem vision;
         readonly DecaySystem decay;
-        readonly OrderSystem orders;
-        readonly BehaviourSystem behaviour;
+        readonly OrderSystem behaviour;
         readonly StatsSystem combat;
 
         #endregion
@@ -154,10 +156,12 @@ namespace Shanism.Engine.Entities
         /// </summary>
         public uint OwnerId => Owner.Id;
 
+        public Ability CastingAbility => abilities.CastingAbility; 
+
         /// <summary>
         /// Gets the ability this unit is currently casting.
         /// </summary>
-        public uint CastingAbilityId => abilities.CastingAbility?.Id ?? 0;
+        uint IUnit.CastingAbilityId => abilities.CastingAbility?.Id ?? 0;
 
         /// <summary>
         /// Gets the progress of the ability the unit is currently casting or null if no ability is being cast. 
@@ -217,12 +221,14 @@ namespace Shanism.Engine.Entities
             Systems.Add(movement = new MovementSystem(this));
             Systems.Add(range = new RangeSystem(this));
             Systems.Add(vision = new VisionSystem(this));
-            Systems.Add(orders = new OrderSystem(this));
-            Systems.Add(behaviour = new BehaviourSystem(this));
+            Systems.Add(behaviour = new OrderSystem(this));
             Systems.Add(combat = new StatsSystem(this));
 
-            Owner = owner;
             Level = level;
+            DefaultOrder = new Stand(this, DefaultReturnRange);
+            initStats();
+
+            Owner = owner;
         }
 
 

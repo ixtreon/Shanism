@@ -85,7 +85,7 @@ namespace Shanism.Engine
         internal virtual void Update(int msElapsed) { }
 
         /// <summary>
-        /// Determines whether the specified <see cref="object" /> points to an entity with the same id. 
+        /// Determines whether the specified <see cref="object" /> points to an entity with the same id.
         /// </summary>
         /// <param name="obj">The <see cref="object" /> to compare with this instance.</param>
         /// <returns>
@@ -94,10 +94,15 @@ namespace Shanism.Engine
         public override bool Equals(object obj) =>
             (obj is Entity) && ((Entity)obj).Id == Id;
 
-
+        /// <summary>
+        /// Determines whether the two objects are the same.
+        /// </summary>
         public static bool operator ==(GameObject a, GameObject b)
             => a?.Id == b?.Id;
 
+        /// <summary>
+        /// Determines whether the two objects are different.
+        /// </summary>
         public static bool operator !=(GameObject a, GameObject b)
             => a?.Id != b?.Id;
 

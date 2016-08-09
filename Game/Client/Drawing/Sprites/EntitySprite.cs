@@ -38,14 +38,10 @@ namespace Shanism.Client.Drawing
 
         TextureDef currentTexture;
         AnimationDef currentAnimation;
-
         Vector textureCellScale;
-
-        float entityFacing;
-        bool isFacingRight;
-
-
         RectangleF inGameBounds;
+        float entityFacing = float.NaN;
+        bool isFacingRight;
 
         /// <summary>
         /// Gets or sets the draw depth. 0 is back, 1 is front. 
@@ -60,35 +56,43 @@ namespace Shanism.Client.Drawing
 
         public bool RemoveFlag { get; set; }
 
+        //user-set
+        bool LoopAnimation;
+        protected string AnimationName;
+
         public EntitySprite(AssetList content, IEntity obj)
         {
             this.content = content;
             Entity = obj;
 
             trySetAnimation(AnimationDef.Default);
-            setEntityOrientation(entityFacing);
+            SetOrientation(entityFacing);
         }
-
+        string lastModelName;
         /// <summary>
         /// Checks if the object's animation has changed and reloads its texture if needed. Also updates dynamic animations' frames. 
         /// <para>
-        ///     Tries to get animation with the current <see cref="this.Object.AnimationName"/>. 
-        ///     Falls back to <see cref="Object.AnimationName"/> if the current animation cannot be found. 
+        ///     Tries to get animation with the current <see cref="AnimationName"/>. 
+        ///     Falls back to <see cref="IEntity.Model"/> if the current animation cannot be found. 
         /// </para>
         /// </summary>
         public override void Update(int msElapsed)
         {
-            //re-fetch animation
-            if (!refreshCurrentAnimation())
+            if (lastModelName != Entity.Model)
             {
-                //update frames if dynamic animation
-                if (currentAnimation.IsDynamic
-                    && (Entity.LoopAnimation || frameIdCounter.Value < currentAnimation.FrameCount - 1)
-                    && frameElapsedCounter.Tick(msElapsed))
-                {
-                    frameIdCounter.Tick();
+                refreshAnimation();
+                lastModelName = Entity.Model;
+            }
+
+            //update current frame if dynamic animation
+            if (currentAnimation.IsDynamic
+                && frameElapsedCounter.Tick(msElapsed))
+            {
+                var resetFrames = frameIdCounter.Tick();
+                if (!LoopAnimation && resetFrames)
+                    SetAnimation(string.Empty, true);
+                else
                     SourceRectangle = currentAnimation.GetFrame(frameIdCounter.Value) * textureCellScale;
-                }
             }
 
             //update in-game position
@@ -111,14 +115,24 @@ namespace Shanism.Client.Drawing
         public void Draw(SpriteBatch sb)
         {
             Draw(sb, inGameBounds, DrawDepth);
-            if(ClientEngine.ShowDebugStats)
-            sb.ShanoDraw(content.Circles.GetTexture(512),
-                new RectangleF(Entity.Position - Entity.Scale / 2, new Vector(Entity.Scale)),
-                Color.Red.SetAlpha(50));
+            if (ClientEngine.ShowDebugStats)
+                sb.ShanoDraw(content.Circles.GetTexture(512),
+                    new RectangleF(Entity.Position - Entity.Scale / 2, new Vector(Entity.Scale)),
+                    Color.Red.SetAlpha(50));
         }
 
+        protected bool SetAnimation(string anim, bool loop)
+        {
+            LoopAnimation = loop;
+            if (anim != AnimationName)
+            {
+                AnimationName = anim;
+                return refreshAnimation();
+            }
 
-        internal void setEntityOrientation(float angle)
+            return true;
+        }
+        protected void SetOrientation(float angle)
         {
             if (angle.Equals(entityFacing))
                 return;
@@ -130,34 +144,14 @@ namespace Shanism.Client.Drawing
             if (Math.Abs(xDist) > 1e-3)
                 isFacingRight = xDist > 0;
 
-            updateTextureOrientation();
+            refreshOrientation();
         }
 
 
-        /// <summary>
-        /// Updates the current animation. Returns whether the animation was changed. 
-        /// </summary>
-        bool refreshCurrentAnimation()
-        {
-            return swapAnimation(ShanoPath.Combine(Entity.Model, Entity.Animation)) 
-                ?? swapAnimation(ShanoPath.Normalize(Entity.Model)) 
-                ?? swapAnimation(AnimationDef.Default.Name)
-                ?? false;
-        }
-
-        bool? swapAnimation(string name)
-        {
-            if (currentAnimation.Name == name)
-                return false;
-            if (trySetAnimation(name))
-                return true;
-            return null;
-        }
-
-        bool trySetAnimation(string animName)
+        bool trySetAnimation(string fullName)
         {
             AnimationDef outAnim;
-            if (!content.Animations.TryGetValue(animName, out outAnim))
+            if (!content.Animations.TryGetValue(fullName ?? string.Empty, out outAnim))
                 return false;
 
             return trySetAnimation(outAnim);
@@ -172,9 +166,10 @@ namespace Shanism.Client.Drawing
                 return false;
 
             Texture2D tex;
-            if(!content.Textures.TryGet(texName, out tex))
+            if (!content.Textures.TryGet(texName, out tex))
                 return false;
 
+            Texture = tex;
             currentTexture = texDef;
             currentAnimation = anim;
 
@@ -183,18 +178,43 @@ namespace Shanism.Client.Drawing
             frameIdCounter.Reset(currentAnimation.FrameCount);
 
             //update source rect + texture
-            Texture = tex;
             textureCellScale = new Vector(Texture.Width, Texture.Height) / texDef.Cells;
             SourceRectangle = currentAnimation.GetFrame(0) * textureCellScale;
-            updateTextureOrientation();
+            refreshOrientation();
 
             return true;
         }
 
+        bool refreshAnimation()
+        {
+            //check if same model+anim
+            var reqModelAnim = ShanoPath.Combine(Entity.Model, AnimationName);
+            if (ShanoPath.Equals(currentAnimation.Name, reqModelAnim))
+                return true;
+
+            //try refetch model+anim
+            if (trySetAnimation(reqModelAnim))
+                return true;
+
+            //try just model
+            if (trySetAnimation(Entity.Model))
+            {
+                AnimationName = string.Empty;
+                LoopAnimation = true;
+                return false;
+            }
+
+            //set default
+            trySetAnimation(AnimationDef.Default);
+            AnimationName = string.Empty;
+            return false;
+        }
+
+
         /// <summary>
         /// Updates the texture orientation using the current animation and unit orientation values.
         /// </summary>
-        void updateTextureOrientation()
+        void refreshOrientation()
         {
             switch (currentAnimation.RotationStyle)
             {

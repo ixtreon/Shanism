@@ -9,11 +9,11 @@ using System.Text;
 using Shanism.Common.Game;
 using Shanism.Engine.Common;
 using Shanism.Engine.Entities;
-using Shanism.Engine.Systems.Orders;
 using Shanism.Common.Message.Client;
 using Shanism.Common.StubObjects;
 using Shanism.Common.Util;
 using Shanism.Common.Interfaces.Entities;
+using Shanism.Engine.Objects.Orders;
 
 namespace Shanism.Engine.Entities
 {

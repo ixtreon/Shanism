@@ -26,7 +26,6 @@ namespace Shanism.Common.Serialization
             w.Write(u.OwnerId);
             w.Write(u.Level);
             w.Write(u.IsDead);
-            w.Write((byte)u.OrderType);
             w.Write((short)u.StateFlags);
             w.Write(u.VisionRange);
 
@@ -36,8 +35,8 @@ namespace Shanism.Common.Serialization
             u.Stats.Write(w);
 
             //movement
-            w.Write(u.IsMoving);
-            w.Write(u.MoveDirection);
+            w.Write(u.MovementState.MoveDirection);
+            w.Write(u.MovementState.MaxDistance);
 
             //casting
             w.Write(u.CastingAbilityId);
@@ -69,7 +68,6 @@ namespace Shanism.Common.Serialization
             u.OwnerId = r.ReadUInt32();
             u.Level = r.ReadInt32();
             u.IsDead = r.ReadBoolean();
-            u.OrderType = (OrderType)r.ReadByte();
             u.StateFlags = (StateFlags)r.ReadInt16();
             u.VisionRange = r.ReadSingle();
 
@@ -79,8 +77,9 @@ namespace Shanism.Common.Serialization
             u.Stats.Read(r);
 
             //movement
-            u.IsMoving = r.ReadBoolean();
-            u.MoveDirection = r.ReadSingle();
+            var dir = r.ReadSingle();
+            var maxd = r.ReadSingle();
+            u.MovementState = new MovementState(dir, maxd);
 
             //casting
             u.CastingAbilityId = r.ReadUInt32();

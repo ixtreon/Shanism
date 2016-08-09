@@ -87,6 +87,7 @@
     <Compile Include="Drawing\Sprites\UnitSprite.cs" />
     <Compile Include="Drawing\TextureChunk.cs" />
     <Compile Include="Exceptions\ContentDirectoryMissing.cs" />
+    <Compile Include="Input\InputThread.cs" />
     <Compile Include="Input\MouseInfo.cs" />
     <Compile Include="Interfaces\IClientEngine.cs" />
     <Compile Include="Systems\ClientSystem.cs" />

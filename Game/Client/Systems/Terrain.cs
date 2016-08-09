@@ -61,7 +61,7 @@ namespace Shanism.Client.Map
             effect.SetStaticViewMatrix();
         }
 
-        Vector CameraPosition => Screen.InGameCenter;
+        Vector CameraPosition => Screen.GameCenter;
 
         public override void Update(int msElapsed)
         {

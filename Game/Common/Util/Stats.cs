@@ -43,20 +43,6 @@ namespace Shanism.Common
     {
         public UnitStats() : base(UnitStat.Count)
         {
-            this[UnitStat.MaxLife] = 10;
-            this[UnitStat.MaxMana] = 0;
-
-            this[UnitStat.LifeRegen] = 0.1f;
-            this[UnitStat.ManaRegen] = 0;
-            this[UnitStat.MagicDamage] = 0;
-
-            this[UnitStat.MinDamage] = 1;
-            this[UnitStat.MaxDamage] = 2;
-            this[UnitStat.Defense] = 0;
-
-            this[UnitStat.MoveSpeed] = 10;
-            this[UnitStat.AttacksPerSecond] = 0.6f;
-            this[UnitStat.AttackRange] = 2.5f;
         }
     }
 

@@ -35,7 +35,7 @@ namespace Shanism.Engine.Entities
         /// <summary>
         /// Gets all entities this unit can see. 
         /// </summary>
-        public IEnumerable<Entity> VisibleObjects => objectsSeen;
+        public IEnumerable<Entity> VisibleEntities => objectsSeen;
 
         /// <summary>
         /// Gets or sets the vision range of the unit. 

@@ -92,6 +92,7 @@ namespace Shanism.Client.UI.Menus
             };
             agilityBox.AddLabel("Dodge", "Your total chance to dodge attacks. ");
             agilityBox.AddLabel("Attack Speed", "The amount of attacks that can be done per second. ");
+            agilityBox.AddLabel("Movement Speed", "The amount of tiles you can cross per second. ");
             agilityBox.Resize();
 
             intellectBox = new StatBox
@@ -151,13 +152,17 @@ namespace Shanism.Client.UI.Menus
 
             var attacksPerSec = Target.Stats[UnitStat.AttacksPerSecond];
             var dodge = 0f;
+            var moveSpeed = Target.Stats[UnitStat.MoveSpeed];
             agilityBox.SetStatValue(Target.BaseAttributes[HeroAttribute.Agility], Target.Attributes[HeroAttribute.Agility]);
             agilityBox.SetLabelValue(0, 
                 $"{dodge:0}%", 
                 $"{dodge:0.00}%");
-            agilityBox.SetLabelValue(1, 
-                $"{attacksPerSec / 1000f:0.0}", 
-                $"{1f / attacksPerSec:0.0} sec / attack.\n{attacksPerSec:0.0} attacks / sec");
+            agilityBox.SetLabelValue(1,
+                $"{attacksPerSec:0.0}",
+                $"{attacksPerSec:0.0} attacks / sec\n{1f / attacksPerSec:0.0} sec / attack.");
+            agilityBox.SetLabelValue(2,
+                $"{moveSpeed:0.0}",
+                $"{moveSpeed:0.0#}");
 
             var maxMana = Target.Stats[UnitStat.MaxMana];
             var manaRegen = Target.Stats[UnitStat.ManaRegen];
