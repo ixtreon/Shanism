@@ -21,18 +21,18 @@ namespace Shanism.Engine.Entities
         /// <summary>
         /// Gets or sets the speed of the projectile in game units per second. 
         /// </summary>
-        public double Speed = 20;
+        public float Speed = 20;
 
         /// <summary>
         /// Gets or sets the direction (in radians) this projectile is traveling at. 
         /// </summary>
-        public double Direction = 0;
+        public float Direction = 0;
 
         /// <summary>
         /// Gets or sets the maximum distance the projectile will travel before getting destroyed. 
         /// <para>Has a default value of 10. </para>
         /// </summary>
-        public double MaxRange = 10;
+        public float MaxRange = 10;
 
         /// <summary>
         /// Gets or sets whether the projectile will be automatically destroyed after it collides with a unit. 
@@ -44,7 +44,7 @@ namespace Shanism.Engine.Entities
         /// Gets the distance this projectile has travelled so far. 
         /// </summary>
         /// <returns></returns>
-        public double DistanceTravelled { get; private set; }
+        public float DistanceTravelled { get; private set; }
 
         /// <summary>
         /// Raised whenever the projecticle collides with a unit. 
@@ -72,13 +72,27 @@ namespace Shanism.Engine.Entities
         }
 
         /// <summary>
-        /// Creates a new projectile at the specified in-game location. 
+        /// Creates a new projectile at the specified in-game location.
         /// </summary>
-        /// <param name="owner">The unit that owns the projectile. </param>
-        /// <param name="ignoredUnits">The collection this projectile will not collide with. </param>
-        public Projectile(Unit owner, IEnumerable<Unit> ignoredUnits = null)
+        /// <param name="owner">The unit that owns the projectile.</param>
+        /// <param name="ignoredUnits">The collection this projectile will not collide with.</param>
+        /// <param name="speed">The speed of the projectile, in tiles per second.</param>
+        /// <param name="direction">The direction of the projectile in radians.</param>
+        /// <param name="maxRange">The maximum range travelled before the projectile is destroyed.</param>
+        /// <param name="collideDestroy">Whether to automatically destroy the projectile when it collides an unit.</param>
+        public Projectile(Unit owner, 
+            IEnumerable<Unit> ignoredUnits = null,
+            float speed = 20, 
+            float direction = 0, 
+            float maxRange = 10, 
+            bool collideDestroy = true)
         {
             Owner = owner;
+
+            Speed = speed;
+            Direction = direction;
+            MaxRange = maxRange;
+            DestroyOnCollision = collideDestroy;
 
             if (ignoredUnits != null)
                 foreach (var u in ignoredUnits)
