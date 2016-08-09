@@ -41,9 +41,9 @@ namespace Shanism.Engine.Objects.Abilities
                 Model = "objects/arrowz",
                 Scale = 2.5,
 
-                Direction = Owner.Position.AngleTo(targetLoc),
+                Direction = (float)Owner.Position.AngleTo(targetLoc),
                 Speed = 20,
-                MaxRange = CastRange,
+                MaxRange = (float)CastRange,
 
                 DestroyOnCollision = true,
             };
