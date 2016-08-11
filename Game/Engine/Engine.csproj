@@ -119,6 +119,7 @@
     <Compile Include="Objects\Orders\MoveToGround.cs" />
     <Compile Include="Objects\Orders\FollowUnit.cs" />
     <Compile Include="Objects\Orders\MoveDirection.cs" />
+    <Compile Include="Objects\Orders\Guard.cs" />
     <Compile Include="Players\Alliance.cs" />
     <Compile Include="Objects\Buffs\Stunned.cs" />
     <Compile Include="Events\AbilityCastArgs.cs" />
@@ -163,7 +164,7 @@
     <Compile Include="Objects\Abilities\Attack.cs" />
     <Compile Include="Objects\Orders\SpamCast.cs" />
     <Compile Include="Objects\Orders\Order.cs" />
-    <Compile Include="Objects\Orders\Stand.cs" />
+    <Compile Include="Objects\Orders\Aggro.cs" />
     <Compile Include="Objects\Orders\OrderList.cs" />
     <Compile Include="Objects\Orders\MoveToUnit.cs" />
     <Compile Include="Objects\Orders\Return.cs" />

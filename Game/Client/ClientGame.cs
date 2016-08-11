@@ -17,6 +17,8 @@ namespace Shanism.Client
 
         GraphicsDeviceManager graphics;
 
+        RenderTarget2D drawBuffer;
+
 
         Microsoft.Xna.Framework.Rectangle _windowSize;
         bool _stopResizeRecurse;
@@ -55,17 +57,33 @@ namespace Shanism.Client
                 CullMode = CullMode.None,
             };
 
-            //no vsync
-            graphics.SynchronizeWithVerticalRetrace = false;
-            this.IsFixedTimeStep = false;
-            graphics.ApplyChanges();
-
-
-            //hook resizing, set mouse
+            //setup stuff
             IsMouseVisible = true;
+            IsFixedTimeStep = false;
             Window.AllowUserResizing = true;
             Window.ClientSizeChanged += Window_ClientSizeChanged;
-            _clientEngine.SetWindowSize(Window.ClientBounds.Size.ToPoint());
+
+            Settings.Current.Saved += reloadGraphicsEngine;
+            reloadGraphicsEngine();
+
+            Screen.SetWindowSize(Window.ClientBounds.Size.ToPoint());
+        }
+
+        void recreateBackBuffer()
+        {
+            var s = Settings.Current.RenderSize;
+            var w = (int)(Window.ClientBounds.Width * s);
+            var h = (int)(Window.ClientBounds.Height * s);
+            drawBuffer = new RenderTarget2D(GraphicsDevice, w, h);
+        }
+
+        void reloadGraphicsEngine()
+        {
+            graphics.SynchronizeWithVerticalRetrace = Settings.Current.VSync;
+            graphics.IsFullScreen = false;
+
+            recreateBackBuffer();
+            graphics.ApplyChanges();
         }
 
 
@@ -79,17 +97,19 @@ namespace Shanism.Client
 
             //update backbuffer size
             var sz = Window.ClientBounds;
+            var renderScale = Settings.Current.RenderSize;
             if (sz != _windowSize && sz.Width > 0 && sz.Height > 0)
             {
                 _windowSize = sz;
-                graphics.PreferredBackBufferWidth = sz.Width;
-                graphics.PreferredBackBufferHeight = sz.Height;
+
+                graphics.PreferredBackBufferWidth = (int)(sz.Width);
+                graphics.PreferredBackBufferHeight = (int)(sz.Height);
                 graphics.ApplyChanges();
 
+                recreateBackBuffer();
             }
 
-            //inform the engine
-            _clientEngine.SetWindowSize(Window.ClientBounds.Size.ToPoint());
+            Screen.SetWindowSize(Window.ClientBounds.Size.ToPoint());
 
             _stopResizeRecurse = false;
         }

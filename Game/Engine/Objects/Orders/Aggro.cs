@@ -9,101 +9,77 @@ namespace Shanism.Engine.Objects.Orders
 {
     /// <summary>
     /// A compound behaviour which makes an unit engage other units that come into range.
-    /// Switches between following and attacking the current target with max aggro, unless it escapes too far away.
-    /// In peaceful times releases control.
+    /// Switches between following and attacking the current target with max aggro, until it dies.
     /// </summary>
-    class Stand : OrderList
+    class Aggro : OrderList
     {
         public const int DefaultReturnRange = 20;
 
 
         readonly Dictionary<Unit, double> aggroTable = new Dictionary<Unit, double>();
 
-        readonly ReturnOrder ForceReturnBehaviour;     // forces the unit to the origin if it leaves its aggro zone
-        readonly SpamBehaviour SpamBehaviour;              // forces the unit to continuously cast its spammable abilities, if it can
+        readonly SpamAbilities SpamBehaviour;              // forces the unit to continuously cast its spammable abilities, if it can
         readonly MoveToUnit FollowBehaviour;          // forces the unit to chase enemy units in its vision range
-        readonly ReturnOrder FreeReturnBehaviour;      // makes the unit return to the origin if nothing else is to be done
 
         public Unit CurrentTarget { get; private set; }
 
-        public double ReturnRange { get; }
 
-
-        public Stand(Unit u, double returnRange = DefaultReturnRange)
+        public Aggro(Unit u)
             : base(u)
         {
-            ReturnRange = returnRange;
-            ForceReturnBehaviour = new ReturnOrder(this, u.Position, ReturnRange);
-            SpamBehaviour = new SpamBehaviour(this);
+            SpamBehaviour = new SpamAbilities(this);
             FollowBehaviour = new MoveToUnit(u);
-            FreeReturnBehaviour = new ReturnOrder(this, u.Position, 0.5);
 
             AddRange(new Order[]
             {
-                ForceReturnBehaviour,
                 SpamBehaviour,
                 FollowBehaviour,
-                FreeReturnBehaviour,
             });
 
             Owner.ObjectSeen += onEntitySeen;
             Owner.DamageReceived += onDamageReceived;
 
-            ForceReturnBehaviour.OnReturnStarted += ReturnBehaviour_OnReturnStarted;
-            ForceReturnBehaviour.OnReturnFinished += ReturnBehaviour_OnReturnFinished;
         }
 
         public override bool TakeControl()
         {
-
             //keep track of most aggressive targets
             var newTarget = updateTarget();
             if (newTarget != CurrentTarget)
             {
                 SpamBehaviour.TargetUnit = newTarget;
                 FollowBehaviour.Target = newTarget;
-                if(newTarget != null)
+                if (newTarget != null)
                     FollowBehaviour.MinDistance = (float)(Owner.Scale + newTarget.Scale) / 2;
 
                 CurrentTarget = newTarget;
             }
-
-            //update return locations in peaceful times
-            if (CurrentTarget == null
-                && CurrentBehaviour == null
-                && ReturnPosition.DistanceTo(Owner.Position) > 2 * FreeReturnBehaviour.MaxDistance)
-            {
-                ReturnPosition = Owner.Position;
-            }
-
 
             return base.TakeControl();
         }
 
         public override void Update(int msElapsed)
         {
-
             base.Update(msElapsed);
-        }
-
-        private void ReturnBehaviour_OnReturnFinished()
-        {
-            //re-add all visible entities to the aggro table
-            foreach (var o in Owner.VisibleEntities)
-                onEntitySeen(o);
-
-            //reset life?!
-            Owner.Life = Owner.MaxLife;
-        }
-
-        private void ReturnBehaviour_OnReturnStarted()
-        {
-            //clear the aggro table
-            aggroTable.Clear();
         }
 
         readonly List<Unit> toRemove = new List<Unit>();
 
+        /// <summary>
+        /// Clears this unit's aggro table.
+        /// </summary>
+        public void ClearTable()
+            => aggroTable.Clear();
+
+        /// <summary>
+        /// Re-adds all visible enemies to the aggro table.
+        /// </summary>
+        public void ResetTable()
+        {
+            aggroTable.Clear();
+            foreach (var e in Owner.VisibleEntities)
+                onEntitySeen(e);
+        }
 
         /// <summary>
         /// Re-targets the hero with the most aggro. 
@@ -124,7 +100,7 @@ namespace Shanism.Engine.Objects.Orders
                 var uAggro = kvp.Value;
                 var d = Owner.Position.DistanceTo(u.Position);
 
-                if (u.IsDead || d > ReturnRange)
+                if (u.IsDead)
                 {
                     toRemove.Add(u);
                     continue;
@@ -175,23 +151,10 @@ namespace Shanism.Engine.Objects.Orders
                 return;
 
 
-            if (ForceReturnBehaviour.Returning)
-                return;
-
             //add it to the aggro table if it's a hero
             if (u.Owner.IsEnemyOf(Owner))
-                if(!aggroTable.ContainsKey(u))
+                if (!aggroTable.ContainsKey(u))
                     aggroTable.Add(u, 0);
-        }
-
-        Vector ReturnPosition
-        {
-            get { return FreeReturnBehaviour.OriginPosition; }
-            set
-            {
-                ForceReturnBehaviour.OriginPosition =
-                FreeReturnBehaviour.OriginPosition = value;
-            }
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Shanism.Engine.Objects.Orders
 
         public override bool TakeControl()
         {
-            return Target != null;
+            return Target != null && !Target.IsDead;
         }
 
         public override void Update(int msElapsed)

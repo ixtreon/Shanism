@@ -5,10 +5,17 @@ using Shanism.Engine.Events;
 namespace Shanism.Engine.Objects.Orders
 {
     /// <summary>
-    /// Represents a base class for the creation of unit behaviours. 
-    /// At each tick the behaviour selects whether to act by calling the <see cref="TakeControl"/> method.
-    /// If that method returns true the behaviour updates its state (see <see cref="Update(int)"/>,
-    /// and updates its 'suggestion' for the unit's current order (see <see cref="CurrentOrder"/>. 
+    /// An abstract unit order. 
+    /// <para>
+    /// At each tick the order selects whether to act 
+    /// by calling the <see cref="TakeControl"/> method.
+    /// 
+    /// If that method returns true the behaviour is allowed
+    /// to updates its state (see <see cref="Update(int)"/>.
+    /// 
+    /// The active order issues a <see cref="MovementState"/> and 
+    /// may affect its owner in any other way. 
+    /// </para>
     /// </summary>
     /// 
     /// <example>

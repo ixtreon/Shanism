@@ -10,9 +10,9 @@ namespace Shanism.Engine.Objects.Orders
 
     class ReturnOrder : Order
     {
-        public Vector OriginPosition { get; set; }
+        public Vector ReturnPosition { get; set; }
 
-        public double MaxDistance { get; set; }
+        public double ReturnStartDistance { get; set; }
 
         public bool Returning { get; private set; }
 
@@ -23,42 +23,41 @@ namespace Shanism.Engine.Objects.Orders
 
         public event Action OnReturnFinished;
 
-        double distanceSquared => MaxDistance * MaxDistance;
-
         public ReturnOrder(Order b, Vector origin, double maxDistance) 
             : base(b)
         {
-            OriginPosition = origin;
-            MaxDistance = maxDistance;
+            ReturnPosition = origin;
+            ReturnStartDistance = maxDistance;
         }
 
 
         public override bool TakeControl()
         {
             return Returning 
-                || Owner.Position.DistanceToSquared(OriginPosition) > distanceSquared;
+                || Owner.Position.DistanceTo(ReturnPosition) > ReturnStartDistance;
         }
 
 
         public override void Update(int msElapsed)
         {
-            //issue the return order if needed
+            //raise the event
             if (!Returning)
             {
                 Returning = true;
                 OnReturnStarted?.Invoke();
             }
-            var ang = (float)Owner.Position.AngleTo(OriginPosition);
+
+            var ang = (float)Owner.Position.AngleTo(ReturnPosition);
             CurrentState = new MovementState(ang);
 
             //if returning and back at the origin, say we are back. 
-            if (Owner.Position.DistanceTo(OriginPosition) < 0.1)
+            if (Owner.Position.DistanceTo(ReturnPosition) <= 1)
             {
                 Returning = false;
                 CurrentState = MovementState.Stand;
                 OnReturnFinished?.Invoke();
             }
         }
-        public override string ToString() => $"Return to {OriginPosition}";
+        public override string ToString() => $"Return to {ReturnPosition}";
     }
 }

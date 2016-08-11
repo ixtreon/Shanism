@@ -136,6 +136,8 @@ namespace Shanism.Engine.Entities
 
             BaseMaxLife = 100;
             BaseMaxMana = 5;
+
+            DefaultOrder = null;
         }
 
         internal void updateHeroStats()

@@ -22,7 +22,7 @@ namespace Shanism.Engine.Entities
         /// </summary>
         public override ObjectType ObjectType => ObjectType.Unit;
 
-        private const int DefaultReturnRange = 50;
+        private const int DefaultReturnRange = 30;
 
         Player _owner;
 
@@ -225,7 +225,7 @@ namespace Shanism.Engine.Entities
             Systems.Add(combat = new StatsSystem(this));
 
             Level = level;
-            DefaultOrder = new Stand(this, DefaultReturnRange);
+            DefaultOrder = new Guard(this, DefaultReturnRange);
             initStats();
 
             Owner = owner;

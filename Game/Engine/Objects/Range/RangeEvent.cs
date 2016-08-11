@@ -18,7 +18,6 @@ namespace Shanism.Engine.Objects.Range
 
     public class RangeEvent : IComparable<RangeEvent>
     {
-
         internal readonly double RangeSquared;
 
         /// <summary>
@@ -53,8 +52,8 @@ namespace Shanism.Engine.Objects.Range
         /// <param name="eventHandler">The default handler for this event. </param>
         public RangeEvent(double range, Entity target = null, RangeEventCallback eventHandler = null)
         {
-            if (range <= 0 || range > Constants.RangeEvents.MaxRangeUnits)
-                throw new ArgumentOutOfRangeException($"Distance must be between 0 and {Constants.RangeEvents.MaxRangeUnits}");
+            if (range <= 0)
+                throw new ArgumentOutOfRangeException($"Distance must be more than 0.");
 
             Range = range;
             RangeSquared = range * range;

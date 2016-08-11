@@ -69,6 +69,7 @@ namespace Shanism.Client
 
 
         public bool VSync { get; set; } = false;
+        public bool FullScreen { get; set; } = false;
         public float RenderSize { get; set; } = 1.0f;
 
         //public bool EnableShaders { get; set; } = true;
@@ -76,7 +77,7 @@ namespace Shanism.Client
 
         public KeybindSettings Keybinds { get; set; } = new KeybindSettings(true);
 
-
+        public event Action Saved;
 
         Settings() { }
 
@@ -95,6 +96,7 @@ namespace Shanism.Client
             {
                 var datas = JsonConvert.SerializeObject(this);
                 File.WriteAllText(DefaultSettingsFile, datas);
+                Saved?.Invoke();
             }
             catch (Exception e)
             {

@@ -10,15 +10,24 @@ namespace Shanism.Engine.Objects.Orders
     /// <summary>
     /// A behaviour that casts spammable abilities on the specified target, if that is possible. 
     /// </summary>
-    class SpamBehaviour : Order
+    class SpamAbilities : Order
     {
         List<Ability> spammableAbilities;
 
         public Ability CurrentAbility { get; private set; }
 
         public Unit TargetUnit { get; set; }
+        public SpamAbilities(Unit owner, Unit target) 
+            : base(owner)
+        {
+            TargetUnit = target;
 
-        public SpamBehaviour(Order b)
+            Owner.abilities.OnAbilityLearned += owner_abilitiesChanged;
+            Owner.abilities.OnAbilityLost += owner_abilitiesChanged;
+            owner_abilitiesChanged(null);
+        }
+
+        public SpamAbilities(Order b)
             : base(b)
         {
             Owner.abilities.OnAbilityLearned += owner_abilitiesChanged;

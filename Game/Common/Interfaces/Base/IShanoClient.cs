@@ -28,7 +28,9 @@ namespace Shanism.Common
         /// </summary>
         event Action<IOMessage> MessageSent;
 
-
+        /// <summary>
+        /// Gets the current state of the client.
+        /// </summary>
         ClientState State { get; }
 
     }

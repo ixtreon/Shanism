@@ -19,19 +19,6 @@ namespace Shanism.Engine
             public const int MapChunkSize = 2;
         }
 
-        public static class RangeEvents
-        {
-            /// <summary>
-            /// The maximum range of a RangeEvent measured in chunks. 
-            /// </summary>
-            public const int MaxRangeChunks = (int)(MaxRangeUnits / Engine.MapChunkSize + 0.5);
-
-            /// <summary>
-            /// The maximum range of a RangeEvent measured in in-game units. 
-            /// </summary>
-            public const double MaxRangeUnits = 32;
-        }
-
         public static class Entities
         {
             /// <summary>

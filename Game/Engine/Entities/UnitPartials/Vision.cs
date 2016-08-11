@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Shanism.Common.Message;
 using Shanism.Engine.Players;
+using Shanism.Engine.Objects.Range;
+using Shanism.Common;
 
 namespace Shanism.Engine.Entities
 {
@@ -43,10 +45,9 @@ namespace Shanism.Engine.Entities
         public float VisionRange
         {
             get { return _visionRange; }
-
             set
             {
-                _visionRange = value;
+                _visionRange = Math.Max(0, value);
                 OnVisionRangeChanged();
             }
         }

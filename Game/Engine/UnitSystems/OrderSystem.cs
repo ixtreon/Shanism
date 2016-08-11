@@ -27,12 +27,12 @@ namespace Shanism.Engine.Systems
             if (tryTakeControl(Owner.CurrentOrder, msElapsed))
                 return;
 
-            //otherwise default
+            //otherwise revert to default
             Owner.CurrentOrder = null;
             if (tryTakeControl(Owner.DefaultOrder, msElapsed))
                 return;
 
-            //otherwise don't do anything
+            //or don't do anything
             Owner.MovementState = Shanism.Common.MovementState.Stand;
         }
 

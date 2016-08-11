@@ -11,7 +11,9 @@ using Shanism.Engine.Events;
 namespace Shanism.Engine.Objects.Abilities
 {
     /// <summary>
-    /// A simple melee attack ability that mirrors its owner's attack type, range and cooldown. 
+    /// A simple attack ability that mirrors its owner's attack type, range and cooldown. 
+    /// Ranged heroes shoot projectiles. 
+    /// Melee heroes swing at the closest foe and can do it while walking. 
     /// </summary>
     [AbilityType(AbilityTypeFlags.Spammable)]
     public class Attack : Ability
@@ -27,14 +29,16 @@ namespace Shanism.Engine.Objects.Abilities
 
         protected override void OnCast(AbilityCastArgs e)
         {
-            e.Success = (Owner.HasRangedAttack ? rangedAttack(e) : meleeAttack(e));
+            if (Owner.HasRangedAttack)
+                e.Success = rangedAttack(e);
+            else
+                e.Success = meleeAttack(e);
         }
 
         bool rangedAttack(AbilityCastArgs e)
         {
             var targetLoc = e.TargetLocation;
             var damageRoll = Owner.DamageRoll();
-
             var proj = new Projectile(Owner)
             {
                 Position = Owner.Position,
@@ -47,10 +51,10 @@ namespace Shanism.Engine.Objects.Abilities
 
                 DestroyOnCollision = true,
             };
-            proj.OnUnitCollision += (p, u) 
+            proj.OnUnitCollision += (p, u)
                 => Owner.DamageUnit(u, DamageType.Physical, damageRoll);
+
             Map.Add(proj);
-            Console.WriteLine(Map.Entities.OfType<Projectile>().Count());
             return true;
         }
 
@@ -62,7 +66,7 @@ namespace Shanism.Engine.Objects.Abilities
             else
             {
                 target = Map.GetUnitsInRange(Owner.Position, CastRange)
-                    .Where(u => u.Owner.IsEnemyOf(Owner))
+                    .Where(Owner.Owner.IsEnemyOf)
                     .OrderBy(u => u.Position.DistanceTo(e.TargetLocation))
                     .FirstOrDefault();
 
@@ -77,8 +81,9 @@ namespace Shanism.Engine.Objects.Abilities
 
         protected override void OnUpdate(int msElapsed)
         {
-            CastRange = Owner.AttackRange;
+            CastRange = Owner.Scale / 2 + Owner.AttackRange;
             Cooldown = Owner.AttackCooldown;
+            CanCastWalk = !Owner.HasRangedAttack;
         }
     }
 }

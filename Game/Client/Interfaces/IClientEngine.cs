@@ -14,7 +14,7 @@ namespace Shanism.Client
     /// <summary>
     /// An instance of the game client engine. 
     /// Contains the logic necessary to draw and update the ShanoRpg. 
-    /// Is also a <see cref="IShanoClient"/> that can play on a <see cref="IShanoEngine"/>. 
+    /// Implements the <see cref="IShanoClient"/> interface to play on a <see cref="IShanoEngine"/>. 
     /// </summary>
     public interface IClientEngine : IShanoClient
     {
@@ -51,7 +51,11 @@ namespace Shanism.Client
         /// <param name="sz">The new size of the window.</param>
         void SetWindowSize(Point sz);
 
-
+        /// <summary>
+        /// Moves the camera.
+        /// </summary>
+        /// <param name="inGamePos">The in game position.</param>
+        /// <param name="inGameSz">The in game sz.</param>
         void MoveCamera(Vector? inGamePos, Vector? inGameSz);
 
         /// <summary>

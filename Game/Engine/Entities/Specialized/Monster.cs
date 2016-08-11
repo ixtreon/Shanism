@@ -61,11 +61,10 @@ namespace Shanism.Engine.Entities
             BaseMoveSpeed = 10;
             BaseDodgeChance = 10;
 
-            baseStats[UnitStat.AttackRange] = 3;
+            BaseAttackRange = 3;
             BaseStates &= (~StateFlags.RangedAttack);
 
             Abilities.Add(new Attack());
-            CurrentOrder = new Stand(this);
         }
 
         /// <summary>

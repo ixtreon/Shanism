@@ -14,10 +14,18 @@ namespace Shanism.Engine.Entities
     //The part of the unit class which deals with orders such as moving and attacking. 
     partial class Unit
     {
+        /// <summary>
+        /// Gets or sets the default order of this unit. 
+        /// </summary>
+        /// <value>
+        /// The default order.
+        /// </value>
         public Order DefaultOrder { get; set; }
 
         /// <summary>
-        /// Gets or sets the current order of this unit. 
+        /// Gets or sets a custom order for this unit. 
+        /// The unit will follow this order until it releases 
+        /// control, then revert to its <see cref="DefaultOrder"/>.
         /// </summary>
         public Order CurrentOrder { get; set; }
 
@@ -126,34 +134,45 @@ namespace Shanism.Engine.Entities
         public void OrderMove(Vector target) => SetOrder(new MoveToGround(this, target));
 
         /// <summary>
+        /// Orders the unit to move towards the target location, 
+        /// attacking any enemy units on sight.
+        /// </summary>
+        /// <param name="target">The position to reach.</param>
+        public void OrderMoveAttack(Vector target) => SetOrder(new MoveAttack(this, target));
+
+        /// <summary>
         /// Orders the unit to start moving in the specified direction. 
         /// </summary>
+        /// <param name="direction">The direction to start moving at, in radians.</param>
         public void OrderMove(float direction) => SetOrder(new MoveDirection(this, direction));
 
         /// <summary>
         /// Orders the unit to go to the target unit. 
         /// Similar to <see cref="OrderMove(Vector)"/> but makes sure the target is reached
-        /// even if it moves after the order was issued. 
+        /// even if it changes its position after the order was issued. 
         /// </summary>
+        /// <param name="target">The unit to move to.</param>
         public void OrderMove(Unit target) => SetOrder(new MoveToUnit(this, target));
 
-
+        /// <summary>
+        /// Orders the unit to follow the target unit unti it dies.
+        /// </summary>
+        /// <param name="target">The unit to follow.</param>
         public void OrderFollow(Unit target) => SetOrder(new FollowUnit(this, target));
 
+        /// <summary>
+        /// Orders the unit to attack the target unit until it dies. 
+        /// </summary>
+        /// <param name="target">The unit to attack.</param>
         public void OrderAttack(Unit target)
         {
             if (!Owner.IsEnemyOf(target))
                 return;
 
-            throw new NotImplementedException();
+            SetOrder(new SpamAbilities(this, target));
         }
 
         public void OrderPatrol(Vector target)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OrderMoveAttack(Vector target)
         {
             throw new NotImplementedException();
         }
