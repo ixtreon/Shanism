@@ -18,7 +18,7 @@ namespace Shanism.Common.StubObjects
     {
         public int DurationLeft { get; set; }
 
-        public BuffStub Prototype { get; set; }
+        public BuffStub Prototype { get; } = new BuffStub();
 
 
         public BuffInstanceStub() { }

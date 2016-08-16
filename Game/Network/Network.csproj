@@ -72,6 +72,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client\NReceptor.cs" />
     <Compile Include="Client\ObjectCache.cs" />
     <Compile Include="Client\ClientSerializer.cs" />
     <Compile Include="Diff\DiffGuy.cs" />

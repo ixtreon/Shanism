@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace Shanism.Client
 {
-    public static class ShanoGame
+    public static class ClientFactory
     {
-        public static IClientInstance CreateClient(string playerName)
+        public static IClientInstance CreateGame(string playerName)
         {
             return new ClientGame(playerName);
         }
 
-        public static IClientEngine CreateClientEngine(string playerName, IGraphicsDeviceService graphics, ContentManager content)
+        public static IClientEngine CreateGameEngine(string playerName, IGraphicsDeviceService graphics, ContentManager content)
         {
             return new ClientEngine(playerName, graphics, content);
         }

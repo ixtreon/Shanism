@@ -18,8 +18,8 @@ namespace Shanism.Common.StubObjects
         public bool HasIcon { get; set; }
         public string Icon { get; set; }
 
-        public IHeroAttributes Attributes { get; set; }
-        public IUnitStats Stats { get; set; }
+        public IHeroAttributes Attributes { get; } = new HeroAttributes();
+        public IUnitStats Stats { get; } = new UnitStats();
         public StateFlags StateFlags { get; set; }
 
         public int AttackSpeedPercentage { get; set; }

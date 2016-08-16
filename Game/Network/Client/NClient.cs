@@ -19,36 +19,20 @@ namespace Shanism.Network.Client
     /// 
     /// Emulates a local game server to fool the game client. 
     /// </summary>
-    public class NClient : NPeer, IReceptor
+    public class NClient : NPeer, IShanoEngine
     {
         //
-        const int FPS = 60;
-
-
-        public uint Id { get; private set; }
-
-        public string Name { get; }
-
-
-        readonly ObjectCache objects = new ObjectCache();
-
-        readonly ClientSerializer serializer = new ClientSerializer();
-
-        readonly Counter clientFrameCounter = new Counter(1000 / FPS);
-
         bool isConnected;
-
-        public IHero MainHero { get; private set; }
+        bool handshakeSent;
+        NReceptor receptor;
 
         public IShanoClient GameClient { get; private set; }
 
-        public IReadOnlyCollection<IEntity> VisibleEntities => objects.VisibleEntities;
-
-        public event Action<IOMessage> MessageSent;
 
         NetClient NetClient => (NetClient)peer;
 
         public bool IsConnected => isConnected;
+        bool hasClient => GameClient != null;
 
         static NClient()
         {
@@ -56,40 +40,27 @@ namespace Shanism.Network.Client
         }
 
 
-        public NClient(string hostAddress, string name)
+        public NClient(string hostAddress)
             : base(new NetClient(new NetPeerConfiguration(AppIdentifier)))
         {
-            Name = name;
-
             //initiate a connection
             var conn = NetClient.Connect(hostAddress, NetworkPort);
         }
 
-        public void SetClient(IShanoClient client)
-        {
-            this.GameClient = client;
-
-            //beam events thru the network
-            client.MessageSent += SendMessage;
-        }
 
 
         internal override void OnConnected(NetConnection conn)
         {
             isConnected = true;
-
-            //send a handshake init to the server
-            var ioMsg = new HandshakeInitMessage(Name);
-            SendMessage(ioMsg);
+            trySendHandshake();
         }
 
         internal override void OnDisconnected(NetConnection conn)
         {
             isConnected = false;
 
-            //do stuff when the link drops (whatever the reason)
-
             Log.Default.Info("Disconnected");
+            //TODO
         }
 
         //got a message from the server
@@ -103,43 +74,28 @@ namespace Shanism.Network.Client
                 return;
             }
 
-            switch (ioMsg.Type)
-            {
-                //a server game frame
-                case MessageType.GameFrame:
-                    objects.ReadServerFrame(serializer, (GameFrameMessage)ioMsg);
-                    break;
-
-                //grab the player id from a handshake reply message
-                case MessageType.HandshakeReply:
-                    Id = ((HandshakeReplyMessage)ioMsg).PlayerId;
-
-                    goto case MessageType.PlayerStatusUpdate;
-
-                //relay all other messages to the IClient
-                case MessageType.PlayerStatusUpdate:
-                case MessageType.MapReply:
-                    Log.Default.Info($"Received a {ioMsg.Type}. ");
-                    MessageSent(ioMsg);
-                    break;
-
-                default:
-                    Log.Default.Warning($"Unrecognized message type: {ioMsg.Type}");
-                    return;
-            }
+            //if valid, pass it to the receptor
+            receptor.HandleMessage(ioMsg);
         }
 
-        void SendMessage(IOMessage ioMsg)
+        internal void SendMessageReliable(IOMessage ioMsg)
         {
             SendMessage(ioMsg, NetDeliveryMethod.ReliableUnordered);
         }
 
-        void SendMessage(IOMessage ioMsg, NetDeliveryMethod deliveryMethod)
+        internal void SendMessage(IOMessage ioMsg,
+            NetDeliveryMethod deliveryMethod)
         {
+            if (!handshakeSent)
+            {
+                Log.Default.Debug("Unable to send a message to the server: no handshake was sent.");
+                return;
+            }
+
             var msg = ioMsg.ToNetMessage(NetClient);
             var result = NetClient.SendMessage(msg, deliveryMethod);
 
-            if(result == NetSendResult.FailedNotConnected)
+            if (result == NetSendResult.FailedNotConnected)
             {
                 //TODO: initiate shutdown sequence
                 Log.Default.Info($"Connection dropped. ");
@@ -149,27 +105,55 @@ namespace Shanism.Network.Client
             Log.Default.Debug($"Sent a {ioMsg.Type}. ");
         }
 
-        public void UpdateServer(int msElapsed)
-        {
-            Update(msElapsed);
-        }
 
         public override void Update(int msElapsed)
         {
             //read incoming messages 
             base.Update(msElapsed);
 
-            //send clientframe
-            if (clientFrameCounter.Tick(msElapsed))
-            {
-                var msg = serializer.WriteClientFrame(GameClient.State);
-                SendMessage(msg, NetDeliveryMethod.UnreliableSequenced);
-            }
+            receptor.Update(msElapsed);
         }
 
-        public string GetDebugString()
+        //send a handshake init if both the server and client are set
+        bool trySendHandshake()
         {
-            return string.Empty;
+            if (!isConnected || !hasClient || handshakeSent)
+                return false;
+
+            handshakeSent = true;
+            var ioMsg = new HandshakeInitMessage(receptor.Name);
+            SendMessageReliable(ioMsg);
+            return true;
         }
+
+        #region Server implementation
+        public IReceptor AcceptClient(IShanoClient client)
+        {
+            if (receptor != null)
+                throw new InvalidOperationException("There is already a client assigned to this instance.");
+
+            GameClient = client;
+            GameClient.MessageSent += SendMessageReliable;
+            receptor = new NReceptor(this, client);
+            return receptor;
+        }
+
+        public void StartPlaying(IReceptor rec)
+        {
+            //send a handshake if we are already connected
+            //otherwise do so when we connect
+            trySendHandshake();
+        }
+
+        public void OpenToNetwork()
+        {
+            Log.Default.Info("Unable to open a remote server to the network.");
+        }
+
+        public void RestartScenario()
+        {
+            Log.Default.Info("Unable to restart a scenario over the network.");
+        }
+        #endregion
     }
 }

@@ -88,15 +88,6 @@ namespace Shanism.Editor.Views
             MarkAsChanged();
         }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-        }
-
-        private void ShanoMap1_MapRedrawn()
-        {
-            MarkAsChanged();
-        }
 
         private void chkInfinite_CheckedChanged(object sender, EventArgs e)
         {

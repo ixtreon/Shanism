@@ -28,6 +28,7 @@ namespace Shanism.Client.UI.Tooltips
 
         public AbilityTip()
         {
+            IsVisible = false;
             Font = Content.Fonts.NormalFont;
             BackColor = Color.Black.SetAlpha(25);
             Size = new Vector(0.6, 0.15);

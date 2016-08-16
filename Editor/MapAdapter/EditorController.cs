@@ -23,190 +23,76 @@ using Shanism.Common.Interfaces.Entities;
 namespace Shanism.Editor.MapAdapter
 {
 
-    class EditorController : IReceptor, IEditorEngine
+    class EditorController
     {
-
-
-        readonly EditorControl Control;
-
-        readonly SelectionTool selectionTool;
-
-
-        readonly HashSet<Entity> _startupObjects = new HashSet<Entity>();
-
-        readonly HashSet<IEntity> visibleObjects = new HashSet<IEntity>();
-        /// <summary>
-        /// The unit that is always at the center of the screen. 
-        /// </summary>
-        readonly HeroStub God;
-
-
-        public uint Id { get; } = 0;
-
-        public string Name { get; } = "ShanoEdit";
-
-
-        public IReadOnlyCollection<IEntity> VisibleEntities => visibleObjects;
-
-
         public ScenarioViewModel ScenarioView { get; private set; }
 
+        readonly EditorControl clientControl;
+        IClientEngine gameClient;
+        EditorEngine gameEngine;
 
+        SelectionTool selectionTool;
+
+        //
         Vector inGameWindowSize = Constants.Client.WindowSize;
-
-        /// <summary>
-        /// Whether the map is currently being dragged around
-        /// </summary>
-        bool isPanningMap;
-
-        /// <summary>
-        /// The in-game point where panning started. 
-        /// </summary>
-        Vector mapPanStartPos;
-        Vector mapPanGodPos;
 
         MapTool currentTool;
 
+        //mouse position
         Vector mouseScreenPosition = Vector.Zero;
-        Vector mousePositionInGame = Vector.Zero;
+        Vector mouseGamePosition = Vector.Zero;
 
-        ObjectCreator Creator;
-
+        //mouse pan/zoom
+        bool isPanningMap;
+        Vector mapPanStartPos;
+        Vector mapPanGodPos;
 
         public event Action MapChanged;
 
-
-        IClientEngine Client => Control.Client;
-
-        ScenarioConfig config => ScenarioView.Scenario.Config;
-
-        MapConfig map => config.Map;
-
-        MapTool CurrentTool => currentTool;
-
-        public IEnumerable<Entity> StartupObjects => _startupObjects;
-
-
-
-        public event Action<IEnumerable<Entity>> SelectionChanged
-        {
-            add { selectionTool.SelectionChanged += value; }
-            remove { selectionTool.SelectionChanged -= value; }
-        }
+        public event Action<IEnumerable<Entity>> SelectionChanged;
 
         public EditorController(EditorControl c)
         {
-            selectionTool = new SelectionTool(this);
 
-            setTool(selectionTool);
-
-            God = new HeroStub(1);
-
-            Control = c;
-            Control.Resize += updateClientSize;
-            Control.KeyDown += onClientKeyDown;
-            Control.ClientLoaded += () =>
+            clientControl = c;
+            clientControl.Resize += updateClientSize;
+            clientControl.KeyDown += onClientKeyDown;
+            clientControl.ClientLoaded += () =>
             {
-                Client.SetWindowSize(Control.Size.ToPoint());
+                gameClient = clientControl.GameClient;
+                gameClient.SetWindowSize(clientControl.Size.ToPoint());
                 updateClientSize(null, null);
             };
 
-            initMapPanScroll();
-            initMapTools();
+            initMapHandlers();
+            initToolHandlers();
         }
 
         public void LoadScenario(ScenarioViewModel sc)
         {
-
             ScenarioView = sc;
 
-            //Start the client
-            Control.Client.SetServer(this);
+            //create engine, connect the client to it
+            gameEngine = new EditorEngine(sc);
+            gameEngine.SomethingChanged += () => MapChanged?.Invoke();
 
-            //send the scenario datas
-            var scData = config.SaveToBytes();
-            var contentData = config.ZipContent();
-            MessageSent(new HandshakeReplyMessage(true, Id, scData, contentData));
+            IReceptor rec;
+            if (!gameClient.TryConnect(gameEngine, out rec))
+                throw new Exception("Unable to connect to the editor engine!");
 
-            //objectconstr/creator
-            Creator = new ObjectCreator(ScenarioView.Scenario);
+            ((IShanoEngine)gameEngine).StartPlaying(rec);
 
-            // Reset the entities, create god (aka the camera)
-            visibleObjects.Clear();
-            God.Position = sc.Scenario.Config.Map.Size / 2;
-            visibleObjects.Add(God);
-            MessageSent(new PlayerStatusMessage(God.Id));
-
-            //resend map
-            resendMap();
-
-            //recreate startup objects
-            _startupObjects.Clear();
-            var ocs = ScenarioView.Scenario.Config.Map.Objects.ToList();    //LMAOOOO
-            foreach (var oc in ocs)
-            {
-                var o = CreateObject(oc);
-                if (o != null && _startupObjects.Add(o))
-                    visibleObjects.Add(o);
-                else
-                    ScenarioView.Scenario.Config.Map.Objects.Remove(oc);
-            }
+            //initialize the map tools
+            selectionTool = new SelectionTool(gameEngine);
+            selectionTool.SelectionChanged += (es) 
+                => SelectionChanged?.Invoke(es);
+            setTool(selectionTool);
         }
-
-        /// <summary>
-        /// Creates the entity specified in the given <see cref="ObjectConstructor"/>. 
-        /// Saves the <see cref="ObjectConstructor"/> in the <see cref="Entity.Data"/> field. 
-        /// </summary>
-        public Entity CreateObject(ObjectConstructor oc)
-        {
-            var e = Creator.CreateObject(oc);
-            if (e == null)
-                return null;
-
-            e.Data = oc;
-            return e;
-        }
-
-        /// <summary>
-        /// Adds the given object to the <see cref="_startupObjects"/> list
-        /// and sends an <see cref="ObjectSeenMessage"/> message to the game client. 
-        /// </summary>
-        public bool AddObject(Entity e)
-        {
-            if (_startupObjects.Add(e))
-            {
-                visibleObjects.Add(e);
-                MapChanged?.Invoke();
-                return true;
-            }
-
-            return false;
-        }
-
-        public bool RemoveObject(Entity e)
-        {
-            if (_startupObjects.Remove(e))
-            {
-                visibleObjects.Remove(e);
-                MapChanged?.Invoke();
-                return true;
-            }
-
-            return false;
-        }
-
 
         void setTool(MapTool newTool)
         {
             currentTool?.Dispose();
             currentTool = newTool;
-            currentTool.MessageSent += onMessageSent;
-        }
-
-        void onMessageSent(IOMessage msg)
-        {
-            MessageSent?.Invoke(msg);
-            MapChanged?.Invoke();
         }
 
         void onClientKeyDown(object sender, KeyEventArgs e)
@@ -217,7 +103,7 @@ namespace Shanism.Editor.MapAdapter
                     setTool(selectionTool);
                     break;
                 default:
-                    CurrentTool.OnKeyPress(e);
+                    currentTool.OnKeyPress(e);
                     break;
             }
         }
@@ -226,159 +112,104 @@ namespace Shanism.Editor.MapAdapter
         {
             var area = inGameWindowSize.X * inGameWindowSize.Y;
 
-            if (Control.Width * Control.Height == 0)
+            if (clientControl.Width * clientControl.Height == 0)
                 return;
 
-            var ratio = (double)Control.Width / Control.Height;
+            var ratio = (double)clientControl.Width / clientControl.Height;
             var h = Math.Sqrt(area / ratio);
             var w = h * ratio;
             inGameWindowSize = new Vector(w, h);
-            Client?.MoveCamera(null, inGameWindowSize);
+            gameClient?.MoveCamera(null, inGameWindowSize);
         }
 
-        public void ResizeMap(Point newSize)
-        {
-            if (ScenarioView == null) return;
-
-            clearMap();
-
-            //do the resize
-            map.ResizeMap(newSize.X, newSize.Y);
-
-            //fill the client map
-            resendMap();
-
-            MapChanged?.Invoke();
-        }
-
-        void clearMap()
-        {
-            var mapSize = map.Size;
-
-            //null out the client map
-            MessageSent(new MapDataMessage(new Rectangle(Point.Zero, mapSize)));
-        }
+        public void ResizeMap(Point newSize) => gameEngine.ResizeMap(newSize);
 
         public void SetBrush(TerrainType tty, int size, bool isCircle)
         {
             if (ScenarioView == null) return;
-
-            setTool(new TerrainBrush(this, tty, size, isCircle));
+            setTool(new TerrainBrush(gameEngine, tty, size, isCircle));
         }
 
         public void SetBrush(IEntity obj)
         {
             if (ScenarioView == null) return;
-
-            setTool(new CustomObjectBrush(this, obj));
+            setTool(new CustomObjectBrush(gameEngine, obj));
         }
 
         public void SetBrush(ObjectConstructor oc)
         {
-            setTool(new ObjectConstructorBrush(this, oc));
+            if (ScenarioView == null) return;
+            setTool(new ObjectConstructorBrush(gameEngine, oc));
         }
 
-        #region IReceptor implementation
-
-        public event Action<IOMessage> MessageSent;
-
-        public void UpdateServer(int msElapsed)
-        {
-            Keyboard.Update();
-        }
-
-        public string GetDebugString()
-        {
-            return "All is OK!";
-        }
-
-        #endregion
 
 
-        void initMapPanScroll()
+        void initMapHandlers()
         {
             const double zoomFactor = 0.05;
 
             //drag-to-move
-            Control.MouseDown += (o, e) =>
+            clientControl.MouseDown += (o, e) =>
             {
                 if (e.Button != MouseButtons.Right) return;
-                Control.Cursor = Cursors.NoMove2D;
+                clientControl.Cursor = Cursors.NoMove2D;
 
                 isPanningMap = true;
                 mapPanStartPos = new Vector(e.X, e.Y);
-                mapPanGodPos = God.Position;
+                mapPanGodPos = gameEngine.God.Position;
             };
 
-            Control.MouseMove += (o, e) =>
+            clientControl.MouseMove += (o, e) =>
             {
                 if (isPanningMap)
                 {
-                    var d = Client.ScreenToGame(new Vector(e.X, e.Y)) - Client.ScreenToGame(mapPanStartPos);
+                    var d = gameClient.ScreenToGame(new Vector(e.X, e.Y)) - gameClient.ScreenToGame(mapPanStartPos);
 
-                    God.Position = mapPanGodPos - d;
+                    gameEngine.God.Position = mapPanGodPos - d;
                 }
             };
 
-            Control.MouseUp += (o, e) =>
+            clientControl.MouseUp += (o, e) =>
             {
                 if (e.Button != MouseButtons.Right) return;
-                Control.Cursor = Cursors.Arrow;
+                clientControl.Cursor = Cursors.Arrow;
 
                 isPanningMap = false;
             };
 
             //zoom in/out
-            Control.MouseWheel += (o, e) =>
+            clientControl.MouseWheel += (o, e) =>
             {
                 var ratio = (1 - (double)e.Delta / 120 * zoomFactor);
                 inGameWindowSize *= ratio;
-                Client.MoveCamera(null, inGameWindowSize);
+                gameClient.MoveCamera(null, inGameWindowSize);
             };
         }
 
 
-        void initMapTools()
+        void initToolHandlers()
         {
-            Control.MouseDown += (o, e) =>
+            clientControl.MouseDown += (o, e) =>
             {
                 mouseScreenPosition = new Vector(e.X, e.Y);
-                mousePositionInGame = Client.ScreenToGame(mouseScreenPosition);
-                CurrentTool.OnMouseDown(e.Button, mousePositionInGame);
+                mouseGamePosition = gameClient.ScreenToGame(mouseScreenPosition);
+                currentTool.OnMouseDown(e.Button, mouseGamePosition);
             };
-            Control.MouseMove += (o, e) =>
+            clientControl.MouseMove += (o, e) =>
             {
                 mouseScreenPosition = new Vector(e.X, e.Y);
-                mousePositionInGame = Client.ScreenToGame(mouseScreenPosition);
-                CurrentTool.OnMouseMove(e.Button, mousePositionInGame);
+                mouseGamePosition = gameClient.ScreenToGame(mouseScreenPosition);
+                currentTool.OnMouseMove(e.Button, mouseGamePosition);
             };
-            Control.MouseUp += (o, e) =>
+            clientControl.MouseUp += (o, e) =>
             {
-                CurrentTool.OnMouseUp(e.Button, mousePositionInGame);
+                currentTool.OnMouseUp(e.Button, mouseGamePosition);
             };
 
-            Control.OnDraw += () =>
+            clientControl.OnDraw += () =>
             {
-                CurrentTool?.OnDraw(Control, mousePositionInGame);
+                currentTool?.OnDraw(clientControl, mouseGamePosition);
             };
-        }
-
-        void resendMap()
-        {
-            var mapData = getMapData(map);
-            var msg = new MapDataMessage(new Rectangle(Point.Zero, map.Size), mapData);
-            MessageSent(msg);
-        }
-
-        static TerrainType[] getMapData(MapConfig map)
-        {
-            var tty = new TerrainType[map.Width * map.Height];
-
-            foreach (var x in Enumerable.Range(0, map.Width))
-                foreach (var y in Enumerable.Range(0, map.Height))
-                    tty[x + map.Width * y] = map.Terrain[x, y];
-
-            return tty;
         }
     }
 }

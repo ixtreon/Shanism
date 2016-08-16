@@ -75,13 +75,19 @@ namespace ShanoRPGWin
         }
 
         //Starts connecting to the specified server. 
-        private void StartRemoteGame(string playerName, string ipAddress)
+        void StartRemoteGame(string playerName, string ipAddress)
         {
-            var netClient = new NClient(ipAddress, playerName);
-            var clientGame = ShanoGame.CreateClient(playerName);
+            var clientGame = ClientFactory.CreateGame(playerName);
+            var netClient = new NClient(ipAddress);
 
-            clientGame.SetServer(netClient);
-            netClient.SetClient(clientGame.Engine);
+            clientGame.GameLoaded += () =>
+            {
+                IReceptor receptor;
+                if (!clientGame.Engine.TryConnect(netClient, out receptor))
+                    throw new Exception("Unable to connect to the local server!");
+                
+                netClient.StartPlaying(receptor);
+            };
 
             clientGame.Run();
         }

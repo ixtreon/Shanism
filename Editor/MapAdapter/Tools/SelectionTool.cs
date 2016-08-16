@@ -79,8 +79,8 @@ namespace Shanism.Editor.MapAdapter
             if (isSelecting)
             {
                 var selection = selectionRect.MakePositive();
-                var objStart = control.Client.GameToScreen(selection.Position);
-                var objEnd = control.Client.GameToScreen(selection.FarPosition);
+                var objStart = control.GameClient.GameToScreen(selection.Position);
+                var objEnd = control.GameClient.GameToScreen(selection.FarPosition);
 
                 control.SpriteBatch.ShanoDraw(control.EditorContent.Blank, objStart, objEnd - objStart, selectionColor.SetAlpha(100));
             }

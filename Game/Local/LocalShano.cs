@@ -25,30 +25,26 @@ namespace Shanism.Local
 
         readonly IClientInstance client;
 
-        readonly IReceptor receptor;
-
         /// <summary>
         /// Creates a new local game instance, putting the provided hero in the map with the specified seed. 
         /// </summary>
         /// <param name="mapSeed">The map seed. </param>
         public LocalShano(string playerName, int mapSeed, string scenarioPath)
         {
-            //create the local server and client
-            engine = new ShanoEngine();
-            client = ShanoGame.CreateClient(playerName);
-
-            //start the server
+            //create server
             string compileErrors;
+            engine = new ShanoEngine();
             if (!engine.TryLoadScenario(scenarioPath, mapSeed, out compileErrors))
-            {
                 throw new Exception(compileErrors);
-            }
 
-            //connect the client
-            receptor = engine.AcceptClient(client.Engine);
+            //create the client
+            client = ClientFactory.CreateGame(playerName);
             client.GameLoaded += () =>
             {
-                client.SetServer(receptor);
+                IReceptor receptor;
+                if (!client.Engine.TryConnect(engine, out receptor))
+                    throw new Exception("Unable to connect to the local server!");
+
                 engine.StartPlaying(receptor);
             };
             client.Run();

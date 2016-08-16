@@ -10,6 +10,7 @@ using Shanism.ScenarioLib;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -37,14 +38,14 @@ namespace Shanism.Engine
         /// <summary>
         /// A list of all receptors (human players) currently in game. 
         /// </summary>
-        internal readonly ConcurrentDictionary<string, ShanoReceptor> Players = new ConcurrentDictionary<string, ShanoReceptor>();
+        readonly ConcurrentDictionary<string, ShanoReceptor> players = new ConcurrentDictionary<string, ShanoReceptor>();
 
-
+        //counters
         internal readonly PerfCounter UnitPerfCounter = new PerfCounter();
         readonly PerfCounter GamePerfCounter = new PerfCounter();
         readonly Counter perfResetCounter = new Counter(250);
 
-
+        //systems
         readonly List<GameSystem> systems = new List<GameSystem>();
 
         internal readonly MapSystem map;
@@ -112,18 +113,24 @@ namespace Shanism.Engine
 
         public bool TryLoadScenario(string scenarioDir, int mapSeed, out string errors)
         {
+            //reset variables
+            players.Clear();
+            GameTime = 0;
+
             //compile the scenario
             scenarioDir = Path.GetFullPath(scenarioDir);
             var result = Scenario.Load(scenarioDir, out errors, out scenario);
             if (result != Scenario.ScenarioCompilationResult.Success)
                 return false;
 
+            Debug.Assert(scenario != null);
+
             //initialize map + objects, scripts  
             map.LoadScenario(Scenario, mapSeed);
             scripts.LoadScenario(Scenario);
 
             //fire the OnGameStart script event
-            Scripts.Run(cs => cs.OnGameStart());
+            scripts.Run(cs => cs.OnGameStart());
 
             return true;
         }
@@ -136,7 +143,7 @@ namespace Shanism.Engine
         /// </summary>
         public IReceptor AcceptClient(IShanoClient c)
         {
-            if (!Players.TryAdd(c.Name, null))
+            if (!players.TryAdd(c.Name, null))
                 return null;
 
             return new ShanoReceptor(this, c);
@@ -205,9 +212,9 @@ namespace Shanism.Engine
         /// Gets all players currently connected to the game.
         /// </summary>
         IEnumerable<IPlayer> IGame.Players
-            => Players.Select(kvp => kvp.Value.Player);
+            => players.Select(kvp => kvp.Value.Player);
 
-        int IGame.PlayerCount => Players.Count;
+        int IGame.PlayerCount => players.Count;
 
         /// <summary>
         /// Sends a system message to all currently connected players.
@@ -215,7 +222,7 @@ namespace Shanism.Engine
         /// <param name="msg">The message to send.</param>
         public void SendSystemMessage(string msg)
         {
-            foreach (var kvp in Players)
+            foreach (var kvp in players)
                 kvp.Value.SendSystemMessage(msg);
         }
 
@@ -227,7 +234,7 @@ namespace Shanism.Engine
         public void SendSystemMessage(IPlayer pl, string msg)
         {
             ShanoReceptor receptor;
-            if (!Players.TryGetValue(pl.Name, out receptor))
+            if (!players.TryGetValue(pl.Name, out receptor))
                 return;     //silently fail?!
             receptor.SendSystemMessage(msg);
         }
@@ -253,7 +260,7 @@ namespace Shanism.Engine
             foreach (var sys in systems)
                 GamePerfCounter.RunAndLog(sys.SystemName, sys.Update, msElapsed);
 
-            foreach (var kvp in Players)
+            foreach (var kvp in players)
                 kvp.Value.Update(msElapsed);
         }
 
@@ -264,10 +271,10 @@ namespace Shanism.Engine
         /// <param name="pl"></param>
         void addPlayer(ShanoReceptor pl)
         {
-            if (!Players.ContainsKey(pl.Name) || Players[pl.Name] != null)
+            if (!players.ContainsKey(pl.Name) || players[pl.Name] != null)
                 throw new Exception();
 
-            Players[pl.Name] = pl;
+            players[pl.Name] = pl;
 
             Scripts.Run(s => s.OnPlayerJoined(pl.Player));
         }
@@ -295,7 +302,12 @@ namespace Shanism.Engine
 
         public void RestartScenario()
         {
-            throw new NotImplementedException();
+            if (Scenario == null)
+                throw new InvalidOperationException("No scenario to be restarted...");
+
+            string errors;
+            if (!TryLoadScenario(Scenario.Config.BaseDirectory, 123, out errors))
+                throw new Exception($"Unable to compile the scenario: {errors}");
         }
     }
 }

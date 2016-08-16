@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Shanism.Client
 {
-    static class ExitHelper
+    static class GameHelper
     {
         static ClientGame TheGame;
 
@@ -19,6 +19,11 @@ namespace Shanism.Client
         {
             if(TheGame != null)
                 TheGame.Exit();
+        }
+
+        public static void Restart()
+        {
+            TheGame.Engine.RestartScenario();
         }
     }
 }

@@ -51,8 +51,8 @@ namespace Shanism.Editor.MapAdapter
             if (Object == null)
                 return;
 
-            var llPos = control.Client.GameToScreen(inGamePos - Object.Scale / 2);
-            var urPos = control.Client.GameToScreen(inGamePos + Object.Scale / 2);
+            var llPos = control.GameClient.GameToScreen(inGamePos - Object.Scale / 2);
+            var urPos = control.GameClient.GameToScreen(inGamePos + Object.Scale / 2);
             var tex = control.EditorContent.Circle;
             var c = canPlace(inGamePos) ? Color.Blue : Color.Red;
 
@@ -61,10 +61,10 @@ namespace Shanism.Editor.MapAdapter
 
         bool canPlace(Vector pos) => !Engine.StartupObjects.Any(o => o.Position.DistanceTo(pos) < (o.Scale + Object.Scale) / 2);
 
-        public override IOMessage Place(Vector inGamePos)
+        public override void Place(Vector inGamePos)
         {
             if (Object == null)
-                return null;
+                return;
 
             //var objCtor = new ObjectConstructor(Object, inGamePos);
 
@@ -73,7 +73,7 @@ namespace Shanism.Editor.MapAdapter
             //check against other placed objects
             //TODO: check if objs have collision
             if (!canPlace(inGamePos))
-                return null;
+                return;
 
             //add to client engine
             Engine.AddObject(Object);
@@ -86,7 +86,6 @@ namespace Shanism.Editor.MapAdapter
             });
 
             recreateObject(Object.GetType().FullName);
-            return null;
         }
     }
 }

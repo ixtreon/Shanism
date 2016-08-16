@@ -43,8 +43,8 @@ namespace Shanism.Editor.MapAdapter
         /// <param name="inGamePos">The in game position.</param>
         public override void OnDraw(IEditorMapControl control, Vector inGamePos)
         {
-            var llPos = control.Client.GameToScreen(inGamePos - @object.Scale / 2);
-            var urPos = control.Client.GameToScreen(inGamePos + @object.Scale / 2);
+            var llPos = control.GameClient.GameToScreen(inGamePos - @object.Scale / 2);
+            var urPos = control.GameClient.GameToScreen(inGamePos + @object.Scale / 2);
             var tint = Color.White;
 
             Texture2D tex;
@@ -62,11 +62,11 @@ namespace Shanism.Editor.MapAdapter
             !Engine.StartupObjects
                 .Any(o => o.Position.DistanceTo(pos) < (o.Scale + @object.Scale) / 2);
 
-        public override IOMessage Place(Vector inGamePos)
+        public override void Place(Vector inGamePos)
         {
             //check against other placed objects
             if (!canPlace(inGamePos))
-                return null;
+                return;
 
             //add to client engine
             @object.Position = lastPlacedPos = inGamePos;
@@ -79,7 +79,6 @@ namespace Shanism.Editor.MapAdapter
 
             //create a fresh instance of that object constructor
             recreateObject();
-            return null;
         }
     }
 }

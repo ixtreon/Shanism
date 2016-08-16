@@ -19,7 +19,7 @@ namespace Shanism.Common.Message.Server
         /// <summary>
         /// A negative response to a player joining. 
         /// </summary>
-        public static readonly HandshakeReplyMessage Negative = new HandshakeReplyMessage(false, 0, null, null);
+        public static readonly HandshakeReplyMessage Negative = new HandshakeReplyMessage();
 
 
         public override MessageType Type => MessageType.HandshakeReply;
@@ -29,10 +29,11 @@ namespace Shanism.Common.Message.Server
         /// Gets whether the handshake was successful. 
         /// </summary>
         [ProtoMember(1)]
-        public readonly bool Success;
+        public readonly bool Success = false;
 
         /// <summary>
         /// Gets the player's unique identifier as assigned by the server.
+        /// Only valid if <see cref="Success"/> is set to true.
         /// </summary>
         [ProtoMember(2)]
         public readonly uint PlayerId;
@@ -51,11 +52,11 @@ namespace Shanism.Common.Message.Server
 
         HandshakeReplyMessage() { }
 
-        public HandshakeReplyMessage(bool isSuccessful, uint playerId, 
+        public HandshakeReplyMessage(uint playerId, 
             byte[] scenarioData, byte[] contentData)
             :this()
         {
-            Success = isSuccessful;
+            Success = true;
             PlayerId = playerId;
             ScenarioData = scenarioData;
             ContentData = contentData;

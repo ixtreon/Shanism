@@ -92,6 +92,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MapAdapter\EditorController.cs" />
+    <Compile Include="MapAdapter\EditorEngine.cs" />
     <Compile Include="Util\Ext.cs" />
     <Compile Include="MapAdapter\Tools\Brush.cs" />
     <Compile Include="MapAdapter\Tools\Brushes\CustomObjectBrush.cs" />
@@ -100,7 +102,7 @@
     <Compile Include="MapAdapter\EditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MapAdapter\EditorController.cs" />
+    <Compile Include="MapAdapter\EditorReceptor.cs" />
     <Compile Include="MapAdapter\GLTestControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

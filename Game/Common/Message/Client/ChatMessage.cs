@@ -18,6 +18,8 @@ namespace Shanism.Common.Message.Client
         [ProtoMember(2)]
         public readonly string Message;
 
+        ChatMessage() { }
+
         public ChatMessage(string channel, string msg)
         {
             Channel = channel;

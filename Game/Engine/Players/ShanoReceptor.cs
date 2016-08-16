@@ -30,6 +30,8 @@ namespace Shanism.Engine.Players
         /// </summary>
         public IShanoClient Client { get; }
 
+        public ConnectionState State { get; } = ConnectionState.Playing;
+
         /// <summary>
         /// Gets the underlying in-game player represented by this receptor. 
         /// </summary>
@@ -123,15 +125,13 @@ namespace Shanism.Engine.Players
         public event Action<IOMessage> MessageSent;
 
 
-        internal void SendMessage(IOMessage msg) => MessageSent(msg);
+        internal void SendMessage(IOMessage msg)
+        {
+            MessageSent?.Invoke(msg);
+        }
 
 
         public string GetDebugString() => Engine.DebugString;
-
-        public void UpdateServer(int msElapsed)
-        {
-            Engine.Update(msElapsed);
-        }
 
         public void Update(int msElapsed)
         {
@@ -167,7 +167,7 @@ namespace Shanism.Engine.Players
             }
 
             var scConfig = Engine.Scenario.Config;
-            var msg = new HandshakeReplyMessage(true, Id, scConfig.SaveToBytes(), scConfig.ZipContent());
+            var msg = new HandshakeReplyMessage(Id, scConfig.SaveToBytes(), scConfig.ZipContent());
 
             SendMessage(msg);
         }

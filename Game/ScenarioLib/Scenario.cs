@@ -34,7 +34,7 @@ namespace Shanism.ScenarioLib
 
         public ScenarioConfig Config { get; private set; }
 
-        public IEnumerable<IEntity> DefinedEntities { get; private set; }
+        public IEnumerable<IEntity> DefinedEntities { get; private set; } = Enumerable.Empty<IEntity>();
 
 
         public IEnumerable<Type> DefinedEntityTypes => DefinedEntities?.Select(e => e.GetType()) ?? Enumerable.Empty<Type>();
@@ -46,16 +46,18 @@ namespace Shanism.ScenarioLib
         /// Creates a new empty scenario at the given path. 
         /// </summary>
         /// <param name="scenarioPath"></param>
-        public Scenario(string scenarioPath)
+        public Scenario(string scenarioPath,
+            bool createDefaultFolders = false)
         {
             Config = new ScenarioConfig(scenarioPath);
 
-            foreach (var folder in FolderNames)
-            {
-                var fullFolderName = Path.Combine(scenarioPath, folder);
-                if (!Directory.Exists(fullFolderName))
-                    Directory.CreateDirectory(fullFolderName);
-            }
+            if(createDefaultFolders)
+                foreach (var folder in FolderNames)
+                {
+                    var fullFolderName = Path.Combine(scenarioPath, folder);
+                    if (!Directory.Exists(fullFolderName))
+                        Directory.CreateDirectory(fullFolderName);
+                }
         }
 
         /// <summary>

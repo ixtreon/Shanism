@@ -114,7 +114,7 @@
     <Compile Include="Assets\AssetList.cs" />
     <Compile Include="Assets\FontCache.cs" />
     <Compile Include="Assets\TerrainCache.cs" />
-    <Compile Include="ExitHelper.cs" />
+    <Compile Include="GameHelper.cs" />
     <Compile Include="Input\Common\Keybind.cs" />
     <Compile Include="Input\KeyMap.cs" />
     <Compile Include="EventArgs\MouseButtonArgs.cs" />
@@ -134,7 +134,7 @@
     <Compile Include="Settings\ShanoSettings.cs" />
     <Compile Include="Settings\Keybinds.cs" />
     <Compile Include="Drawing\Shaders.cs" />
-    <Compile Include="ShanoGame.cs" />
+    <Compile Include="ClientFactory.cs" />
     <Compile Include="Interfaces\IClientInstance.cs" />
     <Compile Include="Map\TerrainChunk.cs" />
     <Compile Include="Systems\Terrain.cs" />

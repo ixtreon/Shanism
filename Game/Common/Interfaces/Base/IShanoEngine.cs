@@ -19,7 +19,7 @@ namespace Shanism.Common
 
         /// <summary>
         /// Decides whether to accept the given client to the server. 
-        /// If the client is accepted returns the network receptor to use for communication with the server. Otherwise returns null. 
+        /// If the client is accepted returns the receptor to use for communication with the server. Otherwise returns null. 
         /// </summary>
         IReceptor AcceptClient(IShanoClient c);
 
@@ -30,5 +30,7 @@ namespace Shanism.Common
         void OpenToNetwork();
 
         void RestartScenario();
+
+        void Update(int msElapsed);
     }
 }

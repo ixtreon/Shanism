@@ -30,8 +30,8 @@ namespace Shanism.Network
                 bytes = ms.ToArray();
             }
 
-            var netMsg = peer.CreateMessage(sizeof(HeaderType) + bytes.Length);
-            netMsg.Write((HeaderType)bytes.Length);
+            var netMsg = peer.CreateMessage(sizeof(int) + bytes.Length);
+            netMsg.Write((int)bytes.Length);
             netMsg.Write(bytes);
 
             return netMsg;
@@ -53,7 +53,7 @@ namespace Shanism.Network
                 using (var ms = new MemoryStream(bytes))
                     return Serializer.Deserialize<IOMessage>(ms);
             }
-            catch
+            catch(Exception e)
             {
                 return null;
             }

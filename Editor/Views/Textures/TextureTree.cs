@@ -41,6 +41,7 @@ namespace Shanism.Editor.Views.Content
             Model = model;
 
             texBuilder.Model = model;
+            texBuilder.RemoveNodes();
             texBuilder.RefreshNodes(treeView.Nodes, null);
             treeView.Sort();
         }
@@ -167,6 +168,7 @@ namespace Shanism.Editor.Views.Content
         {
             treeView.Enabled = false;
             await Model.Reload();
+            texBuilder.RemoveNodes();
             texBuilder.RefreshNodes(treeView.Nodes, null);
             treeView.Enabled = true;
         }

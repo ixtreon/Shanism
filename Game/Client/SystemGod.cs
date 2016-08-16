@@ -10,9 +10,7 @@ using Shanism.Common;
 using Shanism.Client.Systems;
 using Shanism.Client.Map;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Content;
 using Shanism.Common.Interfaces.Entities;
-using Shanism.Client.Drawing;
 using Shanism.Common.Message.Client;
 
 namespace Shanism.Client

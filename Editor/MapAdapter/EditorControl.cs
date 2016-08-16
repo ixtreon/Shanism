@@ -14,6 +14,13 @@ using GameTime = Microsoft.Xna.Framework.GameTime;
 
 namespace Shanism.Editor.MapAdapter
 {
+    /// <summary>
+    /// A map control used in the editor. 
+    /// Provides a <see cref="SpriteBatch"/> for custom drawing
+    /// and a link to the custom content loaded by the editor. 
+    /// </summary>
+    /// <seealso cref="GameControl" />
+    /// <seealso cref="IEditorMapControl" />
     class EditorControl : GameControl, IEditorMapControl
     {
         static readonly string PlayerName = "WorldEdit";
@@ -30,7 +37,7 @@ namespace Shanism.Editor.MapAdapter
 
         #region IEditorMapControl implementation
 
-        public IClientEngine Client => _client;
+        public IClientEngine GameClient => _client;
 
         public TextureCache DefaultContent => _client.Textures;
 
@@ -41,9 +48,7 @@ namespace Shanism.Editor.MapAdapter
         #endregion
 
 
-
         #region Overrides
-
 
         protected override void OnResize(EventArgs e)
         {
@@ -67,7 +72,7 @@ namespace Shanism.Editor.MapAdapter
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             //create the client, load its content
-            _client = ShanoGame.CreateClientEngine(PlayerName, GraphicsDeviceService, _editorContent);
+            _client = ClientFactory.CreateGameEngine(PlayerName, GraphicsDeviceService, _editorContent);
             _client.LoadContent();
             _client.SetWindowSize(new Point(Width, Height));
             _client.SetDesignMode(true);

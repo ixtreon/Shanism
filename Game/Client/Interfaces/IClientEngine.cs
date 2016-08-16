@@ -1,4 +1,5 @@
-﻿using Shanism.Client.Drawing;
+﻿using Microsoft.Xna.Framework.Graphics;
+using Shanism.Client.Drawing;
 using Shanism.Common;
 using Shanism.Common.Interfaces.Entities;
 using System;
@@ -22,16 +23,21 @@ namespace Shanism.Client
 
         TextureCache Textures { get; }
 
+        RenderTarget2D DefaultRenderTarget { get; set; }
+
         /// <summary>
-        /// Sets the receptor that allows a client to communicate with an underlying <see cref="IShanoEngine"/>. 
+        /// Attempts to connect to the specified engine. Returns the receptor in case we succeeded.
         /// </summary>
-        /// <param name="receptor">The receptor as supplied by a game engine.</param>
-        void SetServer(IReceptor receptor);
+        /// <param name="engine">The engine to connect to.</param>
+        /// <param name="receptor">The receptor for the engine, in case we connected to it.</param>
+        bool TryConnect(IShanoEngine engine, out IReceptor receptor);
 
         /// <summary>
         /// Loads the default game content.
         /// </summary>
         void LoadContent();
+
+        void RestartScenario();
 
         /// <summary>
         /// Causes the client to update its state. 

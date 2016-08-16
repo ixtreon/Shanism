@@ -30,13 +30,17 @@ namespace Shanism.Editor
                 return;
 
 
-            var dialog = new OpenFileDialog
+            var dialog = new SaveFileDialog
             {
-                CheckFileExists = false,
+                ValidateNames = true,
                 CheckPathExists = true,
-                ValidateNames = false,
-                Filter = "Folders|%",
-                FileName = placeholderText,
+                CheckFileExists = false,
+
+                AddExtension = true,
+                DefaultExt = ".json",
+
+                Filter = "JSON file|*.json",
+                FileName = "scenario.json",
             };
 
             if (dialog.ShowDialog() != DialogResult.OK)
@@ -45,7 +49,8 @@ namespace Shanism.Editor
             //modify the UI
             StatusLoading = true;
 
-            var sc = new Scenario(dialog.FileName);
+            var fn = dialog.FileName;
+            var sc = new Scenario(fn, false);
 
             await open(sc);
 

@@ -9,7 +9,8 @@ using System.Linq;
 namespace Shanism.Client
 {
     /// <summary>
-    /// The main game class that starts the client engine. 
+    /// The entry game class that starts the <see cref="ClientEngine"/>. 
+    /// Extends the <see cref="Microsoft.Xna.Framework.Game"/> class.
     /// </summary>
     class ClientGame : Game, IClientInstance
     {
@@ -27,8 +28,7 @@ namespace Shanism.Client
 
         #region IShanoClient implementation
 
-        public IShanoClient Engine { get { return _clientEngine; } }
-
+        public IClientEngine Engine => _clientEngine;
         public event Action GameLoaded;
 
         #endregion
@@ -48,7 +48,7 @@ namespace Shanism.Client
         {
             base.Initialize();
             Window.Title = "ShanoRPG";
-            ExitHelper.SetGame(this);
+            GameHelper.SetGame(this);
             Content.RootDirectory = "Content";
 
 
@@ -63,13 +63,13 @@ namespace Shanism.Client
             Window.AllowUserResizing = true;
             Window.ClientSizeChanged += Window_ClientSizeChanged;
 
-            Settings.Current.Saved += reloadGraphicsEngine;
+            Settings.Saved += reloadGraphicsEngine;
             reloadGraphicsEngine();
 
             Screen.SetWindowSize(Window.ClientBounds.Size.ToPoint());
         }
 
-        void recreateBackBuffer()
+        void recreateDrawBuffer()
         {
             var s = Settings.Current.RenderSize;
             var w = (int)(Window.ClientBounds.Width * s);
@@ -79,10 +79,11 @@ namespace Shanism.Client
 
         void reloadGraphicsEngine()
         {
+            IsFixedTimeStep = Settings.Current.VSync;
             graphics.SynchronizeWithVerticalRetrace = Settings.Current.VSync;
             graphics.IsFullScreen = false;
 
-            recreateBackBuffer();
+            recreateDrawBuffer();
             graphics.ApplyChanges();
         }
 
@@ -93,23 +94,24 @@ namespace Shanism.Client
         void Window_ClientSizeChanged(object sender, EventArgs e)
         {
             if (_stopResizeRecurse) return;
+
             _stopResizeRecurse = true;
 
-            //update backbuffer size
             var sz = Window.ClientBounds;
-            var renderScale = Settings.Current.RenderSize;
             if (sz != _windowSize && sz.Width > 0 && sz.Height > 0)
             {
                 _windowSize = sz;
 
+                //drawbuffer
+                recreateDrawBuffer();
+                _clientEngine.SetWindowSize(new Common.Point(drawBuffer.Width, drawBuffer.Height));
+
+                //actual backbuffer
                 graphics.PreferredBackBufferWidth = (int)(sz.Width);
                 graphics.PreferredBackBufferHeight = (int)(sz.Height);
                 graphics.ApplyChanges();
-
-                recreateBackBuffer();
             }
 
-            Screen.SetWindowSize(Window.ClientBounds.Size.ToPoint());
 
             _stopResizeRecurse = false;
         }
@@ -132,6 +134,12 @@ namespace Shanism.Client
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            if (!_isLoaded)
+            {
+                _isLoaded = true;
+                GameLoaded?.Invoke();
+            }
+
             _clientEngine.Update(gameTime);
             base.Update(gameTime);
         }
@@ -142,20 +150,28 @@ namespace Shanism.Client
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            if(!_isLoaded)
+            if (drawBuffer != null)
             {
-                _isLoaded = true;
-                GameLoaded?.Invoke();
-            }
+                _clientEngine.DefaultRenderTarget = drawBuffer;
+                _clientEngine.Draw(gameTime);
 
-            _clientEngine.Draw(gameTime);
+                GraphicsDevice.SetRenderTarget(null);
+                using (var sb = new SpriteBatch(GraphicsDevice))
+                {
+                    sb.Begin();
+                    var sz = Window.ClientBounds;
+                    sb.Draw(drawBuffer,
+                        new Microsoft.Xna.Framework.Rectangle(0, 0, sz.Width, sz.Height),
+                        new Microsoft.Xna.Framework.Rectangle(0, 0, drawBuffer.Width, drawBuffer.Height),
+                        Color.White);
+                    sb.End();
+                }
+            }
+            else
+                _clientEngine.Draw(gameTime);
+
 
             base.Draw(gameTime);
-        }
-
-        public void SetServer(IReceptor server)
-        {
-            _clientEngine.SetServer(server);
         }
     }
 }

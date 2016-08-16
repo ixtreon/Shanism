@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Content\AnimationStyle.cs" />
+    <Compile Include="Game\ConnectionState.cs" />
     <Compile Include="Game\EquipSlot.cs" />
     <Compile Include="Game\MovementState.cs" />
     <Compile Include="Interfaces\Base\IGame.cs" />

@@ -17,6 +17,12 @@ namespace Shanism.Editor.Views.Textures
 
         public TexturesViewModel Model { get; set; }
 
+        public void RemoveNodes()
+        {
+            Root?.Remove();
+            Root = null;
+        }
+
         public void RefreshNodes(TreeNodeCollection container, TexturesView viewControl)
         {
             if (Model == null)

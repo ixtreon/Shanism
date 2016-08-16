@@ -15,7 +15,7 @@ namespace Shanism.Client.UI
 {
     enum MenuButtonType
     {
-        Keybinds, Options, Exit
+        Keybinds, Options, Restart, Exit
     }
 
     class MainMenu : Window
@@ -26,7 +26,7 @@ namespace Shanism.Client.UI
         }
 
         static readonly int NButtons = Enum<MenuButtonType>.Count;
-        static readonly Vector ButtonSize = new Vector(0.45, 0.14);
+        static readonly Vector ButtonSize = new Vector(0.45, 0.10);
         static readonly double MenuPadding = Padding * 3;
 
 

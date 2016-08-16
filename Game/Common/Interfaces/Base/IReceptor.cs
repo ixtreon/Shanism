@@ -1,4 +1,5 @@
-﻿using Shanism.Common.Interfaces.Entities;
+﻿using Shanism.Common.Game;
+using Shanism.Common.Interfaces.Entities;
 using Shanism.Common.Message;
 using System;
 using System.Collections.Generic;
@@ -25,17 +26,12 @@ namespace Shanism.Common
         /// </summary>
         string Name { get; }
 
+        //ConnectionState State { get; }
+
         /// <summary>
         /// The event raised whenever the server sends a message to the player. 
         /// </summary>
         event Action<IOMessage> MessageSent;
-
-        /// <summary>
-        /// Causes the underlying game server to update. 
-        /// Called by the client to update the local or network server instance, respectively. 
-        /// </summary>
-        /// <param name="msElapsed">The time elapsed since the last invocation of this method. </param>
-        void UpdateServer(int msElapsed);
 
         /// <summary>
         /// Returns a string with data useful for debugging.

@@ -11,7 +11,7 @@ namespace Shanism.Editor.MapAdapter
 {
     /// <summary>
     /// A map control used in the editor. 
-    /// Provides a spritebatch for custom drawing
+    /// Provides a <see cref="SpriteBatch"/> for custom drawing
     /// and a link to the custom content loaded by the editor. 
     /// </summary>
     interface IEditorMapControl
@@ -22,7 +22,7 @@ namespace Shanism.Editor.MapAdapter
 
         TextureCache DefaultContent { get; }
 
-        IClientEngine Client { get; }
+        IClientEngine GameClient { get; }
 
     }
 }

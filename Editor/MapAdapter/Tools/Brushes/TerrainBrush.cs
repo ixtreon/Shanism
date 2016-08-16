@@ -35,10 +35,11 @@ namespace Shanism.Editor.MapAdapter
             IsCircle = isCircle;
         }
 
-        public override IOMessage Place(Vector inGamePos)
+        public override void Place(Vector inGamePos)
         {
             if (lastBrushPlaced == inGamePos.ToPoint())
-                return null;
+                return;
+
             lastBrushPlaced = inGamePos.ToPoint();
 
             //change the scenario 
@@ -56,7 +57,7 @@ namespace Shanism.Editor.MapAdapter
             }
 
             var msg = new MapDataMessage(span, mapData);
-            return msg;
+            Engine.SendMessage(msg);
         }
 
         IEnumerable<Point> GetShape(Vector pos)
@@ -92,8 +93,8 @@ namespace Shanism.Editor.MapAdapter
             var blankTex = control.EditorContent.Blank;
             foreach (var p in GetShape(inGamePos))
             {
-                var ll = control.Client.GameToScreen(p);
-                var ur = control.Client.GameToScreen(p + 1);
+                var ll = control.GameClient.GameToScreen(p);
+                var ur = control.GameClient.GameToScreen(p + 1);
 
                 control.SpriteBatch.ShanoDraw(blankTex, ll, ur - ll, Color.Blue.SetAlpha(100));
             }

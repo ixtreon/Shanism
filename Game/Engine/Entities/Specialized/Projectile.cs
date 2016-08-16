@@ -11,34 +11,34 @@ using Shanism.Common;
 namespace Shanism.Engine.Entities
 {
     /// <summary>
-    /// A projectile is a special type of effect that travels in a straight line
-    /// and fires an event whenever it collides with <see cref="Unit"/>s on its way. 
-    /// This class also supports setting the max distance travelled, whether the projectile is
-    /// destroyed on collision and tracking of the units that are hit.  
+    /// A special type of effect that travels in a straight line.
+    /// Raises an event whenever it collides with enemy <see cref="Unit"/>s on its way. 
+    /// Supports setting the max distance travelled, whether the projectile is
+    /// destroyed on collision, and tracks units that are hit.  
     /// </summary>
     public class Projectile : Effect
     {
         /// <summary>
         /// Gets or sets the speed of the projectile in game units per second. 
         /// </summary>
-        public float Speed = 20;
+        public float Speed { get; set; }
 
         /// <summary>
         /// Gets or sets the direction (in radians) this projectile is traveling at. 
         /// </summary>
-        public float Direction = 0;
+        public float Direction { get; set; }
 
         /// <summary>
         /// Gets or sets the maximum distance the projectile will travel before getting destroyed. 
         /// <para>Has a default value of 10. </para>
         /// </summary>
-        public float MaxRange = 10;
+        public float MaxRange { get; set; }
 
         /// <summary>
         /// Gets or sets whether the projectile will be automatically destroyed after it collides with a unit. 
         /// The default value is true. 
         /// </summary>
-        public bool DestroyOnCollision = true;
+        public bool DestroyOnCollision { get; set; }
 
         /// <summary>
         /// Gets the distance this projectile has travelled so far. 
@@ -105,6 +105,9 @@ namespace Shanism.Engine.Entities
         /// <param name="msElapsed"></param>
         public override void OnUpdate(int msElapsed)
         {
+            if (IsDestroyed)
+                return;
+
             // update location
             var dist = (Speed * msElapsed / 1000);
             Position = Position.PolarProjection(Direction, dist);

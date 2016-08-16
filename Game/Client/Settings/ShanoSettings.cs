@@ -26,6 +26,7 @@ namespace Shanism.Client
         public static Settings Current { get; private set; }
 
 
+        public static event Action Saved;
 
         static Settings()
         {
@@ -77,7 +78,6 @@ namespace Shanism.Client
 
         public KeybindSettings Keybinds { get; set; } = new KeybindSettings(true);
 
-        public event Action Saved;
 
         Settings() { }
 

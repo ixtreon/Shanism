@@ -16,9 +16,7 @@ namespace Shanism.Client
         /// <summary>
         /// Gets the underlying client engine. 
         /// </summary>
-        IShanoClient Engine { get; }
-
-        void SetServer(IReceptor server);
+        IClientEngine Engine { get; }
 
         void Run();
 

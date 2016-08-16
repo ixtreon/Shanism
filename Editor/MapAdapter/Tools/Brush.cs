@@ -25,20 +25,14 @@ namespace Shanism.Editor.MapAdapter
             if (btn == MouseButtons.Left)
             {
                 isPlacing = true;
-                var msg = Place(inGamePos);
-                if (msg != null)
-                    SendMessage(msg);
+                Place(inGamePos);
             }
         }
 
         public override void OnMouseMove(MouseButtons btn, Vector inGamePos)
         {
             if (btn == MouseButtons.Left && isPlacing)
-            {
-                var msg = Place(inGamePos);
-                if (msg != null)
-                    SendMessage(msg);
-            }
+                Place(inGamePos);
         }
 
         public override void OnMouseUp(MouseButtons btn, Vector inGamePos)
@@ -47,7 +41,7 @@ namespace Shanism.Editor.MapAdapter
                 isPlacing = false;
         }
 
-        public abstract IOMessage Place(Vector inGamePos);
+        public abstract void Place(Vector inGamePos);
 
     }
 }

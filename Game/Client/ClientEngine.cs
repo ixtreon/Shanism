@@ -18,6 +18,8 @@ using Shanism.Common.Message.Client;
 
 namespace Shanism.Client
 {
+
+
     /// <summary>
     /// Contains all the drawing and update logic of the client. 
     /// </summary>
@@ -40,7 +42,8 @@ namespace Shanism.Client
         /// </summary>
         SystemGod Game;
 
-        IReceptor server;
+        IShanoEngine server;
+        IReceptor receptor;
 
         AssetList Content;
 
@@ -57,6 +60,7 @@ namespace Shanism.Client
 
         bool isDesignMode;
 
+        
         bool isConnected;
 
         public ClientState State { get; } = new ClientState();
@@ -81,28 +85,56 @@ namespace Shanism.Client
 
         #region IClientEngine implementation
 
-        void IClientEngine.SetServer(IReceptor server)
+        public bool TryConnect(IShanoEngine server, out IReceptor receptor)
         {
-            isConnected = false;
+            if (server == null)
+                throw new ArgumentNullException(nameof(server));
 
-            if (server != null)
-                server.MessageSent -= server_MessageSent;
+            disconnect();
+            if ((receptor = server?.AcceptClient(this)) == null)
+                return false;
 
-            this.server = server;
-            server.MessageSent += server_MessageSent;
-
-            tryInitGame();
+            connect(server, receptor);
+            return true;
         }
 
-        void tryInitGame()
+        void IClientEngine.RestartScenario()
         {
-            if (Game == null
-                && server != null
-                && graphicsDevice != null)
+            if (server != null)
             {
-                Game = new SystemGod(graphicsDevice, Content, server, State);
-                Game.MessageSent += sendMessage;
+                server.RestartScenario();
+                if (TryConnect(server, out receptor))
+                    server.StartPlaying(receptor);
             }
+        }
+
+        void disconnect()
+        {
+            if (receptor != null)
+                receptor.MessageSent -= server_MessageSent;
+
+            isConnected = false;
+            receptor = null;
+            server = null;
+        }
+
+        void connect(IShanoEngine s, IReceptor r)
+        {
+            isConnected = true;
+            server = s;
+            receptor = r;
+            receptor.MessageSent += server_MessageSent;
+
+            initSystems();
+        }
+
+        void initSystems()
+        {
+            if (Game != null)
+                Game.MessageSent -= sendMessage;
+
+            Game = new SystemGod(graphicsDevice, Content, receptor, State);
+            Game.MessageSent += sendMessage;
         }
 
         void server_MessageSent(IOMessage msg)
@@ -110,6 +142,7 @@ namespace Shanism.Client
             if (msg != null)
                 pendingMessages.Enqueue(msg);
         }
+        public RenderTarget2D DefaultRenderTarget { get; set; }
 
         void IClientEngine.LoadContent()
         {
@@ -129,7 +162,7 @@ namespace Shanism.Client
                 CullMode = CullMode.CullClockwiseFace,
             };
 
-            tryInitGame();
+            initSystems();
         }
 
         void IClientEngine.Update(GameTime gameTime)
@@ -137,8 +170,8 @@ namespace Shanism.Client
             var msElapsed = (int)gameTime.ElapsedGameTime.TotalMilliseconds;
 
             //update the local server
-            if (server != null)
-                server.UpdateServer(msElapsed);
+            if (isConnected)
+                server.Update(msElapsed);
 
             //Parse its messages
             IOMessage msg;
@@ -154,7 +187,7 @@ namespace Shanism.Client
                 MouseInfo.Update(msElapsed);
 
                 //pan camera to the hero
-                if(Game.MainHero != null)
+                if (Game.MainHero != null)
                     Screen.MoveCamera(Game.MainHero.Position);
 
                 //ui, objects
@@ -175,10 +208,10 @@ namespace Shanism.Client
             }
 
 
-            if (server != null)
+            if (receptor != null)
             {
                 graphicsDevice.Clear(Color.Black);
-                graphicsDevice.SetRenderTarget(null);
+                graphicsDevice.SetRenderTarget(DefaultRenderTarget);
                 graphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
                 // 1. draw terrain
@@ -281,7 +314,7 @@ namespace Shanism.Client
             var font = Content.Fonts.LargeFont;
             var pos = new Point(Screen.Size.X / 10);
 
-            graphicsDevice.SetRenderTarget(null);
+            graphicsDevice.SetRenderTarget(DefaultRenderTarget);
             graphicsDevice.Clear(Color.Black);
 
             spriteBatch.Begin();
@@ -318,7 +351,7 @@ namespace Shanism.Client
                 $"UI Hover: {Control.HoverControl.GetType().Name}",
                 $"UI Focus: {Control.FocusControl?.GetType().Name }",
 
-                server.GetDebugString(),
+                receptor?.GetDebugString(),
             });
         }
 

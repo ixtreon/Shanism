@@ -71,8 +71,12 @@ namespace Shanism.Client.UI.Menus
                     Options.IsVisible = true;
                     break;
 
+                case MenuButtonType.Restart:
+                    GameHelper.Restart();
+                    break;
+
                 case MenuButtonType.Exit:
-                    ExitHelper.Exit();
+                    GameHelper.Exit();
                     break;
             }
         }
