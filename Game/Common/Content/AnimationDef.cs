@@ -12,6 +12,7 @@ namespace Shanism.Common.Content
     /// Represents an animation that can be used by in-game objects and displays one or more frames of a <see cref="TextureDef"/>. 
     /// Animations can be either dynamic or static and are further defined by their source texture and span /frames/. 
     /// </summary>
+    [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
     public class AnimationDef
     {
         public const int DefaultDuration = 500;
@@ -24,18 +25,21 @@ namespace Shanism.Common.Content
         /// <summary>
         /// Gets or sets the name of this animation. 
         /// </summary>
+        [JsonProperty]
         public string Name { get; set; }
 
 
         /// <summary>
         /// Gets or sets the source texture for this animation. 
         /// </summary>
+        [JsonProperty]
         public string Texture { get; set; }
 
 
         /// <summary>
         /// Gets the texture cells spanned by this animation. 
         /// </summary>
+        [JsonProperty]
         public Rectangle Span { get; set; } = new Rectangle(Point.Zero, Point.One);
 
         /// <summary>
@@ -47,6 +51,7 @@ namespace Shanism.Common.Content
         /// If set to false, all cells in this animation's span are treated 
         /// as part of one frame. 
         /// </summary>
+        [JsonProperty]
         public bool IsDynamic { get; set; }
 
         /// <summary>
@@ -54,8 +59,10 @@ namespace Shanism.Common.Content
         /// the frames in a dynamic texture are changed. 
         /// Undefined if <see cref="IsDynamic"/> is false. 
         /// </summary>
+        [JsonProperty]
         public int Period { get; set; }
 
+        [JsonProperty]
         public AnimationStyle RotationStyle { get; set; } = AnimationStyle.Fixed;
 
         /// <summary>

@@ -12,7 +12,7 @@ namespace Shanism.Common.Content
     /// Represents a texture content file used by the game. 
     /// Contains the name of the texture along with the logical splits that divide it into chunks. 
     /// </summary>
-    [JsonObject(IsReference = true, MemberSerialization = MemberSerialization.OptIn)]
+    [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
     public class TextureDef
     {
         /// <summary>
