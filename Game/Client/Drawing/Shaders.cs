@@ -32,7 +32,7 @@ namespace Shanism.Client
         /// </summary>
         public void Load()
         {
-            content.RootDirectory = "Content/Shaders";
+            content.RootDirectory = "Shaders";
 
             FogOfWar = tryLoadShader("shader");
             ObjectShadows = tryLoadShader("shadows");

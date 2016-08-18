@@ -133,7 +133,7 @@ namespace Shanism.Client.UI.Menus
             renderSize.Slider.Value = Settings.Current.RenderSize;
             vSync.IsChecked = Settings.Current.VSync;
             extendCast.IsChecked = Settings.Current.ExtendCast;
-            quickPress.IsChecked = Settings.Current.QuickButtonPress;
+            //quickPress.IsChecked = Settings.Current.QuickButtonPress;
         }
 
         void BtnAccept_MouseUp(Input.MouseButtonArgs obj)

@@ -35,32 +35,34 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\1.png">
+    <Content Include="Shaders\shader.fx" />
+    <Content Include="Shaders\shadows.fx" />
+    <Content Include="Textures\1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\icons.png">
+    <Content Include="Textures\icons.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Icons\border.png">
+    <Content Include="Textures\Icons\border.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Icons\border_hover.png">
+    <Content Include="Textures\Icons\border_hover.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Icons\default.png">
+    <Content Include="Textures\Icons\default.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Icons\icons.txt" />
-    <Content Include="Content\Objects\arrow.png">
+    <Content Include="Textures\Icons\icons.txt" />
+    <Content Include="Textures\Objects\arrow.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Objects\dummy.png">
+    <Content Include="Textures\Objects\dummy.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\terrain.png">
+    <Content Include="Textures\terrain.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\UI\close.png">
+    <Content Include="Textures\UI\close.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ATTRIBUTIONS.txt" />
@@ -68,21 +70,19 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClientContent.mgcb" />
-    <None Include="Content\Fonts\freud.ttf" />
-    <None Include="Content\Fonts\helvetica.spritefont" />
-    <None Include="Content\Fonts\helvetica.xnb">
+    <None Include="Fonts\freud.ttf" />
+    <None Include="Fonts\helvetica.spritefont" />
+    <None Include="Fonts\helvetica.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Content\Fonts\psicopatologia.spritefont" />
-    <None Include="Content\Fonts\psicopatologia.xnb">
+    <None Include="Fonts\psicopatologia.spritefont" />
+    <None Include="Fonts\psicopatologia.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Content\Shaders\shader.fx" />
-    <None Include="Content\Shaders\shader.xnb">
+    <None Include="Shaders\shader.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Content\Shaders\shadows.fx" />
-    <None Include="Content\Shaders\shadows.xnb">
+    <None Include="Shaders\shadows.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

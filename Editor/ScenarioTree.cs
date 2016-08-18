@@ -36,7 +36,7 @@ namespace Shanism.Editor
                 Tag = ScenarioViewType.Map,
             };
 
-            var nContent = new TreeNode { Text = "Content" };
+            var nContent = new TreeNode { Text = "Textures" };
             var nTextures = new TreeNode
             {
                 Text = "Textures",

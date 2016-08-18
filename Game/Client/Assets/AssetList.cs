@@ -19,7 +19,7 @@ namespace Shanism.Client
     /// </summary>
     class AssetList
     {
-        public const string DefaultContentDirectory = @"Content";
+        public const string DefaultContentDirectory = @"Textures";
 
         public const string ScenarioContentDirectory = @"Scenario/Content";
 

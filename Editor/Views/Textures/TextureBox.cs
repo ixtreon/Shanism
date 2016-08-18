@@ -300,7 +300,7 @@ namespace Shanism.Editor.Views.Models
         {
             //create an animation out of each cell
             var anims = Selection.Iterate()
-                .Select(pt => new AnimationDef($"{newAnimName}-{pt.X}-{pt.Y}", texture.Name, new Common.Rectangle(pt.X, pt.Y, 1, 1)))
+                .Select(pt => new AnimationDef($"{newAnimName}/{pt.X}-{pt.Y}", texture.Name, new Common.Rectangle(pt.X, pt.Y, 1, 1)))
                 .ToArray();
 
             AnimationsCreated?.Invoke(anims);

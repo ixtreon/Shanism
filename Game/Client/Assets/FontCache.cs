@@ -42,10 +42,10 @@ namespace Shanism.Client.Drawing
         /// <param name="content"></param>
         public void Load(ContentManager content)
         {
-            content.RootDirectory = "Content/";
+            content.RootDirectory = "Fonts/";
 
-            var fancy = content.Load<SpriteFont>("Fonts/psicopatologia");
-            var main = content.Load<SpriteFont>("Fonts/helvetica");
+            var fancy = content.Load<SpriteFont>("psicopatologia");
+            var main = content.Load<SpriteFont>("helvetica");
 
             //load default fonts
             FancyFont = new TextureFont(fancy, 0.6);
