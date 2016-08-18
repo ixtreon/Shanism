@@ -59,9 +59,9 @@ namespace Shanism.Client.UI.Common
 
         protected override void OnUpdate(int msElapsed)
         {
-            boxFrame = new RectangleF(Padding, (Size.Y - BoxSize) / 2, BoxSize, BoxSize);
+            boxFrame = new RectangleF(Size.X - BoxSize - Padding, (Size.Y - BoxSize) / 2, BoxSize, BoxSize);
             boxContent = new RectangleF(boxFrame.Position + ContentOffset, new Vector(BoxSize - 2 * ContentOffset));
-            var textX = ((Size.X - Padding) + boxFrame.Right) / 2;
+            var textX = Padding;
             var textY = Size.Y / 2;
             textPos = new Vector(textX, textY);
             if (HoverControl == this)
@@ -90,7 +90,7 @@ namespace Shanism.Client.UI.Common
 
             //draw text
             if (!string.IsNullOrEmpty(Text))
-                g.DrawString(Font, Text, TextColor, textPos, 0.5f, 0.5f);
+                g.DrawString(Font, Text, TextColor, textPos, 0f, 0.5f);
         }
     }
 }

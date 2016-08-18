@@ -11,7 +11,6 @@ namespace Shanism.Client.UI.Menus
 {
     class OptionsWindow : Window
     {
-
         readonly FlowPanel mainPanel;
         readonly Button btnApply;
 
@@ -21,6 +20,7 @@ namespace Shanism.Client.UI.Menus
 
         //Game
         readonly CheckBox extendCast;
+        //readonly CheckBox quickPress;
 
         public OptionsWindow()
         {
@@ -51,40 +51,59 @@ namespace Shanism.Client.UI.Menus
 
 
             addHeader("Graphics");
-
-            mainPanel.Add(vSync = new CheckBox
             {
-                Size = new Vector(mainPanel.Size.X - 2 * Padding, 0.07),
-                ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
+                mainPanel.Add(vSync = new CheckBox
+                {
+                    Size = new Vector(mainPanel.Size.X - 2 * Padding, 0.07),
+                    ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
 
-                Text = "VSync",
-            });
-            vSync.CheckedChanged += vSyncBox_CheckedChanged;
+                    Text = "VSync",
+                    ToolTip = "Synchronizes redraws with the screen refresh rate",
+                });
+                vSync.CheckedChanged += (_) => 
+                    Settings.Current.VSync = vSync.IsChecked;
 
-            mainPanel.Add(renderSize = new SliderLabel
-            {
-                Size = new Vector(mainPanel.Size.X - 2 * Padding, 0.07),
-                ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
 
-                ToolTip = "Size of the game render",
-            });
-            renderSize.Label.Text = "Render Size";
-            renderSize.Slider.MinValue = 0.05;
-            renderSize.Slider.MaxValue = 1.00;
-            renderSize.Slider.ValueChanged += renderSizeSlider_ValueChanged;
+                mainPanel.Add(renderSize = new SliderLabel
+                {
+                    Size = new Vector(mainPanel.Size.X - 2 * Padding, 0.07),
+                    ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
 
+                    MinValue = 0.05,
+                    MaxValue = 1.00,
+
+                    Text = "Render Size",
+                    ToolTip = "Size of the underlying game buffer",
+                });
+                renderSize.Slider.ValueChanged += (_) => 
+                    Settings.Current.RenderSize = (float)renderSize.Slider.Value;
+            }
 
             addHeader("Game");
-
-            mainPanel.Add(extendCast = new CheckBox
             {
-                Size = new Vector(mainPanel.Size.X - 2 * Padding, 0.07),
-                ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
+                mainPanel.Add(extendCast = new CheckBox
+                {
+                    Size = new Vector(mainPanel.Size.X - 2 * Padding, 0.07),
+                    ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
 
-                Text = "Extend Cast",
-                ToolTip = "Allow casting even if the mouse cursor is out of range.",
-            });
-            extendCast.CheckedChanged += ExtendCast_CheckedChanged;
+                    Text = "Extend Cast",
+                    ToolTip = "Allow casting even if the mouse cursor is out of range.",
+                });
+                extendCast.CheckedChanged += (_) =>
+                    Settings.Current.ExtendCast = extendCast.IsChecked;
+
+
+                //mainPanel.Add(quickPress = new CheckBox
+                //{
+                //    Size = new Vector(mainPanel.Size.X - 2 * Padding, 0.07),
+                //    ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
+
+                //    Text = "Quick Press",
+                //    ToolTip = "Cast spells on key press, rather than key release",
+                //});
+                //quickPress.CheckedChanged += (_) =>
+                //    Settings.Current.QuickButtonPress = quickPress.IsChecked;
+            }
         }
 
         void addHeader(string name)
@@ -114,6 +133,7 @@ namespace Shanism.Client.UI.Menus
             renderSize.Slider.Value = Settings.Current.RenderSize;
             vSync.IsChecked = Settings.Current.VSync;
             extendCast.IsChecked = Settings.Current.ExtendCast;
+            quickPress.IsChecked = Settings.Current.QuickButtonPress;
         }
 
         void BtnAccept_MouseUp(Input.MouseButtonArgs obj)
@@ -121,20 +141,6 @@ namespace Shanism.Client.UI.Menus
             Settings.Current.Save();
             IsVisible = false;
         }
-
-        void renderSizeSlider_ValueChanged(Slider obj)
-        {
-            Settings.Current.RenderSize = (float)renderSize.Slider.Value;
-        }
-
-        void vSyncBox_CheckedChanged(CheckBox obj)
-        {
-            Settings.Current.VSync = vSync.IsChecked;
-        }
-
-        void ExtendCast_CheckedChanged(CheckBox obj)
-        {
-            Settings.Current.ExtendCast = extendCast.IsChecked;
-        }
+        
     }
 }

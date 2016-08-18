@@ -16,6 +16,11 @@ namespace Shanism.Client.UI.Common
 
         public double LabelWidthRatio { get; set; } = 0.6;
 
+        
+        public string Text { get { return Label.Text; } set { Label.Text = value; } }
+        public double MinValue { get { return Slider.MinValue; } set { Slider.MinValue = value; } }
+        public double MaxValue { get { return Slider.MaxValue; } set { Slider.MaxValue = value; } }
+
         public SliderLabel()
         {
             Size = DefaultSize;

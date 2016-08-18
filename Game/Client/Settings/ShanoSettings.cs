@@ -61,14 +61,12 @@ namespace Shanism.Client
 
         #endregion
 
-
+        /* Game */
         public bool AlwaysShowHealthBars { get; set; } = true;
-
         public bool QuickButtonPress { get; set; } = true;
-
         public bool ExtendCast { get; set; } = true;
 
-
+        /* Graphics */
         public bool VSync { get; set; } = false;
         public bool FullScreen { get; set; } = false;
         public float RenderSize { get; set; } = 1.0f;
