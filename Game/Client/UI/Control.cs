@@ -246,12 +246,12 @@ namespace Shanism.Client.UI
         public double Right => Location.X + Size.X;
 
         /// <summary>
-        /// Gets whether this control is the currently focused control.
+        /// Gets whether this control is the currently focused control (see <see cref="FocusControl"/>).
         /// </summary>
         public bool HasFocus => FocusControl == this;
 
         /// <summary>
-        /// Gets whether the mouse is currently over this control. 
+        /// Gets whether the mouse is currently over this control (see <see cref="HoverControl"/>).
         /// </summary>
         public bool HasHover => (HoverControl == this);
 
@@ -418,13 +418,10 @@ namespace Shanism.Client.UI
 
         internal void UpdateMain(int msElapsed)
         {
-            //update the static keyboard/mouse info
-
-            if (FocusControl == null)
+            if (FocusControl == null || !FocusControl.IsChildOf(this))
                 FocusControl = this;
 
             raiseMoveEvents();
-
             raiseKeyboardEvents();
         }
 
@@ -539,6 +536,9 @@ namespace Shanism.Client.UI
                 FocusControl = this;
         }
 
+        /// <summary>
+        /// Clears focus from the current control, if it is focused (see <see cref="HasFocus"/>).
+        /// </summary>
         public void ClearFocus()
         {
             if (FocusControl != this)
@@ -548,6 +548,25 @@ namespace Shanism.Client.UI
             while (c != null && !c.CanFocus)
                 c = c.Parent;
             FocusControl = c;
+        }
+
+        /// <summary>
+        /// Determines whether this control is contained within the specified control.
+        /// Returns true if both controls are the same.
+        /// </summary>
+        /// <param name="parent">The parent.</param>
+        /// <returns></returns>
+        public bool IsChildOf(Control parent)
+        {
+            var p = this;
+            do
+            {
+                if (p == parent)
+                    return true;
+            }
+            while ((p = p.Parent) != null);
+
+            return false;
         }
     }
 }

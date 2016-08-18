@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Shanism.Client
 {
+    //Provides hacky methods for manipulating the main game - exit, restart.
     static class GameHelper
     {
         static ClientGame TheGame;

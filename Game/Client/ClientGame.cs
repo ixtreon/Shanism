@@ -1,8 +1,6 @@
-﻿using Shanism.Common;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -49,8 +47,6 @@ namespace Shanism.Client
             base.Initialize();
             Window.Title = "ShanoRPG";
             GameHelper.SetGame(this);
-            Content.RootDirectory = "Content";
-
 
             GraphicsDevice.RasterizerState = new RasterizerState
             {

@@ -33,7 +33,6 @@ namespace Shanism.Client.UI
             Size = new Vector(2, 1);
             CanHover = false;
 
-
             var castBarSize = new Vector(0.5f, 0.08f);
             var unitFrameXOffset = 0.25;
             var chatFont = Content.Fonts.NormalFont;
