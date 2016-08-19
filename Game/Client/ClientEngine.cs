@@ -9,12 +9,13 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-
-using Color = Microsoft.Xna.Framework.Color;
-using GameTime = Microsoft.Xna.Framework.GameTime;
-using Shanism.Common.Interfaces.Entities;
 using Shanism.Client.Drawing;
 using Shanism.Common.Message.Client;
+
+
+using GameTime = Microsoft.Xna.Framework.GameTime;
+using Color = Microsoft.Xna.Framework.Color;
+
 
 namespace Shanism.Client
 {
@@ -151,7 +152,7 @@ namespace Shanism.Client
 
             //load default content (textures,fonts,animations)
             Content = new AssetList(graphicsDevice);
-            Content.LoadDefaultContent(ContentManager);
+            Content.LoadDefault(ContentManager);
 
             //shaders
             shaders = new ShaderContainer(ContentManager);
@@ -302,7 +303,7 @@ namespace Shanism.Client
             if (isConnected)
             {
                 //load content n start playing!
-                Content.LoadScenarioContent(ContentManager, msg);
+                Content.LoadScenario(ContentManager, msg);
             }
         }
 

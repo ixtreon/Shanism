@@ -1,18 +1,15 @@
-﻿using IxSerializer.Modules;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.IO;
 
-namespace Shanism.Common.Util
+namespace Shanism.Common
 {
     /// <summary>
     /// Represents a standard ARGB color value. 
     /// </summary>
-    /// <seealso cref="IxSerializer.Modules.IxSerializable" />
-    public struct Color : IxSerializable
+    public struct Color
     {
         #region Static Members
         /// <summary>
@@ -582,23 +579,39 @@ namespace Shanism.Common.Util
         #endregion
 
 
+        #region Static Methods
+        public static Color Lerp(Color a, Color b, float ratio)
+        {
+            ratio = ratio.Clamp(0, 1);
+            return new Color(
+                (byte)lerp(a.R, b.R, ratio),
+                (byte)lerp(a.G, b.G, ratio),
+                (byte)lerp(a.B, b.B, ratio),
+                (byte)lerp(a.A, b.A, ratio));
+        }
+
+        static float lerp(float a, float b, float r) 
+            => a + (b - a) * r;
+        #endregion
+
+
         /// <summary>
         /// Gets the Red component of this color. 
         /// </summary>
-        public byte R;
+        public readonly byte R;
         /// <summary>
         /// Gets the Green component of this color. 
         /// </summary>
-        public byte G;
+        public readonly byte G;
         /// <summary>
         /// Gets the Blue component of this color. 
         /// </summary>
-        public byte B;
+        public readonly byte B;
 
         /// <summary>
         /// Gets the Alpha component of this color. 
         /// </summary>
-        public byte A;
+        public readonly byte A;
 
         /// <summary>
         /// Creates a new color of the specified RGB values and full alpha. 
@@ -643,13 +656,21 @@ namespace Shanism.Common.Util
 
 
         /// <summary>
-        /// Returns a new color with the alpha value multiplied from 0 to 255. 
+        /// Returns a new color with the alpha value set to a value from the range 0 to 255. 
         /// </summary>
         /// <param name="a">The alpha component of the returned color as a value in the range 0-255.</param>
-        /// <returns></returns>
         public Color SetAlpha(byte a)
         {
             return new Color(R, G, B, a);
+        }
+
+        /// <summary>
+        /// Returns a new color with the alpha value set to a value from the range 0 to 255. 
+        /// </summary>
+        /// <param name="a">The alpha component of the returned color as a value in the range 0-255.</param>
+        public Color SetAlpha(int a)
+        {
+            return new Color(R, G, B, (byte)a.Clamp(0, 255));
         }
 
         /// <summary>
@@ -682,28 +703,6 @@ namespace Shanism.Common.Util
             }
         }
 
-        /// <summary>
-        /// Deserializes the data from the specified reader into this object.
-        /// </summary>
-        public void Deserialize(BinaryReader r)
-        {
-            R = r.ReadByte();
-            G = r.ReadByte();
-            B = r.ReadByte();
-            A = r.ReadByte();
-        }
-
-        /// <summary>
-        /// Serializes this object to the given writer.
-        /// </summary>
-        public void Serialize(BinaryWriter w)
-        {
-            w.Write(R);
-            w.Write(G);
-            w.Write(B);
-            w.Write(A);
-        }
-
         public static bool operator ==(Color a, Color b)
         {
             return a.R == b.R
@@ -713,8 +712,8 @@ namespace Shanism.Common.Util
         }
         public static bool operator !=(Color a, Color b) => !(a == b);
 
-        public override bool Equals(object obj) 
-            => (obj is Color) 
+        public override bool Equals(object obj)
+            => (obj is Color)
             && ((Color)obj == this);
 
         public override int GetHashCode() => Pack();

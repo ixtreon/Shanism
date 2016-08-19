@@ -1,11 +1,8 @@
-﻿using Microsoft.Xna.Framework;
-using Shanism.Client.Drawing;
+﻿using Shanism.Client.Drawing;
 using Shanism.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shanism.Client.UI.Common
 {

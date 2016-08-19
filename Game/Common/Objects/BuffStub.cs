@@ -17,6 +17,7 @@ namespace Shanism.Common.StubObjects
 
         public bool HasIcon { get; set; }
         public string Icon { get; set; }
+        public Color IconTint { get; set; }
 
         public IHeroAttributes Attributes { get; } = new HeroAttributes();
         public IUnitStats Stats { get; } = new UnitStats();

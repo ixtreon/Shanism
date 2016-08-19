@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+
+#pragma warning disable RECS0108 // Warns about static fields in generic types
 
 namespace Shanism.Common.Util
 {
@@ -18,7 +18,7 @@ namespace Shanism.Common.Util
         /// </summary>
         public const int None = 0;
 
-        static int guidCount = None;
+        static int guidCount;
 
         /// <summary>
         /// Generates a new, unique id for the current type <typeparamref name="T"/>. 

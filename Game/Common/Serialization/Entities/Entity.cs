@@ -3,8 +3,6 @@ using Shanism.Common.Interfaces.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using Shanism.Common.StubObjects;
 
@@ -42,7 +40,7 @@ namespace Shanism.Common.Serialization
             e.Orientation = r.ReadSingle();
             e.LoopAnimation = r.ReadBoolean();
             e.Scale = r.ReadSingle();
-            e.CurrentTint = new Util.Color(r.ReadInt32());
+            e.CurrentTint = new Color(r.ReadInt32());
         }
     }
 }

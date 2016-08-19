@@ -1,5 +1,4 @@
 ﻿using Shanism.Client.Drawing;
-using Shanism.Common;
 using Shanism.Common.Content;
 using Shanism.Common.Message.Server;
 using Microsoft.Xna.Framework.Content;
@@ -9,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Shanism.Client.Exceptions;
 using Shanism.Common.Util;
 
 namespace Shanism.Client
@@ -19,12 +17,9 @@ namespace Shanism.Client
     /// </summary>
     class AssetList
     {
-        public const string DefaultContentDirectory = @"Textures";
+        public const string DefaultContentFile = @"scenario.json";
 
-        public const string ScenarioContentDirectory = @"Scenario/Content";
-
-
-        static readonly AnimationDef[] DefaultAnimations = { AnimationDef.Default };
+        public const string ScenarioDir = @"Scenario/Content";
 
 
 
@@ -36,14 +31,20 @@ namespace Shanism.Client
         /// </summary>
         public IReadOnlyDictionary<string, AnimationDef> Animations => animations;
 
-        /// <summary>
-        /// Gets the currently loaded fonts. 
-        /// </summary>
-        public FontCache Fonts { get; } = new FontCache();
+        public AnimationDef DefaultAnimation { get; private set; }
 
         public TextureCache Textures { get; } = new TextureCache();
 
-        public TerrainCache Terrain { get; } = new TerrainCache();
+        /// <summary>
+        /// Gets the currently loaded fonts. 
+        /// </summary>
+        public FontCache Fonts { get; private set; }
+
+        public TerrainCache Terrain { get; private set; }
+
+        public UiCache UI { get; private set; }
+
+        public IconCache Icons { get; private set; }
 
         public CircleDict Circles { get; }
 
@@ -53,32 +54,23 @@ namespace Shanism.Client
             Circles = new CircleDict(graphics, 65600, 8);
         }
 
-        public void LoadDefaultContent(ContentManager content)
+        public void LoadDefault(ContentManager content)
         {
-            if (!Directory.Exists(DefaultContentDirectory))
-                throw new ContentDirectoryMissingException();
+            string errors;
+            var sc = ScenarioConfig.LoadFromDisk(".", out errors);
+            if (sc == null)
+                Console.WriteLine($"Unable to load the default content: {errors}");
 
+            loadConfig(content, sc.Content, "Textures");
 
-            // load all files from content dir as textures
-            var defaultTextureList = Directory.EnumerateFiles(DefaultContentDirectory, "*.*", SearchOption.AllDirectories)
-                .Select(fn => fn
-                    .GetRelativePath(DefaultContentDirectory)
-                    .ToLowerInvariant())
-                .Select(fn => new TextureDef(fn))
-                .ToList();
-            Textures.Load(content, DefaultContentDirectory, defaultTextureList);
-
-            //load terrain, fonts
-            Terrain.Reload(Textures);
-            Fonts.Load(content);
-
-            //load the only (dummy) model in the content list
-            foreach (var a in DefaultAnimations)
-                animations[ShanoPath.Normalize(a.Name)] = a;
+            DefaultAnimation = animations["dummy"];
+            // load the only (dummy) model in the content list
+            //animations[ShanoPath.Normalize(AnimationDef.Default.Name)] = AnimationDef.Default;
+            // removed as it is now part of the default scenario.json
         }
 
 
-        public bool LoadScenarioContent(ContentManager content, HandshakeReplyMessage msg)
+        public bool LoadScenario(ContentManager content, HandshakeReplyMessage msg)
         {
             var sc = ScenarioConfig.LoadFromBytes(msg.ScenarioData);
             if (sc == null)
@@ -86,8 +78,8 @@ namespace Shanism.Client
 
             try
             {
-                unzipMessage(msg);
-                loadScenarioContent(content, sc.Content);
+                unzipMessage(msg, ScenarioDir);
+                loadConfig(content, sc.Content, ScenarioDir);
                 return true;
             }
             catch (Exception e)
@@ -97,27 +89,34 @@ namespace Shanism.Client
             }
         }
 
-        void loadScenarioContent(ContentManager content, ContentConfig config)
+        void loadConfig(ContentManager content, ContentConfig config, string textureDir)
         {
-            //load textures, terrain
-            content.RootDirectory = ScenarioContentDirectory;
-            Textures.Load(content, ScenarioContentDirectory, config.Textures);
-            Terrain.Reload(Textures);
+            //load textures
+            content.RootDirectory = textureDir;
+            Textures.Load(content, textureDir, config.Textures);
 
-            //animations
+            //load animations
             foreach (var a in config.Animations)
                 animations[ShanoPath.Normalize(a.Name)] = a;
+
+            //reload terrain, fonts, icons, ui elems
+            Terrain = new TerrainCache(Textures);
+            Fonts = new FontCache(content);
+            UI = new UiCache(this);
+            Icons = new IconCache(this);
         }
 
-        static void unzipMessage(HandshakeReplyMessage msg)
+        static void unzipMessage(HandshakeReplyMessage msg, string outDir)
         {
+            outDir = Path.GetFullPath(outDir);
+
             //clear scenario dir
-            var scenarioContentDir = Path.GetFullPath(ScenarioContentDirectory); 
-            if(Directory.Exists(scenarioContentDir))
-                Directory.Delete(scenarioContentDir, true);
+            if (Directory.Exists(outDir))
+                Directory.Delete(outDir, true);
 
             //unzip to temp dir
-            ScenarioConfig.UnzipContent(msg.ContentData, scenarioContentDir);
+            Directory.CreateDirectory(outDir);
+            ScenarioConfig.UnzipContent(msg.ContentData, outDir);
         }
 
     }

@@ -3,7 +3,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Shanism.Common.Message;
-using Shanism.Common.Message.Network;
 using Shanism.Common.Message.Server;
 using Shanism.Common.Message.Client;
 using Shanism.Common.Game;

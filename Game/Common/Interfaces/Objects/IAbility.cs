@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Shanism.Common.Interfaces.Objects
 {
@@ -26,6 +25,11 @@ namespace Shanism.Common.Interfaces.Objects
         /// Gets the icon of the ability. 
         /// </summary>
         string Icon { get; }
+
+        /// <summary>
+        /// Gets or sets the tint <see cref="Color"/> of this ability's <see cref="Icon"/>.
+        /// </summary>
+        Color IconTint { get; }
 
         /// <summary>
         /// Gets the current cooldown of the ability. 

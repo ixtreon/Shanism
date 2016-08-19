@@ -1,11 +1,7 @@
 ﻿using Shanism.Client.Drawing;
-using Shanism.Common.Game;
-using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Shanism.Common;
 
 namespace Shanism.Client.UI
@@ -67,7 +63,7 @@ namespace Shanism.Client.UI
             var y = TextYStart;
             foreach(var ed in errors.Reverse())
             {
-                var alpha = Math.Min(255, 255 * ed.Timespan / FadeStart);
+                var alpha = (byte)Math.Min(255, 255 * ed.Timespan / FadeStart);
                 var c = Color.Red.SetAlpha(alpha);
 
                 g.DrawString(Font, ed.Text, c, new Vector(Size.X / 2, y), 0.5f, 0f);

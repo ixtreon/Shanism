@@ -1,10 +1,8 @@
 ﻿using Shanism.Client.Drawing;
 using Shanism.Client.UI.Common;
-using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Shanism.Common;
 
 namespace Shanism.Client.UI.Menus.Character

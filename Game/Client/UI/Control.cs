@@ -7,7 +7,7 @@ using System.Text;
 using Shanism.Common;
 using Shanism.Common.Game;
 using Shanism.Client.Input;
-using Color = Microsoft.Xna.Framework.Color;
+
 
 namespace Shanism.Client.UI
 {
@@ -78,7 +78,7 @@ namespace Shanism.Client.UI
         /// <summary>
         /// Defines the background color drawn behind the whole control. 
         /// </summary>
-        public Color BackColor { get; set; } = Color.Transparent;
+        public Shanism.Common.Color BackColor { get; set; } = Shanism.Common.Color.Transparent;
 
         /// <summary>
         /// Gets or sets whether the control is draggable. 

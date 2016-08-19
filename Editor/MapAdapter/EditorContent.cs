@@ -1,14 +1,11 @@
 ﻿using Shanism.Client;
-using Shanism.Common.Game;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-using Color = Microsoft.Xna.Framework.Color;
+
 using Shanism.Common;
 
 namespace Shanism.Editor.MapAdapter
@@ -37,7 +34,7 @@ namespace Shanism.Editor.MapAdapter
             sb.Draw(tex,
                 position: pos.ToVector2(),
                 scale: (sz / new Vector(tex.Width, tex.Height)).ToVector2(),
-                color: c ?? Color.White);
+                color: (c ?? Color.White).ToXnaColor());
         }
     }
 }

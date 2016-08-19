@@ -1,10 +1,6 @@
-﻿using Shanism.Common;
-using Shanism.Common.StubObjects;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Shanism.Common.Game;
 using Shanism.Common.Interfaces.Objects;
 
@@ -31,6 +27,7 @@ namespace Shanism.Common.StubObjects
 
         public AbilityTargetType TargetType { get; set; }
 
+        public Color IconTint { get; set; }
         public AbilityStub() { }
 
         public AbilityStub(uint id)

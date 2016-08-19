@@ -19,17 +19,19 @@ namespace Shanism.Client.Drawing
     {
         public Texture2D Texture { get; protected set; }
 
+        /// <summary>
+        /// Gets or sets the texture source in pixels.
+        /// </summary>
         public Rectangle SourceRectangle { get; protected set; }
 
+        public bool FlipHorizontal { get; protected set; }
 
-        public bool FlipHorizontal { get; set; }
+        public float Orientation { get; protected set; }
 
-        public float Orientation { get; set; }
-
-        public Color Tint { get; set; }
+        public Color Tint { get; protected set; }
 
 
-        SpriteEffects effects => FlipHorizontal ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+        protected SpriteEffects effects => FlipHorizontal ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
 
         public void Draw(SpriteBatch sb, RectangleF drawRect, float depth)
@@ -38,6 +40,6 @@ namespace Shanism.Client.Drawing
                 sb.ShanoDraw(Texture, SourceRectangle, drawRect, Tint, depth, effects, Orientation);
         }
 
-        public abstract void Update(int msElapsed);
+        public virtual void Update(int msElapsed) { }
     }
 }

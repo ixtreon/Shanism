@@ -1,10 +1,8 @@
-﻿using Shanism.Common;
-using Shanism.Common.Game;
+﻿using Shanism.Common.Game;
 using Shanism.Common.Interfaces.Objects;
-using Shanism.Common.Util.Hash;
+using Shanism.Common.Util;
 using Shanism.Engine.Entities;
 using System;
-using System.Threading.Tasks;
 
 namespace Shanism.Engine.Objects.Buffs
 {

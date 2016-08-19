@@ -99,9 +99,13 @@ namespace Shanism.Client
         #endregion
 
 
-        public static Color ToXnaColor(this Shanism.Common.Util.Color c)
+        public static Color ToXnaColor(this Common.Color c)
         {
             return new Color(c.R, c.G, c.B, c.A);
+        }
+        public static Common.Color ToShanoColor(this Color c)
+        {
+            return new Common.Color(c.R, c.G, c.B, c.A);
         }
 
         public static void SyncValues<TKey, TVal>(this IDictionary<TKey, TVal> dict, IEnumerable<TKey> allNewVals,

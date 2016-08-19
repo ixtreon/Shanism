@@ -1,14 +1,8 @@
 ﻿using Shanism.Client.Drawing;
-using Shanism.Client.Input;
-using Shanism.Client.UI.Common;
 using Shanism.Common;
-using Shanism.Common.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Color = Microsoft.Xna.Framework.Color;
 
 namespace Shanism.Client.UI.Common
 {

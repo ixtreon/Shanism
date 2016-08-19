@@ -44,6 +44,8 @@ namespace Shanism.Engine.Objects.Buffs
         /// </summary>
         public string Icon { get; set; } = Shanism.Common.Constants.Content.DefaultValues.Icon;
 
+        public Color IconTint { get; set; } = Color.White;
+
         /// <summary>
         /// Gets or sets the name of the buff. 
         /// </summary>

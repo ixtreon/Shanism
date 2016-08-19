@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shanism.Common.Interfaces.Entities;
+using Shanism.Client;
 
 namespace Shanism.Client.Drawing
 {
@@ -65,10 +66,10 @@ namespace Shanism.Client.Drawing
             this.content = content;
             Entity = obj;
 
-            trySetAnimation(AnimationDef.Default);
+            trySetAnimation(content.DefaultAnimation);
             SetOrientation(entityFacing);
         }
-        string lastModelName;
+        string modelName;
         /// <summary>
         /// Checks if the object's animation has changed and reloads its texture if needed. Also updates dynamic animations' frames. 
         /// <para>
@@ -78,11 +79,7 @@ namespace Shanism.Client.Drawing
         /// </summary>
         public override void Update(int msElapsed)
         {
-            if (lastModelName != Entity.Model)
-            {
-                refreshAnimation();
-                lastModelName = Entity.Model;
-            }
+            modelName = refreshAnimation();
 
             //update current frame if dynamic animation
             if (currentAnimation.IsDynamic
@@ -115,22 +112,21 @@ namespace Shanism.Client.Drawing
         public void Draw(SpriteBatch sb)
         {
             Draw(sb, inGameBounds, DrawDepth);
+
             if (ClientEngine.ShowDebugStats)
-                sb.ShanoDraw(content.Circles.GetTexture(512),
-                    new RectangleF(Entity.Position - Entity.Scale / 2, new Vector(Entity.Scale)),
-                    Color.Red.SetAlpha(50));
+                sb.Draw(content.Circles.GetTexture(512),
+                    new RectangleF(Entity.Position - Entity.Scale / 2, new Vector(Entity.Scale)).ToRectangle().ToXnaRect(),
+                    Microsoft.Xna.Framework.Color.Red.SetAlpha(50));
         }
 
-        protected bool SetAnimation(string anim, bool loop)
+        protected void SetAnimation(string anim, bool loop)
         {
             LoopAnimation = loop;
             if (anim != AnimationName)
             {
                 AnimationName = anim;
-                return refreshAnimation();
+                refreshAnimation();
             }
-
-            return true;
         }
         protected void SetOrientation(float angle)
         {
@@ -159,6 +155,9 @@ namespace Shanism.Client.Drawing
 
         bool trySetAnimation(AnimationDef anim)
         {
+            if (currentAnimation == anim)
+                return true;
+
             var texName = anim.Texture.ToLowerInvariant();
 
             TextureDef texDef;
@@ -169,6 +168,7 @@ namespace Shanism.Client.Drawing
             if (!content.Textures.TryGet(texName, out tex))
                 return false;
 
+            //set vars
             Texture = tex;
             currentTexture = texDef;
             currentAnimation = anim;
@@ -185,29 +185,29 @@ namespace Shanism.Client.Drawing
             return true;
         }
 
-        bool refreshAnimation()
+        string refreshAnimation()
         {
             //check if same model+anim
-            var reqModelAnim = ShanoPath.Combine(Entity.Model, AnimationName);
-            if (ShanoPath.Equals(currentAnimation.Name, reqModelAnim))
-                return true;
+            var modelAnim = ShanoPath.Combine(Entity.Model, AnimationName);
+            if (ShanoPath.Equals(currentAnimation.Name, modelAnim))
+                return modelAnim;
 
             //try refetch model+anim
-            if (trySetAnimation(reqModelAnim))
-                return true;
+            if (trySetAnimation(modelAnim))
+                return modelAnim;
 
             //try just model
             if (trySetAnimation(Entity.Model))
             {
                 AnimationName = string.Empty;
                 LoopAnimation = true;
-                return false;
+                return Entity.Model;
             }
 
             //set default
-            trySetAnimation(AnimationDef.Default);
+            trySetAnimation(content.DefaultAnimation);
             AnimationName = string.Empty;
-            return false;
+            return content.DefaultAnimation.Name;
         }
 
 

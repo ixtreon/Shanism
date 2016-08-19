@@ -1,11 +1,7 @@
 ﻿using Shanism.Common;
-using Shanism.Common.StubObjects;
-using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Client.UI.Common
@@ -35,7 +31,7 @@ namespace Shanism.Client.UI.Common
             {
                 Value = Target.Mana;
                 MaxValue = Target.Stats[UnitStat.MaxMana];
-                ForeColor = Color.Lerp(ColorPalette[0], ColorPalette[1], (float)(MaxValue / Value).Clamp(0, 1));
+                ForeColor = Color.Lerp(ColorPalette[0], ColorPalette[1], (float)(Value / MaxValue).Clamp(0, 1));
                 ToolTip = $"{Target.Stats[UnitStat.ManaRegen]:+0.0;-0.0;0}/sec";
             }
 

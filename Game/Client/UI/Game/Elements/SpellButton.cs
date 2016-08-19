@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Shanism.Common;
 using Shanism.Client.UI.Common;
-using Color = Microsoft.Xna.Framework.Color;
 using Shanism.Common.Interfaces.Objects;
 
 namespace Shanism.Client.UI
@@ -50,14 +47,14 @@ namespace Shanism.Client.UI
             if (ability == null)
             {
                 ToolTip = string.Empty;
-                Texture = Content.Textures.Blank;
+                Texture = Content.Icons.Default;    //TODO: change to empty
                 TextureColor = Color.Black;
             }
             else
             {
                 ToolTip = ability;
-                Texture = Content.Textures.TryGetIcon(ability.Icon) ?? Content.Textures.DefaultIcon;
-                TextureColor = Color.White;
+                Texture = Content.Icons.TryGet(ability.Icon) ?? Content.Icons.Default;
+                TextureColor = ability.IconTint;
             }
 
             AbilityChanged?.Invoke();

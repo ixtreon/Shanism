@@ -17,30 +17,30 @@ namespace Shanism.Client.Drawing
         /// <summary>
         /// A fancy-looking, large font. 
         /// </summary>
-        public TextureFont FancyFont { get; private set; }
+        public TextureFont FancyFont { get; }
 
         /// <summary>
         /// A normal-sized standard font. 
         /// </summary>
-        public TextureFont NormalFont { get; private set; }
+        public TextureFont NormalFont { get; }
 
         /// <summary>
         /// A small-sized standard font. 
         /// </summary>
-        public TextureFont SmallFont { get; private set; }
+        public TextureFont SmallFont { get; }
 
         /// <summary>
         /// A large-sized standard font. 
         /// </summary>
-        public TextureFont LargeFont { get; private set; }
+        public TextureFont LargeFont { get; }
 
-        public SpriteFont ShanoFont { get; private set; }
+        public SpriteFont ShanoFont { get; }
 
         /// <summary>
         /// Loads all fonts to memory using the provided <see cref="ContentManager"/>. 
         /// </summary>
         /// <param name="content"></param>
-        public void Load(ContentManager content)
+        public FontCache(ContentManager content)
         {
             content.RootDirectory = "Fonts/";
 

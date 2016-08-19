@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IxSerializer.Modules;
 using System.IO;
 
 namespace Shanism.Common
@@ -14,7 +13,7 @@ namespace Shanism.Common
     /// Represents a point in the 2D plane with integral coordinates. 
     /// </summary>
     [ProtoContract]
-    public struct Point : IxSerializable
+    public struct Point
     {
         /// <summary>
         /// The point that has both of its X and Y coordinates set to zero. 
@@ -27,35 +26,15 @@ namespace Shanism.Common
         public static readonly Point One = new Point(1);
 
 
-        /// <summary>
-        /// Deserializes the data from the specified reader into this object.
-        /// </summary>
-        /// <param name="r"></param>
-        public void Deserialize(BinaryReader r)
-        {
-            X = r.ReadInt32();
-            Y = r.ReadInt32();
-        }
 
         /// <summary>
-        /// Serializes this object to the given writer.
-        /// </summary>
-        /// <param name="w"></param>
-        public void Serialize(BinaryWriter w)
-        {
-            w.Write(X);
-            w.Write(Y);
-        }
-
-
-        /// <summary>
-        /// The X coordinate of the point. 
+        /// The X coordinate of the point.
         /// </summary>
         [ProtoMember(1)]
         public int X;
 
         /// <summary>
-        /// The Y coordinate of the point. 
+        /// The Y coordinate of the point.
         /// </summary>
         [ProtoMember(2)]
         public int Y;

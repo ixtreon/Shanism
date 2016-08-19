@@ -7,7 +7,7 @@ using Shanism.Common.Game;
 using Shanism.ScenarioLib;
 using Microsoft.Xna.Framework.Graphics;
 
-using Color = Microsoft.Xna.Framework.Color;
+
 using Shanism.Client;
 using Shanism.Common.Message;
 using Shanism.Common.Message.Server;

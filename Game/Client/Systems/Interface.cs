@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Shanism.Common;
 using Shanism.Client.Input;
-using Shanism.Client.UI.Menus;
 using Shanism.Client.UI.CombatText;
 using Shanism.Client.UI.Chat;
 using Shanism.Client.UI;
@@ -13,8 +11,6 @@ using Shanism.Common.Message.Server;
 using Shanism.Common.Interfaces.Entities;
 using Shanism.Common.Interfaces.Objects;
 using Shanism.Client.Drawing;
-using Shanism.Client.UI.Game;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Shanism.Client.Systems

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Shanism.Common;
 using Shanism.Client.UI.Common;
-using Color = Microsoft.Xna.Framework.Color;
+
 using Shanism.Common.Interfaces.Entities;
 using Shanism.Client.Drawing;
 
@@ -136,7 +134,7 @@ namespace Shanism.Client.UI
 
             //unit model
             if (TargetSprite != null)
-                g.Draw(TargetSprite, new Vector(largePadding), new Vector(SpriteSize));
+                g.DrawSprite(TargetSprite, new Vector(largePadding), new Vector(SpriteSize));
         }
     }
 }

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Shanism.Common.Game;
-using Color = Microsoft.Xna.Framework.Color;
 using Shanism.Client.UI.Common;
 using Shanism.Common;
 using Shanism.Client.Drawing;

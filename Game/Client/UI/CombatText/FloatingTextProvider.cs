@@ -1,13 +1,8 @@
-﻿using Shanism.Client.Systems;
-using Shanism.Common;
-using Shanism.Common.Game;
-using Shanism.Common.Message.Server;
+﻿using Shanism.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Color = Microsoft.Xna.Framework.Color;
+
 namespace Shanism.Client.UI.CombatText
 {
     enum FloatingTextStyle
@@ -114,7 +109,8 @@ namespace Shanism.Client.UI.CombatText
             foreach (var td in labels)
             {
                 var screenPos = Screen.GameToScreen(td.Location);
-                Content.Fonts.NormalFont.DrawString(g.SpriteBatch, td.Text, td.Color, screenPos, 0.5f, 0.5f);
+                Content.Fonts.NormalFont
+                    .DrawString(g.SpriteBatch, td.Text, td.Color, screenPos, 0.5f, 0.5f);
             }
         }
     }

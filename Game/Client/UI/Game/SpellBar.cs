@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Shanism.Common;
 
-using Color = Microsoft.Xna.Framework.Color;
+
 
 namespace Shanism.Client.UI
 {

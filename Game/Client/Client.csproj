@@ -78,11 +78,12 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Assets\UiCache.cs" />
     <Compile Include="Assets\IconCache.cs" />
-    <Compile Include="Assets\SpriteCache.cs" />
     <Compile Include="Drawing\CircleDict.cs" />
     <Compile Include="ClientGame.cs" />
     <Compile Include="Drawing\Sprites\EntitySprite.cs" />
+    <Compile Include="Drawing\Sprites\IconSprite.cs" />
     <Compile Include="Drawing\Sprites\SpriteBase.cs" />
     <Compile Include="Drawing\Sprites\UnitSprite.cs" />
     <Compile Include="Drawing\TextureChunk.cs" />

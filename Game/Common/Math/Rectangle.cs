@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using IxSerializer.Modules;
 using System.IO;
 
 namespace Shanism.Common
@@ -14,34 +13,13 @@ namespace Shanism.Common
     /// </summary>
     [ProtoContract]
     [JsonObject(MemberSerialization.OptIn)]
-    public struct Rectangle : IxSerializable
+    public struct Rectangle
     {
         /// <summary>
         /// An empty rectangle positioned at the origin. 
         /// </summary>
         public static readonly Rectangle Empty = new Rectangle();
 
-        /// <summary>
-        /// Deserializes the data from the specified reader into this object.
-        /// </summary>
-        public void Deserialize(BinaryReader r)
-        {
-            _x = r.ReadInt32();
-            _y = r.ReadInt32();
-            _width = r.ReadInt32();
-            _height = r.ReadInt32();
-        }
-
-        /// <summary>
-        /// Serializes this object to the given writer.
-        /// </summary>
-        public void Serialize(BinaryWriter w)
-        {
-            w.Write(_x);
-            w.Write(_y);
-            w.Write(_width);
-            w.Write(_height);
-        }
 
         [ProtoMember(1)]
         [JsonProperty]
@@ -56,16 +34,60 @@ namespace Shanism.Common
         [JsonProperty]
         int _height;
 
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Rectangle"/> struct. 
+        /// </summary>
+        /// <param name="position">The position of the rectangle.</param>
+        /// <param name="size">The size of the rectangle.</param>
+        public Rectangle(Point position, Point size)
+        {
+            _x = position.X;
+            _y = position.Y;
+            _width = size.X;
+            _height = size.Y;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Rectangle"/> struct.
+        /// </summary>
+        /// <param name="x">The x coordinate of the rectangle.</param>
+        /// <param name="y">The y coordinate of the rectangle.</param>
+        /// <param name="width">The width of the rectangle.</param>
+        /// <param name="height">The height of the rectangle.</param>
+        public Rectangle(int x, int y, int width, int height)
+        {
+            _x = x;
+            _y = y;
+            _width = width;
+            _height = height;
+        }
+
+        #region Property Shortcuts
+
         /// <summary>
         /// Gets or sets the position of the bottom-left (low) corner of the rectangle. 
         /// </summary>
         public Point Position => new Point(_x, _y);
 
-
         /// <summary>
         /// Gets or sets the size of the rectangle. 
         /// </summary>
         public Point Size => new Point(_width, _height);
+
+        /// <summary>
+        /// Gets the far position (high X, high Y) of the rectangle. 
+        /// </summary>
+        /// <value>
+        /// The far position.
+        /// </value>
+        public Point FarPosition => Position + Size;
+
+        /// <summary>
+        /// Gets the vector that lies at the center of this rectangle. 
+        /// </summary>
+        public Vector Center => Position + (Vector)Size / 2.0;
+
 
         /// <summary>
         /// Gets the low X edge of the rectangle. 
@@ -107,6 +129,15 @@ namespace Shanism.Common
         /// </summary>
         public int Top => _y + _height;
 
+
+        /// <summary>
+        /// Gets the area of the rectangle. 
+        /// </summary>
+        public int Area => Width * Height;
+
+        #endregion
+
+        #region Binary Operators
 
         /// <summary>
         /// Multiplies both the position and size of the rectangle 
@@ -160,51 +191,7 @@ namespace Shanism.Common
             return !(a == b);
         }
 
-        /// <summary>
-        /// Gets the far position (high X, high Y) of the rectangle. 
-        /// </summary>
-        /// <value>
-        /// The far position.
-        /// </value>
-        public Point FarPosition => Position + Size;
-
-        /// <summary>
-        /// Gets the vector that lies at the center of this rectangle. 
-        /// </summary>
-        public Vector Center => Position + (Vector)Size / 2.0;
-
-        /// <summary>
-        /// Gets the area of the rectangle. 
-        /// </summary>
-        public int Area => Width * Height;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Rectangle"/> struct. 
-        /// </summary>
-        /// <param name="position">The position of the rectangle.</param>
-        /// <param name="size">The size of the rectangle.</param>
-        public Rectangle(Point position, Point size)
-        {
-            _x = position.X;
-            _y = position.Y;
-            _width = size.X;
-            _height = size.Y;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Rectangle"/> struct.
-        /// </summary>
-        /// <param name="x">The x coordinate of the rectangle.</param>
-        /// <param name="y">The y coordinate of the rectangle.</param>
-        /// <param name="width">The width of the rectangle.</param>
-        /// <param name="height">The height of the rectangle.</param>
-        public Rectangle(int x, int y, int width, int height)
-        {
-            _x = x;
-            _y = y;
-            _width = width;
-            _height = height;
-        }
+        #endregion
 
         /// <summary>
         /// Inflates this rectangle to the right. 
@@ -212,10 +199,7 @@ namespace Shanism.Common
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public Rectangle Inflate(int x, int y)
-        {
-            return new Rectangle(X, Y, Width + x, Height + y);
-        }
+        public Rectangle Inflate(int x, int y) => new Rectangle(X, Y, Width + x, Height + y);
 
         /// <summary>
         /// Iterates all points within this rectangle. First X then Y. 
@@ -244,41 +228,34 @@ namespace Shanism.Common
         }
 
         /// <summary>
+        /// Returns whether the given coordinates lie inside this rectangle. 
+        /// </summary>
+        public bool Contains(double x, double y) 
+            => x >= X 
+            && y >= Y 
+            && x < X + Width
+            && y < Y + Height;
+
+        /// <summary>
         /// Returns whether the given point lies inside this rectangle. 
         /// </summary>
-        public bool Contains(Point p)
-        {
-            return Contains(p.X, p.Y);
-        }
+        public bool Contains(Point p) => Contains(p.X, p.Y);
 
         /// <summary>
         /// Returns whether the given vector lies inside this rectangle. 
         /// </summary>
-        public bool Contains(Vector v)
-        {
-            return Contains(v.X, v.Y);
-        }
+        public bool Contains(Vector v) => Contains(v.X, v.Y);
 
         /// <summary>
-        /// Returns whether the given coordinates lie inside this rectangle. 
+        /// Returns a new rectangle representing the same area,
+        /// but with non-negative <see cref="Width"/> and <see cref="Height"/>. 
         /// </summary>
-        public bool Contains(double x, double y)
-        {
-            return x >= X && y >= Y && x < (X + Width) && y < (Y + Height);
-        }
-
-        /// <summary>
-        /// Returns a new rectangle 
-        /// with positive <see cref="Width"/> and <see cref="Height"/>. 
-        /// </summary>
-        public Rectangle MakePositive()
-        {
-            return new Rectangle(
+        public Rectangle MakePositive() 
+            => new Rectangle(
                 Math.Min(X, X + Width),
                 Math.Min(Y, Y + Height),
                 Math.Abs(Width),
                 Math.Abs(Height));
-        }
 
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.
@@ -286,8 +263,7 @@ namespace Shanism.Common
         /// <returns>
         /// A <see cref="System.String" /> that represents this instance.
         /// </returns>
-        public override string ToString() =>
-            $"[{X}, {Y}, {Width}, {Height}]";
+        public override string ToString() => $"[{X}, {Y}, {Width}, {Height}]";
 
         /// <summary>
         /// Determines whether the specified <see cref="object" />, is equal to this instance.
@@ -296,10 +272,8 @@ namespace Shanism.Common
         /// <returns>
         ///   <c>true</c> if the specified <see cref="object" /> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object obj)
-        {
-            return (obj is Rectangle) && this == (Rectangle)obj;
-        }
+        public override bool Equals(object obj) 
+            => (obj is Rectangle) && this == (Rectangle)obj;
 
         /// <summary>
         /// Returns a hash code for this instance.
@@ -309,7 +283,8 @@ namespace Shanism.Common
         /// </returns>
         public override int GetHashCode()
         {
-            unchecked       // http://stackoverflow.com/questions/5221396/what-is-an-appropriate-gethashcode-algorithm-for-a-2d-point-struct-avoiding
+            // http://stackoverflow.com/questions/5221396/what-is-an-appropriate-gethashcode-algorithm-for-a-2d-point-struct-avoiding
+            unchecked
             {
                 int hash = 17;
                 hash = hash * 23 + X.GetHashCode();

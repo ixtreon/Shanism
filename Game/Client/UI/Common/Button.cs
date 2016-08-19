@@ -1,9 +1,6 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Color = Microsoft.Xna.Framework.Color;
 using Shanism.Client.Drawing;
 using Shanism.Common;
 
@@ -21,7 +18,7 @@ namespace Shanism.Client.UI.Common
         /// <summary>
         /// Gets or sets the texture that is drawn stretched on the button. 
         /// </summary>
-        public Texture2D Texture { get; set; }
+        public IconSprite Texture { get; set; }
 
 
         public event Action<Button> Selected;
@@ -65,13 +62,13 @@ namespace Shanism.Client.UI.Common
         /// </summary>
         public bool CanSelect { get; set; }
 
-        public Button(string text = null, Texture2D texture = null)
+        public Button(string text = null, IconSprite icon = null)
         {
             Font = Content.Fonts.NormalFont;
             Size = DefaultSize;
 
             Text = text;
-            Texture = texture;
+            Texture = icon;
 
             BackColor = Color.YellowGreen;
 
@@ -94,7 +91,7 @@ namespace Shanism.Client.UI.Common
         {
             //draw background
             g.Draw(Content.Textures.Blank, Vector.Zero, Size, BackColor);
-            if(HasHover)
+            if (HasHover)
                 g.Draw(Content.Textures.Blank, Vector.Zero, Size, HoverOverlayColor);
 
             //draw texture
@@ -108,7 +105,7 @@ namespace Shanism.Client.UI.Common
             //draw border
             if (HasBorder)
             {
-                var border = Content.Textures.IconBorder;
+                var border = Content.Icons.IconBorderHover;
                 var tint = HasHover ? Color.White : new Color(32, 32, 32);
                 tint = (CanSelect && IsSelected) ? Color.Gold.Brighten(20) : tint;
 

@@ -18,11 +18,6 @@ namespace Shanism.Common.Content
         public const int DefaultDuration = 500;
 
         /// <summary>
-        /// A placeholder animation that is present in all games. Uses <see cref="TextureDef.Default"/> as its texture. 
-        /// </summary>
-        public static readonly AnimationDef Default = new AnimationDef("dummy", TextureDef.Default.Name, new Rectangle(Point.Zero, Point.One));
-
-        /// <summary>
         /// Gets or sets the name of this animation. 
         /// </summary>
         [JsonProperty]

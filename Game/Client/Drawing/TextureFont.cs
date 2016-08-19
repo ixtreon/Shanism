@@ -3,10 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Xml;
-using Microsoft.Xna.Framework.Content;
+
 using Color = Microsoft.Xna.Framework.Color;
-using System.IO;
 using Shanism.Common;
 
 namespace Shanism.Client.Drawing
@@ -55,6 +53,12 @@ namespace Shanism.Client.Drawing
             _userScale = scale;
             Font = font;
         }
+
+        public void DrawString(SpriteBatch sb, string text,
+            Common.Color color, Vector p,
+            float xAnchor, float yAnchor,
+            double? maxWidth = null)
+            => DrawString(sb, text, color.ToXnaColor(), p, xAnchor, yAnchor, maxWidth);
 
         /// <summary>
         /// Draws the given multi-line string at the given screen coordinates. 

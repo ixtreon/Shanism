@@ -2,13 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Shanism.Common.Game;
 using SharpNoise.Modules;
 using System.Diagnostics;
 using Shanism.Engine.Entities;
-using Shanism.Engine.Objects;
-using Shanism.Common.Util.Hash;
+using Shanism.Common.Util;
 
 namespace Shanism.Engine.Maps
 {

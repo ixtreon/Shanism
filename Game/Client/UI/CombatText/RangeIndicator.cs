@@ -1,10 +1,7 @@
 ﻿using Shanism.Common.Game;
-using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Shanism.Common;
 
 namespace Shanism.Client.UI.CombatText
@@ -72,7 +69,7 @@ namespace Shanism.Client.UI.CombatText
                     sourceRectangle: circle.Bounds,
                     position: screenPos.ToVector2(),
                     scale: (screenDiameter / new Vector(circle.Width, circle.Height)).ToVector2(),
-                    color: ForeColor);
+                    color: ForeColor.ToXnaColor());
             }
         }
     }

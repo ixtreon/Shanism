@@ -53,6 +53,11 @@ namespace Shanism.Engine.Objects.Abilities
         public string Icon { get; set; } = Shanism.Common.Constants.Content.DefaultValues.Icon;
 
         /// <summary>
+        /// Gets or sets the tint <see cref="Color"/> of this ability's <see cref="Icon"/>.
+        /// </summary>
+        public Color IconTint { get; set; } = Color.White;
+
+        /// <summary>
         /// Gets the current cooldown of this ability in milliseconds. 
         /// </summary>
         public int CurrentCooldown { get; internal set; }

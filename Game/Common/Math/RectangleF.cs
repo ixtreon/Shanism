@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using IxSerializer.Modules;
 
 namespace Shanism.Common
 {
@@ -14,7 +13,7 @@ namespace Shanism.Common
     /// </summary>
     [ProtoContract(ImplicitFields = ImplicitFields.AllFields)]
     [JsonObject(MemberSerialization.Fields)]
-    public struct RectangleF : IxSerializable
+    public struct RectangleF
     {
         /// <summary>
         /// Gets the empty rectangle that lies at the origin. 
@@ -22,35 +21,12 @@ namespace Shanism.Common
         public static readonly RectangleF Empty = new RectangleF();
 
 
-        /// <summary>
-        /// Deserializes the data from the specified reader into this object.
-        /// </summary>
-        /// <param name="r"></param>
-        public void Deserialize(BinaryReader r)
-        {
-            _x = r.ReadDouble();
-            _y = r.ReadDouble();
-            _width = r.ReadDouble();
-            _height = r.ReadDouble();
-        }
-
-        /// <summary>
-        /// Serializes this object to the given writer.
-        /// </summary>
-        /// <param name="w"></param>
-        public void Serialize(BinaryWriter w)
-        {
-            w.Write(X);
-            w.Write(Y);
-            w.Write(Width);
-            w.Write(Height);
-        }
-
-
         double _x;
         double _y;
         double _width;
         double _height;
+
+        #region Property Shortcuts
 
         /// <summary>
         /// Gets the position of the bottom-left (low) corner of the rectangle. 
@@ -138,6 +114,9 @@ namespace Shanism.Common
         /// </summary>
         public double Area => Width * Height;
 
+#endregion
+
+        #region Binary Operators
 
         public static RectangleF operator *(RectangleF r, Vector p)
         {
@@ -170,6 +149,7 @@ namespace Shanism.Common
             return new RectangleF(r.X + f, r.Y + f, r.Width, r.Height);
         }
 
+        #endregion
 
         public static implicit operator RectangleF(Rectangle r)
         {
@@ -262,10 +242,11 @@ namespace Shanism.Common
         /// <summary>
         /// Returns whether the given coordinates lie inside this rectangle. 
         /// </summary>
-        public bool Contains(double x, double y)
-        {
-            return x >= X && y >= Y && x < (X + Width) && y < (Y + Height);
-        }
+        public bool Contains(double x, double y) 
+            => x >= X 
+            && y >= Y 
+            && x < X + Width
+            && y < Y + Height;
 
         /// <summary>
         /// Returns whether the given point lies inside this rectangle. 

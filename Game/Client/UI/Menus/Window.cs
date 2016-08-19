@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework.Graphics;
 using Shanism.Client.Input;
-using Color = Microsoft.Xna.Framework.Color;
-using Shanism.Common.Game;
-using Microsoft.Xna.Framework.Input;
 using Shanism.Common;
 
 namespace Shanism.Client.UI.Common
@@ -123,7 +117,7 @@ namespace Shanism.Client.UI.Common
                 Size = new Vector(0.1, 0.07),
                 Location = new Vector(DefaultSize.X - 0.1, 0),
 
-                Texture = Content.Textures.UiCloseButton,
+                Texture = Content.UI.MenuClose,
                 TextureColor = Color.Black,
 
                 BackColor = Color.Red.SetAlpha(150),

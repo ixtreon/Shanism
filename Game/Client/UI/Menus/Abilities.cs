@@ -9,7 +9,7 @@ using Shanism.Common.Interfaces.Entities;
 using Shanism.Common.Interfaces.Objects;
 
 
-using Color = Microsoft.Xna.Framework.Color;
+
 
 namespace Shanism.Client.UI
 {

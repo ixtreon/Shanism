@@ -18,6 +18,7 @@ namespace Shanism.Common.Serialization
             w.Write(a.Name);
             w.Write(a.Description);
             w.Write(a.Icon);
+            w.Write(a.IconTint.Pack());
 
             w.Write(a.CurrentCooldown);
             w.Write(a.Cooldown);
@@ -37,6 +38,7 @@ namespace Shanism.Common.Serialization
             a.Name = r.ReadString();
             a.Description = r.ReadString();
             a.Icon = r.ReadString();
+            a.IconTint = new Color(r.ReadInt32());
 
             a.CurrentCooldown = r.ReadInt32();
             a.Cooldown = r.ReadInt32();

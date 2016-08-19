@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shanism.Common.Interfaces.Objects
 {
@@ -36,6 +34,8 @@ namespace Shanism.Common.Interfaces.Objects
         /// Gets the icon of the buff. 
         /// </summary>
         string Icon { get; }
+
+        Color IconTint { get; }
 
         /// <summary>
         /// Gets the name of the buff. 

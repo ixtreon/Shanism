@@ -1,18 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Shanism.Common.Game;
-using Shanism.Common.StubObjects;
 using Shanism.ScenarioLib;
-using Microsoft.Xna.Framework;
-using Shanism.Client;
-using Shanism.Common.Message;
 using Shanism.Engine;
-using Shanism.Engine.Objects;
-using Shanism.Engine.Entities;
-using Shanism.Common.Message.Server;
 using Shanism.Common;
 using Shanism.Common.Interfaces.Entities;
 

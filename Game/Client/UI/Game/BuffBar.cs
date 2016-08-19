@@ -3,8 +3,6 @@ using Shanism.Common.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Color = Microsoft.Xna.Framework.Color;
 using Shanism.Common.Interfaces.Entities;
 using Shanism.Common.Interfaces.Objects;
 using Shanism.Client.UI.Game;
@@ -88,10 +86,9 @@ namespace Shanism.Client.UI
 
         BuffBox addBuff(IBuffInstance b)
         {
-            var bc = new BuffBox
+            var bc = new BuffBox(b)
             {
                 Size = BuffSize,
-                Buff = b,
                 ToolTip = $"{b.Prototype.Name}\n\n{b.Prototype.Description}",
             };
             Add(bc);

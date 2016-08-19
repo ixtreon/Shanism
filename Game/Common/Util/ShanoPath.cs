@@ -12,9 +12,12 @@ namespace Shanism.Common.Util
     /// </summary>
     public static class ShanoPath
     {
-        public const char PathDelimiter = '/';
+        const char PathDelimiter = '/';
         const char AltPathDelimiter = '\\';
 
+        /// <summary>
+        /// The list of all recognized path segment delimiters.
+        /// </summary>
         public static readonly char[] RecognizedDelimiters = { PathDelimiter, AltPathDelimiter };
 
         /// <summary>

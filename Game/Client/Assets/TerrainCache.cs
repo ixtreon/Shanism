@@ -13,10 +13,10 @@ namespace Shanism.Client.Drawing
 {
     class TerrainCache
     {
-        public Texture2D Texture { get; private set; }
+        public Texture2D Texture { get; }
 
 
-        public void Reload(TextureCache textures)
+        public TerrainCache(TextureCache textures)
         {
             Texture2D outTex;
             if (!textures.TryGet(TerrainFile, out outTex))

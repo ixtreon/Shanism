@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
 using Shanism.Common;
 using Shanism.Common.Interfaces.Objects;
+using Shanism.Client.Drawing;
 
 namespace Shanism.Client.UI.Game
 {
@@ -20,29 +17,36 @@ namespace Shanism.Client.UI.Game
             set { base.Size = new Vector(value); }
         }
 
-        public IBuffInstance Buff { get; set; }
+        public IBuffInstance Buff { get; }
 
-        Texture2D buffTexture;
+        IconSprite currentTexture;
         float shadeRatio;
+        Color currentTint;
 
 
-        public BuffBox()
+        public BuffBox(IBuffInstance buff)
         {
             ToolTip = "wut";
+            Buff = buff;
         }
 
         protected override void OnUpdate(int msElapsed)
         {
+            var b = Buff.Prototype;
+
             //update icon
-            if (Buff.Prototype.Icon != buffTexture?.Name)
-                buffTexture = Content.Textures.TryGetIcon(Buff.Prototype.Icon) 
-                    ?? Content.Textures.DefaultIcon;
+            if (b.HasIcon)
+            {
+                if (b.Icon != currentTexture?.Texture.Name)
+                    currentTexture = Content.Icons.TryGet(b.Icon) ?? Content.Icons.Default;
+                currentTint = b.IconTint;
+            }
 
             //update cooldown shade
-            if (Buff.Prototype.FullDuration > 0)
+            if (b.FullDuration > 0)
                 shadeRatio = 0;
             else
-                shadeRatio = (float)Buff.DurationLeft / Buff.Prototype.FullDuration;
+                shadeRatio = (float)Buff.DurationLeft / b.FullDuration;
         }
 
         public override void OnDraw(Graphics g)
@@ -50,8 +54,8 @@ namespace Shanism.Client.UI.Game
             base.OnDraw(g);
 
             //draw the buff
-            if(buffTexture != null)
-                g.Draw(buffTexture, Vector.Zero, base.Size, Color.White);
+            if(currentTexture != null)
+                g.Draw(currentTexture, Vector.Zero, base.Size, currentTint);
 
             if(shadeRatio > 0)
             {

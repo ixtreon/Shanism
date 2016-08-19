@@ -2,13 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework.Graphics;
-using Shanism.Common.Game;
-using Shanism.Client.UI.Common;
-using Shanism.Common.StubObjects;
-using Color = Microsoft.Xna.Framework.Color;
 using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Client.UI

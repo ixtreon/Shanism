@@ -1,11 +1,7 @@
 ﻿using Shanism.Common;
-using Shanism.Common.StubObjects;
-using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Client.UI.Common

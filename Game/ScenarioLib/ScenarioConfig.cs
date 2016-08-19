@@ -3,10 +3,8 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Ionic.Zip;
 
 namespace Shanism.ScenarioLib
@@ -212,8 +210,6 @@ namespace Shanism.ScenarioLib
         /// <param name="folder">The output folder.</param>
         public static void UnzipContent(byte[] content, string folder)
         {
-            Directory.CreateDirectory(folder);
-
             using (var ms = new MemoryStream(content))
             using (var zip = ZipFile.Read(ms))
             {

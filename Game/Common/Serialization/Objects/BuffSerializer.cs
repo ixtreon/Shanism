@@ -25,7 +25,12 @@ namespace Shanism.Common.Serialization
             w.Write((byte)b.StackType);
 
             w.Write(b.HasIcon);
-            w.Write(b.Icon);
+            if (b.HasIcon)
+            {
+                w.Write(b.Icon);
+                w.Write(b.IconTint.Pack());
+            }
+
             w.Write(b.Name);
             w.Write(b.Description);
 
@@ -50,7 +55,12 @@ namespace Shanism.Common.Serialization
             b.StackType = (BuffStackType)r.ReadByte();
 
             b.HasIcon = r.ReadBoolean();
-            b.Icon = r.ReadString();
+            if (b.HasIcon)
+            {
+                b.Icon = r.ReadString();
+                b.IconTint = new Color(r.ReadInt32());
+            }
+
             b.Name = r.ReadString();
             b.Description = r.ReadString();
 

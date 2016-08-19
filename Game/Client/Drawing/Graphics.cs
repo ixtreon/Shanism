@@ -1,13 +1,9 @@
 ﻿using Shanism.Client.Drawing;
 using Shanism.Common;
-using Shanism.Common.Game;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Color = Microsoft.Xna.Framework.Color;
 
 namespace Shanism.Client
 {
@@ -54,6 +50,7 @@ namespace Shanism.Client
             Bounds = new RectangleF(offset, sz);
         }
 
+
         public void PushWindow(Vector offset, Vector sz)
         {
             offset = Vector.Max(Vector.Zero, offset);
@@ -69,10 +66,7 @@ namespace Shanism.Client
         }
 
 
-        //public void DrawIcon(string iconName, 
-
-
-        public void Draw(Texture2D tex, Vector texPos, Vector texSize, Color? color = null, float depth = 0)
+        public void Draw(Texture2D tex, Vector texPos, Vector texSize, Shanism.Common.Color? color = null, float depth = 0)
         {
             if (tex == null)
                 throw new ArgumentNullException(nameof(tex), "The texture cannot be null!");
@@ -82,11 +76,12 @@ namespace Shanism.Client
             SpriteBatch.Draw(tex,
                 position: screenPos.ToVector2(),
                 scale: (screenSz / new Vector(tex.Width, tex.Height)).ToVector2(),
-                color: (color ?? Color.White),
+                color: (color ?? Color.White).ToXnaColor(),
                 layerDepth: depth);
         }
 
-        public void Draw(EntitySprite s, Vector sPos, Vector sSize, 
+
+        public void DrawSprite(EntitySprite s, Vector sPos, Vector sSize,
             float depth = 0)
         {
             var screenPos = getClampedScreenPos(sPos);
@@ -96,19 +91,30 @@ namespace Shanism.Client
             s.Draw(SpriteBatch, screenRect, depth);
         }
 
-        public void DrawString(TextureFont f, string text,
-            Color color, Vector txtPos,
-            float xAnchor, float yAnchor,
-            double? txtMaxWidth = null)
+
+        public void Draw(IconSprite s, Vector sPos, Vector sSize, Common.Color? tint = null)
+        {
+            var screenPos = getClampedScreenPos(sPos);
+            var screenSz = getClampedScreenSize(sPos, sSize);
+            var screenRect = new RectangleF(screenPos, screenSz);
+
+            s.Draw(SpriteBatch, screenRect, tint);
+        }
+
+
+        public void DrawString(TextureFont f, string text, Common.Color color,
+            Vector txtPos,
+            float xAnchor, float yAnchor, double? txtMaxWidth = null)
         {
             txtPos = txtPos.Clamp(Vector.Zero, Size);
 
             var screenPos = Screen.UiToScreen(Position + txtPos);
             var screenMaxWidth = Screen.UiScale * txtMaxWidth;
-            f.DrawString(SpriteBatch, text, color, screenPos, 
+            f.DrawString(SpriteBatch, text, color, screenPos,
                 xAnchor, yAnchor, screenMaxWidth);
         }
-        
+
+
         Vector getClampedScreenPos(Vector pos)
         {
             pos = pos.Clamp(Vector.Zero, Size);

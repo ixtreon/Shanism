@@ -1,7 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Shanism.Client;
-using Shanism.Common;
-using Shanism.Common.Util;
+﻿using Shanism.Common;
 using Shanism.Engine;
 using System;
 using System.Collections.Generic;
@@ -61,7 +58,7 @@ namespace Shanism.Editor.MapAdapter
 
             //tint new selection
             foreach (var obj in selectedObjects)
-                obj.CurrentTint = Common.Util.Color.Blue;
+                obj.CurrentTint = Color.Blue;
 
             SelectionChanged?.Invoke(selectedObjects);
         }
@@ -74,7 +71,7 @@ namespace Shanism.Editor.MapAdapter
 
         public override void OnDraw(IEditorMapControl control, Vector inGamePos)
         {
-            var selectionColor = Microsoft.Xna.Framework.Color.Blue;
+            var selectionColor = Color.Blue;
 
             if (isSelecting)
             {

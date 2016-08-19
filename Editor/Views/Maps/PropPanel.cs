@@ -1,17 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Shanism.Editor.ViewModels;
 using Shanism.ScenarioLib;
 using Shanism.Engine.Entities;
-using Shanism.Common.Game;
-using Shanism.Common.Util;
 
 namespace Shanism.Editor.Views.Maps
 {
@@ -28,7 +21,7 @@ namespace Shanism.Editor.Views.Maps
             Model = string.Empty,
             Owner = string.Empty,
             Size = 2.5,
-            Tint = Common.Util.Color.White,
+            Tint = Common.Color.White,
         };
 
         public void LoadModel(AnimationsViewModel animations)

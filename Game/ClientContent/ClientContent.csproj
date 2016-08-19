@@ -43,16 +43,9 @@
     <Content Include="Textures\icons.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Textures\Icons\border.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Textures\Icons\border_hover.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Textures\Icons\default.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Textures\Icons\icons.txt" />
+    <Content Include="Textures\Icons\border.png" />
+    <Content Include="Textures\Icons\border_hover.png" />
+    <Content Include="Textures\Icons\default.png" />
     <Content Include="Textures\Objects\arrow.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -62,9 +55,10 @@
     <Content Include="Textures\terrain.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Textures\UI\close.png">
+    <Content Include="Textures\ui.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Textures\UI\close.png" />
     <Content Include="ATTRIBUTIONS.txt" />
     <Content Include="README.txt" />
   </ItemGroup>
@@ -78,6 +72,9 @@
     <None Include="Fonts\psicopatologia.spritefont" />
     <None Include="Fonts\psicopatologia.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="scenario.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Shaders\shader.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

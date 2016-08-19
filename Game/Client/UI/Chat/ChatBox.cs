@@ -1,11 +1,7 @@
 ﻿using Shanism.Client.Drawing;
-using Shanism.Common.Game;
-using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Shanism.Common;
 
 namespace Shanism.Client.UI.Chat

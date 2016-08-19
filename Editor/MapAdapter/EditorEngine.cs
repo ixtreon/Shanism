@@ -16,7 +16,7 @@ using Shanism.Common.StubObjects;
 using Shanism.Engine;
 using Shanism.Engine.Entities;
 
-using Color = Microsoft.Xna.Framework.Color;
+
 using Shanism.Engine.Common;
 using Shanism.Common.Interfaces.Entities;
 
