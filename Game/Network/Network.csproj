@@ -90,10 +90,6 @@
       <Project>{b1fc6d51-2a33-4ef8-bbad-d8207f2dcb02}</Project>
       <Name>IxLog</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\lib\IxSerializer\IxSerializer.csproj">
-      <Project>{41be9dd9-644c-4a90-8d47-667b4323df7a}</Project>
-      <Name>IxSerializer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{dc89987d-5817-4f1d-95ca-80c024c8d6bb}</Project>
       <Name>Common</Name>

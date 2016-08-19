@@ -203,10 +203,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\IxSerializer\IxSerializer.csproj">
-      <Project>{41be9dd9-644c-4a90-8d47-667b4323df7a}</Project>
-      <Name>IxSerializer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ScenarioLib\ScenarioLib.csproj">
       <Project>{bada50f2-93bc-4eba-949a-bf892ae4b7e5}</Project>
       <Name>ScenarioLib</Name>
