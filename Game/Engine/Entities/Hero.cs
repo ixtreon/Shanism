@@ -65,6 +65,7 @@ namespace Shanism.Engine.Entities
                 {
                     _experience -= ExperienceNeeded;
                     Level++;
+                    OnLevelUp();
                 }
             }
         }
@@ -146,5 +147,7 @@ namespace Shanism.Engine.Entities
             foreach (var b in Buffs)
                 attributes.Add(b.Prototype.heroStats);
         }
+
+        protected virtual void OnLevelUp() { }
     }
 }

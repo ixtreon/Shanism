@@ -64,6 +64,7 @@ namespace Shanism.Client
         /// </summary>
         public static Vector GameCenter => _pannedLocation;
 
+        static Vector backBufferScale = new Vector(1);
 
         static Vector _pannedLocation;
 
@@ -83,8 +84,7 @@ namespace Shanism.Client
             GameBounds = new RectangleF(GameCenter - GameSize / 2, GameSize);
         }
 
-        public static void MoveCamera(Vector inGameCenter,
-            Vector inGameSz)
+        public static void MoveCamera(Vector inGameCenter, Vector inGameSz)
         {
             GameSize = inGameSz;
             _pannedLocation = inGameCenter;
@@ -97,52 +97,39 @@ namespace Shanism.Client
         /// <summary>
         /// Gets the screen co-ordinates of the given in-game point. 
         /// </summary>
-        public static Vector GameToScreen(Vector p)
-        {
-            return (p - GameCenter) * GameScale + HalfSize;
-        }
+        public static Vector GameToScreen(Vector p) 
+            => (p - GameCenter) * GameScale + HalfSize;
 
         /// <summary>
         /// Converts the given screen point to in-game co-ordinates.  
         /// </summary>
-        public static Vector ScreenToGame(Vector position)
-        {
-            return (position - HalfSize) / GameScale + GameCenter;
-        }
+        public static Vector ScreenToGame(Vector position) 
+            => (position - HalfSize) / GameScale + GameCenter;
 
 
+        // TODO: stop being lazy
         /// <summary>
         /// Converts the given in-game point to Ui co-ordinates. 
         /// </summary>
-        public static Vector GameToUi(Vector v)
-        {
-            // TODO: stop being lazy
-            return ScreenToUi(GameToScreen(v));
-        }
+        public static Vector GameToUi(Vector v) 
+            => ScreenToUi(GameToScreen(v));
 
-        public static Vector UiToGame(Vector absolutePosition)
-        {
-            return ScreenToGame(UiToScreen(absolutePosition));
-        }
-
+        public static Vector UiToGame(Vector absolutePosition) 
+            => ScreenToGame(UiToScreen(absolutePosition));
 
         /// <summary>
         /// Converts the given Ui point to screen co-ordinates.  
         /// </summary>
-        public static Vector UiToScreen(Vector p)
-        {
-            return HalfSize + p * UiScale;
-        }
+        public static Vector UiToScreen(Vector p) 
+            => HalfSize + p * UiScale;
 
 
 
         /// <summary>
         /// Converts the given screen point to Ui co-ordinates.  
         /// </summary>
-        public static Vector ScreenToUi(Vector p)
-        {
-            return (p - HalfSize) / UiScale;
-        }
+        public static Vector ScreenToUi(Vector p) 
+            => (p - HalfSize) / UiScale;
 
         /// <summary>
         /// Gets the UI size of the given screen size. 

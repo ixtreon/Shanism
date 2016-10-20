@@ -68,7 +68,7 @@ namespace Shanism.Engine
         /// <summary>
         /// Gets the orientation of the object. 
         /// </summary>
-        public double Orientation { get; set; }
+        public float Orientation { get; set; }
 
         /// <summary>
         /// Gets or sets the custom data for this entity. 
@@ -86,10 +86,6 @@ namespace Shanism.Engine
         public Vector Position { get; set; }
 
         internal Vector MapPosition { get; set; }
-        /// <summary>
-        /// Gets the angle at which this entity is displayed. 
-        /// </summary>
-        public double Facing { get; set; }
 
         /// <summary>
         /// Gets or sets the default tint color of this entity. 

@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shanism.Common;
-
-
+using Shanism.Common.Game;
+using Shanism.Common.Interfaces.Objects;
 
 namespace Shanism.Client.UI
 {
@@ -21,6 +21,8 @@ namespace Shanism.Client.UI
         readonly int BarId;
 
         public static double ButtonSize { get; } = 0.1;
+
+        public event Action<IAbility> AbilityActivated;
 
         public int MaxButtonsPerRow
         {
@@ -61,7 +63,17 @@ namespace Shanism.Client.UI
             if (btnId < 0 || btnId >= buttons.Count)
                 return;
 
-            buttons[btnId].IsSelected = true;
+            var btn = buttons[btnId];
+            var ab = btn?.Ability;
+            if (ab?.TargetType == AbilityTargetType.NoTarget)
+            {
+                AbilityActivated?.Invoke(ab);
+            }
+            else
+            {
+                buttons[btnId].IsSelected = true;
+            }
+
         }
 
         void updateButtonCount(int newCount)

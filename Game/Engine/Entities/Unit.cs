@@ -14,7 +14,7 @@ namespace Shanism.Engine.Entities
     /// <summary>
     /// Represents an in-game unit. This includes NPCs, heroes, buildings. 
     /// </summary>
-    public abstract partial class Unit : Entity, IUnit
+    public partial class Unit : Entity, IUnit
     {
         /// <summary>
         /// Gets the object type of this unit. 
@@ -199,20 +199,34 @@ namespace Shanism.Engine.Entities
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Unit"/> class.
+        /// Creates a new level 1 <see cref="Unit"/> whose owner is the <see cref="Player.Aggressive"/> player
+        /// positioned at the map origin.
         /// </summary>
-        protected Unit()
-            : this(Player.Aggressive, 1)
+        public Unit()
+            : this(Player.Aggressive, null, 1)
+        {
+
+        }
+
+
+        /// <summary>
+        /// Creates a new <see cref="Unit" /> positioned at the map origin.
+        /// </summary>
+        /// <param name="owner">The owner of the unit.</param>
+        /// <param name="level">The level of the unit.</param>
+        public Unit(Player owner, int level)
+            : this(owner, null, level)
         {
 
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Unit"/> class.
+        /// Initializes a new instance of the <see cref="Unit" /> class.
         /// </summary>
-        /// <param name="owner">The owner.</param>
-        /// <param name="level">The level.</param>
-        protected Unit(Player owner, int level = 1)
+        /// <param name="owner">The owner of the unit.</param>
+        /// <param name="position">The position of the newly created unit.</param>
+        /// <param name="level">The level of the unit.</param>
+        public Unit(Player owner, Vector? position = null, int level = 1)
         {
             Systems.Add(buffs = new BuffSystem(this));
             Systems.Add(inventory = new InventorySystem(this));
@@ -224,11 +238,13 @@ namespace Shanism.Engine.Entities
             Systems.Add(behaviour = new OrderSystem(this));
             Systems.Add(combat = new StatsSystem(this));
 
-            Level = level;
             DefaultOrder = new Guard(this, DefaultReturnRange);
             initStats();
 
+            Level = level;
             Owner = owner;
+            if (position.HasValue)
+                Position = position.Value;
         }
 
 

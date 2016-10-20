@@ -38,69 +38,74 @@ namespace Shanism.Engine.Objects.Abilities
         public Unit Owner { get; private set; }
 
         /// <summary>
-        /// Gets or sets the name of this ability. 
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Gets or sets the description text of this ability. 
-        /// </summary>
-        public string Description { get; set; }
-
-        /// <summary>
-        /// Gets or sets the icon of this ability. 
-        /// </summary>
-        public string Icon { get; set; } = Shanism.Common.Constants.Content.DefaultValues.Icon;
-
-        /// <summary>
-        /// Gets or sets the tint <see cref="Color"/> of this ability's <see cref="Icon"/>.
-        /// </summary>
-        public Color IconTint { get; set; } = Color.White;
-
-        /// <summary>
         /// Gets the current cooldown of this ability in milliseconds. 
         /// </summary>
         public int CurrentCooldown { get; internal set; }
 
         /// <summary>
+        /// Gets or sets the name of this ability. 
+        /// </summary>
+        public virtual string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the description text of this ability. 
+        /// </summary>
+        public virtual string Description { get; set; }
+
+        /// <summary>
+        /// Gets or sets the level of the ability. 
+        /// </summary>
+        public virtual int Level { get; set; } = 1;
+
+        /// <summary>
+        /// Gets or sets the icon of this ability. 
+        /// </summary>
+        public virtual string Icon { get; set; } = Shanism.Common.Constants.Content.DefaultValues.Icon;
+
+        /// <summary>
+        /// Gets or sets the tint <see cref="Color"/> of this ability's <see cref="Icon"/>.
+        /// </summary>
+        public virtual Color IconTint { get; set; } = Color.White;
+
+        /// <summary>
         /// Gets or sets the cooldown of this ability in milliseconds. 
         /// </summary>
-        public int Cooldown { get; set; } = 1500;
+        public virtual int Cooldown { get; set; } = 1500;
 
         /// <summary>
         /// Gets or sets the mana cost of this ability. 
         /// </summary>
-        public int ManaCost { get; set; } = 1;
+        public virtual int ManaCost { get; set; } = 1;
 
         /// <summary>
         /// Gets or sets the casting time of the ability, in milliseconds. 
         /// </summary>
-        public int CastTime { get; set; }
+        public virtual int CastTime { get; set; }
 
         /// <summary>
         /// Gets or sets the casting range of the ability in units. 
         /// </summary>
-        public double CastRange { get; set; } = 15;
+        public virtual double CastRange { get; set; } = 15;
 
         /// <summary>
         /// Gets or sets whether this ability can be cast while moving.
         /// </summary>
-        public bool CanCastWalk { get; set; }
+        public virtual bool CanCastWalk { get; set; }
 
         /// <summary>
         /// Gets or sets the target types of this ability, if it is targeted. 
         /// </summary>
-        public AbilityTargetType TargetType { get; set; } = AbilityTargetType.NoTarget;
+        public virtual AbilityTargetType TargetType { get; set; } = AbilityTargetType.NoTarget;
 
         /// <summary>
         /// Gets or sets the AoE of this ability, if it is targeted. 
         /// </summary>
-        public int TargetAoE { get; set; }
+        public virtual int TargetAoE { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the animation that will be played whenever the ability is cast. 
         /// </summary>
-        public string Animation { get; set; } = Shanism.Common.Constants.Animations.Cast;
+        public virtual string Animation { get; set; } = Shanism.Common.Constants.Animations.Cast;
 
 
         /// <summary>
@@ -275,7 +280,7 @@ namespace Shanism.Engine.Objects.Abilities
             Owner.Mana -= ManaCost;
 
             var tLoc = args.TargetLocation;
-            Owner.Facing = Owner.Position.AngleTo(tLoc);
+            Owner.Orientation = (float)Owner.Position.AngleTo(tLoc);
             Owner.PlayAnimation(Shanism.Common.Constants.Animations.Cast, false);
 
             return true;

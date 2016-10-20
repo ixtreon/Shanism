@@ -3,6 +3,7 @@ using Shanism.Client.UI.CombatText;
 using Shanism.Client.UI.Game;
 using Shanism.Client.UI.Menus;
 using Shanism.Common;
+using Shanism.Common.Interfaces.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,8 @@ namespace Shanism.Client.UI
         public readonly RangeIndicator RangeIndicator;
 
         public event Action<string> ChatSent;
+
+        public event Action<IAbility> AbilityActivated;
 
         public Root()
         {
@@ -64,6 +67,7 @@ namespace Shanism.Client.UI
                 ParentAnchor = AnchorMode.Bottom,
                 Location = new Vector(0.6, 0.8),
             });
+            HeroAbilities.AbilityActivated += (a) => AbilityActivated?.Invoke(a);
             Add(HeroCastBar = new CastBar
             {
                 ParentAnchor = AnchorMode.Bottom,
@@ -97,6 +101,7 @@ namespace Shanism.Client.UI
             Add(new Tooltips.SimpleTip());
             Add(new Tooltips.AbilityTip());
         }
+
 
         protected override void OnUpdate(int msElapsed)
         {

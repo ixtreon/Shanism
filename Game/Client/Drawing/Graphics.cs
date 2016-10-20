@@ -92,7 +92,7 @@ namespace Shanism.Client
         }
 
 
-        public void Draw(IconSprite s, Vector sPos, Vector sSize, Common.Color? tint = null)
+        public void Draw(IconSprite s, Vector sPos, Vector sSize, Color? tint = null)
         {
             var screenPos = getClampedScreenPos(sPos);
             var screenSz = getClampedScreenSize(sPos, sSize);

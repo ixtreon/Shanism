@@ -35,7 +35,7 @@ namespace Shanism.Engine.Entities
         /// <param name="level">The level of the monster. </param>
         /// <param name="isElite">Whether the monster gets bonus life n damage and is considered elite. </param>
         public Monster(int level, bool isElite = false)
-            : base(Player.Aggressive, level)
+            : base(Player.Aggressive, null, level)
         {
             Model = "units/devilkin";
 

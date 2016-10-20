@@ -67,7 +67,7 @@ namespace Shanism.Client.Drawing
             Entity = obj;
 
             trySetAnimation(content.DefaultAnimation);
-            SetOrientation(entityFacing);
+            SetOrientation(obj.Orientation);
         }
         string modelName;
         /// <summary>
@@ -114,9 +114,13 @@ namespace Shanism.Client.Drawing
             Draw(sb, inGameBounds, DrawDepth);
 
             if (ClientEngine.ShowDebugStats)
-                sb.Draw(content.Circles.GetTexture(512),
-                    new RectangleF(Entity.Position - Entity.Scale / 2, new Vector(Entity.Scale)).ToRectangle().ToXnaRect(),
-                    Microsoft.Xna.Framework.Color.Red.SetAlpha(50));
+            {
+                const int texSz = 512;
+                sb.ShanoDraw(content.Circles.GetTexture(texSz),
+                    new Rectangle(0, 0, texSz, texSz),
+                    new RectangleF(Entity.Position - Entity.Scale / 2, new Vector(Entity.Scale)),
+                    Color.Red.SetAlpha(50));
+            }
         }
 
         protected void SetAnimation(string anim, bool loop)
@@ -128,6 +132,7 @@ namespace Shanism.Client.Drawing
                 refreshAnimation();
             }
         }
+
         protected void SetOrientation(float angle)
         {
             if (angle.Equals(entityFacing))
@@ -210,6 +215,7 @@ namespace Shanism.Client.Drawing
             return content.DefaultAnimation.Name;
         }
 
+        const float PiOverTwo = (float)Math.PI / 2;
 
         /// <summary>
         /// Updates the texture orientation using the current animation and unit orientation values.
@@ -230,7 +236,7 @@ namespace Shanism.Client.Drawing
 
                 case AnimationStyle.TopDown:
                     FlipHorizontal = false;
-                    Orientation = entityFacing;
+                    Orientation = PiOverTwo + entityFacing;
                     break;
 
                 default:

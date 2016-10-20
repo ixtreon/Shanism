@@ -14,10 +14,13 @@ namespace Shanism.Client.Drawing
     {
         public readonly IUnit Unit;
 
+        Vector lastPosition;
+
         public UnitSprite(AssetList content, IUnit unit) 
             : base(content, unit)
         {
             Unit = unit;
+            lastPosition = unit.Position;
         }
 
         public override void Update(int msElapsed)
@@ -27,8 +30,19 @@ namespace Shanism.Client.Drawing
             //update unit orientation
             if (Unit.MovementState.IsMoving)
             {
-                SetOrientation(Unit.MovementState.MoveDirection);
-                SetAnimation("move", true);
+                var curPosition = Unit.Position;
+                var ang = lastPosition.AngleTo(curPosition);
+                var dist = curPosition.DistanceTo(lastPosition) * 1000 / msElapsed;
+
+                if (dist > Unit.Stats[UnitStat.MoveSpeed] / 10)
+                {
+                    SetOrientation((float)ang);
+                    SetAnimation("move", true);
+
+                    lastPosition = Unit.Position;
+                }
+                else
+                    SetAnimation(string.Empty, true);
             }
             else if (Unit.IsCasting())
             {
@@ -41,7 +55,7 @@ namespace Shanism.Client.Drawing
             //tint black if dead
             if (Unit.IsDead)
             {
-                DrawDepth = 0;
+                DrawDepth = 1e-5f;
                 Tint = Color.Black;
             }
         }

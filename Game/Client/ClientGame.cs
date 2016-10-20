@@ -48,19 +48,16 @@ namespace Shanism.Client
             Window.Title = "ShanoRPG";
             GameHelper.SetGame(this);
 
-            GraphicsDevice.RasterizerState = new RasterizerState
-            {
-                CullMode = CullMode.None,
-            };
-
-            //setup stuff
+            //setup MonoGame vars
             IsMouseVisible = true;
             IsFixedTimeStep = false;
             Window.AllowUserResizing = true;
             Window.ClientSizeChanged += Window_ClientSizeChanged;
+            GraphicsDevice.RasterizerState = new RasterizerState { CullMode = CullMode.None };
+            reloadGraphicsEngine();
+
 
             Settings.Saved += reloadGraphicsEngine;
-            reloadGraphicsEngine();
 
             Screen.SetWindowSize(Window.ClientBounds.Size.ToPoint());
         }

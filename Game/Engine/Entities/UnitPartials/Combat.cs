@@ -117,14 +117,15 @@ namespace Shanism.Engine.Entities
         }
 
         /// <summary>
-        /// Causes this unit to damage the specified unit. 
+        /// Causes this unit to damage the specified unit.
         /// </summary>
-        /// <param name="target">The unit to deal damage to. </param>
-        /// <param name="dmgType">The type of damage to deal. </param>
-        /// <param name="amount">The amount of damage to deal. </param>
-        /// <param name="flags">A DamageFlags instance specifying additional rules when dealing damage. </param>
+        /// <param name="target">The unit to deal damage to.</param>
+        /// <param name="dmgType">The type of damage to deal.</param>
+        /// <param name="amount">The amount of damage to deal.</param>
+        /// <param name="displayText">Whether to show damage text on the player screen.</param>
+        /// <param name="flags">A DamageFlags instance specifying additional rules when dealing damage.</param>
         /// <returns></returns>
-        public bool DamageUnit(Unit target, DamageType dmgType, float amount, DamageFlags flags = DamageFlags.None)
+        public bool DamageUnit(Unit target, DamageType dmgType, float amount, bool displayText = true, DamageFlags flags = DamageFlags.None)
         {
             //Check target alive
             if (target.IsDead)
@@ -161,8 +162,11 @@ namespace Shanism.Engine.Entities
             target.DamageReceived?.Invoke(receiveArgs);
 
             //send a message yo
-            var eventMessage = new DamageEventMessage(target, dmgType, finalDmg, true);
-            target.SendMessageToVisibles(eventMessage);
+            if (displayText)
+            {
+                var eventMessage = new DamageEventMessage(target, dmgType, finalDmg, true);
+                target.SendMessageToVisibles(eventMessage);
+            }
 
             //check for death
             if (target.LifePercentage <= 0)

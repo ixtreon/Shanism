@@ -19,6 +19,11 @@ namespace Shanism.Engine.Objects.Abilities
     public class Attack : Ability
     {
 
+        /// <summary>
+        /// Gets or sets a value indicating whether projectiles are destroyed whenever they hit the first unit.
+        /// </summary>
+        public bool DestroyOnCollision { get; set; } = true;
+
         public Attack()
         {
             TargetType = AbilityTargetType.PointOrUnitTarget;
@@ -49,7 +54,7 @@ namespace Shanism.Engine.Objects.Abilities
                 Speed = 20,
                 MaxRange = (float)CastRange,
 
-                DestroyOnCollision = true,
+                DestroyOnCollision = DestroyOnCollision,
             };
             proj.OnUnitCollision += (p, u)
                 => Owner.DamageUnit(u, DamageType.Physical, damageRoll);

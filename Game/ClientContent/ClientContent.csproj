@@ -43,9 +43,6 @@
     <Content Include="Textures\icons.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Textures\Icons\border.png" />
-    <Content Include="Textures\Icons\border_hover.png" />
-    <Content Include="Textures\Icons\default.png" />
     <Content Include="Textures\Objects\arrow.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

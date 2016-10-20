@@ -8,11 +8,19 @@ using Shanism.Common.Game;
 using Shanism.Client.Input;
 using Shanism.Common.Message.Client;
 using Shanism.Client.UI;
+using Shanism.Common;
 
 namespace Shanism.Client.Systems
 {
     class MoveSystem : ClientSystem
     {
+        private UiSystem ui;
+
+        public MoveSystem(UiSystem ui)
+        {
+            this.ui = ui;
+        }
+        
         public override void Update(int msElapsed)
         {
             updateMovement();
@@ -26,20 +34,26 @@ namespace Shanism.Client.Systems
                 return;
             }
 
+            /// Keyboard movement
             var dx = Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveRight)) - Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveLeft));
             var dy = Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveDown)) - Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveUp));
-            if (dx == 0 && dy == 0)
+            if (dx != 0 || dy != 0)
+            {
+                var moveAngle = (float)(Math.Atan2(dy, dx));
+
+                ClientState.IsMoving = true;
+                ClientState.MoveAngle = moveAngle;
+            }
+            else if(MouseInfo.LeftDown && ui.Root.HasFocus) // mouse movement
+            {
+                var ang = Vector.Zero.AngleTo(MouseInfo.UiPosition);
+                ClientState.IsMoving = true;
+                ClientState.MoveAngle = (float)ang;
+            }
+            else
             {
                 ClientState.IsMoving = false;
-                return;
             }
-
-
-            var moveAngle = (float)(Math.Atan2(dy, dx));
-            //var moveAngle = (float)(Math.Atan2(dx, -dy) + MouseInfo.UiPosition.Angle);
-
-            ClientState.IsMoving = true;
-            ClientState.MoveAngle = moveAngle;
         }
     }
 }

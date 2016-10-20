@@ -60,15 +60,15 @@ namespace Shanism.Client.UI
 
         public override void OnDraw(Graphics g)
         {
-            var y = TextYStart;
+            var currentY = TextYStart;
             foreach(var ed in errors.Reverse())
             {
                 var alpha = (byte)Math.Min(255, 255 * ed.Timespan / FadeStart);
                 var c = Color.Red.SetAlpha(alpha);
 
-                g.DrawString(Font, ed.Text, c, new Vector(Size.X / 2, y), 0.5f, 0f);
+                g.DrawString(Font, ed.Text, c, new Vector(Size.X / 2, currentY), 0.5f, 0f);
 
-                y += Font.HeightUi;
+                currentY += Font.HeightUi;
             }
         }
 

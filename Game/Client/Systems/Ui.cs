@@ -19,7 +19,7 @@ namespace Shanism.Client.Systems
     /// Holds all elements of the default user interface. 
     /// </summary>
     /// <seealso cref="Shanism.Client.Systems.ClientSystem" />
-    class Interface : ClientSystem
+    class UiSystem : ClientSystem
     {
         readonly Root root;
 
@@ -36,18 +36,24 @@ namespace Shanism.Client.Systems
         public Control Root => root;
 
         readonly SpriteBatch interfaceBatch;
+        public ActionSystem actions;
 
-
-        public Interface(GraphicsDevice device, SpriteSystem objManager, IChatProvider chatProvider)
+        public UiSystem(GraphicsDevice device, SpriteSystem objManager, IChatProvider chatProvider)
         {
             interfaceBatch = new SpriteBatch(device);
             objects = objManager;
 
             root = new Root();
+            root.AbilityActivated += onAbilityActivated;
             root.GameActionActivated += onActionActivated;
             root.ChatBox.SetProvider(chatProvider);
             root.ChatBar.ChatSent += (m) =>
                 SendMessage(new Common.Message.Client.ChatMessage(string.Empty, m));
+        }
+
+        void onAbilityActivated(IAbility a)
+        {
+            actions.CastAbility(a);
         }
 
         // adds all abilities of the hero to the default bar

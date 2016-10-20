@@ -84,7 +84,7 @@ namespace Shanism.Client.UI.Menus.Keybinds
             ToolTip = kb.ToString();
 
             if (HasFocus)
-                BackColor = Color.Black.SetAlpha((int)Ticker.Default.GetValue(150, 200));
+                BackColor = Color.Black.SetAlpha((int)Counter.Default.GetValue(150, 200));
             else
                 BackColor = Color.Black.SetAlpha(HasHover ? 100 : 50);
         }

@@ -39,7 +39,7 @@ namespace Shanism.Common.Interfaces.Entities
         /// <summary>
         /// Gets the in-game orientation of the entity. 
         /// </summary>
-        double Orientation { get; }
+        float Orientation { get; }
 
         [Obsolete]
         bool LoopAnimation { get; }

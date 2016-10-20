@@ -19,7 +19,7 @@ namespace Shanism.Common.StubObjects
 
         public double Scale { get; set; }
 
-        public double Orientation { get; set; }
+        public float Orientation { get; set; }
 
 
 

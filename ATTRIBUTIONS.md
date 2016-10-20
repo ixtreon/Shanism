@@ -5,4 +5,4 @@ Part of the graphic tiles used in this program is the Public domain roguelike ti
 Awesome Icons by:
 J. W. Bjerk (eleazzaar) -- www.jwbjerk.com/art -- find this and other open art at: http://opengameart.org
 
-A mumltitude of icons from: http://game-icons.net/
+Over 2000 free icons from: http://game-icons.net/

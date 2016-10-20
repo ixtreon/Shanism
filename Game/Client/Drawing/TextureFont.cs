@@ -116,7 +116,7 @@ namespace Shanism.Client.Drawing
                 return new double[] { 0 };
 
             return Enumerable.Range(0, s.Length + 1)
-                .Select(i => (double)Font.MeasureString(s.Substring(0, i)).X)
+                .Select(i => (double)Font.MeasureString(s.Substring(0, i)).X * Scale)
                 .ToArray();
         }
 

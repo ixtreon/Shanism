@@ -1,7 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using Shanism.Client.Input;
-using Shanism.Client.UI;
+﻿using Shanism.Client.Input;
 using Shanism.Client.UI.CombatText;
 using Shanism.Common;
 using Shanism.Common.Game;
@@ -21,15 +18,16 @@ namespace Shanism.Client.Systems
 
         FloatingTextProvider ErrorTextProvider => Interface.FloatingText;
 
-        readonly Interface Interface;
+        readonly UiSystem Interface;
         readonly SpriteSystem Objects;
 
         public IHero Hero { get; set; }
 
 
-        public ActionSystem(Interface ui, SpriteSystem objects)
+        public ActionSystem(UiSystem ui, SpriteSystem objects)
         {
             Interface = ui;
+            Interface.actions = this;
             Objects = objects;
         }
 
@@ -39,26 +37,71 @@ namespace Shanism.Client.Systems
             if (Objects.MainHero == null)
                 return;
 
-            //cast abilities if button is held
-            if (MouseInfo.RightDown
-                && Interface.CurrentAbility != null
-                && Interface.CurrentAbility.TargetType != AbilityTargetType.Passive)
+            //make some checks so we don't spam the server
+            var ab = Interface.CurrentAbility;
+            if (ab == null)
             {
-                ClientState.ActionId = Interface.CurrentAbility.Id;
-                ClientState.ActionTargetId = Objects.HoverSprite?.Entity.Id ?? 0; 
-                ClientState.ActionTargetLoc = getCastTargetLocation();
-            }
-            else
                 ClientState.ActionId = 0;
+                return;
+            }
+
+            if (!MouseInfo.RightDown)
+            {
+                ClientState.ActionId = 0;
+                return;
+            }
+
+
+            if (ab.TargetType == AbilityTargetType.Passive)
+            {
+                ClientState.ActionId = 0;
+                return;
+            }
+            CastAbility(ab);
         }
 
-        Vector getCastTargetLocation()
+        public void CastAbility(IAbility ab)
+        {
+            var targetLoc = getCastTargetLocation(ab);
+
+            //cooldown
+            if (ab.CurrentCooldown > 0)
+            {
+                if (MouseInfo.RightJustPressed)
+                    Interface.FloatingText.AddLabel(targetLoc, $"{ab.CurrentCooldown / 1000.0:0.0} sec!", Color.Red, FloatingTextStyle.Top);
+                return;
+            }
+
+            //target
+            if (ab.TargetType != AbilityTargetType.NoTarget
+                && targetLoc.DistanceTo(Hero.Position) > ab.CastRange)
+            {
+                Interface.FloatingText.AddLabel(targetLoc, "Out of range", Color.Red, FloatingTextStyle.Top);
+                Interface.RangeIndicator.Show(ab.CastRange, 1250);
+                return;
+            }
+
+            //mana
+            if (Hero.Mana < ab.ManaCost)
+            {
+                Interface.FloatingText.AddLabel(targetLoc, "Not enough mana", Color.Red, FloatingTextStyle.Top);
+                return;
+            }
+
+
+            //cast abilities if button is held
+            ClientState.ActionId = ab.Id;
+            ClientState.ActionTargetId = Objects.HoverSprite?.Entity.Id ?? 0;
+            ClientState.ActionTargetLoc = targetLoc;
+        }
+
+        Vector getCastTargetLocation(IAbility ab)
         {
             var m = MouseInfo.InGamePosition;
             if (!Settings.Current.ExtendCast)
                 return m;
 
-            var r = Interface.CurrentAbility.CastRange;
+            var r = ab.CastRange;
             var o = Objects.MainHero.Position;
             var d = m - o;
             var l = d.Length();

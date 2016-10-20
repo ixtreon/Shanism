@@ -12,7 +12,7 @@ namespace Shanism.Client.UI.CombatText
         const int WaitDuration = 250;
 
 
-        public Color ForeColor { get; set; } = Color.LimeGreen.SetAlpha(100);
+        public Color ForeColor { get; set; } = Color.DarkGreen.SetAlpha(64);
 
         bool isForced;
         double range;
@@ -55,6 +55,7 @@ namespace Shanism.Client.UI.CombatText
             if (isForced && !isBlinkShown(durationLeft))
                 return;
 
+            //DrawOrder = 0;
             var gamePos = Screen.GameCenter - range;
             var screenPos = Screen.GameToScreen(gamePos);
             var screenDiameter = Screen.GameScale * (2 * range);

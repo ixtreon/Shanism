@@ -86,11 +86,11 @@
     <Compile Include="Drawing\Sprites\IconSprite.cs" />
     <Compile Include="Drawing\Sprites\SpriteBase.cs" />
     <Compile Include="Drawing\Sprites\UnitSprite.cs" />
-    <Compile Include="Drawing\TextureChunk.cs" />
     <Compile Include="Exceptions\ContentDirectoryMissing.cs" />
     <Compile Include="Input\InputThread.cs" />
     <Compile Include="Input\MouseInfo.cs" />
     <Compile Include="Interfaces\IClientEngine.cs" />
+    <Compile Include="Systems\Ability.cs" />
     <Compile Include="Systems\ClientSystem.cs" />
     <Compile Include="Systems\Actions.cs" />
     <Compile Include="Systems\Chat.cs" />
@@ -160,7 +160,7 @@
     <Compile Include="UI\Menus\Keybinds.cs" />
     <Compile Include="UI\Menus\MainMenu.cs" />
     <Compile Include="UI\Tooltips\AbilityTip.cs" />
-    <Compile Include="Systems\Interface.cs" />
+    <Compile Include="Systems\Ui.cs" />
     <Compile Include="UI\Game\SpellBar.cs" />
     <Compile Include="UI\Menus\Abilities.cs" />
     <Compile Include="UI\Game\Elements\SpellButton.cs" />

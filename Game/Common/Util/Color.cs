@@ -654,6 +654,16 @@ namespace Shanism.Common
 
         }
 
+        /// <summary>
+        /// Mixes another color with this one. 
+        /// </summary>
+        /// <param name="other">The color to mix this color with.</param>
+        /// <param name="ratio">The ratio of the second color. Should be between 0 and 1.</param>
+        /// <returns></returns>
+        public Color MixWith(Color other, float ratio)
+        {
+            return Lerp(this, other, ratio);
+        }
 
         /// <summary>
         /// Returns a new color with the alpha value set to a value from the range 0 to 255. 

@@ -33,7 +33,7 @@ namespace Shanism.Client
         /// </summary>
         readonly SpriteSystem objects;
         Terrain terrain;
-        Interface @interface;
+        UiSystem @interface;
         /// <summary>
         /// Listens for ability casts and informs the server. 
         /// </summary>
@@ -97,9 +97,9 @@ namespace Shanism.Client
             systems.Clear();
             systems.Add(terrain = new Terrain(device, Content.Terrain));
             systems.Add(objects);
-            systems.Add(movement = new MoveSystem());
             systems.Add(chat = new ChatSystem());
-            systems.Add(@interface = new Interface(device, objects, chat));
+            systems.Add(@interface = new UiSystem(device, objects, chat));
+            systems.Add(movement = new MoveSystem(@interface));
             systems.Add(actions = new ActionSystem(@interface, objects));
 
             foreach (var sys in systems)

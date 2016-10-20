@@ -19,7 +19,7 @@ namespace Shanism.Common.Serialization
             w.Write((float)e.Position.Y);
             w.Write(e.Model ?? string.Empty);
             w.Write(e.Animation ?? string.Empty);
-            w.Write((float)e.Orientation);
+            w.Write(e.Orientation);
             w.Write(e.LoopAnimation);
             w.Write((float)e.Scale);
             w.Write(e.CurrentTint.Pack());

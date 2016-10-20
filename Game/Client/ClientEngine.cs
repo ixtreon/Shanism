@@ -181,8 +181,6 @@ namespace Shanism.Client
 
             if (isConnected)
             {
-                Ticker.Default.Update(msElapsed);
-
                 //input
                 KeyboardInfo.Update(msElapsed);
                 MouseInfo.Update(msElapsed);
@@ -262,7 +260,7 @@ namespace Shanism.Client
             if (sz.X == 0 || sz.Y == 0 || sz == Screen.Size)
                 return;
 
-            Screen.SetWindowSize(sz);
+            Screen.SetWindowSize(((Vector)sz * Settings.Current.RenderSize).ToPoint());
         }
 
         void IClientEngine.MoveCamera(Vector? inGameCenter, Vector? inGameSz)
