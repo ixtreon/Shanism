@@ -63,16 +63,18 @@ namespace Shanism.Client.UI
             if (btnId < 0 || btnId >= buttons.Count)
                 return;
 
-            var btn = buttons[btnId];
-            var ab = btn?.Ability;
-            if (ab?.TargetType == AbilityTargetType.NoTarget)
-            {
-                AbilityActivated?.Invoke(ab);
-            }
-            else
-            {
+            var ab = buttons[btnId]?.Ability;
+            if (ab == null || ab.TargetType == AbilityTargetType.Passive)
+                return;
+
+            //if (ab.TargetType == AbilityTargetType.NoTarget)
+            //{
+            //    AbilityActivated?.Invoke(ab);
+            //}
+            //else
+            //{
                 buttons[btnId].IsSelected = true;
-            }
+            //}
 
         }
 

@@ -47,7 +47,7 @@ namespace Shanism.Client.UI
             Add(RangeIndicator = new RangeIndicator());
             Add(errors = new ErrorTextControl());
 
-            //game controls
+            // hero, target & hover
             Add(HeroFrame = new UnitFrame
             {
                 ParentAnchor = AnchorMode.Top,
@@ -62,6 +62,7 @@ namespace Shanism.Client.UI
             {
                 ParentAnchor = AnchorMode.Top,
             });
+
             Add(HeroAbilities = new SpellBar(0)
             {
                 ParentAnchor = AnchorMode.Bottom,

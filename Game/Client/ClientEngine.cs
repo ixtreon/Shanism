@@ -241,9 +241,15 @@ namespace Shanism.Client
                         spriteBatch.End();
                     }
 
+
+                    //var gg  = new Graphics(spriteBatch, -Screen.UiSize / 2, Screen.UiSize);
+                    //spriteBatch.Begin();
+                    //gg.Draw(Content.Textures.Blank, Screen.UiSize / 4, Screen.UiSize / 2);
+                    //spriteBatch.End();
+
+
                     // 4. interface
                     Game.DrawUi();
-
                     //debug
                     if (ShowDebugStats)
                     {
@@ -260,7 +266,7 @@ namespace Shanism.Client
             if (sz.X == 0 || sz.Y == 0 || sz == Screen.Size)
                 return;
 
-            Screen.SetWindowSize(((Vector)sz * Settings.Current.RenderSize).ToPoint());
+            Screen.SetWindowSize(/*((Vector)*/sz /** Settings.Current.RenderSize).ToPoint()*/);
         }
 
         void IClientEngine.MoveCamera(Vector? inGameCenter, Vector? inGameSz)
@@ -342,6 +348,10 @@ namespace Shanism.Client
             debugString = string.Join("\n", new[]
             {
                 $"FPS: {curFps:00}",
+
+                $"BackBuffer Size: {DefaultRenderTarget?.Bounds.Size}",
+                $"Window Size: {Screen.Size}",
+                $"Mouse: {MouseInfo.ScreenPosition}",
 
                 $"Mouse UI: {mpUi:0.00}",
                 $"Mouse InGame: {mpGame:0.00}",

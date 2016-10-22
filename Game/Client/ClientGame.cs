@@ -64,7 +64,7 @@ namespace Shanism.Client
 
         void recreateDrawBuffer()
         {
-            var s = Settings.Current.RenderSize;
+            var s = Screen.RenderSize;
             var w = (int)(Window.ClientBounds.Width * s);
             var h = (int)(Window.ClientBounds.Height * s);
             drawBuffer = new RenderTarget2D(GraphicsDevice, w, h);
@@ -97,7 +97,7 @@ namespace Shanism.Client
 
                 //drawbuffer
                 recreateDrawBuffer();
-                _clientEngine.SetWindowSize(new Common.Point(drawBuffer.Width, drawBuffer.Height));
+                _clientEngine.SetWindowSize(sz.Size.ToPoint());
 
                 //actual backbuffer
                 graphics.PreferredBackBufferWidth = (int)(sz.Width);
@@ -154,8 +154,8 @@ namespace Shanism.Client
                     sb.Begin();
                     var sz = Window.ClientBounds;
                     sb.Draw(drawBuffer,
-                        new Microsoft.Xna.Framework.Rectangle(0, 0, sz.Width, sz.Height),
-                        new Microsoft.Xna.Framework.Rectangle(0, 0, drawBuffer.Width, drawBuffer.Height),
+                        new Rectangle(0, 0, sz.Width, sz.Height),
+                        new Rectangle(0, 0, drawBuffer.Width, drawBuffer.Height),
                         Color.White);
                     sb.End();
                 }

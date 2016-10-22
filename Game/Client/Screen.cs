@@ -49,6 +49,8 @@ namespace Shanism.Client
         /// </summary>
         public static double UiScale { get; private set; } = DefaultUiScale;
 
+        public static float RenderSize { get; private set; } = Settings.Current.RenderSize;
+
         /// <summary>
         /// Gets the Game-to-pixel scaling factor. 
         /// </summary>
@@ -64,6 +66,7 @@ namespace Shanism.Client
         /// </summary>
         public static Vector GameCenter => _pannedLocation;
 
+
         static Vector backBufferScale = new Vector(1);
 
         static Vector _pannedLocation;
@@ -74,7 +77,13 @@ namespace Shanism.Client
             HalfSize = Size / 2;
 
             UiScale = Math.Min(Size.X, Size.Y) / 2;
-            FontScale = UiScale / DefaultUiScale;
+            FontScale = UiScale / DefaultUiScale * RenderSize;
+        }
+
+        public static void SetRenderSize(float renderSize)
+        {
+            RenderSize = renderSize;
+            FontScale = UiScale / DefaultUiScale * RenderSize;
         }
 
         public static void MoveCamera(Vector inGameCenter)
@@ -98,13 +107,13 @@ namespace Shanism.Client
         /// Gets the screen co-ordinates of the given in-game point. 
         /// </summary>
         public static Vector GameToScreen(Vector p) 
-            => (p - GameCenter) * GameScale + HalfSize;
+            => ((p - GameCenter) * GameScale + HalfSize) * RenderSize;
 
         /// <summary>
         /// Converts the given screen point to in-game co-ordinates.  
         /// </summary>
         public static Vector ScreenToGame(Vector position) 
-            => (position - HalfSize) / GameScale + GameCenter;
+            => (position / RenderSize - HalfSize) / GameScale + GameCenter;
 
 
         // TODO: stop being lazy
@@ -121,7 +130,7 @@ namespace Shanism.Client
         /// Converts the given Ui point to screen co-ordinates.  
         /// </summary>
         public static Vector UiToScreen(Vector p) 
-            => HalfSize + p * UiScale;
+            => (HalfSize + p * UiScale) * RenderSize;
 
 
 
@@ -136,7 +145,7 @@ namespace Shanism.Client
         /// </summary>
         public static double ScreenToUi(double sz)
         {
-            return sz / UiScale;
+            return sz / UiScale / RenderSize;
         }
     }
 }

@@ -22,6 +22,8 @@ namespace Shanism.Client.UI
         /// </summary>
         public static SpellBarButton CurrentSpellButton { get; private set; }
 
+        public static SpellBarButton PreviousSpellButton { get; private set; }
+
 
         public readonly int BarId;
         public readonly int ButtonId;
@@ -59,6 +61,7 @@ namespace Shanism.Client.UI
             if (CurrentSpellButton != this && CurrentSpellButton != null)
                 CurrentSpellButton.IsSelected = false;
 
+            PreviousSpellButton = CurrentSpellButton;
             CurrentSpellButton = this;
         }
 

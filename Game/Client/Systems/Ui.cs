@@ -31,7 +31,8 @@ namespace Shanism.Client.Systems
 
         public RangeIndicator RangeIndicator => root.RangeIndicator;
 
-        public IAbility CurrentAbility => SpellBarButton.CurrentSpellButton?.Ability;
+        public SpellButton CurrentSpellButton => SpellBarButton.CurrentSpellButton;
+        public SpellButton PreviousSpellButton => SpellBarButton.PreviousSpellButton;
 
         public Control Root => root;
 

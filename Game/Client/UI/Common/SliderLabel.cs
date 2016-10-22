@@ -1,4 +1,5 @@
-﻿using Shanism.Common;
+﻿using Shanism.Client.Drawing;
+using Shanism.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,9 @@ namespace Shanism.Client.UI.Common
 
         
         public string Text { get { return Label.Text; } set { Label.Text = value; } }
+        public TextureFont TextFont { get { return Label.Font; } set { Label.Font = value; } }
+        public Color TextColor { get { return Label.TextColor; } set { Label.TextColor = value; } }
+
         public double MinValue { get { return Slider.MinValue; } set { Slider.MinValue = value; } }
         public double MaxValue { get { return Slider.MaxValue; } set { Slider.MaxValue = value; } }
 

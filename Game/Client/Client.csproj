@@ -131,7 +131,7 @@
     <Compile Include="UI\Menus\Keybinds\KeybindPanel.cs" />
     <Compile Include="UI\Menus\Keybinds\KeyBoxLabel.cs" />
     <Compile Include="UI\Menus\MenuBar.cs" />
-    <Compile Include="UI\Game\Elements\SpellBarButton.cs" />
+    <Compile Include="UI\Casting\SpellBarButton.cs" />
     <Compile Include="Settings\ShanoSettings.cs" />
     <Compile Include="Settings\Keybinds.cs" />
     <Compile Include="Drawing\Shaders.cs" />
@@ -149,7 +149,7 @@
     <Compile Include="UI\CombatText\FloatingTextProvider.cs" />
     <Compile Include="UI\Game\Elements\BuffControl.cs" />
     <Compile Include="UI\Game\BuffBar.cs" />
-    <Compile Include="UI\Game\CastBar.cs" />
+    <Compile Include="UI\Casting\CastBar.cs" />
     <Compile Include="UI\Chat\ChatBar.cs" />
     <Compile Include="UI\Common\Button.cs" />
     <Compile Include="UI\Game\Elements\HealthBar.cs" />
@@ -161,9 +161,9 @@
     <Compile Include="UI\Menus\MainMenu.cs" />
     <Compile Include="UI\Tooltips\AbilityTip.cs" />
     <Compile Include="Systems\Ui.cs" />
-    <Compile Include="UI\Game\SpellBar.cs" />
+    <Compile Include="UI\Casting\SpellBar.cs" />
     <Compile Include="UI\Menus\Abilities.cs" />
-    <Compile Include="UI\Game\Elements\SpellButton.cs" />
+    <Compile Include="UI\Casting\SpellButton.cs" />
     <Compile Include="UI\Game\UnitBox.cs" />
     <Compile Include="UI\Tooltips\SimpleTip.cs" />
     <Compile Include="UI\Control.cs" />
@@ -202,6 +202,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="UI\GameScreens\" />
     <Folder Include="UI\StatBox\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

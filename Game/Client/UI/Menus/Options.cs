@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Shanism.Client.UI.Common;
+﻿using Shanism.Client.UI.Common;
 using Shanism.Common;
 using System;
 using System.Collections.Generic;
@@ -68,6 +67,9 @@ namespace Shanism.Client.UI.Menus
                 {
                     Size = new Vector(mainPanel.Size.X - 2 * Padding, 0.07),
                     ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
+
+                    TextFont = Content.Fonts.NormalFont,
+                    TextColor = Color.White,
 
                     MinValue = 0.05,
                     MaxValue = 1.00,
@@ -138,6 +140,7 @@ namespace Shanism.Client.UI.Menus
 
         void BtnAccept_MouseUp(Input.MouseButtonArgs obj)
         {
+            Screen.SetRenderSize(Settings.Current.RenderSize);
             Settings.Current.Save();
             IsVisible = false;
         }

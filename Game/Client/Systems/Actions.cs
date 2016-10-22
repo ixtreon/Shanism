@@ -38,25 +38,39 @@ namespace Shanism.Client.Systems
                 return;
 
             //make some checks so we don't spam the server
-            var ab = Interface.CurrentAbility;
+            var ab = Interface.CurrentSpellButton?.Ability;
             if (ab == null)
             {
                 ClientState.ActionId = 0;
                 return;
             }
 
-            if (!MouseInfo.RightDown)
+            //cast only if rightdown or if instacast
+            if (!(MouseInfo.RightDown || ab.TargetType == AbilityTargetType.NoTarget))
             {
                 ClientState.ActionId = 0;
                 return;
             }
 
-
+            //cast only if not passive
             if (ab.TargetType == AbilityTargetType.Passive)
             {
                 ClientState.ActionId = 0;
                 return;
             }
+
+            //instacasts are spammed until server registers it
+            if (Objects.MainHero.CastingAbilityId == ab.Id && ab.TargetType == AbilityTargetType.NoTarget)
+            {
+                ClientState.ActionId = 0;
+
+                if (Interface.PreviousSpellButton != null)
+                    Interface.PreviousSpellButton.IsSelected = true;
+                else
+                    Interface.CurrentSpellButton.IsSelected = false;
+                return;
+            }
+
             CastAbility(ab);
         }
 

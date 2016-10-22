@@ -126,7 +126,7 @@ namespace Shanism.Client
             size = size.Clamp(Vector.Zero, (Size - pos));
             if (size.X < 0 || size.Y < 0)
                 return Vector.Zero;
-            return size * Screen.UiScale;
+            return size * Screen.UiScale * Screen.RenderSize;
         }
 
         public override string ToString() => $"Graphics @ {Position} : {Size}";
