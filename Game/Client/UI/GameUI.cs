@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Shanism.Client.UI
 {
-    class Root : Control
+    class GameUI : Control
     {
         public readonly UnitFrame HeroFrame;
         public readonly CastBar HeroCastBar;
@@ -31,7 +31,7 @@ namespace Shanism.Client.UI
 
         public event Action<IAbility> AbilityActivated;
 
-        public Root()
+        public GameUI()
         {
             Size = new Vector(2, 1);
             CanHover = false;

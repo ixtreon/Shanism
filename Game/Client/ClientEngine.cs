@@ -38,9 +38,6 @@ namespace Shanism.Client
         readonly ConcurrentQueue<IOMessage> pendingMessages = new ConcurrentQueue<IOMessage>();
 
 
-        /// <summary>
-        /// Contains all systems. 
-        /// </summary>
         SystemGod Game;
 
         IShanoEngine server;

@@ -16,7 +16,9 @@ using Shanism.Common.Message.Client;
 namespace Shanism.Client
 {
 
-    // A top level control, contains all the client systems
+    /// <summary>
+    /// The keeper of all game systems. 
+    /// </summary>
     class SystemGod : Control
     {
         readonly ClientState clientState;
@@ -32,21 +34,25 @@ namespace Shanism.Client
         /// Lists and draws objects. 
         /// </summary>
         readonly SpriteSystem objects;
+
         Terrain terrain;
-        UiSystem @interface;
+
         /// <summary>
         /// Listens for ability casts and informs the server. 
         /// </summary>
         ActionSystem actions;
+
         /// <summary>
         /// Listens for key presses and informs the server. 
         /// </summary>
         MoveSystem movement;
+
         /// <summary>
         /// Listens for chat messages and sends them to the chatbox
         /// </summary>
         ChatSystem chat;
 
+        UiSystem @interface;
 
         #endregion
 

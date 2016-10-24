@@ -87,6 +87,9 @@
     <Compile Include="Drawing\Sprites\SpriteBase.cs" />
     <Compile Include="Drawing\Sprites\UnitSprite.cs" />
     <Compile Include="Exceptions\ContentDirectoryMissing.cs" />
+    <Compile Include="GameScreens\InGame.cs" />
+    <Compile Include="GameScreens\GameScreen.cs" />
+    <Compile Include="GameScreens\MainMenu.cs" />
     <Compile Include="Input\InputThread.cs" />
     <Compile Include="Input\MouseInfo.cs" />
     <Compile Include="Interfaces\IClientEngine.cs" />
@@ -110,7 +113,7 @@
     <Compile Include="UI\Menus\Character\StatBox.cs" />
     <Compile Include="UI\Common\FlowPanel.cs" />
     <Compile Include="UI\Menus\Options.cs" />
-    <Compile Include="UI\Root.cs" />
+    <Compile Include="UI\GameUI.cs" />
     <Compile Include="UI\Ticker.cs" />
     <Compile Include="Assets\AssetList.cs" />
     <Compile Include="Assets\FontCache.cs" />
@@ -160,7 +163,7 @@
     <Compile Include="UI\Menus\Keybinds.cs" />
     <Compile Include="UI\Menus\MainMenu.cs" />
     <Compile Include="UI\Tooltips\AbilityTip.cs" />
-    <Compile Include="Systems\Ui.cs" />
+    <Compile Include="Systems\GameUi.cs" />
     <Compile Include="UI\Casting\SpellBar.cs" />
     <Compile Include="UI\Menus\Abilities.cs" />
     <Compile Include="UI\Casting\SpellButton.cs" />
@@ -202,7 +205,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="UI\GameScreens\" />
     <Folder Include="UI\StatBox\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

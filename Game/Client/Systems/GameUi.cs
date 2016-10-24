@@ -21,7 +21,7 @@ namespace Shanism.Client.Systems
     /// <seealso cref="Shanism.Client.Systems.ClientSystem" />
     class UiSystem : ClientSystem
     {
-        readonly Root root;
+        readonly GameUI root;
 
         readonly SpriteSystem objects;
 
@@ -39,12 +39,12 @@ namespace Shanism.Client.Systems
         readonly SpriteBatch interfaceBatch;
         public ActionSystem actions;
 
-        public UiSystem(GraphicsDevice device, SpriteSystem objManager, IChatProvider chatProvider)
+        public UiSystem(GraphicsDevice device, SpriteSystem objects, IChatProvider chatProvider)
         {
             interfaceBatch = new SpriteBatch(device);
-            objects = objManager;
+            this.objects = objects;
 
-            root = new Root();
+            root = new GameUI();
             root.AbilityActivated += onAbilityActivated;
             root.GameActionActivated += onActionActivated;
             root.ChatBox.SetProvider(chatProvider);
