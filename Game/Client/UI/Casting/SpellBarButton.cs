@@ -56,7 +56,7 @@ namespace Shanism.Client.UI
             }
         }
 
-        void onSelected(Common.Button obj)
+        void onSelected(Button obj)
         {
             if (CurrentSpellButton != this && CurrentSpellButton != null)
                 CurrentSpellButton.IsSelected = false;

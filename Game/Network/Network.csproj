@@ -76,6 +76,7 @@
     <Compile Include="Client\ObjectCache.cs" />
     <Compile Include="Client\ClientSerializer.cs" />
     <Compile Include="Diff\DiffGuy.cs" />
+    <Compile Include="Ext.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="NetworkExt.cs" />
     <Compile Include="Client\NClient.cs" />

@@ -21,7 +21,7 @@ namespace Shanism.Client.Systems
 
         readonly GraphicsDevice device;
 
-        readonly AssetList content;
+        readonly ContentList content;
 
         readonly Dictionary<uint, EntitySprite> unitSpriteDict = new Dictionary<uint, EntitySprite>();
 
@@ -54,7 +54,7 @@ namespace Shanism.Client.Systems
         public EntitySprite HoverSprite => hoverSprite;
 
 
-        public SpriteSystem(GraphicsDevice device, AssetList content)
+        public SpriteSystem(GraphicsDevice device, ContentList content)
         {
             this.device = device;
             this.content = content;
@@ -66,8 +66,8 @@ namespace Shanism.Client.Systems
         {
             //update the transformation matrix
             transformMatrix = Matrix.CreateTranslation(-(float)Screen.GameCenter.X, -(float)Screen.GameCenter.Y, 0)
-                * Matrix.CreateScale((float)Screen.GameScale.X, (float)Screen.GameScale.Y, 1)
-                * Matrix.CreateTranslation(Screen.HalfSize.X, Screen.HalfSize.Y, 0);
+                * Matrix.CreateScale((float)Screen.GameScale.X * Screen.RenderSize, (float)Screen.GameScale.Y * Screen.RenderSize, 1)
+                * Matrix.CreateTranslation(Screen.HalfSize.X * Screen.RenderSize, Screen.HalfSize.Y * Screen.RenderSize, 0);
 
 
             //update all sprites + hover guy

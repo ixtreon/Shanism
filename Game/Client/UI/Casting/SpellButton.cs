@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Shanism.Common;
-using Shanism.Client.UI.Common;
 using Shanism.Common.Interfaces.Objects;
 
 namespace Shanism.Client.UI

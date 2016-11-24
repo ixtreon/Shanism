@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Shanism.Common;
 
-namespace Shanism.Client.UI.Common
+namespace Shanism.Client.UI
 {
     /// <summary>
     /// A progress bar representing the current value of a property relative to the maximum value of that property. 

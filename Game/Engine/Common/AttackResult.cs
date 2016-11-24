@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shanism.Engine.Common
+namespace Shanism.Engine
 {
     enum AttackResult    //unused
     {

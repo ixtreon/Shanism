@@ -16,7 +16,7 @@ namespace Shanism.Client.Drawing
 
         readonly Dictionary<string, IconSprite> icons = new Dictionary<string, IconSprite>();
 
-        public IconCache(AssetList assets)
+        public IconCache(ContentList assets)
         {
             IconBorder = new IconSprite(assets, "ui/border");
             IconBorderHover = new IconSprite(assets, "ui/border-hover");

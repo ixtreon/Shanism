@@ -73,7 +73,7 @@ namespace Shanism.Engine
         /// <summary>
         /// Gets or sets the custom data for this entity. 
         /// </summary>
-        public dynamic Data { get; set; }
+        public object Data { get; set; }
 
         /// <summary>
         /// Gets whether this entity should be removed from the map as soon as possible. 
@@ -177,6 +177,9 @@ namespace Shanism.Engine
         /// </summary>
         public virtual void OnUpdate(int msElapsed) { }
 
+        /// <summary>
+        /// Override to implement custom functionality on entity creation. 
+        /// </summary>
         public virtual void OnSpawned() { }
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Shanism.Common.Game;
-using Shanism.Client.UI.Common;
 using Shanism.Common;
 using Shanism.Client.Drawing;
 using Shanism.Common.Interfaces.Objects;
@@ -10,6 +9,9 @@ using Shanism.Client.Input;
 
 namespace Shanism.Client.UI.Tooltips
 {
+    /// <summary>
+    /// A tooltip for them abilities.
+    /// </summary>
     class AbilityTip : Control
     {
         //The size minus the height needed to write the description. 
@@ -87,9 +89,9 @@ namespace Shanism.Client.UI.Tooltips
                     var ct = newAbility.CastTime / 1000.0;
                     var cr = newAbility.CastRange;
                     if (newAbility.TargetType == AbilityTargetType.NoTarget)
-                        txtStuff.Text = $"MC: {mc} CD: {cd:0.0}s CT: {ct:0.0}s";
+                        txtStuff.Text = $"MC: {mc:0.#} CD: {cd:0.#}s CT: {ct:0.#}s";
                     else
-                        txtStuff.Text = $"MC: {mc} R: {cr} CD: {cd:0.0}s CT: {ct:0.0}s";
+                        txtStuff.Text = $"MC: {mc:0.#} R: {cr:0.#} CD: {cd:0.#}s CT: {ct:0.#}s";
                 }
 
 

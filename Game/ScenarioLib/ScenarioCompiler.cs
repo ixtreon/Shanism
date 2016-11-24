@@ -11,6 +11,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Security.Policy;
 using Shanism.Common;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Shanism.ScenarioLib
 {
@@ -30,18 +31,33 @@ namespace Shanism.ScenarioLib
         /// <summary>
         /// The system assemblies used to compile scenarios. 
         /// </summary>
-        static readonly string[] systemAssemblies = 
+        static readonly string[] systemAssemblies =
         {
             "System.dll",
             "System.Core.dll",
             "mscorlib.dll",
-            "Microsoft.Csharp.dll",
+            //"Microsoft.Csharp.dll",
+        };
+
+        static readonly HashSet<string> whitelistedNamespaces = new HashSet<string>
+        {
+            "System",
+
+            //System.Core
+            "System.Linq",
+
+            //mscorlib
+            "System.Threading.Tasks",
+
+            //System
+            "System.Collections",
+            "System.Collections.Generic",
         };
 
         /// <summary>
         /// The custom assemblies used to compile scenarios. 
         /// </summary>
-        static readonly string[] customAssemblies = 
+        static readonly string[] customAssemblies =
         {
             "Shanism.Common.dll",
             "Shanism.Engine.dll",
@@ -122,12 +138,11 @@ namespace Shanism.ScenarioLib
                 throw new InvalidOperationException("Please select a Scenario directory first!");
 
             var files = Directory.EnumerateFiles(ScenarioDir, "*.cs", SearchOption.AllDirectories);
-            var compilationResult = compile(files, Path.GetFullPath(OutputFilePath));
 
-            IsCompiled = compilationResult.Success;
-            if (IsCompiled)
-                return Enumerable.Empty<Diagnostic>();
-            return compilationResult.Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error);
+            List<Diagnostic> errors;
+            IsCompiled = compile(files, Path.GetFullPath(OutputFilePath), out errors);
+
+            return errors;
         }
 
         /// <summary>
@@ -136,11 +151,21 @@ namespace Shanism.ScenarioLib
         /// <param name="inFiles"></param>
         /// <param name="outFile">The path where the compiled file should be written. </param>
         /// <returns>The result of the compilation. </returns>
-        EmitResult compile(IEnumerable<string> inFiles, string outFile)
+        bool compile(IEnumerable<string> inFiles, string outFile, out List<Diagnostic> errors)
         {
-            //get the syntax tree
+            //get the syntax trees
+            //List<SyntaxTree> syntaxTrees = new List<SyntaxTree>();
+            //foreach (var f in inFiles)
+            //{
+            //    var tree = SyntaxFactory.ParseSyntaxTree(File.ReadAllText(f), null, f, Encoding.Default);
+
+            //}
             var syntaxTrees = inFiles
-                .Select(f => SyntaxFactory.ParseSyntaxTree(File.ReadAllText(f), null, f, Encoding.Default));
+                .Select(f => SyntaxFactory.ParseSyntaxTree(File.ReadAllText(f), null, f, Encoding.Default))
+                .ToList();
+
+
+
 
             //create the compilation unit using the trusted assemblies
             var systemRefs = systemAssemblies
@@ -149,11 +174,84 @@ namespace Shanism.ScenarioLib
                 .Select(s => MetadataReference.CreateFromFile(getLocalDir(s)));
             var compilation = CSharpCompilation.Create(
                 assemblyName: OutputFileName,
-                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
-                    optimizationLevel: OptimizationLevel.Debug),
-                    syntaxTrees: syntaxTrees,
-                    references: systemRefs.Concat(customRefs)
-                );
+                syntaxTrees: syntaxTrees,
+                references: systemRefs.Concat(customRefs),
+                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+            errors = compilation.GetDiagnostics()
+                .Where(d => d.Severity == DiagnosticSeverity.Error)
+                .ToList();
+
+            if (errors.Any())
+                return false;
+
+            //check no custom namespaces 
+            //starting with whitelisted namespace names
+            var namespaces = syntaxTrees
+                .SelectMany(t => t.GetNamespaces())
+                .ToList();
+
+            errors = namespaces
+                .Where(n => whitelistedNamespaces.Contains(n.Name.ToString()))
+                .Select(n => customError(n.GetLocation(), $"Naming your namespace `{n.Name}` is not allowed."))
+                .ToList();
+
+            if (errors.Any())
+                return false;
+
+            //check only method calls from whitelisted namespaces
+            var wlns = new HashSet<string>(whitelistedNamespaces);
+            foreach (var ns in namespaces)
+                wlns.Add(ns.Name.ToString());
+
+            errors = syntaxTrees.Select(t => new
+                {
+                    Invocations = t.GetInvocations(),
+                    Model = compilation.GetSemanticModel(t, false),
+                })
+                .SelectMany(s => s.Invocations.Select(i => new
+                {
+                    Namespace = s.Model
+                        .GetSymbolInfo(i)
+                        .Symbol
+                        .ContainingNamespace
+                        .ToString(),
+                    Invocation = i,
+                }))
+                .Where(s
+                    => !s.Namespace.StartsWith("Shanism")
+                    && !wlns.Contains(s.Namespace))
+                .Select(s => customError(
+                    s.Invocation.GetLocation(),
+                    $"The namespace `{s.Namespace}` cannot be used in custom scenarios."))
+                .ToList();
+
+            if (errors.Any())
+                return false;
+
+            //foreach (var tree in syntaxTrees)
+            //{
+            //    var model = compilation.GetSemanticModel(tree, false);
+            //    var methodCalls = tree.GetInvocations()
+            //        .ToList();
+
+            //    foreach (var mi in methodCalls)
+            //    {
+            //        var memberSymbol = (IMethodSymbol)model.GetSymbolInfo(mi).Symbol;
+            //        var nspace = memberSymbol.ContainingNamespace;
+            //        var s_nspace = nspace.ToString();
+
+            //        if (s_nspace.StartsWith("Shanism", StringComparison.Ordinal))
+            //            continue;
+
+            //        if (!wlns.Contains(s_nspace))
+            //            errors.Add(customError(mi.GetLocation(), $"The namespace `{s_nspace}` cannot be used in custom scenarios."));
+            //    }
+            //}
+
+            //if (errors.Any())
+            //    return false;
+
 
             //create directory
             if (!Directory.Exists(OutputDirectory))
@@ -165,9 +263,18 @@ namespace Shanism.ScenarioLib
             using (var outStream = new FileStream(OutputFilePath, FileMode.Create))
                 result = compilation.Emit(outStream, pdbStream: pdbStream);
 
-            return result;
+            errors = result.Diagnostics
+                .Where(d => d.Severity == DiagnosticSeverity.Error)
+                .ToList();
+            return result.Success;
         }
-        
+
+        static Diagnostic customError(Location errorLocation, string text)
+            => Diagnostic.Create("666", "ShanoError",
+                    text,
+                    DiagnosticSeverity.Error, DiagnosticSeverity.Error,
+                    true, 0,
+                    location: errorLocation);
 
         static string getAssemblyDir(string path)
         {

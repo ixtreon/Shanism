@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shanism.Client.UI.Common
+namespace Shanism.Client.UI
 {
     class SliderLabel : Control
     {

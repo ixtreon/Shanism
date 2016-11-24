@@ -84,6 +84,7 @@
     <Compile Include="Game\ConnectionState.cs" />
     <Compile Include="Game\EquipSlot.cs" />
     <Compile Include="Game\MovementState.cs" />
+    <Compile Include="ServerState.cs" />
     <Compile Include="Interfaces\Base\IGame.cs" />
     <Compile Include="Interfaces\Objects\IItem.cs" />
     <Compile Include="Message\Client\ChatMessage.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Serialization\Entities\Entity.cs" />
     <Compile Include="Serialization\ObjectHeader.cs" />
     <Compile Include="Serialization\Serializer.cs" />
+    <Compile Include="Util\Allocator.cs" />
     <Compile Include="Util\Color.cs" />
     <Compile Include="Content\AnimationDef.cs" />
     <Compile Include="Content\TextureDef.cs" />

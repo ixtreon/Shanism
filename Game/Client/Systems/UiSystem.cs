@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Shanism.Common;
 using Shanism.Client.Input;
-using Shanism.Client.UI.CombatText;
+using Shanism.Client.UI.Game;
 using Shanism.Client.UI.Chat;
 using Shanism.Client.UI;
 using Shanism.Common.Message;
@@ -21,7 +21,7 @@ namespace Shanism.Client.Systems
     /// <seealso cref="Shanism.Client.Systems.ClientSystem" />
     class UiSystem : ClientSystem
     {
-        readonly GameUI root;
+        readonly GameRoot root;
 
         readonly SpriteSystem objects;
 
@@ -36,17 +36,19 @@ namespace Shanism.Client.Systems
 
         public Control Root => root;
 
-        readonly SpriteBatch interfaceBatch;
+        readonly GraphicsDevice device;
+        readonly Graphics g;
+
         public ActionSystem actions;
 
         public UiSystem(GraphicsDevice device, SpriteSystem objects, IChatProvider chatProvider)
         {
-            interfaceBatch = new SpriteBatch(device);
+            this.device = device;
             this.objects = objects;
+            g = new Graphics(device);
 
-            root = new GameUI();
+            root = new GameRoot();
             root.AbilityActivated += onAbilityActivated;
-            root.GameActionActivated += onActionActivated;
             root.ChatBox.SetProvider(chatProvider);
             root.ChatBar.ChatSent += (m) =>
                 SendMessage(new Common.Message.Client.ChatMessage(string.Empty, m));
@@ -67,21 +69,22 @@ namespace Shanism.Client.Systems
                 .ToList();
         }
 
+
         public void Draw()
         {
-            var g = new Graphics(interfaceBatch, -Screen.UiSize / 2, Screen.UiSize);
-
-            interfaceBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend,
-                SamplerState.PointClamp, DepthStencilState.DepthRead,
-                RasterizerState.CullNone);
+            g.Begin();
 
             Root.Draw(g);
 
-            interfaceBatch.End();
+            g.End();
         }
 
         public override void Update(int msElapsed)
         {
+            g.Bounds = new RectangleF(Vector.Zero, Screen.UiSize);
+
+            root.Update(msElapsed);
+
             //update hero pointer
             if (objects.MainHeroSprite != _curHeroSprite)
             {
@@ -118,23 +121,6 @@ namespace Shanism.Client.Systems
 
                     var text = dmgEv.ValueChange.ToString("0");
                     FloatingText.AddLabel(unit.Position, text, Color.Red, FloatingTextStyle.Rainbow);
-                    break;
-            }
-        }
-
-        void onActionActivated(ClientAction ga)
-        {
-            switch (ga)
-            {
-                case ClientAction.Chat:
-                    if (!root.ChatBar.HasFocus)
-                        root.ChatBar.SetFocus();
-
-                    break;
-
-                default:
-                    root.HeroAbilities.ActivateAction(ga);
-                    root.Menus.ActivateAction(ga);
                     break;
             }
         }

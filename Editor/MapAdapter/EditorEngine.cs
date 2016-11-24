@@ -1,31 +1,33 @@
-﻿using Shanism.Client;
-using Shanism.Common;
+﻿using Shanism.Common;
+using Shanism.Common.Game;
+using Shanism.Common.Interfaces.Entities;
+using Shanism.Common.Message;
 using Shanism.Common.Message.Server;
+using Shanism.Common.StubObjects;
 using Shanism.Editor.ViewModels;
+using Shanism.Engine;
+using Shanism.ScenarioLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common.Message;
-using Shanism.Engine.Objects;
-using Shanism.Common.Game;
-using Shanism.ScenarioLib;
-using System.Windows.Forms;
-using Shanism.Common.StubObjects;
-using Shanism.Engine;
-using Shanism.Engine.Entities;
-
-
-using Shanism.Engine.Common;
-using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Editor.MapAdapter
 {
 
     class EditorEngine : IShanoEngine, IEditorEngine
     {
+        readonly ObjectCreator creator;
+
+        /// <summary>
+        /// All objects that are created on map start
+        /// </summary>
         readonly HashSet<Entity> _startupObjects = new HashSet<Entity>();
+
+        /// <summary>
+        /// All objects created on map start + the dummy God unit
+        /// </summary>
         readonly HashSet<IEntity> _visibleObjects = new HashSet<IEntity>();
 
         /// <summary>
@@ -33,18 +35,13 @@ namespace Shanism.Editor.MapAdapter
         /// </summary>
         public readonly HeroStub God;
 
-        readonly ObjectCreator creator;
+
         EditorReceptor player;
-
-
 
 
         public ScenarioViewModel ScenarioView { get; private set; }
 
-
-        Vector inGameWindowSize = Constants.Client.WindowSize;
-
-
+        public ServerState State { get; } = ServerState.Playing;
 
         ScenarioConfig config => ScenarioView.Scenario.Config;
         MapConfig map => config.Map;
@@ -180,7 +177,7 @@ namespace Shanism.Editor.MapAdapter
 
         void IShanoEngine.Update(int msElapsed)
         {
-
+            // do nothing
         }
     }
 }

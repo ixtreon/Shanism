@@ -1,5 +1,4 @@
 ﻿using Shanism.Client.Input;
-using Shanism.Client.UI.Common;
 using Shanism.Client.UI.Menus;
 using Shanism.Common;
 using System;
@@ -13,27 +12,27 @@ using System.Threading.Tasks;
 
 namespace Shanism.Client.UI
 {
-    enum MenuButtonType
+    enum GameMenuButton
     {
-        Keybinds, Options, Restart, Exit
+        Keybinds, Options, Restart, Quit
     }
 
-    class MainMenu : Window
+    class GameMenu : Window
     {
         class MenuButton : Button
         {
-            public MenuButtonType Type { get; set; }
+            public GameMenuButton Type { get; set; }
         }
 
-        static readonly int NButtons = Enum<MenuButtonType>.Count;
+        static readonly int NButtons = Enum<GameMenuButton>.Count;
         static readonly Vector ButtonSize = new Vector(0.45, 0.10);
         static readonly double MenuPadding = Padding * 3;
 
 
-        public event Action<MenuButtonType> ButtonClicked;
+        public event Action<GameMenuButton> ButtonClicked;
 
 
-        public MainMenu()
+        public GameMenu()
         {
             HasTitleBar = true;
             CanFocus = false;
@@ -44,13 +43,13 @@ namespace Shanism.Client.UI
             Size = new Vector(ButtonSize.X, TitleHeight + (Padding + ButtonSize.Y) * NButtons) + 2 * MenuPadding;
             ParentAnchor = AnchorMode.None;
 
-            foreach (var ty in Enum<MenuButtonType>.Values)
+            foreach (var ty in Enum<GameMenuButton>.Values)
                 addButton(ty);
         }
 
         MenuButton lastButton;
 
-        MenuButton addButton(MenuButtonType btnType)
+        MenuButton addButton(GameMenuButton btnType)
         {
             var btnY = (lastButton?.Bottom ?? TitleHeight + MenuPadding) + Padding;
             var btnPos = new Vector(MenuPadding, btnY);

@@ -15,7 +15,7 @@ namespace Shanism.Client
     /// <summary>
     /// A list of the loaded game assets: textures, animations, fonts.  
     /// </summary>
-    class AssetList
+    class ContentList
     {
         public const string DefaultContentFile = @"scenario.json";
 
@@ -49,24 +49,26 @@ namespace Shanism.Client
         public CircleDict Circles { get; }
 
 
-        public AssetList(GraphicsDevice graphics)
+        public ContentList(GraphicsDevice graphics)
         {
             Circles = new CircleDict(graphics, 65600, 8);
         }
 
-        public void LoadDefault(ContentManager content)
+        public bool LoadDefault(ContentManager content)
         {
             string errors;
             var sc = ScenarioConfig.LoadFromDisk(".", out errors);
             if (sc == null)
+            {
                 Console.WriteLine($"Unable to load the default content: {errors}");
+                return false;
+            }
 
             loadConfig(content, sc.Content, "Textures");
 
             DefaultAnimation = animations["dummy"];
-            // load the only (dummy) model in the content list
-            //animations[ShanoPath.Normalize(AnimationDef.Default.Name)] = AnimationDef.Default;
-            // removed as it is now part of the default scenario.json
+
+            return true;
         }
 
 

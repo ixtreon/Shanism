@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shanism.Engine.Common
+namespace Shanism.Engine
 {
     /// <summary>
     /// The enumeration of flags specifying extra rules when dealing (receiving) damage. 

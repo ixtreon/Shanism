@@ -42,7 +42,7 @@ namespace Shanism.Local
             client.GameLoaded += () =>
             {
                 IReceptor receptor;
-                if (!client.Engine.TryConnect(engine, out receptor))
+                if (!client.GameScreen.TryConnect(engine, out receptor))
                     throw new Exception("Unable to connect to the local server!");
 
                 engine.StartPlaying(receptor);

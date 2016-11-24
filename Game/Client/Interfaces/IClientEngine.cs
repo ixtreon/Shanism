@@ -20,22 +20,21 @@ namespace Shanism.Client
     public interface IClientEngine : IShanoClient
     {
 
-
         TextureCache Textures { get; }
 
-        RenderTarget2D DefaultRenderTarget { get; set; }
+        RenderTarget2D RenderTarget { get; set; }
 
         /// <summary>
         /// Attempts to connect to the specified engine. Returns the receptor in case we succeeded.
         /// </summary>
         /// <param name="engine">The engine to connect to.</param>
         /// <param name="receptor">The receptor for the engine, in case we connected to it.</param>
-        bool TryConnect(IShanoEngine engine, out IReceptor receptor);
+        bool TryConnect(IShanoEngine engine, string playerName, out IReceptor receptor);
 
         /// <summary>
         /// Loads the default game content.
         /// </summary>
-        void LoadContent();
+        bool LoadContent();
 
         void RestartScenario();
 
@@ -43,13 +42,13 @@ namespace Shanism.Client
         /// Causes the client to update its state. 
         /// </summary>
         /// <param name="gameTime">The game time.</param>
-        void Update(GameTime gameTime);
+        void Update(int msElapsed);
 
         /// <summary>
         /// Causes the client to re-draw itself. 
         /// </summary>
         /// <param name="gameTime">The game time.</param>
-        void Draw(GameTime gameTime);
+        void Draw();
 
         /// <summary>
         /// Sets the size of the game-window buffers in pixels.

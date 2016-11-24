@@ -83,7 +83,7 @@ namespace ShanoRPGWin
             clientGame.GameLoaded += () =>
             {
                 IReceptor receptor;
-                if (!clientGame.Engine.TryConnect(netClient, out receptor))
+                if (!clientGame.GameScreen.TryConnect(netClient, playerName, out receptor))
                     throw new Exception("Unable to connect to the local server!");
                 
                 netClient.StartPlaying(receptor);

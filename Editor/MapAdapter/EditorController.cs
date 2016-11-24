@@ -1,30 +1,24 @@
 ﻿using Shanism.Client;
 using Shanism.Common;
-using Shanism.Common.Message.Server;
+using Shanism.Common.Game;
+using Shanism.Common.Interfaces.Entities;
 using Shanism.Editor.ViewModels;
+using Shanism.Engine;
+using Shanism.ScenarioLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Shanism.Common.Message;
-using Shanism.Engine.Objects;
-using Shanism.Common.Game;
-using Shanism.ScenarioLib;
 using System.Windows.Forms;
-using Shanism.Common.StubObjects;
-using Shanism.Engine;
-using Shanism.Engine.Entities;
-
-
-using Shanism.Engine.Common;
-using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Editor.MapAdapter
 {
 
     class EditorController
     {
+        const string PlayerName = "WorldEdit";
+
+
         public ScenarioViewModel ScenarioView { get; private set; }
 
         readonly EditorControl clientControl;
@@ -53,7 +47,6 @@ namespace Shanism.Editor.MapAdapter
 
         public EditorController(EditorControl c)
         {
-
             clientControl = c;
             clientControl.Resize += updateClientSize;
             clientControl.KeyDown += onClientKeyDown;
@@ -77,7 +70,7 @@ namespace Shanism.Editor.MapAdapter
             gameEngine.SomethingChanged += () => MapChanged?.Invoke();
 
             IReceptor rec;
-            if (!gameClient.TryConnect(gameEngine, out rec))
+            if (!gameClient.TryConnect(gameEngine, PlayerName, out rec))
                 throw new Exception("Unable to connect to the editor engine!");
 
             ((IShanoEngine)gameEngine).StartPlaying(rec);
@@ -122,7 +115,8 @@ namespace Shanism.Editor.MapAdapter
             gameClient?.MoveCamera(null, inGameWindowSize);
         }
 
-        public void ResizeMap(Point newSize) => gameEngine.ResizeMap(newSize);
+        public void ResizeMap(Point newSize) 
+            => gameEngine.ResizeMap(newSize);
 
         public void SetBrush(TerrainType tty, int size, bool isCircle)
         {

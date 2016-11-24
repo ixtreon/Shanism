@@ -11,14 +11,9 @@ namespace Shanism.Client
 {
     public static class ClientFactory
     {
-        public static IClientInstance CreateGame(string playerName)
+        public static IClientEngine CreateGameEngine(IGraphicsDeviceService graphics, ContentManager content)
         {
-            return new ClientGame(playerName);
-        }
-
-        public static IClientEngine CreateGameEngine(string playerName, IGraphicsDeviceService graphics, ContentManager content)
-        {
-            return new ClientEngine(playerName, graphics, content);
+            return new ClientEngine(graphics, content);
         }
     }
 }

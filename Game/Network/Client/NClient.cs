@@ -26,6 +26,9 @@ namespace Shanism.Network.Client
         bool handshakeSent;
         NReceptor receptor;
 
+
+        public ServerState State { get; } = ServerState.Playing;
+
         public IShanoClient GameClient { get; private set; }
 
 

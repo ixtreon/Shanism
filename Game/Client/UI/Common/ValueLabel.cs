@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Shanism.Client.UI.Common
+namespace Shanism.Client.UI
 {
     class ValueLabel : Control
     {

@@ -56,12 +56,8 @@ namespace Shanism.Engine
 
         Scenario scenario;
 
+        public ServerState State { get; private set; } = ServerState.NoScenario;
 
-
-        /// <summary>
-        /// Gets whether this game server is running. 
-        /// </summary>
-        public bool IsRunning { get; private set; }
 
         /// <summary>
         /// Gets the thread running the game loop. 
@@ -77,6 +73,11 @@ namespace Shanism.Engine
 
 
         /// <summary>
+        /// Gets whether this game server is running. 
+        /// </summary>
+        bool IsRunning => State == ServerState.Playing;
+
+        /// <summary>
         /// The current game map containing unit/doodad/sfx info. 
         /// </summary>
         internal IGameMap Map => map;
@@ -84,7 +85,7 @@ namespace Shanism.Engine
         internal IScriptRunner Scripts => scripts;
 
         /// <summary>
-        /// Gets the scenario this engine is playing. 
+        /// Gets the scenario assigned to this engine. 
         /// </summary>
         internal Scenario Scenario => scenario;
 
@@ -105,13 +106,15 @@ namespace Shanism.Engine
 
             //register this server as the parent of all objects. 
             //quite hacky by nature
-            if (!GameObject.TrySetGame(this))
+            if (!GameObject.SetGame(this))
                 throw new SingleServerException();
         }
 
 
         public bool TryLoadScenario(string scenarioDir, int mapSeed, out string errors)
         {
+            State = ServerState.Loading;
+
             //reset variables
             players.Clear();
             GameTime = 0;
@@ -120,7 +123,10 @@ namespace Shanism.Engine
             scenarioDir = Path.GetFullPath(scenarioDir);
             var result = Scenario.Load(scenarioDir, out errors, out scenario);
             if (result != Scenario.ScenarioCompilationResult.Success)
+            {
+                State = ServerState.LoadFailure;
                 return false;
+            }
 
             Debug.Assert(scenario != null);
 
@@ -131,6 +137,7 @@ namespace Shanism.Engine
             //fire the OnGameStart script event
             scripts.Run(cs => cs.OnGameStart());
 
+            State = ServerState.Playing;
             return true;
         }
 
@@ -150,6 +157,12 @@ namespace Shanism.Engine
 
         public void StartPlaying(IReceptor rec)
         {
+            if (!IsRunning)
+            {
+                Console.WriteLine($"Connection failed as the server was not running!");
+                return;
+            }
+
             var pl = rec as ShanoReceptor;
             if (pl == null)
                 throw new ArgumentException(nameof(rec), $"The receptor must be of type `{nameof(ShanoReceptor)}` as returned by this engine!");
@@ -169,14 +182,23 @@ namespace Shanism.Engine
         #endregion
 
         #region Server Controls
+
+        //whether any of the Start methods is called.
+        bool autoRun = false;
+
         /// <summary>
         /// Starts running the main game loop on the current thread. 
         /// </summary>
         /// <exception cref="ServerRunningException">Thrown if the server has already been started. </exception>
         public void Start()
         {
-            if (IsRunning) throw new ServerRunningException();
-            IsRunning = true;
+            if (State != ServerState.Playing || State == ServerState.Stopped)
+                throw new InvalidOperationException($"Unable to start the server while in the {State} state.");
+
+            if (autoRun)
+                throw new ServerRunningException();
+
+            autoRun = true;
 
             mainLoop();
         }
@@ -187,8 +209,13 @@ namespace Shanism.Engine
         /// <exception cref="ServerRunningException">Thrown if the server has already been started. </exception>
         public Thread StartBackground()
         {
-            if (IsRunning) throw new ServerRunningException();
-            IsRunning = true;
+            if (State != ServerState.Playing || State == ServerState.Stopped)
+                throw new InvalidOperationException($"Unable to start the server while in the {State} state.");
+
+            if (autoRun)
+                throw new ServerRunningException();
+
+            autoRun = true;
 
             GameThread = new Thread(mainLoop) { IsBackground = true };
             GameThread.Start();
@@ -197,11 +224,38 @@ namespace Shanism.Engine
         }
 
         /// <summary>
+        /// Performs a single update of the game engine. 
+        /// </summary>
+        /// <param name="msElapsed">The time elapsed since the last call of this function. </param>
+        public void Update(int msElapsed)
+        {
+            State = ServerState.Playing;
+
+            GameTime += msElapsed;
+
+            if (perfResetCounter.Tick(msElapsed))
+            {
+                DebugString = $"{GamePerfCounter.GetPerformanceData()}\n\n"
+                    + $"{UnitPerfCounter.GetPerformanceData()}\n\n";
+
+                UnitPerfCounter.Reset();
+                GamePerfCounter.Reset();
+            }
+
+            foreach (var sys in systems)
+                GamePerfCounter.RunAndLog(sys.SystemName, sys.Update, msElapsed);
+
+            foreach (var kvp in players)
+                if (kvp.Value != null)
+                    kvp.Value.Update(msElapsed);
+        }
+
+        /// <summary>
         /// Stops the game server as soon as the current frame has finished processing. 
         /// </summary>
         public void Stop()
         {
-            IsRunning = false;
+            State = ServerState.Stopped;
         }
         #endregion
 
@@ -235,33 +289,9 @@ namespace Shanism.Engine
             ShanoReceptor receptor;
             if (!players.TryGetValue(pl.Name, out receptor))
                 return;     //silently fail?!
-            receptor.SendSystemMessage(msg);
+            receptor?.SendSystemMessage(msg);
         }
         #endregion
-
-        /// <summary>
-        /// Performs a single update of the game state. 
-        /// </summary>
-        /// <param name="msElapsed">The time elapsed since the last call of this function. </param>
-        public void Update(int msElapsed)
-        {
-            GameTime += msElapsed;
-
-            if (perfResetCounter.Tick(msElapsed))
-            {
-                DebugString = $"{GamePerfCounter.GetPerformanceData()}\n\n"
-                    + $"{UnitPerfCounter.GetPerformanceData()}\n\n";
-
-                UnitPerfCounter.Reset();
-                GamePerfCounter.Reset();
-            }
-
-            foreach (var sys in systems)
-                GamePerfCounter.RunAndLog(sys.SystemName, sys.Update, msElapsed);
-
-            foreach (var kvp in players)
-                kvp.Value.Update(msElapsed);
-        }
 
 
         /// <summary>
@@ -284,6 +314,7 @@ namespace Shanism.Engine
         /// </summary>
         void mainLoop()
         {
+            const int sleepGranularity = 10;    //in milliseconds
             while (IsRunning)
             {
                 var frameStart = Environment.TickCount;
@@ -292,9 +323,7 @@ namespace Shanism.Engine
 
                 var msElapsed = Environment.TickCount - frameStart;
                 var msSleep = MSPF - msElapsed;     //to sleep
-                var isThrottled = msSleep < 0;      //or not to sleep?
-
-                if (!isThrottled)
+                if (msSleep > sleepGranularity)     //or not to sleep?
                     Thread.Sleep(msSleep);
             }
         }

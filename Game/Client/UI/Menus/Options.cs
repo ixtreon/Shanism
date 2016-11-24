@@ -1,5 +1,4 @@
-﻿using Shanism.Client.UI.Common;
-using Shanism.Common;
+﻿using Shanism.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +14,7 @@ namespace Shanism.Client.UI.Menus
 
         //Graphics
         readonly CheckBox vSync;
+        readonly CheckBox fullScreen;
         readonly SliderLabel renderSize;
 
         //Game
@@ -44,8 +44,6 @@ namespace Shanism.Client.UI.Menus
                 Location = new Vector(LargePadding, TitleHeight + LargePadding),
                 Size = Size - LargePadding * 2 - new Vector(0, TitleHeight + Padding + btnApply.Size.Y),
                 ParentAnchor = AnchorMode.All,
-
-                Direction = FlowDirection.Vertical,
             });
 
 
@@ -59,8 +57,19 @@ namespace Shanism.Client.UI.Menus
                     Text = "VSync",
                     ToolTip = "Synchronizes redraws with the screen refresh rate",
                 });
-                vSync.CheckedChanged += (_) => 
+                vSync.CheckedChanged += (_) =>
                     Settings.Current.VSync = vSync.IsChecked;
+
+                mainPanel.Add(fullScreen = new CheckBox
+                {
+                    Size = new Vector(mainPanel.Size.X - 2 * Padding, 0.07),
+                    ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
+
+                    Text = "Full Screen",
+                    ToolTip = "Makes the game span all of the display area.",
+                });
+                fullScreen.CheckedChanged += (_) =>
+                    Settings.Current.FullScreen = fullScreen.IsChecked;
 
 
                 mainPanel.Add(renderSize = new SliderLabel
@@ -77,9 +86,10 @@ namespace Shanism.Client.UI.Menus
                     Text = "Render Size",
                     ToolTip = "Size of the underlying game buffer",
                 });
-                renderSize.Slider.ValueChanged += (_) => 
-                    Settings.Current.RenderSize = (float)renderSize.Slider.Value;
+                renderSize.Slider.ValueChanged += Slider_ValueChanged;
             }
+
+
 
             addHeader("Game");
             {
@@ -108,6 +118,12 @@ namespace Shanism.Client.UI.Menus
             }
         }
 
+        void Slider_ValueChanged(Slider s)
+        {
+            Settings.Current.RenderSize = (float)renderSize.Slider.Value.RoundToNearest(0.05);
+            renderSize.Slider.Value = Settings.Current.RenderSize;
+        }
+
         void addHeader(string name)
         {
             mainPanel.Add(new Label
@@ -134,16 +150,15 @@ namespace Shanism.Client.UI.Menus
         {
             renderSize.Slider.Value = Settings.Current.RenderSize;
             vSync.IsChecked = Settings.Current.VSync;
+            fullScreen.IsChecked = Settings.Current.FullScreen;
             extendCast.IsChecked = Settings.Current.ExtendCast;
-            //quickPress.IsChecked = Settings.Current.QuickButtonPress;
         }
 
         void BtnAccept_MouseUp(Input.MouseButtonArgs obj)
         {
-            Screen.SetRenderSize(Settings.Current.RenderSize);
             Settings.Current.Save();
             IsVisible = false;
         }
-        
+
     }
 }

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Shanism.Client.UI.CombatText
+namespace Shanism.Client.UI.Game
 {
     enum FloatingTextStyle
     {
@@ -110,7 +110,7 @@ namespace Shanism.Client.UI.CombatText
             {
                 var screenPos = Screen.GameToScreen(td.Location);
                 Content.Fonts.NormalFont
-                    .DrawString(g.SpriteBatch, td.Text, td.Color, screenPos, 0.5f, 0.5f);
+                    .DrawString(g, td.Text, td.Color, screenPos, 0.5f, 0.5f);
             }
         }
     }

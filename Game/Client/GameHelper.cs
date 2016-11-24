@@ -11,20 +11,26 @@ namespace Shanism.Client
     {
         static ClientGame TheGame;
 
+        public static event Action QuitToTitle;
+
         public static void SetGame(ClientGame theGame)
         {
             TheGame = theGame;
         }
 
+        public static void Quit()
+        {
+            QuitToTitle?.Invoke();
+        }
+
         public static void Exit()
         {
-            if(TheGame != null)
-                TheGame.Exit();
+            TheGame?.Exit();
         }
 
         public static void Restart()
         {
-            TheGame.Engine.RestartScenario();
+            TheGame.GameScreen.RestartScenario();
         }
     }
 }

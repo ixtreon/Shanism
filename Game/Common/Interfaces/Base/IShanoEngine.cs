@@ -17,6 +17,8 @@ namespace Shanism.Common
     public interface IShanoEngine
     {
 
+        ServerState State { get; }
+
         /// <summary>
         /// Decides whether to accept the given client to the server. 
         /// If the client is accepted returns the receptor to use for communication with the server. Otherwise returns null. 

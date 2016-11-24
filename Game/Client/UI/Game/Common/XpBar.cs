@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Shanism.Common.Interfaces.Entities;
 
-namespace Shanism.Client.UI.Common
+namespace Shanism.Client.UI.Game
 {
     class XpBar : ValueBar
     {

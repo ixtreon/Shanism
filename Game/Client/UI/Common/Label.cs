@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Shanism.Common;
 
-namespace Shanism.Client.UI.Common
+namespace Shanism.Client.UI
 {
     /// <summary>
     /// Displays a simple label. 
     /// </summary>
     class Label : Control
     {
-        TextureFont DefaultFont => Content.Fonts.FancyFont;
+        public static TextureFont DefaultFont => Content.Fonts.FancyFont;
 
         string _text = string.Empty;
         TextureFont font;
@@ -54,6 +54,7 @@ namespace Shanism.Client.UI.Common
         /// </summary>
         public float TextXAlign { get; set; }
 
+        public float TextScale { get; set; } = 1;
 
         public Label()
         {

@@ -1,5 +1,4 @@
 ﻿using Shanism.Client.Input;
-using Shanism.Client.UI.Common;
 using Shanism.Common.Interfaces.Entities;
 using Shanism.Common.StubObjects;
 using System;
@@ -20,7 +19,7 @@ namespace Shanism.Client.UI.Menus
         public KeybindsMenu Keybinds { get; }
         public OptionsWindow Options { get; }
         public CharacterMenu Character { get; }
-        public MainMenu MainMenu { get; }
+        public GameMenu MainMenu { get; }
         public SpellBook SpellBook { get; }
 
         readonly Window[] menus;
@@ -48,7 +47,7 @@ namespace Shanism.Client.UI.Menus
             {
                 (Character = new CharacterMenu()),
                 (Options = new OptionsWindow()),
-                (MainMenu = new MainMenu()),
+                (MainMenu = new GameMenu()),
                 (SpellBook = new SpellBook()),
                 (Keybinds = new KeybindsMenu()),
             };
@@ -59,24 +58,24 @@ namespace Shanism.Client.UI.Menus
             MainMenu.ButtonClicked += onMainMenuButtonClick;
         }
 
-        void onMainMenuButtonClick(MenuButtonType btnType)
+        void onMainMenuButtonClick(GameMenuButton btnType)
         {
             switch (btnType)
             {
-                case MenuButtonType.Keybinds:
+                case GameMenuButton.Keybinds:
                     Keybinds.IsVisible = true;
                     break;
 
-                case MenuButtonType.Options:
+                case GameMenuButton.Options:
                     Options.IsVisible = true;
                     break;
 
-                case MenuButtonType.Restart:
+                case GameMenuButton.Restart:
                     GameHelper.Restart();
                     break;
 
-                case MenuButtonType.Exit:
-                    GameHelper.Exit();
+                case GameMenuButton.Quit:
+                    GameHelper.Quit();
                     break;
             }
         }

@@ -7,16 +7,16 @@ using Shanism.Client.Input;
 
 namespace Shanism.Client.UI.Tooltips
 {
+    /// <summary>
+    /// A text-only tooltip.
+    /// </summary>
     class SimpleTip : Control
     {
         string Text;
 
         public TextureFont Font { get; set; }
 
-        /// <summary>
-        /// Gets or sets the max size of the tooltip in UI units. 
-        /// </summary>
-        public int MaxSize { get; set; }
+        public double MaxWidth { get; set; } = 0.5;
 
         public SimpleTip()
         {
@@ -36,11 +36,13 @@ namespace Shanism.Client.UI.Tooltips
                 return;
             }
 
+            BringToFront();
+
             if (Text != tipAsString)
             {
                 Text = tipAsString;
                 //update size, position
-                Size = Font.MeasureStringUi(Text, 0.5) + new Vector(Padding * 2);
+                Size = Font.MeasureStringUi(Text, MaxWidth) + new Vector(Padding * 2);
             }
 
             Location = ((MouseInfo.ScreenPosition + MouseInfo.CursorSize) / Screen.UiScale)
@@ -53,8 +55,8 @@ namespace Shanism.Client.UI.Tooltips
         {
             if (IsVisible)
             {
-                g.Draw(Content.Textures.Blank, Vector.Zero, new Vector(555), Color.Black.SetAlpha(150));
-                g.DrawString(Font, Text, Color.White, new Vector(Padding), 0, 0, 0.5);
+                g.Draw(Content.Textures.Blank, Vector.Zero, Size, Color.Black.SetAlpha(150));
+                g.DrawString(Font, Text, Color.White, new Vector(Padding), 0, 0, MaxWidth);
             }
         }
     }

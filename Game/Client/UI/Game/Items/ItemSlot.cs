@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Shanism.Client.UI.Items
+namespace Shanism.Client.UI.Game
 {
     class ItemSlot : Control
     {

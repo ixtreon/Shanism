@@ -10,19 +10,17 @@ namespace Shanism.Client
     /// <summary>
     /// A graphics object used to draw on top of some or all the MonoGame SpriteBatch. 
     /// </summary>
-    class Graphics
+    class Graphics : SpriteBatch
     {
         readonly Stack<RectangleF> drawStack = new Stack<RectangleF>();
 
-        /// <summary>
-        /// Gets the SpriteBatch this Graphics works on.
-        /// </summary>
-        public SpriteBatch SpriteBatch { get; }
+        readonly GraphicsDevice device;
+
 
         /// <summary>
         /// Gets the bounds of the drawing area. 
         /// </summary>
-        public RectangleF Bounds { get; private set; }
+        public RectangleF Bounds { get; set; }
 
         /// <summary>
         /// Gets the position of the drawing area. 
@@ -34,22 +32,18 @@ namespace Shanism.Client
         /// </summary>
         public Vector Size => Bounds.Size;
 
-        /// <summary>
-        /// Creates a new graphics object that spans the whole sprite batch. 
-        /// </summary>
-        /// <param name="sb"></param>
-        public Graphics(SpriteBatch sb)
+        public Graphics(GraphicsDevice gd)
+            : base(gd)
         {
-            SpriteBatch = sb;
-            Bounds = new RectangleF(Vector.Zero, Vector.MaxValue);
+            device = gd;
         }
 
-        public Graphics(SpriteBatch sb, Vector offset, Vector sz)
+        public void Begin()
         {
-            SpriteBatch = sb;
-            Bounds = new RectangleF(offset, sz);
+            Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend,
+                SamplerState.PointClamp, DepthStencilState.DepthRead,
+                RasterizerState.CullNone);
         }
-
 
         public void PushWindow(Vector offset, Vector sz)
         {
@@ -66,39 +60,40 @@ namespace Shanism.Client
         }
 
 
-        public void Draw(Texture2D tex, Vector texPos, Vector texSize, Shanism.Common.Color? color = null, float depth = 0)
+        public void Draw(Texture2D tex, Vector pos, Vector size, Color? color = null, float depth = 0)
         {
             if (tex == null)
                 throw new ArgumentNullException(nameof(tex), "The texture cannot be null!");
 
-            var screenPos = getClampedScreenPos(texPos);
-            var screenSz = getClampedScreenSize(texPos, texSize);
-            SpriteBatch.Draw(tex,
-                position: screenPos.ToVector2(),
-                scale: (screenSz / new Vector(tex.Width, tex.Height)).ToVector2(),
+            clampPositionAndSize(ref pos, ref size);
+            uiToScreen(ref pos, ref size);
+
+            Draw(tex,
+                position: pos.ToVector2(),
+                scale: new Vector(size.X / tex.Width, size.Y / tex.Height).ToVector2(),
                 color: (color ?? Color.White).ToXnaColor(),
                 layerDepth: depth);
         }
 
 
-        public void DrawSprite(EntitySprite s, Vector sPos, Vector sSize,
+        public void DrawSprite(EntitySprite s, Vector pos, Vector size,
             float depth = 0)
         {
-            var screenPos = getClampedScreenPos(sPos);
-            var screenSz = getClampedScreenSize(sPos, sSize);
-            var screenRect = new RectangleF(screenPos, screenSz);
+            clampPositionAndSize(ref pos, ref size);
+            uiToScreen(ref pos, ref size);
+            var screenRect = new RectangleF(pos, size);
 
-            s.Draw(SpriteBatch, screenRect, depth);
+            s.Draw(this, screenRect, depth);
         }
 
 
-        public void Draw(IconSprite s, Vector sPos, Vector sSize, Color? tint = null)
+        public void Draw(IconSprite s, Vector pos, Vector size, Color? tint = null)
         {
-            var screenPos = getClampedScreenPos(sPos);
-            var screenSz = getClampedScreenSize(sPos, sSize);
-            var screenRect = new RectangleF(screenPos, screenSz);
+            clampPositionAndSize(ref pos, ref size);
+            uiToScreen(ref pos, ref size);
+            var screenRect = new RectangleF(pos, size);
 
-            s.Draw(SpriteBatch, screenRect, tint);
+            s.Draw(this, screenRect, tint);
         }
 
 
@@ -106,27 +101,23 @@ namespace Shanism.Client
             Vector txtPos,
             float xAnchor, float yAnchor, double? txtMaxWidth = null)
         {
-            txtPos = txtPos.Clamp(Vector.Zero, Size);
 
             var screenPos = Screen.UiToScreen(Position + txtPos);
             var screenMaxWidth = Screen.UiScale * txtMaxWidth;
-            f.DrawString(SpriteBatch, text, color, screenPos,
+            f.DrawString(this, text, color, screenPos,
                 xAnchor, yAnchor, screenMaxWidth);
         }
 
-
-        Vector getClampedScreenPos(Vector pos)
+        void clampPositionAndSize(ref Vector pos, ref Vector size)
         {
-            pos = pos.Clamp(Vector.Zero, Size);
-            return Screen.UiToScreen(Position + pos);
+            //pos = pos.Clamp(Vector.Zero, Size - size);
+            //size = size.Clamp(Vector.Zero, (Size - pos));
         }
 
-        Vector getClampedScreenSize(Vector pos, Vector size)
+        void uiToScreen(ref Vector pos, ref Vector size)
         {
-            size = size.Clamp(Vector.Zero, (Size - pos));
-            if (size.X < 0 || size.Y < 0)
-                return Vector.Zero;
-            return size * Screen.UiScale * Screen.RenderSize;
+            pos = Screen.UiToScreen(Position + pos);
+            size = Screen.UiToScreenSize(size);
         }
 
         public override string ToString() => $"Graphics @ {Position} : {Size}";

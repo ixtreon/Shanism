@@ -14,10 +14,11 @@ namespace Shanism.Network.Client
     {
         readonly GameSerializer serializer = new GameSerializer();
 
-        public GameFrameMessage WriteClientFrame(ClientState state)
+        public GameFrameMessage WriteClientFrame(uint gameFrame, ClientState state)
         {
             using (var ms = new MemoryStream())
             {
+                ms.WriteUint24(gameFrame);
                 ProtoBuf.Serializer.Serialize(ms, state);
 
                 var bytes = ms.ToArray();

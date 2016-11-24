@@ -5,7 +5,7 @@ using System.Linq;
 using Shanism.Common.Interfaces.Entities;
 using Shanism.Common.Game;
 
-namespace Shanism.Client.UI.Common
+namespace Shanism.Client.UI.Game
 {
     class HealthBar : ValueBar
     {

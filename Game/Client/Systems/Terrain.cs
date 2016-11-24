@@ -74,13 +74,22 @@ namespace Shanism.Client.Map
 
             //update effect values
             effect.World = Microsoft.Xna.Framework.Matrix.CreateTranslation((float)-CameraPosition.X, (float)-CameraPosition.Y, 0);
-            effect.Projection = Microsoft.Xna.Framework.Matrix.CreateOrthographic((float)Screen.GameSize.X, (float)Screen.GameSize.Y, -5, 5);
+            effect.Projection = Microsoft.Xna.Framework.Matrix.CreateOrthographic(
+                (float)Screen.GameSize.X, 
+                (float)Screen.GameSize.Y, 
+                -5, 5);
             effect.Texture = terrain.Texture;
         }
 
         public void Draw()
         {
             var device = effect.GraphicsDevice;
+            device.SamplerStates[0] = SamplerState.PointClamp;
+            //device.RasterizerState = new RasterizerState
+            //{
+            //    MultiSampleAntiAlias = true,
+            //};
+            //device.PresentationParameters.MultiSampleCount = 4;
 
             //draw all chunks around us
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)

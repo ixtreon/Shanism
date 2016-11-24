@@ -1,5 +1,4 @@
 ﻿using Shanism.Client.Input;
-using Shanism.Client.UI.Common;
 using Shanism.Client.UI.Menus.Keybinds;
 using System;
 using System.Collections.Generic;

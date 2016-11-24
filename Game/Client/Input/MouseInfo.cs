@@ -36,8 +36,10 @@ namespace Shanism.Client.Input
         public static bool RightJustReleased => mouseState.RightButton == ButtonState.Released && oldMouseState.RightButton == ButtonState.Pressed;
 
 
-        public static void Update(int msElapsed)
+        public static void Update(int msElapsed, bool isActive)
         {
+            if (!isActive) return;
+
             oldMouseState = mouseState;
             mouseState = Mouse.GetState();
 

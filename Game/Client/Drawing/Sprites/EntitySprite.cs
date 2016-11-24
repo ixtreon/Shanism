@@ -34,7 +34,7 @@ namespace Shanism.Client.Drawing
         /// </summary>
         public readonly IEntity Entity;
 
-        readonly AssetList content;
+        readonly ContentList content;
 
 
         TextureDef currentTexture;
@@ -61,7 +61,7 @@ namespace Shanism.Client.Drawing
         bool LoopAnimation;
         protected string AnimationName;
 
-        public EntitySprite(AssetList content, IEntity obj)
+        public EntitySprite(ContentList content, IEntity obj)
         {
             this.content = content;
             Entity = obj;

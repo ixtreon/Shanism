@@ -4,13 +4,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Shanism.Client.UI.Common
+namespace Shanism.Client.UI
 {
     class Slider : ProgressBar
     {
         public static readonly Vector DefaultSize = new Vector(0.4, 0.07);
         bool sliding;
         double value;
+
+        public int Decimals { get; set; } = 2;
 
         public double MinValue { get; set; } = 0;
         public double MaxValue { get; set; } = 1;
@@ -42,11 +44,11 @@ namespace Shanism.Client.UI.Common
 
         void setVal(double newVal)
         {
-            if (!MaxValue.Equals(0))
+            if (!MaxValue.Equals(0) && !newVal.Equals(value))
             {
                 value = newVal.Clamp(MinValue, MaxValue);
                 Progress = ((value - MinValue) / (MaxValue - MinValue));
-                Text = $"{value:0.0}";
+                Text = value.ToString($"N{Decimals}");
 
                 ValueChanged?.Invoke(this);
             }

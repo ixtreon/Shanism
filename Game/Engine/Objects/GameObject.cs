@@ -14,7 +14,7 @@ namespace Shanism.Engine
     /// Represents all things that belong to a game world. 
     /// This includes game objects, abilities, buffs, items, scripts (?)
     /// </summary>
-    public abstract class GameObject : IGameObject
+    public abstract class GameObject : IGameObject, IDisposable
     {
         #region Static Members
 
@@ -24,11 +24,8 @@ namespace Shanism.Engine
         /// Tries to set the game engine instance all game objects are part of.
         /// Fails if there is another engine registered already. 
         /// </summary>
-        public static bool TrySetGame(ShanoEngine game)
+        public static bool SetGame(ShanoEngine game)
         {
-            if (currentGame != null)
-                return false;
-
             currentGame = game;
             return true;
         }
@@ -74,7 +71,7 @@ namespace Shanism.Engine
         /// </summary>
         protected GameObject()
         {
-            Id = GenericId<GameObject>.GetNew();
+            Id = Allocator<GameObject>.Allocate();
         }
 
 
@@ -119,5 +116,13 @@ namespace Shanism.Engine
         /// A <see cref="System.String" /> that represents this instance.
         /// </returns>
         public override string ToString() => $"{ObjectType} #{Id}";
+
+        /// <summary>
+        /// Releases the ID of this object. 
+        /// </summary>
+        public void Dispose()
+        {
+            Allocator<GameObject>.Deallocate(Id);
+        }
     }
 }

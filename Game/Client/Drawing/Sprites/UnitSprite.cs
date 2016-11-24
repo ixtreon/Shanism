@@ -16,7 +16,7 @@ namespace Shanism.Client.Drawing
 
         Vector lastPosition;
 
-        public UnitSprite(AssetList content, IUnit unit) 
+        public UnitSprite(ContentList content, IUnit unit) 
             : base(content, unit)
         {
             Unit = unit;

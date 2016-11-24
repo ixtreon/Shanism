@@ -1,5 +1,4 @@
 ﻿using Shanism.Client.Input;
-using Shanism.Client.UI.Common;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -68,7 +67,7 @@ namespace Shanism.Client.UI.Menus.Keybinds
         {
             if (k.Key != Keys.Escape)
             {
-                var kb = new Keybind(KeyboardInfo.Modifiers, k.Key);
+                var kb = new Keybind(k.Modifiers, k.Key);
                 Settings.Current.Keybinds[Action] = kb;
             }
 

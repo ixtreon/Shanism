@@ -18,6 +18,9 @@ namespace Shanism.Engine
     /// </summary>
     public class Player : IPlayer
     {
+
+        #region Static Members
+
         /// <summary>
         /// The default enemy player. Attacks human 
         /// and <see cref="Friendly"/> players on sight. 
@@ -47,17 +50,16 @@ namespace Shanism.Engine
             return false;
         }
 
-
+        #endregion
 
 
         internal readonly HashSet<Unit> controlledUnits = new HashSet<Unit>();
 
         internal readonly HashSet<Entity> visibleEntities = new HashSet<Entity>();
 
-        Hero _mainHero;
 
         /// <summary>
-        /// Gets the receptor of the player. 
+        /// Gets the receptor of a human-controlled player. 
         /// Returns null if this is a non-human player. 
         /// </summary>
         internal ShanoReceptor Receptor { get; }
@@ -94,9 +96,14 @@ namespace Shanism.Engine
         #region Property Shortcuts
 
         /// <summary>
-        /// Gets the player's hero, if he has one. 
+        /// Gets the player's hero, if they have one. 
         /// </summary>
-        public Hero MainHero => _mainHero;
+        public Hero MainHero { get; private set; }
+
+        /// <summary>
+        /// Gets the player's alliance, if they have one.
+        /// </summary>
+        public Alliance Alliance { get; internal set; }
 
         /// <summary>
         /// Gets all entities visible by this player. 
@@ -183,8 +190,8 @@ namespace Shanism.Engine
             if (HasHero)
                 throw new Exception("Player already has a hero!");
 
-            _mainHero = h;
-            MainHeroChanged?.Invoke(_mainHero);
+            MainHero = h;
+            MainHeroChanged?.Invoke(MainHero);
         }
 
         /// <summary>
@@ -196,9 +203,9 @@ namespace Shanism.Engine
             var success = controlledUnits.Add(unit);
             Debug.Assert(success);
 
-            see(unit);
-            unit.ObjectSeen += see;
-            unit.ObjectUnseen += unsee;
+            onObjectSeen(unit);
+            unit.ObjectSeen += onObjectSeen;
+            unit.ObjectUnseen += onObjectUnseen;
             return true;
         }
 
@@ -207,15 +214,15 @@ namespace Shanism.Engine
             var success = controlledUnits.Remove(unit);
             Debug.Assert(success);
 
-            unsee(unit);
-            unit.ObjectSeen -= see;
-            unit.ObjectUnseen -= unsee;
+            onObjectUnseen(unit);
+            unit.ObjectSeen -= onObjectSeen;
+            unit.ObjectUnseen -= onObjectUnseen;
             return true;
         }
 
 
         //fired whenever an owned unit sees an object. 
-        void see(Entity obj)
+        void onObjectSeen(Entity obj)
         {
             if (!visibleEntities.Add(obj))
                 return;
@@ -223,7 +230,7 @@ namespace Shanism.Engine
             ObjectSeen?.Invoke(obj);
         }
 
-        void unsee(Entity obj)
+        void onObjectUnseen(Entity obj)
         {
             //if noone else can see this unit, remove it
             if (!shouldUnsee(obj))

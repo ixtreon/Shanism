@@ -21,5 +21,11 @@ namespace Shanism.Common
                 .GetTypes()
                 .Where(ty => typeof(T).IsAssignableFrom(ty));
         }
+
+        public static double RoundToNearest(this double d, double val)
+        {
+            var div = Math.Round(d / val);
+            return div * val;
+        }
     }
 }

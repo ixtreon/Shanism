@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 
 namespace Shanism.Client.Input
 {
@@ -13,7 +14,6 @@ namespace Shanism.Client.Input
     /// </summary>
     static class KeyboardInfo
     {
-
         static HashSet<Keys> oldKeysDown = new HashSet<Keys>();
         static HashSet<Keys> newKeysDown = new HashSet<Keys>();
 
@@ -27,17 +27,17 @@ namespace Shanism.Client.Input
         public static ModifierKeys Modifiers { get; private set; }
 
 
-
-
         /// <summary>
         /// Updates the available keyboard and chat info. 
         /// </summary>
         /// <param name="msElapsed"></param>
-        public static void Update(int msElapsed)
+        public static void Update(int msElapsed, bool isActive)
         {
+            if (!isActive) return;
+
             oldKeysDown = newKeysDown;
             newKeysDown = new HashSet<Keys>(Keyboard.GetState().GetPressedKeys());
-
+            
             Modifiers = (isShiftDown() ? ModifierKeys.Shift : ModifierKeys.None)
                 | (isControlDown() ? ModifierKeys.Control : ModifierKeys.None)
                 | (isAltDown() ? ModifierKeys.Alt : ModifierKeys.None);
@@ -64,9 +64,7 @@ namespace Shanism.Client.Input
         /// Gets whether a key is down. 
         /// </summary>
         static bool IsDown(Keys k)
-        {
-            return newKeysDown.Contains(k);
-        }
+            => newKeysDown.Contains(k);
 
         /// <summary>
         /// Gets whether a key was just activated. 
@@ -87,30 +85,21 @@ namespace Shanism.Client.Input
         /// <param name="a">The game action whose key to check. </param>
         /// <returns>Whether the key is currently down. </returns>
         public static bool IsDown(ClientAction a)
-        {
-            var kb = Settings.Current.Keybinds[a];
-            return checkModifiers(kb.Modifiers) && IsDown(kb.Key);    //TODO: fix for modifiers
-        }
+            => IsDown(Settings.Current.Keybinds[a]);
 
 
         public static bool IsDown(Keybind kb)
-        {
-            return checkModifiers(kb.Modifiers) && IsDown(kb.Key);
-        }
+            => checkModifiers(kb.Modifiers) && IsDown(kb.Key);
+
 
         /// <summary>
         /// Gets whether a keybind was just activated. 
         /// The definition of activation is determined by <see cref="Settings.QuickButtonPress"/>. 
         /// </summary>
         public static bool IsActivated(Keybind kb)
-        {
-            return checkModifiers(kb.Modifiers) && IsActivated(kb.Key);
-        }
+            => checkModifiers(kb.Modifiers) && IsActivated(kb.Key);
 
         static bool checkModifiers(ModifierKeys mods)
-        {
-            return (~Modifiers & mods) == 0;
-        }
-
+            => (~Modifiers & mods) == 0;
     }
 }

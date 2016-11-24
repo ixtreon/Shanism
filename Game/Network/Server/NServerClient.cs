@@ -73,7 +73,7 @@ namespace Shanism.Network.Server
             gameReceptor = receptor;
 
             //attach to the game receptor events
-            gameReceptor.MessageSent += GameReceptor_MessageSent;
+            gameReceptor.MessageSent += sendMessage;
         }
 
 
@@ -85,7 +85,7 @@ namespace Shanism.Network.Server
                 return;
             }
 
-            //send a GameFrame
+            //send a GameFrame to the client
             var msg = serializer.WriteServerFrame(gameReceptor);
             sendMessage(msg, NetDeliveryMethod.Unreliable);
         }
@@ -95,15 +95,6 @@ namespace Shanism.Network.Server
 
         void GameReceptor_MessageSent(IOMessage msg)
         {
-            switch(msg.Type)
-            {
-                //send most receptor messages directly via the network interface. 
-                case MessageType.HandshakeReply:
-                case MessageType.PlayerStatusUpdate:
-                case MessageType.MapReply:
-                    sendMessage(msg);
-                    break;
-            }
             sendMessage(msg);
         }
         #endregion
@@ -131,7 +122,10 @@ namespace Shanism.Network.Server
         /// <summary>
         /// Sends the given message to the game client. 
         /// </summary>
-        void sendMessage(IOMessage msg, NetDeliveryMethod deliveryMethod = NetDeliveryMethod.ReliableUnordered)
+        void sendMessage(IOMessage msg)
+            => sendMessage(msg, NetDeliveryMethod.ReliableUnordered);
+
+        void sendMessage(IOMessage msg, NetDeliveryMethod deliveryMethod)
         {
             Server.SendMessage(msg.ToNetMessage(Server), ConnectionHandle, deliveryMethod);
             if(msg.Type != MessageType.GameFrame)

@@ -4,7 +4,7 @@ using System.Linq;
 using Shanism.Client.Drawing;
 using Shanism.Common;
 
-namespace Shanism.Client.UI.Common
+namespace Shanism.Client.UI
 {
     /// <summary>
     /// A button that shows an image and/or text and can be clicked. 

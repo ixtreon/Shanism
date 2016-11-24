@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Shanism.ScenarioLib;
-using Shanism.Engine.Common;
 using Shanism.Engine.GameSystems.Maps;
 using Shanism.Engine.Maps.Terrain;
 
@@ -85,7 +84,10 @@ namespace Shanism.Engine.Maps
         public void Add(Entity e)
         {
             if (objectsGuidTable.ContainsKey(e.Id))
-                throw new InvalidOperationException("An entity with the same GUID already exists on the map. ");
+                throw new InvalidOperationException("An entity with the same GUID already exists on the map.");
+
+            if (e.IsDestroyed)
+                throw new InvalidOperationException("Unable to add a destroyed object to the map.");
 
             var pos = e.Position;
 
@@ -230,6 +232,8 @@ namespace Shanism.Engine.Maps
 
                 if (e is Unit)
                     units.Remove((Unit)e);
+
+                e.Dispose();
             }
 
         }

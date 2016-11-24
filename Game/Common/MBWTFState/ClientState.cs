@@ -7,15 +7,31 @@ using System.Threading.Tasks;
 
 namespace Shanism.Common.Message.Client
 {
+    /// <summary>
+    /// Represents the in-game state of a client. 
+    /// Linked with (in SP) or beamed to (in MP) the server at the default frequency.
+    /// </summary>
     [ProtoContract]
     public class ClientState
     {
+        const float byteAngleAdd = (float)Math.PI;
+        const float byteAngleToFloat = (float)Math.PI * 2 / 256;
+
         [ProtoMember(1)]
         public bool IsMoving { get; set; }
 
-        [ProtoMember(2)]
-        public float MoveAngle { get; set; }
+        /// <summary>
+        /// Gets or sets the angle at which this client's main hero is moving.
+        /// </summary>
+        public float MoveAngle
+        {
+            get { return (moveAngleByte * byteAngleToFloat) - byteAngleAdd; }
+            set { moveAngleByte = (byte)((value + byteAngleAdd) / byteAngleToFloat); }
+        }
 
+
+        [ProtoMember(2)]
+        byte moveAngleByte;
 
         [ProtoMember(3)]
         public uint ActionId { get; set; }
@@ -24,8 +40,7 @@ namespace Shanism.Common.Message.Client
         public uint ActionTargetId { get; set; }
 
         [ProtoMember(5)]
-        public Vector ActionTargetLoc { get; set; }
-
+        public Vector ActionTargetLocation { get; set; }
 
         public void SetMovement(bool isMoving, float angle)
         {
@@ -37,7 +52,7 @@ namespace Shanism.Common.Message.Client
         {
             ActionId = id;
             ActionTargetId = targetId;
-            ActionTargetLoc = targetPos;
+            ActionTargetLocation = targetPos;
         }
     }
 }

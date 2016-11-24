@@ -26,7 +26,7 @@ namespace Shanism.Client
         public static Settings Current { get; private set; }
 
 
-        public static event Action Saved;
+        public static event Action<Settings> Saved;
 
         static Settings()
         {
@@ -94,7 +94,7 @@ namespace Shanism.Client
             {
                 var datas = JsonConvert.SerializeObject(this);
                 File.WriteAllText(DefaultSettingsFile, datas);
-                Saved?.Invoke();
+                Saved?.Invoke(this);
             }
             catch (Exception e)
             {

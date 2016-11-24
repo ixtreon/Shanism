@@ -44,6 +44,9 @@ namespace Shanism.Network.Client
 
         public IReadOnlyCollection<IEntity> VisibleEntities => objects.VisibleEntities;
 
+        public uint CurrentFrame { get; set; }
+
+
         /// <summary>
         /// Raised whenever a non-network message is received from the remote server.
         /// </summary>
@@ -64,7 +67,10 @@ namespace Shanism.Network.Client
             {
                 //a server game frame
                 case MessageType.GameFrame:
-                    objects.ReadServerFrame(serializer, (GameFrameMessage)msg);
+                    var frameMsg = (GameFrameMessage)msg;
+                    objects.ReadServerFrame(serializer, frameMsg);
+
+
                     break;
 
                 //grab the player id from a handshake reply message

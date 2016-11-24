@@ -1,5 +1,4 @@
 ﻿using Shanism.Client.Input;
-using Shanism.Client.UI.Common;
 using Shanism.Common;
 using System;
 using System.Collections.Generic;

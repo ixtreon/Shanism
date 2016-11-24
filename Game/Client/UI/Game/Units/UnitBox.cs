@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Shanism.Common;
-using Shanism.Client.UI.Common;
 
 using Shanism.Common.Interfaces.Entities;
 using Shanism.Client.Drawing;
 
-namespace Shanism.Client.UI
+namespace Shanism.Client.UI.Game
 {
     /// <summary>
     /// Displays information about a given unit such as its name, level, life and mana. 

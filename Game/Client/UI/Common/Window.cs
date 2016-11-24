@@ -4,12 +4,12 @@ using System.Linq;
 using Shanism.Client.Input;
 using Shanism.Common;
 
-namespace Shanism.Client.UI.Common
+namespace Shanism.Client.UI
 {
     /// <summary>
     /// A basic window-like control with a title, close box and a hotkey. 
     /// </summary>
-    abstract class Window : Control
+    class Window : Control
     {
         /// <summary>
         /// Gets the default size of the title bar of a window. 
@@ -31,7 +31,12 @@ namespace Shanism.Client.UI.Common
         /// <summary>
         /// Gets or sets whether this window can be moved around. 
         /// </summary>
-        public bool Locked { get; set; } = true;
+        public bool CanMove { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets whether this window can be resized.
+        /// </summary>
+        public bool CanResize { get; set; } = true;
 
         /// <summary>
         /// Gets or sets the window of this title. 
@@ -58,6 +63,12 @@ namespace Shanism.Client.UI.Common
 
         public Vector MaximumSize { get; set; } = Vector.MaxValue;
 
+        public Window()
+            : this(AnchorMode.None)
+        {
+
+        }
+
         /// <summary>
         /// Creates a new window, optionally specifying the side it is anchored to. 
         /// </summary>
@@ -76,18 +87,18 @@ namespace Shanism.Client.UI.Common
                 case AnchorMode.Left:
                     ParentAnchor = AnchorMode.Left | AnchorMode.Bottom;
                     Location = new Vector(0, 1 - Size.Y);
-                    Locked = true;
+                    CanMove = false;
                     break;
 
                 case AnchorMode.Right:
                     ParentAnchor = AnchorMode.Right | AnchorMode.Bottom;
                     Location = new Vector(2 - Size.X, 1 - Size.Y);
-                    Locked = true;
+                    CanMove = false;
                     break;
 
                 default:
                     Location = Vector.One - Size / 2;
-                    Locked = false;
+                    CanMove = true;
                     break;
             }
 
@@ -135,7 +146,7 @@ namespace Shanism.Client.UI.Common
         void onMouseDown(MouseButtonArgs ev)
         {
             var dFromCorner = Size - ev.Position;
-            if (dFromCorner.X + dFromCorner.Y < 3 * Padding)
+            if (CanResize && dFromCorner.X + dFromCorner.Y < 3 * Padding)
             {
                 sizeLoc = dFromCorner;
             }
@@ -158,27 +169,28 @@ namespace Shanism.Client.UI.Common
 
         #region Drag to move
         Vector? dragLoc;
-
-        void onTitleBarMouseMove(MouseArgs ev)
-        {
-            if (dragLoc != null)
-                Location += ev.Position - dragLoc.Value;
-        }
-
         void onTitleBarMouseDown(MouseButtonArgs ev)
         {
-            if (!Locked)
+            if (CanMove)
             {
                 dragLoc = ev.Position;
             }
         }
+
+        void onTitleBarMouseMove(MouseArgs ev)
+        {
+            if (dragLoc != null)
+                Location = (Location + ev.Position - dragLoc.Value)
+                    .Clamp(Vector.Zero, Screen.UiSize - Size);
+        }
+
         void onTitleBarMouseUp(MouseButtonArgs ev)
         {
             dragLoc = null;
         }
         #endregion
 
-        void onVisibleChanged(Control obj)
+        void onVisibleChanged(Control c)
         {
             if (IsVisible)
                 SetFocus();

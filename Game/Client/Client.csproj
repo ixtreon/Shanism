@@ -6,13 +6,28 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{418F2CBD-5DB3-47D4-BEE1-2C69AA6D1914}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Shanism.Client</RootNamespace>
     <AssemblyName>Shanism.Client</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -87,12 +102,19 @@
     <Compile Include="Drawing\Sprites\SpriteBase.cs" />
     <Compile Include="Drawing\Sprites\UnitSprite.cs" />
     <Compile Include="Exceptions\ContentDirectoryMissing.cs" />
-    <Compile Include="GameScreens\InGame.cs" />
+    <Compile Include="GameScreens\ConfirmExit.cs" />
+    <Compile Include="GameScreens\MultiPlayer.cs" />
+    <Compile Include="Scenarios\ScenarioListControl.cs" />
+    <Compile Include="Scenarios\ScenarioRow.cs" />
+    <Compile Include="GameScreens\UiScreen.cs" />
     <Compile Include="GameScreens\GameScreen.cs" />
     <Compile Include="GameScreens\MainMenu.cs" />
-    <Compile Include="Input\InputThread.cs" />
     <Compile Include="Input\MouseInfo.cs" />
     <Compile Include="Interfaces\IClientEngine.cs" />
+    <Compile Include="GameScreens\SinglePlayer.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Scenarios\ScenarioLibrary.cs" />
+    <Compile Include="Scenarios\ScenarioList.cs" />
     <Compile Include="Systems\Ability.cs" />
     <Compile Include="Systems\ClientSystem.cs" />
     <Compile Include="Systems\Actions.cs" />
@@ -101,21 +123,24 @@
     <Compile Include="Systems\Sprites.cs" />
     <Compile Include="UI\Chat\ChatBox.cs" />
     <Compile Include="UI\Chat\IChatProvider.cs" />
-    <Compile Include="UI\CombatText\RangeIndicator.cs" />
+    <Compile Include="UI\Common\PagedFlowPanel.cs" />
+    <Compile Include="UI\Common\ScrollBar.cs" />
+    <Compile Include="UI\Game\CombatText\RangeIndicator.cs" />
     <Compile Include="UI\Common\CheckBox.cs" />
     <Compile Include="UI\Common\ProgressBar.cs" />
     <Compile Include="UI\Common\Slider.cs" />
     <Compile Include="UI\Common\SliderLabel.cs" />
     <Compile Include="UI\Common\ValueLabel.cs" />
-    <Compile Include="UI\ErrorText\ErrorTextControl.cs" />
-    <Compile Include="UI\Game\UnitFrame.cs" />
-    <Compile Include="UI\Items\ItemSlot.cs" />
+    <Compile Include="UI\Game\ErrorText\ErrorTextControl.cs" />
+    <Compile Include="UI\Game\Units\UnitFrame.cs" />
+    <Compile Include="UI\Game\Items\ItemSlot.cs" />
     <Compile Include="UI\Menus\Character\StatBox.cs" />
     <Compile Include="UI\Common\FlowPanel.cs" />
     <Compile Include="UI\Menus\Options.cs" />
-    <Compile Include="UI\GameUI.cs" />
+    <Compile Include="UI\GameRoot.cs" />
+    <Compile Include="UI\Common\MessageBox.cs" />
     <Compile Include="UI\Ticker.cs" />
-    <Compile Include="Assets\AssetList.cs" />
+    <Compile Include="Assets\ContentList.cs" />
     <Compile Include="Assets\FontCache.cs" />
     <Compile Include="Assets\TerrainCache.cs" />
     <Compile Include="GameHelper.cs" />
@@ -130,7 +155,7 @@
     <Compile Include="Input\Common\ClientAction.cs" />
     <Compile Include="Input\KeyboardInfo.cs" />
     <Compile Include="SystemGod.cs" />
-    <Compile Include="UI\Game\UnitHoverBox.cs" />
+    <Compile Include="UI\Game\Units\HoverFrame.cs" />
     <Compile Include="UI\Menus\Keybinds\KeybindPanel.cs" />
     <Compile Include="UI\Menus\Keybinds\KeyBoxLabel.cs" />
     <Compile Include="UI\Menus\MenuBar.cs" />
@@ -149,35 +174,34 @@
     <Compile Include="ClientEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Drawing\TextureFont.cs" />
-    <Compile Include="UI\CombatText\FloatingTextProvider.cs" />
-    <Compile Include="UI\Game\Elements\BuffControl.cs" />
-    <Compile Include="UI\Game\BuffBar.cs" />
+    <Compile Include="UI\Game\CombatText\FloatingTextProvider.cs" />
+    <Compile Include="UI\Game\Common\BuffControl.cs" />
+    <Compile Include="UI\Game\Common\BuffBar.cs" />
     <Compile Include="UI\Casting\CastBar.cs" />
     <Compile Include="UI\Chat\ChatBar.cs" />
     <Compile Include="UI\Common\Button.cs" />
-    <Compile Include="UI\Game\Elements\HealthBar.cs" />
-    <Compile Include="UI\Game\Elements\ManaBar.cs" />
-    <Compile Include="UI\Game\Elements\XpBar.cs" />
+    <Compile Include="UI\Game\Common\HealthBar.cs" />
+    <Compile Include="UI\Game\Common\ManaBar.cs" />
+    <Compile Include="UI\Game\Common\XpBar.cs" />
     <Compile Include="UI\Common\Label.cs" />
     <Compile Include="UI\Menus\Character.cs" />
     <Compile Include="UI\Menus\Keybinds.cs" />
-    <Compile Include="UI\Menus\MainMenu.cs" />
+    <Compile Include="UI\Menus\GameMenu.cs" />
     <Compile Include="UI\Tooltips\AbilityTip.cs" />
-    <Compile Include="Systems\GameUi.cs" />
+    <Compile Include="Systems\UiSystem.cs" />
     <Compile Include="UI\Casting\SpellBar.cs" />
     <Compile Include="UI\Menus\Abilities.cs" />
     <Compile Include="UI\Casting\SpellButton.cs" />
-    <Compile Include="UI\Game\UnitBox.cs" />
+    <Compile Include="UI\Game\Units\UnitBox.cs" />
     <Compile Include="UI\Tooltips\SimpleTip.cs" />
     <Compile Include="UI\Control.cs" />
     <Compile Include="UI\Common\ValueBar.cs" />
-    <Compile Include="UI\Menus\Window.cs" />
+    <Compile Include="UI\Common\Window.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="MonoGame.Framework, Version=3.5.1.1679, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MonoGame.Framework.WindowsDX.3.5.1.1679\lib\net40\MonoGame.Framework.dll</HintPath>
+    <Reference Include="MonoGame.Framework, Version=3.5.0.1678, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MonoGame.Framework.WindowsDX.3.5.0.1678\lib\net40\MonoGame.Framework.dll</HintPath>
       <Private>True</Private>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -187,9 +211,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="directories.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ClientContent\ClientContent.csproj">
+      <Project>{3088ee46-46f9-441d-a2b8-e044c30cd0b3}</Project>
+      <Name>ClientContent</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Engine\Engine.csproj">
+      <Project>{0b2e9f70-7046-470a-8e5d-ebd47f030ddc}</Project>
+      <Name>Engine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ScenarioLib\ScenarioLib.csproj">
       <Project>{bada50f2-93bc-4eba-949a-bf892ae4b7e5}</Project>
       <Name>ScenarioLib</Name>
@@ -203,9 +238,16 @@
     <None Include="app.config" />
     <None Include="ClientContent.mgcb" />
     <None Include="packages.config" />
+    <None Include="touch">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="UI\StatBox\" />
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

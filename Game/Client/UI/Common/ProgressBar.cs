@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Shanism.Common;
 
-namespace Shanism.Client.UI.Common
+namespace Shanism.Client.UI
 {
     /// <summary>
     /// A progress bar that exposes a value between 0 and 1, and some text. 

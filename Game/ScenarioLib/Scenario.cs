@@ -92,7 +92,7 @@ namespace Shanism.ScenarioLib
             var compileErrors = cmp.Compile();
             if (compileErrors.Any())
             {
-                errors = string.Join("\n", compileErrors.Select(e => $"{e.Location} {e.GetMessage()}"));
+                errors = string.Join("\n", compileErrors.Select(e => e.GetHumanReadableString(scenarioPath)));
                 return ScenarioCompilationResult.CompileErrors;
             }
 

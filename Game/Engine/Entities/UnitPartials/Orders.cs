@@ -90,7 +90,7 @@ namespace Shanism.Engine.Entities
                     return TryCastAbility(ability);
 
                 case AbilityTargetType.PointTarget:
-                    return TryCastAbility(ability, state.ActionTargetLoc);
+                    return TryCastAbility(ability, state.ActionTargetLocation);
 
                 case AbilityTargetType.UnitTarget:
                     targetEntity = Map.GetByGuid(state.ActionTargetId);
@@ -104,7 +104,7 @@ namespace Shanism.Engine.Entities
                     if (targetEntity != null)
                         return TryCastAbility(ability, targetEntity);
 
-                    return TryCastAbility(ability, state.ActionTargetLoc);
+                    return TryCastAbility(ability, state.ActionTargetLocation);
 
                 default:
                     throw new ArgumentOutOfRangeException();

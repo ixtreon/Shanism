@@ -9,7 +9,7 @@ namespace Shanism.Client.Drawing
 {
     class IconSprite : SpriteBase
     {
-        public IconSprite(AssetList content, string animName, Color? tint = null)
+        public IconSprite(ContentList content, string animName, Color? tint = null)
         {
             AnimationDef anim;
             if (!content.Animations.TryGetValue(animName, out anim))

@@ -8,9 +8,8 @@ using System.Threading;
 namespace Shanism.Common.Util
 {
     /// <summary>
-    /// Generates unsigned IDs unique to the supplied generic type. 
+    /// Generates IDs of type <see cref="uint"/> unique to the supplied type. 
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     public static class GenericId<T>
     {
         /// <summary>

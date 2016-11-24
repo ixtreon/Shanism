@@ -77,13 +77,13 @@ namespace Shanism.Client
             HalfSize = Size / 2;
 
             UiScale = Math.Min(Size.X, Size.Y) / 2;
-            FontScale = UiScale / DefaultUiScale * RenderSize;
+            FontScale = UiScale / DefaultUiScale;
         }
 
         public static void SetRenderSize(float renderSize)
         {
             RenderSize = renderSize;
-            FontScale = UiScale / DefaultUiScale * RenderSize;
+            FontScale = UiScale / DefaultUiScale;
         }
 
         public static void MoveCamera(Vector inGameCenter)
@@ -129,8 +129,8 @@ namespace Shanism.Client
         /// <summary>
         /// Converts the given Ui point to screen co-ordinates.  
         /// </summary>
-        public static Vector UiToScreen(Vector p) 
-            => (HalfSize + p * UiScale) * RenderSize;
+        public static Vector UiToScreen(Vector p)
+            => p * UiScale;
 
 
 
@@ -138,14 +138,20 @@ namespace Shanism.Client
         /// Converts the given screen point to Ui co-ordinates.  
         /// </summary>
         public static Vector ScreenToUi(Vector p) 
-            => (p - HalfSize) / UiScale;
+            => p / UiScale;
 
         /// <summary>
         /// Gets the UI size of the given screen size. 
         /// </summary>
-        public static double ScreenToUi(double sz)
-        {
-            return sz / UiScale / RenderSize;
-        }
+        public static double ScreenToUiSize(double sz)
+            => sz / UiScale;
+
+        /// <summary>
+        /// Gets the UI size of the given screen size. 
+        /// </summary>
+        public static Vector UiToScreenSize(Vector sz)
+            => sz * UiScale;
+
+
     }
 }

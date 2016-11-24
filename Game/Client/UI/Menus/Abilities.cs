@@ -4,14 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Shanism.Common.Game;
 using Shanism.Client.Input;
-using Shanism.Client.UI.Common;
 using Shanism.Common.Interfaces.Entities;
 using Shanism.Common.Interfaces.Objects;
 
 
-
-
-namespace Shanism.Client.UI
+namespace Shanism.Client.UI.Menus
 {
     class SpellBook : Window
     {

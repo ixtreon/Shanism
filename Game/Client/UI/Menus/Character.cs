@@ -1,5 +1,4 @@
 ﻿using Shanism.Client.Input;
-using Shanism.Client.UI.Common;
 using Shanism.Common;
 using System;
 using System.Collections.Generic;
@@ -8,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Shanism.Client.UI.Menus.Character;
 using Shanism.Common.Interfaces.Entities;
+using Shanism.Client.UI.Game;
 
 namespace Shanism.Client.UI.Menus
 {

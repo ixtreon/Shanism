@@ -10,7 +10,7 @@ namespace Shanism.Client.Drawing
     {
         public IconSprite MenuClose { get; }
 
-        public UiCache(AssetList assets)
+        public UiCache(ContentList assets)
         {
             MenuClose = new IconSprite(assets, "ui/close");
         }

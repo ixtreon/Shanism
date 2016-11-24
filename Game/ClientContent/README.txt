@@ -3,7 +3,7 @@
 
 Contains the default content used with all ShanoRPG games. Some of the content is transformed using the MonoGame Content Builder tool (MGCB) or its GUI counterpart, the MonoGame Pipeline tool. 
 
-To build the content using MGCB simply pass the `ClientContent.mgcb` file as an argument. By default the script places the output files in the same directory as the input. 
+To build the content using MGCB simply pass the `ClientContent.mgcb` file as an argument. The script places the output files in the same directory as the input. 
 
 To build the content using the MonoGame Pipeline tool simply open the `ClientContent.mgcb` file with it. 
 

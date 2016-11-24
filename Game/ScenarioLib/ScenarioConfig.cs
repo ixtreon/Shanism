@@ -176,9 +176,9 @@ namespace Shanism.ScenarioLib
         /// <summary>
         /// Compresses all textures in the scenario to a byte array. 
         /// </summary>
-        public byte[] ZipContent(bool force = false)
+        public byte[] ZipContent(bool forceRebuild = false)
         {
-            if (zippedContent == null || force)
+            if (zippedContent == null || forceRebuild)
             {
                 var files = Content.Textures.Select(tex => new
                 {

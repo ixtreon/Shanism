@@ -133,7 +133,6 @@
     <Compile Include="GameSystems\Scripting\Context.cs" />
     <Compile Include="GameSystems\Scripting\IScriptRunner.cs" />
     <Compile Include="GameSystems\Scripting\ScriptingSystem.cs" />
-    <Compile Include="Sandboxing\Sandboxer.cs" />
     <Compile Include="UnitSystems\OrderSystem.cs" />
     <Compile Include="UnitSystems\Ability.cs" />
     <Compile Include="UnitSystems\Decay.cs" />
@@ -194,7 +193,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="ClassDiagram1.cd" />
     <None Include="..\..\key.snk" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

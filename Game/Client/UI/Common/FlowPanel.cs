@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections;
 
-namespace Shanism.Client.UI.Common
+namespace Shanism.Client.UI
 {
     enum FlowDirection
     {
@@ -16,7 +17,7 @@ namespace Shanism.Client.UI.Common
     /// Lists all standard keybinds (exluding actionbars). 
     /// Reflows with each control added/removed...
     /// </summary>
-    class FlowPanel : Control
+    class FlowPanel : Control, IEnumerable<Control>
     {
         bool _autoSize = false;
         FlowDirection _direction = FlowDirection.Horizontal;
@@ -27,7 +28,7 @@ namespace Shanism.Client.UI.Common
             set
             {
                 _autoSize = value;
-                reflow();
+                Reflow();
             }
         }
 
@@ -37,27 +38,32 @@ namespace Shanism.Client.UI.Common
             set
             {
                 _direction = value;
-                reflow();
+                Reflow();
             }
         }
 
 
-        public FlowPanel()
+        public FlowPanel(FlowDirection direction = FlowDirection.Vertical)
         {
-            SizeChanged += (c) => reflow();
+            _direction = direction;
+            SizeChanged += (c) => Reflow();
         }
 
         protected override void OnControlAdded(Control c)
         {
-            reflow();
+            Reflow();
+            c.SizeChanged += onControlSizeChanged;
         }
 
         protected override void OnControlRemoved(Control c)
         {
-            reflow();
+            Reflow();
+            c.SizeChanged -= onControlSizeChanged;
         }
 
-        void reflow()
+        void onControlSizeChanged(Control c) => Reflow();
+
+        public void Reflow()
         {
             var startPos = new Vector(Padding);
             var v = (Direction == FlowDirection.Horizontal) ? new Vector(1, 0) : new Vector(0, 1);
@@ -66,6 +72,9 @@ namespace Shanism.Client.UI.Common
 
             foreach (var btn in Controls)
             {
+                if (!btn.IsVisible)
+                    continue;
+
                 var farPos = curPos + btn.Size;
 
                 if (!AutoSize)
@@ -92,8 +101,16 @@ namespace Shanism.Client.UI.Common
                 foreach (var btn in Controls)
                     max = Vector.Max(max, btn.Location + btn.Size);
 
-                Size = max + Padding;
+                var newSize = max + Padding;
+                if(newSize != Size)
+                    Size = max + Padding;
             }
         }
+
+        public IEnumerator<Control> GetEnumerator()
+            => Controls.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator()
+            => Controls.GetEnumerator();
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Shanism.Client.GameScreens;
+using Shanism.Client.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,30 +14,38 @@ namespace Shanism.Client
     /// </summary>
     class ClientGame : Game, IClientInstance
     {
-        readonly IClientEngine _clientEngine;
-
         GraphicsDeviceManager graphics;
 
-        RenderTarget2D drawBuffer;
-
-
-        Microsoft.Xna.Framework.Rectangle _windowSize;
+        Rectangle _windowSize;
         bool _stopResizeRecurse;
         bool _isLoaded;
 
 
-        #region IShanoClient implementation
+        ClientEngine inGameScreen;
+        MainMenu mainMenuScreen;
 
-        public IClientEngine Engine => _clientEngine;
-        public event Action GameLoaded;
+        GameScreen currentGameScreen;
+
+
+        #region IClientInstance implementation
+
+        public IClientEngine GameScreen => inGameScreen;
 
         #endregion
 
 
-        public ClientGame(string playerName)
+        public ClientGame()
         {
+            Console.WriteLine("Starting up...");
+
             graphics = new GraphicsDeviceManager(this);
-            _clientEngine = new ClientEngine(playerName, graphics, Content);
+            graphics.HardwareModeSwitch = false;
+
+            Window.Title = "ShanoRPG";
+
+            // game screens
+            inGameScreen = new ClientEngine(graphics, Content);
+
         }
 
 
@@ -44,22 +54,58 @@ namespace Shanism.Client
         /// </summary>
         protected override void Initialize()
         {
+            Console.WriteLine("Initializing...");
+
             base.Initialize();
-            Window.Title = "ShanoRPG";
+
             GameHelper.SetGame(this);
+            GameHelper.QuitToTitle += GameHelper_QuitToTitle;
+
 
             //setup MonoGame vars
             IsMouseVisible = true;
-            IsFixedTimeStep = false;
+
             Window.AllowUserResizing = true;
             Window.ClientSizeChanged += Window_ClientSizeChanged;
+
             GraphicsDevice.RasterizerState = new RasterizerState { CullMode = CullMode.None };
-            reloadGraphicsEngine();
-
-
-            Settings.Saved += reloadGraphicsEngine;
 
             Screen.SetWindowSize(Window.ClientBounds.Size.ToPoint());
+
+
+            // game screens
+            mainMenuScreen = new MainMenu(graphics.GraphicsDevice);
+            mainMenuScreen.GameStarted += mainMenuScreen_GameStarted;
+
+            setScreen(mainMenuScreen);
+
+
+            //reload graphics settings from settings + hook settings saved
+            reloadGraphicsEngine();
+            Settings.Saved += (s) => reloadGraphicsEngine();
+
+        }
+
+        void setScreen(GameScreen scr)
+        {
+            currentGameScreen = scr;
+            scr.Shown();
+        }
+
+        void GameHelper_QuitToTitle()
+        {
+            setScreen(mainMenuScreen);
+        }
+
+        void mainMenuScreen_GameStarted(Common.IShanoEngine engine)
+        {
+            Common.IReceptor receptor;
+            if (!inGameScreen.TryConnect(engine, "Pesho i Gosho", out receptor))
+                throw new Exception("Unable to connect to the local server!");
+
+            engine.StartPlaying(receptor);
+
+            setScreen(inGameScreen);
         }
 
         void recreateDrawBuffer()
@@ -67,14 +113,20 @@ namespace Shanism.Client
             var s = Screen.RenderSize;
             var w = (int)(Window.ClientBounds.Width * s);
             var h = (int)(Window.ClientBounds.Height * s);
-            drawBuffer = new RenderTarget2D(GraphicsDevice, w, h);
+
+            if (w == Window.ClientBounds.Width && h == Window.ClientBounds.Height)
+                inGameScreen.RenderTarget = null;
+            else
+                inGameScreen.RenderTarget = new RenderTarget2D(GraphicsDevice, w, h);
         }
 
         void reloadGraphicsEngine()
         {
+            Screen.SetRenderSize(Settings.Current.RenderSize);
+
             IsFixedTimeStep = Settings.Current.VSync;
             graphics.SynchronizeWithVerticalRetrace = Settings.Current.VSync;
-            graphics.IsFullScreen = false;
+            graphics.IsFullScreen = Settings.Current.FullScreen;
 
             recreateDrawBuffer();
             graphics.ApplyChanges();
@@ -97,7 +149,7 @@ namespace Shanism.Client
 
                 //drawbuffer
                 recreateDrawBuffer();
-                _clientEngine.SetWindowSize(sz.Size.ToPoint());
+                GameScreen.SetWindowSize(sz.Size.ToPoint());
 
                 //actual backbuffer
                 graphics.PreferredBackBufferWidth = (int)(sz.Width);
@@ -116,7 +168,11 @@ namespace Shanism.Client
         /// </summary>
         protected override void LoadContent()
         {
-            _clientEngine.LoadContent();
+            Console.WriteLine("Loading content...");
+            if (!GameScreen.LoadContent())
+            {
+                //TODO
+            }
         }
 
 
@@ -127,15 +183,22 @@ namespace Shanism.Client
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            var msElapsed = (int)gameTime.ElapsedGameTime.TotalMilliseconds;
+
             if (!_isLoaded)
             {
                 _isLoaded = true;
-                GameLoaded?.Invoke();
+                Console.WriteLine("Boom! Let's play");
             }
 
-            _clientEngine.Update(gameTime);
-            base.Update(gameTime);
+            //input
+            MouseInfo.Update(msElapsed, IsActive);
+            KeyboardInfo.Update(msElapsed, IsActive);
+
+            //screen
+            currentGameScreen.Update(msElapsed);
         }
+
 
         /// <summary>
         /// This is called when the game should draw itself.
@@ -143,28 +206,7 @@ namespace Shanism.Client
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            if (drawBuffer != null)
-            {
-                _clientEngine.DefaultRenderTarget = drawBuffer;
-                _clientEngine.Draw(gameTime);
-
-                GraphicsDevice.SetRenderTarget(null);
-                using (var sb = new SpriteBatch(GraphicsDevice))
-                {
-                    sb.Begin();
-                    var sz = Window.ClientBounds;
-                    sb.Draw(drawBuffer,
-                        new Rectangle(0, 0, sz.Width, sz.Height),
-                        new Rectangle(0, 0, drawBuffer.Width, drawBuffer.Height),
-                        Color.White);
-                    sb.End();
-                }
-            }
-            else
-                _clientEngine.Draw(gameTime);
-
-
-            base.Draw(gameTime);
+            currentGameScreen.Draw();
         }
     }
 }

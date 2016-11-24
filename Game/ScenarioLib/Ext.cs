@@ -6,11 +6,26 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Shanism.Common.Util;
 
 namespace Shanism.ScenarioLib
 {
     static class Ext
     {
+
+        public static string GetHumanReadableString(this Diagnostic d, string rootDir)
+        {
+            if (!d.Location.IsInSource)
+                return d.GetMessage();
+
+            var lineSpan = d.Location.SourceTree.GetLineSpan(d.Location.SourceSpan);
+            var lineNumber = lineSpan.StartLinePosition.Line;
+            var columnNumber = lineSpan.StartLinePosition.Character;
+
+            var filePath = ShanoPath.GetRelativePath(d.Location.SourceTree.FilePath, rootDir, false);
+
+            return $"{filePath}@{lineNumber}:{columnNumber} {d.GetMessage()}";
+        }
 
         public static MemberDeclarationSyntax GetMethod(this ClassDeclarationSyntax cls, string name)
         {
@@ -56,5 +71,17 @@ namespace Shanism.ScenarioLib
             var identifier = (expr.Right as LiteralExpressionSyntax);
             return identifier?.Token.Value.ToString();
         }
+
+        public static IEnumerable<NamespaceDeclarationSyntax> GetNamespaces(this SyntaxTree t)
+            => t
+            .GetRoot()
+            .DescendantNodesAndSelf()
+            .OfType<NamespaceDeclarationSyntax>();
+
+        public static IEnumerable<InvocationExpressionSyntax> GetInvocations(this SyntaxTree t)
+            => t
+            .GetRoot()
+            .DescendantNodesAndSelf()
+            .OfType<InvocationExpressionSyntax>();
     }
 }

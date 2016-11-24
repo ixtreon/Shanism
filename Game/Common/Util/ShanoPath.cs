@@ -25,9 +25,9 @@ namespace Shanism.Common.Util
         /// </summary>
         /// <param name="path">The path.</param>
         /// <returns></returns>
-        public static string[] SplitPath(string path)
+        public static string[] SplitPath(string path, bool toLower = true)
         {
-            path = Normalize(path);
+            path = Normalize(path, toLower);
             if (string.IsNullOrEmpty(path))
                 return new string[0];
 
@@ -63,13 +63,15 @@ namespace Shanism.Common.Util
         /// Gets a normalized version of this path. 
         /// </summary>
         /// <param name="path">The path to normalize. </param>
-        public static string Normalize(string path)
+        public static string Normalize(string path, bool toLower = true)
         {
             if (string.IsNullOrEmpty(path))
                 return string.Empty;
 
+            if (toLower)
+                path = path.ToLowerInvariant();
+
             return path
-                .ToLowerInvariant()
                 .Replace(AltPathDelimiter, PathDelimiter)
                 .Trim(PathDelimiter);
         }
@@ -121,9 +123,9 @@ namespace Shanism.Common.Util
         /// <param name="fullPath"></param>
         /// <param name="basePath"></param>
         /// <returns></returns>
-        public static string GetRelativePath(string fullPath, string basePath)
+        public static string GetRelativePath(string fullPath, string basePath, bool toLower = true)
         {
-            return fullPath.GetRelativePath(basePath);
+            return fullPath.GetRelativePath(basePath, toLower);
         }
 
         /// <summary>

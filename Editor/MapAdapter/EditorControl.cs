@@ -23,7 +23,6 @@ namespace Shanism.Editor.MapAdapter
     /// <seealso cref="IEditorMapControl" />
     class EditorControl : GameControl, IEditorMapControl
     {
-        static readonly string PlayerName = "WorldEdit";
 
 
         IClientEngine _client;
@@ -58,7 +57,7 @@ namespace Shanism.Editor.MapAdapter
 
         protected override void Draw(GameTime gameTime)
         {
-            _client.Draw(gameTime);
+            _client.Draw();
 
             _spriteBatch.Begin();
             OnDraw?.Invoke();
@@ -68,11 +67,10 @@ namespace Shanism.Editor.MapAdapter
         protected override void LoadContent()
         {
             _editorContent = new EditorContent(Services);
-
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             //create the client, load its content
-            _client = ClientFactory.CreateGameEngine(PlayerName, GraphicsDeviceService, _editorContent);
+            _client = ClientFactory.CreateGameEngine(GraphicsDeviceService, _editorContent);
             _client.LoadContent();
             _client.SetWindowSize(new Point(Width, Height));
             _client.SetDesignMode(true);
@@ -83,7 +81,8 @@ namespace Shanism.Editor.MapAdapter
 
         protected override void Update(GameTime gameTime)
         {
-            _client.Update(gameTime);
+            var msElapsed = (int)gameTime.ElapsedGameTime.TotalMilliseconds;
+            _client.Update(msElapsed);
         }
         #endregion
 

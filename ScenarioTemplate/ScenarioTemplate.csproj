@@ -43,6 +43,7 @@
     <Compile Include="Abilities\ShanoAbility.cs" />
     <Compile Include="Buffs\ShanoBuff.cs" />
     <Compile Include="Doodads\ShanoDoodad.cs" />
+    <None Include="app.config" />
     <None Include="scenario.json" />
   </ItemGroup>
   <ItemGroup>

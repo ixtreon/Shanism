@@ -39,23 +39,32 @@ namespace Shanism.Network.Server
             }
         }
 
-        public bool TryReadClientFrame(GameFrameMessage msg, out ClientState state)
+        public bool TryReadClientFrame(GameFrameMessage msg, 
+            out uint clientFrameId,
+            out ClientState state)
         {
-            ClientState state2;
             try
             {
+                ClientState state2;
                 using (var ms = new MemoryStream(msg.Data))
+                {
+                    clientFrameId = ms.ReadUint24();
                     state2 = ProtoBuf.Serializer.Deserialize<ClientState>(ms);
+                }
 
-                var state3 = new ClientState();
-                using (var ms = new MemoryStream(msg.Data))
-                    ProtoBuf.Serializer.Merge(ms, state3);
+                //var state3 = new ClientState();
+                //using (var ms = new MemoryStream(msg.Data))
+                //{
+                //    ProtoBuf.Serializer.Merge(ms, state3);
+                //}
 
+                clientFrameId = 0;
                 state = state2;
                 return true;
             }
             catch
             {
+                clientFrameId = 0;
                 state = null;
                 return false;
             }

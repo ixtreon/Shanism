@@ -79,7 +79,7 @@ namespace Shanism.Client.Drawing
             if (string.IsNullOrEmpty(text))
                 return;
 
-            if (maxWidth.HasValue)
+            if (maxWidth != null)
                 text = getLines(text, maxWidth.Value);
 
             var sz = Font.MeasureString(text).ToVector() * Scale;
@@ -125,7 +125,7 @@ namespace Shanism.Client.Drawing
             var ws = GetLineCharsPx(s);
 
             for (int i = 1; i < ws.Length; i++)
-                ws[i] = Screen.ScreenToUi(ws[i]);
+                ws[i] = Screen.ScreenToUiSize(ws[i]);
 
             return ws;
         }

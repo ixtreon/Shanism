@@ -44,9 +44,10 @@ namespace Shanism.Client.Systems
                 ClientState.IsMoving = true;
                 ClientState.MoveAngle = moveAngle;
             }
-            else if(MouseInfo.LeftDown && ui.Root.HasFocus) // mouse movement
+            else if(MouseInfo.LeftDown && Control.HoverControl == ui.Root) // mouse movement
             {
-                var ang = Vector.Zero.AngleTo(MouseInfo.UiPosition);
+                var ang = ((Vector)Screen.HalfSize).AngleTo(MouseInfo.ScreenPosition);
+                //var ang = Vector.Zero.AngleTo(MouseInfo.UiPosition);
                 ClientState.IsMoving = true;
                 ClientState.MoveAngle = (float)ang;
             }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Shanism.Common;
 
-namespace Shanism.Client.UI
+namespace Shanism.Client.UI.Game
 {
     class ErrorTextControl : Control
     {

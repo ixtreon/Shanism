@@ -10,10 +10,10 @@ namespace Shanism.Common
 {
     public static class IOExt
     {
-        public static string GetRelativePath(this string absolutePath, string folder)
+        public static string GetRelativePath(this string absolutePath, string folder, bool toLower = true)
         {
-            var absSegments = ShanoPath.SplitPath(absolutePath);
-            var dirSegments = ShanoPath.SplitPath(folder);
+            var absSegments = ShanoPath.SplitPath(absolutePath, toLower);
+            var dirSegments = ShanoPath.SplitPath(folder, toLower);
             var commonPrefix = getCommonPrefix(absSegments, dirSegments);
 
             var sb = new StringBuilder();

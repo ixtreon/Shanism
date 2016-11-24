@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shanism.Engine.Common
+namespace Shanism.Engine
 {
     /// <summary>
     /// Creates game entities from <see cref="ObjectConstructor"/> objects in the context of a <see cref="Scenario"/>. 

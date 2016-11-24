@@ -5,9 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Shanism.Common.Interfaces.Entities;
 using Shanism.Common.Interfaces.Objects;
-using Shanism.Client.UI.Game;
 
-namespace Shanism.Client.UI
+namespace Shanism.Client.UI.Game
 {
     class BuffBar : Control
     {
@@ -59,7 +58,9 @@ namespace Shanism.Client.UI
             if (IsVisible = TargetUnit?.Buffs?.Any() ?? false)
             {
                 //get the new buffs
-                BuffList = TargetUnit.Buffs.Take(MaxBuffs);
+                BuffList = TargetUnit.Buffs
+                    .Where(b => b.Prototype.HasIcon)
+                    .Take(MaxBuffs);
 
                 //update the underlying controls
                 buffDict.SyncValues(BuffList, addBuff, removeBuff);

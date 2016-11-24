@@ -89,7 +89,7 @@ namespace Shanism.Common
         /// <param name="ie">The enumerable to search in.</param>
         /// <param name="func">The function that calculates each element's score.</param>
         /// <returns>The element that scores the highest.</returns>
-        public static TSrc ArgMax<TSrc, TArg>(this IEnumerable<TSrc> ie, Func<TSrc, TArg> func) 
+        public static TSrc ArgMax<TSrc, TArg>(this IEnumerable<TSrc> ie, Func<TSrc, TArg> func)
             where TArg : IComparable<TArg>
             => ie.argMax(func, argMaxHelper);
 
@@ -101,7 +101,7 @@ namespace Shanism.Common
         /// <param name="ie">The enumerable to search in.</param>
         /// <param name="func">The function that calculates each element's score.</param>
         /// <returns>The element that scores the least.</returns>
-        public static TSrc ArgMin<TSrc, TArg>(this IEnumerable<TSrc> ie, Func<TSrc, TArg> func) 
+        public static TSrc ArgMin<TSrc, TArg>(this IEnumerable<TSrc> ie, Func<TSrc, TArg> func)
             where TArg : IComparable<TArg>
             => ie.argMax(func, argMinHelper);
 
@@ -109,12 +109,12 @@ namespace Shanism.Common
         {
             //len = 0
             var e = ie.GetEnumerator();
-            if (!e.MoveNext())  throw new InvalidOperationException("Sequence has no elements.");
+            if (!e.MoveNext()) throw new InvalidOperationException("Sequence has no elements.");
 
             //len = 1
             TSrc maxElem = e.Current;
             TArg maxVal = func(maxElem);
-            if (!e.MoveNext())  return maxElem;
+            if (!e.MoveNext()) return maxElem;
 
             //len > 1
             TSrc curElemm;
@@ -152,6 +152,47 @@ namespace Shanism.Common
             var elem = l[id];
             l.RemoveAt(id);
             return elem;
+        }
+
+        /// <summary>
+        /// Moves the given item to the end of the list. 
+        /// Returns whether the control was found in the list. 
+        /// </summary>
+        /// <remarks>
+        /// Has a complexity of O(n). Walks the list twice. 
+        /// </remarks>
+        public static bool MoveToLast<T>(this IList<T> l, T item)
+        {
+            var oldPos = l.IndexOf(item);
+            if (oldPos < 0)
+                return false;
+
+            var lastId = l.Count - 1;
+            for (var i = oldPos; i < lastId; i++)
+                l[i] = l[i + 1];
+            l[lastId] = item;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Moves the given item to the start of the list. 
+        /// Returns whether the control was found in the list. 
+        /// </summary>
+        /// <remarks>
+        /// Has a complexity of O(n). Walks the list twice. 
+        /// </remarks>
+        public static bool MoveToFirst<T>(this IList<T> l, T item)
+        {
+            var oldPos = l.IndexOf(item);
+            if (oldPos < 0)
+                return false;
+
+            for (var i = oldPos; i > 0; i--)
+                l[i] = l[i - 1];
+            l[0] = item;
+
+            return true;
         }
     }
 }

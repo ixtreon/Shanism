@@ -1,5 +1,5 @@
 ﻿using Shanism.Client.UI.Chat;
-using Shanism.Client.UI.CombatText;
+using Shanism.Client.UI.Game;
 using Shanism.Client.UI.Game;
 using Shanism.Client.UI.Menus;
 using Shanism.Common;
@@ -9,10 +9,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shanism.Client.Input;
 
 namespace Shanism.Client.UI
 {
-    class GameUI : Control
+    class GameRoot : Control
     {
         public readonly UnitFrame HeroFrame;
         public readonly CastBar HeroCastBar;
@@ -31,10 +32,12 @@ namespace Shanism.Client.UI
 
         public event Action<IAbility> AbilityActivated;
 
-        public GameUI()
+        public GameRoot()
         {
             Size = new Vector(2, 1);
-            CanHover = false;
+            CanHover = true;
+            CanFocus = true;
+            GameActionActivated += onActionActivated;
 
             var castBarSize = new Vector(0.5f, 0.08f);
             var unitFrameXOffset = 0.25;
@@ -103,10 +106,35 @@ namespace Shanism.Client.UI
             Add(new Tooltips.AbilityTip());
         }
 
+        private void onActionActivated(ClientAction ga)
+        {
+            switch (ga)
+            {
+                case ClientAction.ShowHealthBars:
+                    Settings.Current.AlwaysShowHealthBars = !Settings.Current.AlwaysShowHealthBars;
+                    break;
+
+                case ClientAction.ToggleDebugInfo:
+                    ClientEngine.ShowDebugStats = !ClientEngine.ShowDebugStats;
+                    break;
+
+                case ClientAction.Chat:
+                    if (!ChatBar.HasFocus)
+                        ChatBar.SetFocus();
+
+                    break;
+
+                default:
+                    HeroAbilities.ActivateAction(ga);
+                    Menus.ActivateAction(ga);
+                    break;
+            }
+        }
 
         protected override void OnUpdate(int msElapsed)
         {
             Maximize();
+            UpdateMain(msElapsed);
         }
     }
 }

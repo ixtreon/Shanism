@@ -17,9 +17,9 @@ namespace Shanism.Client
 {
 
     /// <summary>
-    /// The keeper of all game systems. 
+    /// The keeper of all in-game systems. 
     /// </summary>
-    class SystemGod : Control
+    class SystemGod
     {
         readonly ClientState clientState;
         readonly IReceptor server;
@@ -53,30 +53,27 @@ namespace Shanism.Client
         ChatSystem chat;
 
         UiSystem @interface;
+        private readonly ContentList content;
 
         #endregion
 
 
-        public SystemGod(GraphicsDevice device, AssetList content, 
+        public SystemGod(GraphicsDevice device, ContentList content, 
             IReceptor server, ClientState clientState)
         {
             this.server = server;
             this.device = device;
             this.clientState = clientState;
+            this.content = content;
 
-            Location = Vector.Zero;
-            CanFocus = true;
             Control.SetContent(content);
 
-            GameActionActivated += onActionActivated;
-
-            objects = new SpriteSystem(device, Content);
+            objects = new SpriteSystem(device, content);
             Reload();
         }
 
 
         public IHero MainHero => objects.MainHero;
-
 
         public void SetUiVisible(bool isVisible) 
             => @interface.Root.IsVisible = isVisible;
@@ -96,12 +93,11 @@ namespace Shanism.Client
         public event Action<IOMessage> MessageSent;
 
 
-
         public void Reload()
         {
             //systems
             systems.Clear();
-            systems.Add(terrain = new Terrain(device, Content.Terrain));
+            systems.Add(terrain = new Terrain(device, content.Terrain));
             systems.Add(objects);
             systems.Add(chat = new ChatSystem());
             systems.Add(@interface = new UiSystem(device, objects, chat));
@@ -114,9 +110,6 @@ namespace Shanism.Client
                 sys.ClientState = clientState;
                 sys.MessageSent += (m) => MessageSent?.Invoke(m);
             }
-            //controls
-            ClearControls();
-            Add(@interface.Root);
         }
 
         public void HandleMessage(IOMessage msg)
@@ -126,38 +119,14 @@ namespace Shanism.Client
         }
 
 
-        void onActionActivated(ClientAction ga)
+        public void Update(int msElapsed)
         {
-            switch (ga)
-            {
-                case ClientAction.ToggleDebugInfo:
-                    ClientEngine.ShowDebugStats = !ClientEngine.ShowDebugStats;
-                    break;
-
-                case ClientAction.ReloadUi:
-                    Reload();
-                    break;
-
-                case ClientAction.ShowHealthBars:
-                    Settings.Current.AlwaysShowHealthBars = !Settings.Current.AlwaysShowHealthBars;
-                    break;
-
-                default:
-                    //propagate to interface (objects?), let them handle it
-                    @interface.Root.ActivateAction(ga);
-                    break;
-            }
-        }
-
-
-        protected override void OnUpdate(int msElapsed)
-        {
-            Size = Screen.UiSize;
-            Location = Screen.UiSize / -2;
-
             actions.Hero = objects.MainHero;
 
-            UpdateMain(msElapsed);
+            if(KeyboardInfo.JustActivatedActions.Contains(ClientAction.ReloadUi))
+                Reload();
+
+
             foreach (var sys in systems)
                 sys.Update(msElapsed);
         }

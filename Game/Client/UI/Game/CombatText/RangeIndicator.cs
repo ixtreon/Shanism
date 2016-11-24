@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Shanism.Common;
 
-namespace Shanism.Client.UI.CombatText
+namespace Shanism.Client.UI.Game
 {
     class RangeIndicator : Control
     {
@@ -66,7 +66,7 @@ namespace Shanism.Client.UI.CombatText
             {
                 var circle = Content.Circles.GetTexture(circleSz);
 
-                g.SpriteBatch.Draw(circle,
+                g.Draw(circle,
                     sourceRectangle: circle.Bounds,
                     position: screenPos.ToVector2(),
                     scale: (screenDiameter / new Vector(circle.Width, circle.Height)).ToVector2(),

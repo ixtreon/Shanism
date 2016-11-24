@@ -192,10 +192,6 @@
       <Project>{dc89987d-5817-4f1d-95ca-80c024c8d6bb}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Game\Local\Local.csproj">
-      <Project>{5778ed3f-48ba-46f3-aa71-801fb00865cc}</Project>
-      <Name>Local</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Game\Network\Network.csproj">
       <Project>{d2fa8685-b964-498d-a34f-d191be2cba6b}</Project>
       <Name>Network</Name>

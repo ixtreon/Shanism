@@ -34,7 +34,7 @@ namespace Shanism.Client.Drawing
         /// </summary>
         public TextureFont LargeFont { get; }
 
-        public SpriteFont ShanoFont { get; }
+        public TextureFont ShanoFont { get; }
 
         /// <summary>
         /// Loads all fonts to memory using the provided <see cref="ContentManager"/>. 
@@ -49,8 +49,10 @@ namespace Shanism.Client.Drawing
 
             //load default fonts
             FancyFont = new TextureFont(fancy, 0.6);
-            NormalFont = new TextureFont(main, 0.6);
+            ShanoFont = new TextureFont(fancy, 2);
 
+
+            NormalFont = new TextureFont(main, 0.6);
             SmallFont = new TextureFont(main, 0.5);
             LargeFont = new TextureFont(main, 0.72);
         }

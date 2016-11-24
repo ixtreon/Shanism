@@ -1,5 +1,5 @@
 ﻿using Shanism.Client.Input;
-using Shanism.Client.UI.CombatText;
+using Shanism.Client.UI.Game;
 using Shanism.Common;
 using Shanism.Common.Game;
 using Shanism.Common.Interfaces.Entities;
@@ -90,15 +90,21 @@ namespace Shanism.Client.Systems
             if (ab.TargetType != AbilityTargetType.NoTarget
                 && targetLoc.DistanceTo(Hero.Position) > ab.CastRange)
             {
-                Interface.FloatingText.AddLabel(targetLoc, "Out of range", Color.Red, FloatingTextStyle.Top);
-                Interface.RangeIndicator.Show(ab.CastRange, 1250);
+                if (MouseInfo.RightJustPressed)
+                {
+                    Interface.FloatingText.AddLabel(targetLoc, "Out of range", Color.Red, FloatingTextStyle.Top);
+                    Interface.RangeIndicator.Show(ab.CastRange, 1250);
+                }
                 return;
             }
 
             //mana
             if (Hero.Mana < ab.ManaCost)
             {
-                Interface.FloatingText.AddLabel(targetLoc, "Not enough mana", Color.Red, FloatingTextStyle.Top);
+                if (MouseInfo.RightJustPressed)
+                {
+                    Interface.FloatingText.AddLabel(targetLoc, "Not enough mana", Color.Red, FloatingTextStyle.Top);
+                }
                 return;
             }
 
@@ -106,22 +112,24 @@ namespace Shanism.Client.Systems
             //cast abilities if button is held
             ClientState.ActionId = ab.Id;
             ClientState.ActionTargetId = Objects.HoverSprite?.Entity.Id ?? 0;
-            ClientState.ActionTargetLoc = targetLoc;
+            ClientState.ActionTargetLocation = targetLoc;
         }
 
         Vector getCastTargetLocation(IAbility ab)
         {
-            var m = MouseInfo.InGamePosition;
+            var mousePos = MouseInfo.InGamePosition;
             if (!Settings.Current.ExtendCast)
-                return m;
+                return mousePos;
 
-            var r = ab.CastRange;
-            var o = Objects.MainHero.Position;
-            var d = m - o;
-            var l = d.Length();
-            if (l <= r)
-                return m;
-            return o + d * (r / l);
+            var castRange = ab.CastRange;
+            var heroPos = Objects.MainHero.Position;
+            var distVector = mousePos - heroPos;
+            var distScalar = distVector.Length();
+            if (distScalar <= castRange)
+                return mousePos;
+
+            castRange *= 0.95;
+            return heroPos + distVector * (castRange / distScalar);
         }
 
     }
