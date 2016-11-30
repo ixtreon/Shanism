@@ -20,35 +20,31 @@ namespace Shanism.Network.Common
 
         public int Length { get; private set; }
 
-        Dictionary<uint, ulong> pageBuffer = new Dictionary<uint, ulong>();
+        ulong[] pageBuffer = new ulong[MaxPages];
 
         public void WriteBitmask(IEnumerable<ObjectData> visibleObjects, BinaryWriter s)
         {
-            pageBuffer.Clear();
+            Array.Clear(pageBuffer, 0, MaxPages);
 
             ulong pageMask = 0;
-            ulong curPage;
             foreach (var o in visibleObjects)
             {
                 var id = o.Object.Id;
 
-                var objPage = id / PageSize;
-                var objIndex = id % PageSize;
+                var objPageId = id / PageSize;
+                var objIndexInPage = id % PageSize;
 
-                Set(ref pageMask, (int)objPage);
-
-                if (!pageBuffer.TryGetValue(objIndex, out curPage))
-                    curPage = 0;
-                Set(ref curPage, (int)objIndex);
-                pageBuffer[objPage] = curPage;
+                Set(ref pageMask, (int)objPageId);
+                Set(ref pageBuffer[objPageId], (int)objIndexInPage);
             }
 
             //write pagemask
             s.Write(pageMask);
 
             //write pages
-            foreach (var p in pageBuffer.OrderBy(kvp => kvp.Key))
-                s.Write(p.Value);
+            for (int i = 0; i < MaxPages; i++)
+                if (Get(pageMask, i))
+                    s.Write(pageBuffer[i]);
         }
 
         public List<uint> VisibleIds { get; } = new List<uint>();
@@ -59,7 +55,8 @@ namespace Shanism.Network.Common
 
             //read included pages
             var pageMask = s.ReadUInt64();
-            //read 
+
+            //read each page
             for (int i = 0; i < MaxPages; i++)
             {
                 if (!Get(pageMask, i))
