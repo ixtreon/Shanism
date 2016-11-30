@@ -1,4 +1,5 @@
 ﻿using Shanism.Common.Interfaces.Objects;
+using Shanism.Network.Server;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,7 +22,7 @@ namespace Shanism.Network.Common
 
         Dictionary<uint, ulong> pageBuffer = new Dictionary<uint, ulong>();
 
-        public void WriteBitmask(IEnumerable<IGameObject> visibleObjects, BinaryWriter s)
+        public void WriteBitmask(IEnumerable<ObjectData> visibleObjects, BinaryWriter s)
         {
             pageBuffer.Clear();
 
@@ -29,16 +30,16 @@ namespace Shanism.Network.Common
             ulong curPage;
             foreach (var o in visibleObjects)
             {
-                var id = o.Id;
-                var objPage = o.Id / PageSize;
-                var objIndex = o.Id % PageSize;
+                var id = o.Object.Id;
+
+                var objPage = id / PageSize;
+                var objIndex = id % PageSize;
+
+                Set(ref pageMask, (int)objPage);
 
                 if (!pageBuffer.TryGetValue(objIndex, out curPage))
                     curPage = 0;
-
                 Set(ref curPage, (int)objIndex);
-                Set(ref pageMask, (int)objPage);
-
                 pageBuffer[objPage] = curPage;
             }
 
