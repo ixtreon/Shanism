@@ -1,5 +1,4 @@
 ﻿using Shanism.Client.Input;
-using Shanism.Common.Game;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;

@@ -13,7 +13,7 @@ namespace Shanism.Common.Message
     public enum MessageType
     {
 
-        ///-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+        /// -=-=-=-=-=- Client -> Server -=-=-=-=-=- 
 
         /// <summary>
         /// A message sent by the client to the server to initiate a handshake. 
@@ -30,7 +30,8 @@ namespace Shanism.Common.Message
         /// </summary>
         ClientChat,
 
-        ///-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+        /// -=-=-=-=-=- Server -> Client -=-=-=-=-=- 
 
         /// <summary>
         /// A message sent by the server in reply to a client's hanshake message. See <see cref="HandshakeInit"/>. 
@@ -63,7 +64,13 @@ namespace Shanism.Common.Message
         /// </summary>
         ObjectAnimation,
 
-        /// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+        /// <summary>
+        /// A message sent by the server to inform a client they were disconnected. 
+        /// </summary>
+        Disconnected,
+
+
+        /// -=-=-=-=-=- Common -=-=-=-=-=- 
 
         /// <summary>
         /// A message send by both the client and the server. A generic frame. 

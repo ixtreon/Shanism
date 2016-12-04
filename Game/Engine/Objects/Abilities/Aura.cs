@@ -1,4 +1,4 @@
-﻿using Shanism.Common.Game;
+﻿using Shanism.Common;
 using Shanism.Engine.Entities;
 using Shanism.Engine.Objects.Buffs;
 using Shanism.Engine.Objects.Range;

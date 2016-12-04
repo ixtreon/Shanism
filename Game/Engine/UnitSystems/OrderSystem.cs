@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Shanism.Engine.Entities;
 using Shanism.Common.Message;
-using Shanism.Common.Game;
 using Shanism.Engine.Objects.Orders;
 
 namespace Shanism.Engine.Systems

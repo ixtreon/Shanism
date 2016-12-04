@@ -38,6 +38,8 @@ namespace Shanism.Network.Client
 
         bool hasClient => GameClient != null;
 
+        public event Action ConnectionLost;
+
 
         static NClient()
         {
@@ -65,6 +67,8 @@ namespace Shanism.Network.Client
             isConnected = false;
 
             Log.Default.Info("Disconnected");
+
+            ConnectionLost?.Invoke();
             //TODO
         }
 

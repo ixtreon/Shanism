@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using Shanism.Common.StubObjects;
-using Shanism.Common.Game;
 
 namespace Shanism.Common.Serialization
 {

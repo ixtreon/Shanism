@@ -1,5 +1,5 @@
 ﻿using Shanism.Engine.Events;
-using Shanism.Common.Game;
+using Shanism.Common;
 using Shanism.Common.Message.Server;
 using System;
 using System.Collections.Generic;

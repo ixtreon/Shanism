@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shanism.Common.Game
+namespace Shanism.Common
 {
     /// <summary>
     /// An enumeration of the different states that affect units, 

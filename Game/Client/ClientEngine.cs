@@ -125,9 +125,6 @@ namespace Shanism.Client
             server = null;
         }
 
-        void setConnection(IShanoEngine s, IReceptor r)
-        {
-        }
 
         void initSystems()
         {
@@ -299,6 +296,10 @@ namespace Shanism.Client
             {
                 case MessageType.HandshakeReply:
                     onHandshakeReply((HandshakeReplyMessage)msg);
+                    break;
+
+                case MessageType.Disconnected:
+                    GameHelper.Quit();
                     break;
 
                 default:

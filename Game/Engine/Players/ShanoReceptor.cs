@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Shanism.Common.Message;
 using Shanism.Common.Message.Server;
 using Shanism.Common.Message.Client;
-using Shanism.Common.Game;
 using Shanism.Engine.Entities;
 using System.Collections.Generic;
 using Shanism.Common.Interfaces.Entities;

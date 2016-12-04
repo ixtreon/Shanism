@@ -1,5 +1,4 @@
 ﻿using Shanism.Common;
-using Shanism.Common.Game;
 using Shanism.Common.StubObjects;
 using Microsoft.Xna.Framework.Graphics;
 using System;

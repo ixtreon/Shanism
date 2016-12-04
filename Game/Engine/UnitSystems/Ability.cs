@@ -7,7 +7,6 @@ using System.Collections;
 using Shanism.Common;
 using Shanism.Engine.Objects.Abilities;
 using System.Threading;
-using Shanism.Common.Game;
 using System.Diagnostics;
 
 namespace Shanism.Engine.Systems

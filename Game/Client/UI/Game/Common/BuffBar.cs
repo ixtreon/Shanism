@@ -1,10 +1,10 @@
 ﻿using Shanism.Common;
-using Shanism.Common.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Shanism.Common.Interfaces.Entities;
 using Shanism.Common.Interfaces.Objects;
+using Shanism.Common.Util;
 
 namespace Shanism.Client.UI.Game
 {

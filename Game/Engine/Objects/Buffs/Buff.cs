@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Shanism.Engine.Systems;
 using Shanism.Common.StubObjects;
-using Shanism.Common.Game;
 using Shanism.Common;
 using Shanism.Common.Util;
 using Shanism.Common.Interfaces.Objects;

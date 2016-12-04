@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Shanism.Editor.ViewModels;
 using Shanism.Editor.Views.Textures;
-using Shanism.Common.Game;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
+using Shanism.Common.Util;
 
 namespace Shanism.Editor.Views.Content
 {

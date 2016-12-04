@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Shanism.Common.Game
+namespace Shanism.Common
 {
     /// <summary>
     /// A map chunk identifier. Wrapper for a point. 

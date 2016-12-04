@@ -1,5 +1,4 @@
-﻿using Shanism.Common.Game;
-using Shanism.Common.Content;
+﻿using Shanism.Common.Content;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

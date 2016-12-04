@@ -30,10 +30,9 @@ namespace Shanism.Common.Message
     [ProtoInclude((int)MessageType.MapReply, typeof(MapDataMessage))]
     [ProtoInclude((int)MessageType.ServerChat, typeof(Server.ChatMessage))]
     [ProtoInclude((int)MessageType.DamageEvent, typeof(DamageEventMessage))]
+    [ProtoInclude((int)MessageType.Disconnected, typeof(DisconnectedMessage))]
 
-    //common?
-
-    //network
+    //common
     [ProtoInclude((int)MessageType.GameFrame, typeof(GameFrameMessage))]
     public abstract class IOMessage
     {

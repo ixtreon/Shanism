@@ -1,5 +1,4 @@
-﻿using Shanism.Common.Game;
-using Shanism.Common.Message;
+﻿using Shanism.Common.Message;
 using System;
 using System.Collections.Generic;
 using System.Linq;

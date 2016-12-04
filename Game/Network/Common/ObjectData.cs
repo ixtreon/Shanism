@@ -1,4 +1,4 @@
-﻿using Shanism.Common.Game;
+﻿using Shanism.Common;
 using Shanism.Common.Interfaces.Objects;
 using System;
 using System.Collections.Generic;

@@ -1,7 +1,6 @@
 ﻿using Shanism.Client.Input;
 using Shanism.Client.UI.Game;
 using Shanism.Common;
-using Shanism.Common.Game;
 using Shanism.Common.Interfaces.Entities;
 using Shanism.Common.Interfaces.Objects;
 using Shanism.Common.Message.Client;

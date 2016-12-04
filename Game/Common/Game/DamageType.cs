@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shanism.Common.Game
+namespace Shanism.Common
 {
     /// <summary>
     /// The different types of damage that can be dealt. 

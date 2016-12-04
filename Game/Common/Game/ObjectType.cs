@@ -8,7 +8,7 @@ using Shanism.Common.StubObjects;
 using ProtoBuf;
 
 
-namespace Shanism.Common.Game
+namespace Shanism.Common
 {
     /// <summary>
     /// The different object types as seen by the client. 

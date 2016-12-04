@@ -1,5 +1,4 @@
-﻿using Shanism.Common.Game;
-using ProtoBuf;
+﻿using ProtoBuf;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

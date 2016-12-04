@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using Shanism.Common.Interfaces.Objects;
 using Shanism.Common.StubObjects;
-using Shanism.Common.Game;
 using System;
 
 namespace Shanism.Common.Serialization

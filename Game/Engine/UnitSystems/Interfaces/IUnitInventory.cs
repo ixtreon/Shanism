@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Shanism.Engine.Entities;
 using Shanism.Engine.Objects.Items;
-using Shanism.Common.Game;
+using Shanism.Common;
 
 namespace Shanism.Engine.Systems
 {

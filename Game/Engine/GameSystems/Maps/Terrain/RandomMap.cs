@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Shanism.Common.Game;
 using SharpNoise.Modules;
 using System.Diagnostics;
 using Shanism.Engine.Entities;

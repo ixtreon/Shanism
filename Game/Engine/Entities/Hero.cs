@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Shanism.Common.Game;
 using Shanism.Engine.Entities;
 using Shanism.Common.Message.Client;
 using Shanism.Common.StubObjects;

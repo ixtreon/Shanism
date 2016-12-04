@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Shanism.Engine.Objects.Buffs;
-using Shanism.Common.Game;
+using Shanism.Common;
 using Shanism.Engine.Objects.Abilities;
 using Shanism.Common.Interfaces.Objects;
 

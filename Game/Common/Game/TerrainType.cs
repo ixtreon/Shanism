@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Shanism.Common.Game
+namespace Shanism.Common
 {
     /// <summary>
     /// An enumeration of the types of terrain.

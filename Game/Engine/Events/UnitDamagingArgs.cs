@@ -1,5 +1,5 @@
 ﻿using Shanism.Engine.Entities;
-using Shanism.Common.Game;
+using Shanism.Common;
 using System;
 
 namespace Shanism.Engine.Events

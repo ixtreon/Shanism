@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common.Game;
+using Shanism.Common;
 
 namespace Shanism.Engine.Systems
 {

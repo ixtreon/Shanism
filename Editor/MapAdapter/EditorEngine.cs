@@ -1,5 +1,4 @@
 ﻿using Shanism.Common;
-using Shanism.Common.Game;
 using Shanism.Common.Interfaces.Entities;
 using Shanism.Common.Message;
 using Shanism.Common.Message.Server;

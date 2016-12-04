@@ -1,6 +1,5 @@
 ﻿using Shanism.Engine.Entities;
 using Shanism.Common;
-using Shanism.Common.Game;
 using Shanism.Common.Content;
 using Shanism.Common.StubObjects;
 using Shanism.Common.Util;

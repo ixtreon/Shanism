@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace Shanism.Common.Game
+namespace Shanism.Common
 {
     /* supports up to 32 (64) slots */
 

@@ -1,7 +1,6 @@
 ﻿using Shanism.Engine.Maps;
 using Shanism.Common;
 using Shanism.Common.Util;
-using Shanism.Common.Game;
 using Shanism.Common.Interfaces.Objects;
 using Shanism.ScenarioLib;
 using Shanism.Engine.Scripting;

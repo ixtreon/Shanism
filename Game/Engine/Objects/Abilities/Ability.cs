@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Shanism.Engine.Maps;
 using Shanism.Engine.Entities;
 using Shanism.Common;
-using Shanism.Common.Game;
 using Shanism.Engine.Events;
 using Shanism.Common.StubObjects;
 using ProtoBuf;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common.Game;
+using Shanism.Common;
 using Shanism.Engine.Entities;
 using Shanism.Common;
 using Shanism.Engine.Objects.Items;

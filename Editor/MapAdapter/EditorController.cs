@@ -1,6 +1,5 @@
 ﻿using Shanism.Client;
 using Shanism.Common;
-using Shanism.Common.Game;
 using Shanism.Common.Interfaces.Entities;
 using Shanism.Editor.ViewModels;
 using Shanism.Engine;

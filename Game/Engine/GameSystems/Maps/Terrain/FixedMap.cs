@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shanism.Engine.Entities;
-using Shanism.Common.Game;
 using Shanism.Engine.Objects;
 using Shanism.Common;
 

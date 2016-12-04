@@ -1,4 +1,4 @@
-﻿using Shanism.Common.Game;
+﻿using Shanism.Common;
 using Shanism.Engine.Events;
 using Shanism.Engine.Objects.Abilities;
 

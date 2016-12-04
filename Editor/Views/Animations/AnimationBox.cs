@@ -1,5 +1,4 @@
 ﻿using Shanism.Common;
-using Shanism.Common.Game;
 using Shanism.Common.Content;
 using Shanism.Editor.ViewModels;
 using System;

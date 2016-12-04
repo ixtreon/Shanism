@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Shanism.Engine.Objects;
 using Shanism.Engine.Entities;
-using Shanism.Common.Game;
+using Shanism.Common;
 using Shanism.ScenarioLib;
 using Shanism.Engine.Events;
 

@@ -61,8 +61,13 @@ namespace Shanism.Network.Client
             GameClient = client;
             Name = client.Name;
             this.server = server;
+            server.ConnectionLost += onConnectionLost;
         }
 
+        void onConnectionLost()
+        {
+            MessageSent?.Invoke(new DisconnectedMessage(DisconnectReason.TimeOut));
+        }
 
         public void HandleMessage(IOMessage msg)
         {
@@ -73,21 +78,20 @@ namespace Shanism.Network.Client
                     var frameMsg = (GameFrameMessage)msg;
                     objects.ReadServerFrame(frameReader, frameMsg);
 
-                    break;
+                    return;
 
                 //grab the player id from a handshake reply message
                 case MessageType.HandshakeReply:
                     Id = ((HandshakeReplyMessage)msg).PlayerId;
-                    Log.Default.Info($"Received a {msg.Type}. ");
                     MessageSent(msg);
-                    return;
+                    break;
 
                 //relay all other messages to the IClient
                 default:
-                    Log.Default.Info($"Received a {msg.Type}. ");
                     MessageSent(msg);
-                    return;
+                    break;
             }
+            Log.Default.Info($"Received a {msg.Type}. ");
         }
 
         public void Update(int msElapsed)

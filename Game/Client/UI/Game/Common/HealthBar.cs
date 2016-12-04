@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Shanism.Common.Interfaces.Entities;
-using Shanism.Common.Game;
 
 namespace Shanism.Client.UI.Game
 {

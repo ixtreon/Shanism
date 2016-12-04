@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Shanism.Common.Game
+namespace Shanism.Common.Util
 {
     /// <summary>
     /// A generic <see cref="IComparer{T}"/> which uses a lambda function to compare elements. 

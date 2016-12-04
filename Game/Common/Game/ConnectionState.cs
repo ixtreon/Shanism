@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shanism.Common.Game
+namespace Shanism.Common
 {
     /// <summary>
     /// The different states a client could be in relative to its server.
