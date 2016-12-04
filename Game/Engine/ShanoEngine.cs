@@ -147,7 +147,7 @@ namespace Shanism.Engine
         /// Accepts the given client to the server.
         /// Returns the network receptor responsible for it. 
         /// </summary>
-        public IReceptor AcceptClient(IShanoClient c)
+        public IReceptor Connect(IShanoClient c)
         {
             if (!players.TryAdd(c.Name, null))
                 return null;

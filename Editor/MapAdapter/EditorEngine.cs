@@ -147,7 +147,7 @@ namespace Shanism.Editor.MapAdapter
             return tty;
         }
 
-        IReceptor IShanoEngine.AcceptClient(IShanoClient c)
+        IReceptor IShanoEngine.Connect(IShanoClient c)
         {
             if (player != null)
                 throw new InvalidOperationException();

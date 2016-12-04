@@ -144,6 +144,7 @@ namespace Shanism.Engine
             if (receptor == null) throw new ArgumentNullException(nameof(receptor));
 
             Receptor = receptor;
+
         }
 
         /// <summary>

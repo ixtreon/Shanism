@@ -86,15 +86,22 @@ namespace Shanism.Client
 
         public bool TryConnect(IShanoEngine server, string playerName, out IReceptor receptor)
         {
+            //set new server
             if (server == null)
                 throw new ArgumentNullException(nameof(server));
 
             disconnect();
-            receptor = server?.AcceptClient(this);
+            this.server = server;
+
+            //request a new receptor
+            receptor = server.Connect(this);
             if (receptor == null)
                 return false;
 
-            setConnection(server, receptor);
+            receptor.MessageSent += server_MessageSent;
+            this.receptor = receptor;
+
+            initSystems();
             return true;
         }
 
@@ -120,12 +127,6 @@ namespace Shanism.Client
 
         void setConnection(IShanoEngine s, IReceptor r)
         {
-            isConnected = true;
-            server = s;
-            receptor = r;
-            receptor.MessageSent += server_MessageSent;
-
-            initSystems();
         }
 
         void initSystems()

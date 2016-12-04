@@ -12,7 +12,7 @@ namespace Shanism.Client
     /// The entry game class that starts the <see cref="ClientEngine"/>. 
     /// Extends the <see cref="Microsoft.Xna.Framework.Game"/> class.
     /// </summary>
-    class ClientGame : Game, IClientInstance
+    class ClientGamez : Game, IClientInstance
     {
         GraphicsDeviceManager graphics;
 
@@ -34,7 +34,7 @@ namespace Shanism.Client
         #endregion
 
 
-        public ClientGame()
+        public ClientGamez()
         {
             Console.WriteLine("Starting up...");
 
@@ -70,7 +70,6 @@ namespace Shanism.Client
 
             GraphicsDevice.RasterizerState = new RasterizerState { CullMode = CullMode.None };
 
-            //setup screen dimensions
             Screen.SetWindowSize(Window.ClientBounds.Size.ToPoint());
 
 

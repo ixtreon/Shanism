@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Shanism.Client.Drawing;
 using Shanism.Client.Input;
 using Shanism.Client.UI;
 using Shanism.Common;
@@ -13,16 +14,26 @@ namespace Shanism.Client.GameScreens
 {
     abstract class UiScreen : GameScreen
     {
+        static readonly Color BackColor = new Color(48, 24, 48);
+
+        static readonly TextureFont TitleFont = Control.Content.Fonts.ShanoFont;
+        static readonly TextureFont SubTitleFont = Control.Content.Fonts.FancyFont;
+
         public virtual Control Root { get; } = new Control
         {
-            BackColor = new Color(48, 24, 48),
+            BackColor = BackColor,
         };
+
+        UiScreen subScreen;
 
         readonly Label title;
         readonly Label subTitle;
 
         protected readonly GraphicsDevice device;
         readonly Graphics g;
+
+        Control actualRoot
+            => subScreen?.actualRoot ?? Root;
 
         public event Action Closed;
 
@@ -52,17 +63,14 @@ namespace Shanism.Client.GameScreens
 
             });
 
-            var subTitleFont = Control.Content.Fonts.FancyFont;
             Root.Add(subTitle = new Label
             {
-                //BackColor = Color.Gray,
-
                 Text = string.Empty,
-                Font = subTitleFont,
+                Font = SubTitleFont,
 
                 ParentAnchor = AnchorMode.Left | AnchorMode.Right,
 
-                Size = new Vector(Screen.UiSize.X, subTitleFont.HeightUi),
+                Size = new Vector(Screen.UiSize.X, SubTitleFont.HeightUi),
                 Location = new Vector(0, title.Bottom + Control.LargePadding),
                 TextXAlign = 0.5f,
 
@@ -74,7 +82,7 @@ namespace Shanism.Client.GameScreens
             Root.KeyPressed += root_KeyActivated;
         }
 
-        void root_KeyActivated(Input.Keybind k)
+        void root_KeyActivated(Keybind k)
         {
             if (k.Key == Keys.Escape)
             {
@@ -86,7 +94,7 @@ namespace Shanism.Client.GameScreens
         {
             g.Begin();
 
-            Root.Draw(g);
+            actualRoot.Draw(g);
 
             g.End();
         }
@@ -95,9 +103,24 @@ namespace Shanism.Client.GameScreens
         {
             g.Bounds = new RectangleF(Vector.Zero, Screen.UiSize);
 
-            Root.Maximize();
-            Root.UpdateMain(msElapsed);
-            Root.Update(msElapsed);
+            actualRoot.Maximize();
+            actualRoot.UpdateMain(msElapsed);
+            actualRoot.Update(msElapsed);
         }
+
+        /// <summary>
+        /// Sets the child screen.
+        /// </summary>
+        protected virtual void SetScreen(UiScreen newScreen)
+        {
+            subScreen = newScreen;
+            subScreen.Closed += ResetSubScreen;
+        }
+
+        /// <summary>
+        /// Resets the child screen.
+        /// </summary>
+        protected void ResetSubScreen()
+            => subScreen = null;
     }
 }

@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -25,7 +26,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -103,6 +103,8 @@
     <Compile Include="Drawing\Sprites\UnitSprite.cs" />
     <Compile Include="Exceptions\ContentDirectoryMissing.cs" />
     <Compile Include="GameScreens\ConfirmExit.cs" />
+    <Compile Include="GameScreens\MultiPlayerJoin.cs" />
+    <Compile Include="GameScreens\MultiPlayerHost.cs" />
     <Compile Include="GameScreens\MultiPlayer.cs" />
     <Compile Include="Scenarios\ScenarioListControl.cs" />
     <Compile Include="Scenarios\ScenarioRow.cs" />
@@ -121,7 +123,8 @@
     <Compile Include="Systems\Chat.cs" />
     <Compile Include="Systems\Movement.cs" />
     <Compile Include="Systems\Sprites.cs" />
-    <Compile Include="UI\Chat\ChatBox.cs" />
+    <Compile Include="UI\Common\TextBox.cs" />
+    <Compile Include="UI\Chat\ChatFrame.cs" />
     <Compile Include="UI\Chat\IChatProvider.cs" />
     <Compile Include="UI\Common\PagedFlowPanel.cs" />
     <Compile Include="UI\Common\ScrollBar.cs" />
@@ -224,6 +227,10 @@
     <ProjectReference Include="..\Engine\Engine.csproj">
       <Project>{0b2e9f70-7046-470a-8e5d-ebd47f030ddc}</Project>
       <Name>Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Network\Network.csproj">
+      <Project>{D2FA8685-B964-498D-A34F-D191BE2CBA6B}</Project>
+      <Name>Network</Name>
     </ProjectReference>
     <ProjectReference Include="..\ScenarioLib\ScenarioLib.csproj">
       <Project>{bada50f2-93bc-4eba-949a-bf892ae4b7e5}</Project>

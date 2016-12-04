@@ -39,5 +39,8 @@ namespace Shanism.Common
         string GetDebugString();
 
         IReadOnlyCollection<IEntity> VisibleEntities { get; }
+
+        //event Action Connected;
+        //event Action Disconnected;
     }
 }

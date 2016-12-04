@@ -6,7 +6,7 @@ using Shanism.Common;
 
 namespace Shanism.Client.UI.Chat
 {
-    class ChatBox : Control
+    class ChatFrame : Control
     {
         public static readonly Vector DefaultSize = new Vector(0.7, 0.4);
 
@@ -20,7 +20,7 @@ namespace Shanism.Client.UI.Chat
 
         LinkedListNode<string> firstLineShown;
 
-        public ChatBox()
+        public ChatFrame()
         {
             Size = DefaultSize;
             BackColor = Color.Black.SetAlpha(100);

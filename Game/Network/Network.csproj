@@ -74,14 +74,15 @@
   <ItemGroup>
     <Compile Include="Client\NReceptor.cs" />
     <Compile Include="Client\ObjectCache.cs" />
-    <Compile Include="Client\ClientSerializer.cs" />
+    <Compile Include="Common\ClientFrameBuilder.cs" />
     <Compile Include="Common\ObjectBitmask.cs" />
+    <Compile Include="Common\ObjectData.cs" />
     <Compile Include="Diff\DiffGuy.cs" />
     <Compile Include="Ext.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="NetworkExt.cs" />
     <Compile Include="Client\NClient.cs" />
-    <Compile Include="Server\EngineSerializer.cs" />
+    <Compile Include="Common\ServerFrameBuilder.cs" />
     <Compile Include="Server\NServer.cs" />
     <Compile Include="Common\NPeer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

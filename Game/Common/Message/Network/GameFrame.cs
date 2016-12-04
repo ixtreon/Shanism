@@ -21,12 +21,16 @@ namespace Shanism.Common.Message.Network
         public override MessageType Type => MessageType.GameFrame;
 
         [ProtoMember(1)]
+        public uint FrameNumber;
+
+        [ProtoMember(2)]
         public readonly byte[] Data;
 
         GameFrameMessage() { }
 
-        public GameFrameMessage(byte[] datas)
+        public GameFrameMessage(uint frameNumber, byte[] datas)
         {
+            FrameNumber = frameNumber;
             Data = datas;
         }
     }

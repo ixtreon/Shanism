@@ -6,12 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Shanism.Common.Message.Client;
 using Shanism.Common.Message;
 using Shanism.Common.Message.Server;
 using Shanism.Common.Message.Network;
 using Shanism.Common.Interfaces.Entities;
-using Shanism.Common.Game;
+using Shanism.Network.Common;
 
 namespace Shanism.Network.Client
 {
@@ -36,7 +35,8 @@ namespace Shanism.Network.Client
 
         readonly ObjectCache objects = new ObjectCache();
 
-        readonly ClientSerializer serializer = new ClientSerializer();
+        readonly ClientFrameBuilder frameWriter = new ClientFrameBuilder();
+        readonly ServerFrameBuilder frameReader = new ServerFrameBuilder();
 
         public IHero MainHero { get; private set; }
 
@@ -44,6 +44,9 @@ namespace Shanism.Network.Client
 
         public IReadOnlyCollection<IEntity> VisibleEntities => objects.VisibleEntities;
 
+        /// <summary>
+        /// Gets the last ack'd frame.
+        /// </summary>
         public uint CurrentFrame { get; set; }
 
 
@@ -68,8 +71,7 @@ namespace Shanism.Network.Client
                 //a server game frame
                 case MessageType.GameFrame:
                     var frameMsg = (GameFrameMessage)msg;
-                    objects.ReadServerFrame(serializer, frameMsg);
-
+                    objects.ReadServerFrame(frameReader, frameMsg);
 
                     break;
 
@@ -93,7 +95,7 @@ namespace Shanism.Network.Client
             //send state to server
             if (stateRefreshCounter.Tick(msElapsed))
             {
-                var msg = serializer.WriteClientFrame(GameClient.State);
+                var msg = frameWriter.Write(CurrentFrame, GameClient.State);
                 server.SendMessage(msg, NetDeliveryMethod.UnreliableSequenced);
             }
         }

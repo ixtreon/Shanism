@@ -84,6 +84,8 @@
     <Compile Include="Game\ConnectionState.cs" />
     <Compile Include="Game\EquipSlot.cs" />
     <Compile Include="Game\MovementState.cs" />
+    <Compile Include="Serialization\DiffReader.cs" />
+    <Compile Include="Serialization\DiffWriter.cs" />
     <Compile Include="ServerState.cs" />
     <Compile Include="Interfaces\Base\IGame.cs" />
     <Compile Include="Interfaces\Objects\IItem.cs" />

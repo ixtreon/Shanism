@@ -35,7 +35,9 @@ namespace Shanism.Network.Client
         NetClient NetClient => (NetClient)peer;
 
         public bool IsConnected => isConnected;
+
         bool hasClient => GameClient != null;
+
 
         static NClient()
         {
@@ -81,11 +83,6 @@ namespace Shanism.Network.Client
             receptor.HandleMessage(ioMsg);
         }
 
-        internal void SendMessageReliable(IOMessage ioMsg)
-        {
-            SendMessage(ioMsg, NetDeliveryMethod.ReliableUnordered);
-        }
-
         internal void SendMessage(IOMessage ioMsg,
             NetDeliveryMethod deliveryMethod)
         {
@@ -106,6 +103,11 @@ namespace Shanism.Network.Client
             }
 
             Log.Default.Debug($"Sent a {ioMsg.Type}. ");
+        }
+
+        internal void SendMessageReliable(IOMessage ioMsg)
+        {
+            SendMessage(ioMsg, NetDeliveryMethod.ReliableUnordered);
         }
 
 
@@ -130,7 +132,7 @@ namespace Shanism.Network.Client
         }
 
         #region Server implementation
-        public IReceptor AcceptClient(IShanoClient client)
+        public IReceptor Connect(IShanoClient client)
         {
             if (receptor != null)
                 throw new InvalidOperationException("There is already a client assigned to this instance.");

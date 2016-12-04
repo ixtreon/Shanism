@@ -26,7 +26,7 @@ namespace Shanism.Client.GameScreens
             {
                 Size = listSz,
                 Location = new Vector((Root.Size.X - listSz.X) / 2, 0.7),
-                ParentAnchor = UI.AnchorMode.None,
+                ParentAnchor = AnchorMode.None,
                 BackColor = Color.Black.SetAlpha(100),
             });
 

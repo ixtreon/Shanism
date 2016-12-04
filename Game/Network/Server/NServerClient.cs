@@ -6,6 +6,7 @@ using System;
 using Shanism.Common.Util;
 using Shanism.Common.Message.Client;
 using Shanism.Common.Message.Network;
+using Shanism.Network.Common;
 
 namespace Shanism.Network.Server
 {
@@ -18,7 +19,8 @@ namespace Shanism.Network.Server
     /// </summary>
     public class NServerClient : IShanoClient
     {
-        readonly EngineSerializer serializer = new EngineSerializer();
+        readonly ServerFrameBuilder serverFrameWriter = new ServerFrameBuilder();
+        readonly ClientFrameBuilder clientFrameReader = new ClientFrameBuilder();
 
 
         /// <summary>
@@ -42,6 +44,8 @@ namespace Shanism.Network.Server
         /// Gets the name of the client. 
         /// </summary>
         public string Name { get; }
+
+        uint LastAckFrame { get; set; }
 
         public ClientState State { get; private set; } = new ClientState();
 
@@ -86,7 +90,7 @@ namespace Shanism.Network.Server
             }
 
             //send a GameFrame to the client
-            var msg = serializer.WriteServerFrame(gameReceptor);
+            var msg = serverFrameWriter.Write(gameReceptor);
             sendMessage(msg, NetDeliveryMethod.Unreliable);
         }
 
@@ -106,9 +110,12 @@ namespace Shanism.Network.Server
             {
                 case MessageType.GameFrame:
                     ClientState newState;
-                    if (serializer.TryReadClientFrame((GameFrameMessage)msg, out newState))
+                    uint lastFrame;
+                    if (clientFrameReader.TryRead((GameFrameMessage)msg, out lastFrame, out newState))
+                    {
                         State = newState;
-
+                        LastAckFrame = lastFrame;
+                    }
                     break;
 
                 default:

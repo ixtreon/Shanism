@@ -22,7 +22,7 @@ namespace Shanism.Client.UI
         public readonly UnitHoverFrame HoverFrame;
         public readonly MenuBar Menus;
         public readonly ChatBar ChatBar;
-        public readonly ChatBox ChatBox;
+        public readonly ChatFrame ChatBox;
 
         readonly ErrorTextControl errors;
         public readonly FloatingTextProvider FloatingText;
@@ -89,9 +89,9 @@ namespace Shanism.Client.UI
                 Size = chatSize,
                 Location = HeroAbilities.Location - new Vector(0, chatSize.Y),
             });
-            Add(ChatBox = new ChatBox
+            Add(ChatBox = new ChatFrame
             {
-                Size = new Vector(chatSize.X, ChatBox.DefaultSize.Y),
+                Size = new Vector(chatSize.X, ChatFrame.DefaultSize.Y),
                 Location = new Vector(2, 0) - new Vector(chatSize.X, 0),
                 ParentAnchor = AnchorMode.Right | AnchorMode.Top,
             });

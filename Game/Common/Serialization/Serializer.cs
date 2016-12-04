@@ -43,6 +43,7 @@ namespace Shanism.Common.Serialization
 
             w.Write(obj.Id);
             w.Write((byte)ty);
+
             s.Write(w, obj);
         }
 
@@ -67,13 +68,12 @@ namespace Shanism.Common.Serialization
         /// </summary>
         /// <param name="h">The header which specifies the type of game object.</param>
         /// <returns>A fresh game object compatible with the header.</returns>
-        public ObjectStub Create(ObjectHeader h) => Create(h.Type, h.Id);
-
-        public ObjectStub Create(ObjectType type, uint id)
+        public ObjectStub Create(ObjectHeader h)
         {
-            var s = serializers[(int)type];
-            var o = s.Create(id);
-            o.ObjectType = type;
+            var s = serializers[(int)h.Type];
+            var o = s.Create(h.Id);
+
+            o.ObjectType = h.Type;
             return o;
         }
 

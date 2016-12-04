@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Shanism.Common.Message.Network;
 using Shanism.Common.StubObjects;
+using Shanism.Network.Common;
 
 namespace Shanism.Network.Client
 {
@@ -22,10 +23,10 @@ namespace Shanism.Network.Client
         public IReadOnlyCollection<EntityStub> VisibleEntities => _visibleEntities;
 
 
-        internal void ReadServerFrame(ClientSerializer serializer, GameFrameMessage msg)
+        internal void ReadServerFrame(ServerFrameBuilder serializer, GameFrameMessage msg)
         {
             _visibleEntities.Clear();
-            serializer.ReadServerFrame(msg, _objectCache, _visibleEntities);
+            serializer.Read(msg, _objectCache, _visibleEntities);
         }
     }
 }

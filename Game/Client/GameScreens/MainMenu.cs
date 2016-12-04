@@ -25,12 +25,7 @@ namespace Shanism.Client.GameScreens
         readonly ConfirmExit exitDialog;
         readonly Control optionsWindow;
 
-        UiScreen subScreen;
-
         public event Action<IShanoEngine> GameStarted;
-
-        public override Control Root
-            => subScreen?.Root ?? base.Root;
 
         public MainMenu(GraphicsDevice device)
             : base(device)
@@ -75,10 +70,11 @@ namespace Shanism.Client.GameScreens
             //options & exit
             Root.Add(optionsWindow = new OptionsWindow
             {
-                Location = (Screen.UiSize - OptionsWindow.DefaultSize) / 2,
                 IsVisible = false,
                 CanFocus = true,
             });
+            optionsWindow.CenterBoth();
+
             Root.Add(exitDialog = new ConfirmExit());
 
 
@@ -118,31 +114,31 @@ namespace Shanism.Client.GameScreens
         {
             var mpScreen = new MultiPlayer(device);
             mpScreen.GameStarted += onGameStarted;
-            setScreen(mpScreen);
+
+            SetScreen(mpScreen);
         }
 
         void SinglePlayer_MouseUp(Input.MouseButtonArgs e)
         {
             var spScreen = new SinglePlayer(device);
-            spScreen.GameStarted += onGameStarted; 
-            setScreen(spScreen);
+            spScreen.GameStarted += onGameStarted;
+
+            SetScreen(spScreen);
         }
 
         void onGameStarted(IShanoEngine engine)
         {
-            subScreen = null;
+            ResetSubScreen();
             GameStarted?.Invoke(engine);
         }
 
-        void setScreen(UiScreen newScreen)
+        protected override void SetScreen(UiScreen newScreen)
         {
             optionsWindow.IsVisible = false;
             exitDialog.IsVisible = false;
-            subScreen = newScreen;
-            subScreen.Closed += clearScreen;
+
+            base.SetScreen(newScreen);
         }
 
-        void clearScreen()
-            => subScreen = null;
     }
 }

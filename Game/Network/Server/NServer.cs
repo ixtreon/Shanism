@@ -32,8 +32,8 @@ namespace Shanism.Network
         readonly Dictionary<NetConnection, NServerClient> clients = new Dictionary<NetConnection, NServerClient>();
 
 
-        internal NetServer NetServer { get { return (NetServer)peer; } }
-
+        internal NetServer NetServer => (NetServer)peer;
+        uint CurrentFrame;
 
         public NServer(IShanoEngine engine)
             : base(new NetServer(new NetPeerConfiguration(AppIdentifier) { Port = NetworkPort }))
@@ -112,7 +112,7 @@ namespace Shanism.Network
 
 
             //check if the server accepts it
-            var receptor = engine.AcceptClient(client);
+            var receptor = engine.Connect(client);
             var accepted = (receptor != null);  //TODO: make an actual check
             Log.Default.Info($"Player {msg.PlayerName} ({peerConnection.RemoteEndPoint.Address}) wants to join. Accepted? {accepted}");
 
