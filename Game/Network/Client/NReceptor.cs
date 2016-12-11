@@ -93,7 +93,7 @@ namespace Shanism.Network.Client
             //send state to server
             if (stateRefreshCounter.Tick(msElapsed))
             {
-                var msg = serializer.WriteClientFrame(GameClient.State);
+                var msg = serializer.WriteClientFrame(0, GameClient.State);
                 server.SendMessage(msg, NetDeliveryMethod.UnreliableSequenced);
             }
         }
