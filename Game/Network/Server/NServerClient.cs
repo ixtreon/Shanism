@@ -106,7 +106,8 @@ namespace Shanism.Network.Server
             {
                 case MessageType.GameFrame:
                     ClientState newState;
-                    if (serializer.TryReadClientFrame((GameFrameMessage)msg, out newState))
+                    uint curFrame;
+                    if (serializer.TryReadClientFrame((GameFrameMessage)msg, out curFrame, out newState))
                         State = newState;
 
                     break;
