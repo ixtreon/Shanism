@@ -19,6 +19,7 @@ namespace Shanism.Client.GameScreens
         static readonly TextureFont TitleFont = Control.Content.Fonts.ShanoFont;
         static readonly TextureFont SubTitleFont = Control.Content.Fonts.FancyFont;
 
+
         public virtual Control Root { get; } = new Control
         {
             BackColor = BackColor,
@@ -36,6 +37,10 @@ namespace Shanism.Client.GameScreens
             => subScreen?.actualRoot ?? Root;
 
         public event Action Closed;
+
+        public event Action<IShanoEngine> GameStarted;
+
+
 
         public string SubTitle
         {
@@ -81,6 +86,8 @@ namespace Shanism.Client.GameScreens
 
             Root.KeyPressed += root_KeyActivated;
         }
+
+        public void StartGame(IShanoEngine game) => GameStarted?.Invoke(game);
 
         void root_KeyActivated(Keybind k)
         {

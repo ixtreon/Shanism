@@ -29,6 +29,8 @@ namespace Shanism.Network.Client
 
         public ServerState State { get; } = ServerState.Playing;
 
+        public string HostAddress { get; }
+
         public IShanoClient GameClient { get; private set; }
 
 
@@ -47,13 +49,27 @@ namespace Shanism.Network.Client
         }
 
 
-        public NClient(string hostAddress)
+        NClient(string hostAddress)
             : base(new NetClient(new NetPeerConfiguration(AppIdentifier)))
         {
-            //initiate a connection
-            var conn = NetClient.Connect(hostAddress, NetworkPort);
+            HostAddress = hostAddress;
         }
 
+        public static bool TryConnect(string hostAddress, out NClient client)
+        {
+            client = new NClient(hostAddress);
+
+            //initiate a connection
+            try
+            {
+                var conn = client.NetClient.Connect(hostAddress, NetworkPort);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
 
         internal override void OnConnected(NetConnection conn)

@@ -25,8 +25,6 @@ namespace Shanism.Client.GameScreens
         readonly ConfirmExit exitDialog;
         readonly Control optionsWindow;
 
-        public event Action<IShanoEngine> GameStarted;
-
         public MainMenu(GraphicsDevice device)
             : base(device)
         {
@@ -129,7 +127,7 @@ namespace Shanism.Client.GameScreens
         void onGameStarted(IShanoEngine engine)
         {
             ResetSubScreen();
-            GameStarted?.Invoke(engine);
+            StartGame(engine);
         }
 
         protected override void SetScreen(UiScreen newScreen)

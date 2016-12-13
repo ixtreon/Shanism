@@ -14,14 +14,11 @@ namespace Shanism.Client.GameScreens
         static readonly Vector panelSize = new Vector(0.6, 0.7);
         static readonly Vector btnSize = new Vector(panelSize.X - 2 * Control.Padding, 0.15);
 
-        public event Action<IShanoEngine> GameStarted;
 
         public MultiPlayer(GraphicsDevice device)
             : base(device)
         {
             SubTitle = "Multi Player";
-
-            Console.WriteLine("Create MP");
 
             var flowPanel = new FlowPanel
             {
@@ -48,27 +45,30 @@ namespace Shanism.Client.GameScreens
             flowPanel.CenterBoth();
 
             Root.Add(flowPanel);
+
+            //create sub-screens
+            mpJoin = new MultiPlayerJoin(device);
+            mpJoin.GameStarted += onGameStarted;
+
+            mpHost = new MultiPlayerHost(device);
+            mpHost.GameStarted += onGameStarted;
         }
+
+        UiScreen mpHost, mpJoin;
 
         void JoinGame_MouseUp(Input.MouseButtonArgs obj)
         {
-            var mpScreen = new MultiPlayerJoin(device);
-            mpScreen.GameStarted += onGameStarted;
-
-            SetScreen(mpScreen);
+            SetScreen(mpJoin);
         }
 
         void HostGame_MouseUp(Input.MouseButtonArgs obj)
         {
-            var mpScreen = new MultiPlayerHost(device);
-            mpScreen.GameStarted += onGameStarted;
-
-            SetScreen(mpScreen);
+            SetScreen(mpHost);
         }
 
         void onGameStarted(IShanoEngine engine)
         {
-            GameStarted?.Invoke(engine);
+            StartGame(engine);
         }
     }
 }

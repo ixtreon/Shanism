@@ -166,10 +166,11 @@ namespace Shanism.Client
             return true;
         }
 
+        static readonly Keybind cancelConnectKeybind = new Keybind(Microsoft.Xna.Framework.Input.Keys.Escape);
         public override void Update(int msElapsed)
         {
             //update the local server
-            if (isConnected)
+            if (server != null)
                 server.Update(msElapsed);
 
             //Parse its messages
@@ -188,6 +189,11 @@ namespace Shanism.Client
 
                 //debug
                 updateDebugStats(msElapsed);
+            }
+            else
+            {
+                if (KeyboardInfo.IsActivated(cancelConnectKeybind))
+                    GameHelper.Quit();
             }
         }
 

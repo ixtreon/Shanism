@@ -14,8 +14,6 @@ namespace Shanism.Client.GameScreens
     {
         readonly ScenarioListControl scenarioList;
 
-        public event Action<IShanoEngine> GameStarted;
-
         public SinglePlayer(GraphicsDevice device) 
             : base(device)
         {
@@ -53,7 +51,7 @@ namespace Shanism.Client.GameScreens
                 return;
             }
 
-            GameStarted?.Invoke(eng);
+            StartGame(eng);
         }
     }
 }

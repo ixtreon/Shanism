@@ -15,8 +15,6 @@ namespace Shanism.Client.GameScreens
         static readonly Vector panelSize = new Vector(0.6, 0.7);
         static readonly Vector btnSize = new Vector(panelSize.X - 2 * Control.Padding, 0.06);
 
-        public event Action<IShanoEngine> GameStarted;
-
         readonly TextBox hostAddress;
         readonly Button connectButton;
 
@@ -30,7 +28,7 @@ namespace Shanism.Client.GameScreens
             {
                 Width = panelSize.X,
                 ParentAnchor = AnchorMode.None,
-                BackColor = Color.Black.SetAlpha(100),
+                BackColor = Color.Transparent,
             };
 
             flowPanel.Add(new Label
@@ -61,12 +59,22 @@ namespace Shanism.Client.GameScreens
         {
             if (string.IsNullOrEmpty(hostAddress.Text))
             {
-                Root.Add(new MessageBox("Host", "Please enter a host address!"));
+                foreach (var c in Root.Controls.OfType<MessageBox>())
+                    Root.Remove(c);
+                Root.Add(new MessageBox("Host", "Please enter a host address."));
                 return;
             }
 
-            var client = new NClient(hostAddress.Text);
-            GameStarted?.Invoke(client);
+            NClient client;
+            if (!NClient.TryConnect(hostAddress.Text, out client))
+            {
+                foreach (var c in Root.Controls.OfType<MessageBox>())
+                    Root.Remove(c);
+                Root.Add(new MessageBox("Host", "The selected host is unreachable."));
+                return;
+            }
+                
+            StartGame(client);
         }
     }
 }
