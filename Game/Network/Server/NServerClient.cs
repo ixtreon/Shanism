@@ -100,7 +100,7 @@ namespace Shanism.Network.Server
         #endregion
 
 
-        internal void handleClientMessage(IOMessage msg)
+        internal void handleProtoMessage(IOMessage msg)
         {
             switch (msg.Type)
             {

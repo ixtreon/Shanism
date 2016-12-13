@@ -84,11 +84,7 @@
     <Compile Include="Game\ConnectionState.cs" />
     <Compile Include="Game\EquipSlot.cs" />
     <Compile Include="Game\MovementState.cs" />
-    <Compile Include="Serialization\New\FieldReader.cs" />
-    <Compile Include="Serialization\New\FieldWriter.cs" />
-    <Compile Include="Serialization\New\ISerializableObject.cs" />
-    <Compile Include="Serialization\New\PageBuilder.cs" />
-    <Compile Include="Serialization\New\PageReader.cs" />
+    <Compile Include="Objects\ISerializableObject.cs" />
     <Compile Include="ServerState.cs" />
     <Compile Include="Interfaces\Base\IGame.cs" />
     <Compile Include="Interfaces\Objects\IItem.cs" />

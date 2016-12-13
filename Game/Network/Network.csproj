@@ -81,6 +81,10 @@
     <Compile Include="Log.cs" />
     <Compile Include="NetworkExt.cs" />
     <Compile Include="Client\NClient.cs" />
+    <Compile Include="Serialization\FieldReader.cs" />
+    <Compile Include="Serialization\FieldWriter.cs" />
+    <Compile Include="Serialization\PageBuilder.cs" />
+    <Compile Include="Serialization\PageReader.cs" />
     <Compile Include="Server\EngineSerializer.cs" />
     <Compile Include="Server\NServer.cs" />
     <Compile Include="Common\NPeer.cs" />

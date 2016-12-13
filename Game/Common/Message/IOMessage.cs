@@ -33,8 +33,6 @@ namespace Shanism.Common.Message
 
     //common?
 
-    //network
-    [ProtoInclude((int)MessageType.GameFrame, typeof(GameFrameMessage))]
     public abstract class IOMessage
     {
         public abstract MessageType Type { get; }

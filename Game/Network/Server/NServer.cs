@@ -70,32 +70,41 @@ namespace Shanism.Network
         }
 
 
-        internal override void HandleDataMessage(NetIncomingMessage msg)
+        internal override void ReadMessage(NetIncomingMessage msg)
         {
-            var ioMsg = msg.ToIOMessage();
+            var isProtoMessage = msg.ReadByte() == 0;
 
-            if (ioMsg == null)
+            if(isProtoMessage)
             {
-                Log.Default.Warning($"Unable to read incoming message of length {msg.LengthBytes}. ");
-                return;
-            }
+                var ioMsg = msg.ToIOMessage();
 
-            //check if it's a handshake and if so, ask the server whether to accept it
-            if (ioMsg.Type == MessageType.HandshakeInit)
+                if(ioMsg == null)
+                {
+                    Log.Default.Warning($"Unable to read incoming message of length {msg.LengthBytes}. ");
+                    return;
+                }
+
+                //check if it's a handshake and if so, ask the server whether to accept it
+                if(ioMsg.Type == MessageType.HandshakeInit)
+                {
+                    handleHandshake(msg.SenderConnection, (HandshakeInitMessage)ioMsg);
+                    return;
+                }
+
+                //for all other message types, the client must already have an identity. 
+                var client = clients.TryGet(msg.SenderConnection);
+                if(client == null)
+                {
+                    Log.Default.Warning("Received a request from an unknown client. Ignoring it. ");
+                    return;
+                }
+
+                client.handleProtoMessage(ioMsg);
+            }
+            else
             {
-                handleHandshake(msg.SenderConnection, (HandshakeInitMessage)ioMsg);
-                return;
+                //received a game frame..
             }
-
-            //for all other message types, the client must already have an identity. 
-            var client = clients.TryGet(msg.SenderConnection);
-            if (client == null)
-            {
-                Log.Default.Warning("Received a request from an unknown client. Ignoring it. ");
-                return;
-            }
-
-            client.handleClientMessage(ioMsg);
         }
 
 

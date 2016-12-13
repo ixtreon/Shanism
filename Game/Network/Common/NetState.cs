@@ -1,4 +1,5 @@
-﻿using Shanism.Common.Game;
+﻿using Lidgren.Network;
+using Shanism.Common.Game;
 using Shanism.Common.Interfaces.Objects;
 using Shanism.Common.Serialization;
 using Shanism.Common.StubObjects;
@@ -26,16 +27,14 @@ namespace Shanism.Network.Common
         /// <summary>
         /// Writes a new diff frame.
         /// </summary>
-        public byte[] WriteDiff(uint curFrameId, List<IGameObject> objects)
+        public void WriteDiff(NetOutgoingMessage msg, uint curFrameId, List<IGameObject> objects)
         {
-            //get vis. change mask
-
             using(var ms = new MemoryStream())
             {
                 using(var wr = new BinaryWriter(ms))
                 {
                     //write frame ID
-                    wr.Write(curFrameId);
+                    msg.Write(curFrameId);
 
                     //write vis. change mask
                     var pages = new PageBuilder();

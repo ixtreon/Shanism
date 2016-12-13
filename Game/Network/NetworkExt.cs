@@ -8,9 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-// The header type used throughout. 
-using HeaderType = System.Int32;
-
 namespace Shanism.Network
 {
     static class NetworkExt
@@ -31,6 +28,7 @@ namespace Shanism.Network
             }
 
             var netMsg = peer.CreateMessage(sizeof(int) + bytes.Length);
+            netMsg.Write((byte)0);
             netMsg.Write((int)bytes.Length);
             netMsg.Write(bytes);
 
@@ -46,7 +44,6 @@ namespace Shanism.Network
         {
             try
             {
-                msg.Position = 0;
                 var len = msg.ReadInt32();
                 var bytes = msg.ReadBytes(len);
 
@@ -55,6 +52,7 @@ namespace Shanism.Network
             }
             catch(Exception e)
             {
+                Log.Default.Error("Received a faulty message...");
                 return null;
             }
 

@@ -67,18 +67,27 @@ namespace Shanism.Network.Client
         }
 
         //got a message from the server
-        internal override void HandleDataMessage(NetIncomingMessage msg)
+        internal override void ReadMessage(NetIncomingMessage msg)
         {
-            //parse it as an IOMessage
-            var ioMsg = msg.ToIOMessage();
-            if (ioMsg == null)
-            {
-                Log.Default.Warning($"Received a faulty message of length {msg.LengthBytes}.");
-                return;
-            }
+            var isProtoMessage = msg.ReadByte() == 0;
 
-            //if valid, pass it to the receptor
-            receptor.HandleMessage(ioMsg);
+            if(isProtoMessage)
+            {
+                //parse it as an IOMessage
+                var ioMsg = msg.ToIOMessage();
+                if(ioMsg == null)
+                {
+                    Log.Default.Warning($"Received a faulty message of length {msg.LengthBytes}.");
+                    return;
+                }
+
+                //if valid, pass it to the receptor
+                receptor.HandleMessage(ioMsg);
+            }
+            else
+            {
+                //non-proto message => game-frame message
+            }
         }
 
         internal void SendMessageReliable(IOMessage ioMsg)
