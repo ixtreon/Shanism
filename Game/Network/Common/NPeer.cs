@@ -53,7 +53,7 @@ namespace Shanism.Network
 
                 // data messages
                 case NetIncomingMessageType.Data:
-                    HandleDataMessage(msg);
+                    ReadMessage(msg);
                     break;
 
                 // client connect / disconnect
@@ -75,7 +75,7 @@ namespace Shanism.Network
             }
         }
 
-        internal abstract void HandleDataMessage(NetIncomingMessage msg);
+        internal abstract void ReadMessage(NetIncomingMessage msg);
 
         internal virtual void OnConnected(NetConnection conn) { }
         internal virtual void OnDisconnected(NetConnection conn) { }

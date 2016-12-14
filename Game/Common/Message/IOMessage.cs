@@ -32,8 +32,8 @@ namespace Shanism.Common.Message
     [ProtoInclude((int)MessageType.DamageEvent, typeof(DamageEventMessage))]
     [ProtoInclude((int)MessageType.Disconnected, typeof(DisconnectedMessage))]
 
-    //common
-    [ProtoInclude((int)MessageType.GameFrame, typeof(GameFrameMessage))]
+    //common?
+
     public abstract class IOMessage
     {
         public abstract MessageType Type { get; }

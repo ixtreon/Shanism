@@ -17,14 +17,6 @@ namespace NetworkTests
         public void TestStructKind()
         { 
 
-            int a = -5;
-            DiffWriter.IntStruct s = new DiffWriter.IntStruct { IntValue = a };
-
-
-            Debug.WriteLine(s.ByteA);
-            Debug.WriteLine(s.ByteB);
-            Debug.WriteLine(s.ByteC);
-            Debug.WriteLine(s.ByteD);
         }
 
     }

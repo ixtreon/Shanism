@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Shanism.Common.Message.Network;
 using Shanism.Common.StubObjects;
+using System.IO;
+using Shanism.Common.Serialization;
 using Shanism.Network.Common;
 
 namespace Shanism.Network.Client
@@ -27,6 +29,34 @@ namespace Shanism.Network.Client
         {
             _visibleEntities.Clear();
             serializer.Read(msg, _objectCache, _visibleEntities);
+        }
+
+        public void ReadDiff(GameFrameMessage msg)
+        {
+            var diff = msg.Data;
+
+            using(var ms = new MemoryStream(diff))
+            using(var r = new BinaryReader(ms))
+            {
+                //read frame ID
+                var newFrameId = r.ReadUInt32();
+
+                //read vis change mask
+                var pages = new PageReader(r);
+                foreach(var id in pages.ChangedIds)
+                {
+                    if(_objectCache.ContainsKey(id))
+                        _objectCache.Remove(id);
+                    else
+                        _objectCache.Add(id, null);
+                }
+
+                //read object diffs
+                foreach(var kvp in _objectCache.OrderBy(kvp => kvp.Key))
+                {
+
+                }
+            }
         }
     }
 }
