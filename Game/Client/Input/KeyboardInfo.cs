@@ -18,11 +18,11 @@ namespace Shanism.Client.Input
         static HashSet<Keys> newKeysDown = new HashSet<Keys>();
 
 
-        public static IEnumerable<Keys> JustPressedKeys { get; private set; }
+        public static IEnumerable<Keys> JustPressedKeys { get; private set; } = new List<Keys>();
 
-        public static IEnumerable<Keys> JustReleasedKeys { get; private set; }
+        public static IEnumerable<Keys> JustReleasedKeys { get; private set; } = new List<Keys>();
 
-        public static IEnumerable<ClientAction> JustActivatedActions { get; private set; }
+        public static IEnumerable<ClientAction> JustActivatedActions { get; private set; } = new List<ClientAction>();
 
         public static ModifierKeys Modifiers { get; private set; }
 

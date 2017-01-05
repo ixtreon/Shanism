@@ -33,6 +33,7 @@ namespace Shanism.Network
 
 
         internal NetServer NetServer => (NetServer)peer;
+
         uint CurrentFrame;
 
         public NServer(IShanoEngine engine)
@@ -47,9 +48,12 @@ namespace Shanism.Network
         {
             base.Update(msElapsed);
 
+            CurrentFrame++;
+
             //update all netclients
             foreach (var client in clients.Values)
-                client.Update(msElapsed);
+                client.Update(msElapsed, CurrentFrame);
+
         }
 
 
@@ -72,39 +76,45 @@ namespace Shanism.Network
 
         internal override void ReadMessage(NetIncomingMessage msg)
         {
+            NServerClient client;
             var isProtoMessage = msg.ReadByte() == 0;
-
-            if(isProtoMessage)
+            if (!isProtoMessage)
             {
-                var ioMsg = msg.ToIOMessage();
+                //that's a game frame
 
-                if(ioMsg == null)
-                {
-                    Log.Default.Warning($"Unable to read incoming message of length {msg.LengthBytes}. ");
-                    return;
-                }
-
-                //check if it's a handshake and if so, ask the server whether to accept it
-                if(ioMsg.Type == MessageType.HandshakeInit)
-                {
-                    handleHandshake(msg.SenderConnection, (HandshakeInitMessage)ioMsg);
-                    return;
-                }
-
-                //for all other message types, the client must already have an identity. 
-                var client = clients.TryGet(msg.SenderConnection);
-                if(client == null)
+                //the client must already have an identity. 
+                if (!clients.TryGetValue(msg.SenderConnection, out client))
                 {
                     Log.Default.Warning("Received a request from an unknown client. Ignoring it. ");
                     return;
                 }
 
-                client.handleProtoMessage(ioMsg);
+                client.handleFrameMessage(msg);
+                return;
             }
-            else
+
+            var ioMsg = msg.ToIOMessage();
+            if (ioMsg == null)
             {
-                //received a game frame..
+                Log.Default.Warning($"Unable to read incoming message of length {msg.LengthBytes}. ");
+                return;
             }
+
+            //check if it's a handshake and if so, ask the server whether to accept it
+            if (ioMsg.Type == MessageType.HandshakeInit)
+            {
+                handleHandshake(msg.SenderConnection, (HandshakeInitMessage)ioMsg);
+                return;
+            }
+
+            //for all other message types, the client must already have an identity. 
+            if (!clients.TryGetValue(msg.SenderConnection, out client))
+            {
+                Log.Default.Warning("Received a request from an unknown client. Ignoring it. ");
+                return;
+            }
+
+            client.handleProtoMessage(ioMsg);
         }
 
 

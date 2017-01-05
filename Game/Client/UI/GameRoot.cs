@@ -1,6 +1,5 @@
 ﻿using Shanism.Client.UI.Chat;
 using Shanism.Client.UI.Game;
-using Shanism.Client.UI.Game;
 using Shanism.Client.UI.Menus;
 using Shanism.Common;
 using Shanism.Common.Interfaces.Objects;

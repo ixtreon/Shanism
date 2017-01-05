@@ -60,8 +60,9 @@
       <Private>True</Private>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
-    <Reference Include="protobuf-net">
-      <HintPath>..\..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
+    <Reference Include="protobuf-net, Version=2.1.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\protobuf-net.2.1.0\lib\net451\protobuf-net.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -75,9 +76,9 @@
     <Compile Include="Client\NReceptor.cs" />
     <Compile Include="Client\ObjectCache.cs" />
     <Compile Include="Common\ClientFrameBuilder.cs" />
-    <Compile Include="Common\ObjectBitmask.cs" />
     <Compile Include="Common\ObjectData.cs" />
-    <Compile Include="Common\NetState.cs" />
+    <Compile Include="Serialization\PageBase.cs" />
+    <Compile Include="Server\ClientStateTracker.cs" />
     <Compile Include="Diff\DiffGuy.cs" />
     <Compile Include="Ext.cs" />
     <Compile Include="Log.cs" />
@@ -87,8 +88,7 @@
     <Compile Include="Serialization\FieldWriter.cs" />
     <Compile Include="Serialization\PageBuilder.cs" />
     <Compile Include="Serialization\PageReader.cs" />
-    <Compile Include="Server\EngineSerializer.cs" />
-    <Compile Include="Common\ServerFrameBuilder.cs" />
+    <Compile Include="Old\ServerFrameBuilder.cs" />
     <Compile Include="Server\NServer.cs" />
     <Compile Include="Common\NPeer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

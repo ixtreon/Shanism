@@ -11,20 +11,16 @@ using System.Threading.Tasks;
 
 namespace Shanism.Network.Serialization
 {
-    public class PageBuilder
+    public class PageBuilder : PageBase
     {
-        const int BookLength = 64;
-        const int PageLength = 64;
-        const int NBooks = 2;
-        const int NPages = NBooks * PageLength;
 
         readonly HashSet<uint> oldObjects = new HashSet<uint>();
 
-        ulong[] books = new ulong[NBooks];
+        readonly ulong[] books = new ulong[NBooks];
 
-        ulong[] pages = new ulong[NPages];
+        readonly ulong[] pages = new ulong[NPages];
 
-        public void UpdatePages(List<IGameObject> objects)
+        public void UpdatePages(IReadOnlyCollection<IGameObject> objects)
         {
             //reset pages/books
             Array.Clear(books, 0, NBooks);
@@ -32,9 +28,9 @@ namespace Shanism.Network.Serialization
 
 
             //Add objects that were NOT in the old objects collection
-            for(int i = 0; i < objects.Count; i++)
+            foreach(var obj in objects)
             {
-                var objId = objects[i].Id;
+                var objId = obj.Id;
                 if(!oldObjects.Remove(objId))
                     Add(objId);
             }
@@ -46,27 +42,27 @@ namespace Shanism.Network.Serialization
 
             //reset the old objects collection
             oldObjects.Clear();
-            for(int i = 0; i < objects.Count; i++)
-                oldObjects.Add(objects[i].Id);
+            foreach (var obj in objects)
+                oldObjects.Add(obj.Id);
         }
 
         public void Add(uint id)
         {
-            var pageRowId = (int)(id % PageLength);
-            var pageId = id / PageLength;
-            pages[pageId] |= (1ul << pageRowId);
+            var pageRowId = (int)(id % PageBase.PageLength);
+            var pageId = id / PageBase.PageLength;
+            SetBit(ref pages[pageId], pageRowId);
 
-            var bookRowId = (int)(pageId % BookLength);
-            var bookId = pageId / BookLength;
-            books[bookId] |= (1ul << bookRowId);
+            var bookRowId = (int)(pageId % PageBase.BookLength);
+            var bookId = pageId / PageBase.BookLength;
+            SetBit(ref books[bookId], bookRowId);
         }
 
-        public void Write(NetOutgoingMessage msg)
+        public void Write(NetBuffer msg)
         {
-            for(int i = 0; i < NBooks; i++)
+            for(int i = 0; i < PageBase.NBooks; i++)
                 msg.Write(books[i]);
 
-            for(int i = 0; i < NPages; i++)
+            for(int i = 0; i < PageBase.NPages; i++)
             {
                 var page = pages[i];
                 if(page != 0)

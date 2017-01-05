@@ -5,10 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shanism.Common.Serialization;
+using Shanism.Common;
 
 namespace Shanism.Network.Serialization
 {
-    public class FieldReader
+    public class FieldReader : IReader
     {
         NetBuffer Message { get; }
 
@@ -62,6 +64,25 @@ namespace Shanism.Network.Serialization
                 return oldVal;
 
             return Message.ReadString();
+        }
+
+        public Color ReadColor(Color oldVal)
+        {
+            var areEqual = Message.ReadBoolean();
+            if (areEqual)
+                return oldVal;
+
+            return new Color(Message.ReadInt32());
+        }
+
+        public bool ReadBool(bool oldVal)
+        {
+            return Message.ReadBoolean();
+        }
+
+        public void ReadPadBits()
+        {
+            Message.ReadPadBits();
         }
     }
 }

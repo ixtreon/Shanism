@@ -19,9 +19,8 @@ namespace Shanism.Network.Server
     /// </summary>
     public class NServerClient : IShanoClient
     {
-        readonly ServerFrameBuilder serverFrameWriter = new ServerFrameBuilder();
-        readonly ClientFrameBuilder clientFrameReader = new ClientFrameBuilder();
 
+        readonly ClientFrameBuilder clientFrameBuilder;
 
         /// <summary>
         /// Gets the underlying NetConnection. 
@@ -34,6 +33,8 @@ namespace Shanism.Network.Server
         readonly NetServer Server;
 
         readonly uint Id;
+
+        readonly ClientStateTracker stateTracker = new ClientStateTracker();
 
         /// <summary>
         /// The receptor serving this connection
@@ -81,7 +82,7 @@ namespace Shanism.Network.Server
         }
 
 
-        public void Update(int msElapsed)
+        public void Update(int msElapsed, uint gameFrame)
         {
             if(ConnectionHandle.Status == NetConnectionStatus.Disconnected)
             {
@@ -90,8 +91,10 @@ namespace Shanism.Network.Server
             }
 
             //send a GameFrame to the client
-            var msg = serverFrameWriter.Write(gameReceptor);
-            sendMessage(msg, NetDeliveryMethod.Unreliable);
+            var msg = Server.CreateMessage();
+            stateTracker.WriteFrame(msg, gameFrame, gameReceptor.VisibleEntities);
+             
+            Server.SendMessage(msg, ConnectionHandle, NetDeliveryMethod.Unreliable);
         }
 
 
@@ -109,13 +112,6 @@ namespace Shanism.Network.Server
             switch (msg.Type)
             {
                 case MessageType.GameFrame:
-                    ClientState newState;
-                    uint lastFrame;
-                    if (clientFrameReader.TryRead((GameFrameMessage)msg, out lastFrame, out newState))
-                    {
-                        State = newState;
-                        LastAckFrame = lastFrame;
-                    }
                     break;
 
                 default:
@@ -125,11 +121,22 @@ namespace Shanism.Network.Server
             }
         }
 
+        internal void handleFrameMessage(NetBuffer msg)
+        {
+            Shanism.Common.Message.Client.ClientState newState;
+            uint lastFrame;
+            if (clientFrameBuilder.TryRead(msg, out lastFrame, out newState))
+            {
+                State = newState;
+                LastAckFrame = lastFrame;
+            }
+        }
 
-        /// <summary>
-        /// Sends the given message to the game client. 
-        /// </summary>
-        void sendMessage(IOMessage msg)
+
+            /// <summary>
+            /// Sends the given message to the game client. 
+            /// </summary>
+            void sendMessage(IOMessage msg)
             => sendMessage(msg, NetDeliveryMethod.ReliableUnordered);
 
         void sendMessage(IOMessage msg, NetDeliveryMethod deliveryMethod)

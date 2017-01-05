@@ -31,12 +31,11 @@ namespace Shanism.Network.Client
 
         public string Name { get; }
 
+        readonly ClientFrameBuilder clientFrameBuilder = new ClientFrameBuilder();
+
         readonly NClient server;
 
         readonly ObjectCache objects = new ObjectCache();
-
-        readonly ClientFrameBuilder frameWriter = new ClientFrameBuilder();
-        readonly ServerFrameBuilder frameReader = new ServerFrameBuilder();
 
         public IHero MainHero { get; private set; }
 
@@ -47,7 +46,7 @@ namespace Shanism.Network.Client
         /// <summary>
         /// Gets the last ack'd frame.
         /// </summary>
-        public uint CurrentFrame { get; set; }
+        public uint CurrentFrame => objects.CurrentFrame;
 
 
         /// <summary>
@@ -58,10 +57,11 @@ namespace Shanism.Network.Client
 
         public NReceptor(NClient server, IShanoClient client)
         {
-            GameClient = client;
-            Name = client.Name;
             this.server = server;
             server.ConnectionLost += onConnectionLost;
+
+            GameClient = client;
+            Name = client.Name;
         }
 
         void onConnectionLost()
@@ -75,10 +75,7 @@ namespace Shanism.Network.Client
             {
                 //a server game frame
                 case MessageType.GameFrame:
-                    var frameMsg = (GameFrameMessage)msg;
-                    objects.ReadServerFrame(frameReader, frameMsg);
-
-                    return;
+                    throw new InvalidOperationException();
 
                 //grab the player id from a handshake reply message
                 case MessageType.HandshakeReply:
@@ -94,19 +91,24 @@ namespace Shanism.Network.Client
             Log.Default.Info($"Received a {msg.Type}. ");
         }
 
+        public void HandleGameFrame(NetIncomingMessage msg)
+        {
+            objects.ReadFrame(msg);
+        }
+
         public void Update(int msElapsed)
         {
             //send state to server
             if (stateRefreshCounter.Tick(msElapsed))
             {
-                var msg = frameWriter.Write(CurrentFrame, GameClient.State);
-                server.SendMessage(msg, NetDeliveryMethod.UnreliableSequenced);
+                var msg = clientFrameBuilder.Write(server.NetClient, CurrentFrame, GameClient.State);
+                server.NetClient.SendMessage(msg, NetDeliveryMethod.UnreliableSequenced);
             }
         }
 
         public string GetDebugString()
         {
-            return string.Empty;
+            return $"Latency: {server.NetClient.ServerConnection.AverageRoundtripTime:0}ms";
         }
     }
 }

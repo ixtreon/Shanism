@@ -41,6 +41,8 @@ namespace Shanism.Common
 
     public class UnitStats : Stats, IUnitStats
     {
+        public int Count { get; } = UnitStat.Count;
+
         public UnitStats() : base(UnitStat.Count)
         {
         }
@@ -48,6 +50,8 @@ namespace Shanism.Common
 
     public class HeroAttributes : Stats, IHeroAttributes
     {
+        public int Count { get; } = HeroAttribute.Count;
+
         public HeroAttributes() : base(HeroAttribute.Count) { }
 
         public HeroAttributes(float val) : base(HeroAttribute.Count, val) { }
@@ -58,8 +62,9 @@ namespace Shanism.Common
 
     public interface IStats
     {
-        float this[int val] { get; }
+        float this[int val] { get; set; }
 
+        int Count { get; }
 
         void Write(BinaryWriter wr);
         void Read(BinaryReader r);

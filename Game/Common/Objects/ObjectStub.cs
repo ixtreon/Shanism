@@ -30,15 +30,6 @@ namespace Shanism.Common.StubObjects
         {
             this.Id = id;
         }
-        public virtual void ReadDiff(FieldReader r)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual void WriteDiff(FieldWriter w, IGameObject newObject)
-        {
-            throw new NotImplementedException();
-        }
 
         public static ObjectStub GetDefaultObject(ObjectType type)
         {
@@ -101,6 +92,16 @@ namespace Shanism.Common.StubObjects
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        public virtual void WriteDiff(IWriter w, IGameObject newObject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void ReadDiff(IReader r)
+        {
+            throw new NotImplementedException();
         }
     }
 }

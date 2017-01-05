@@ -32,7 +32,7 @@ namespace Shanism.Engine
 
 
         /// <summary>
-        /// Gets the <see cref="Shanism.Common.Game.ObjectType"/> of this game object. 
+        /// Gets the <see cref="Shanism.Common.ObjectType"/> of this game object. 
         /// </summary>
         public abstract ObjectType ObjectType { get; }
 

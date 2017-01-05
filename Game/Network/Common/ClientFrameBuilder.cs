@@ -5,28 +5,30 @@ using System.IO;
 using System.Linq;
 using System;
 using Shanism.Common.Message.Client;
+using Lidgren.Network;
 
 namespace Shanism.Network.Common
 {
+    /// <summary>
+    /// Reads and writes <see cref="ClientState"/> frames.
+    /// </summary>
     public class ClientFrameBuilder
     {
-        readonly GameSerializer serializer = new GameSerializer();
-
-        ObjectBitmaskBuilder bitmaskBuilder = new ObjectBitmaskBuilder();
-
-        public GameFrameMessage Write(uint gameFrame, ClientState state)
+        public NetOutgoingMessage Write(NetPeer srv, uint gameFrame, ClientState state)
         {
+            NetOutgoingMessage msg;
             using (var ms = new MemoryStream())
             {
-                ms.WriteUint24(gameFrame);
                 ProtoBuf.Serializer.Serialize(ms, state);
 
-                var bytes = ms.ToArray();
-                return new GameFrameMessage(0, bytes);
+                msg = srv.CreateMessage(4 + (int)ms.Length);
+                msg.Write(gameFrame);
+                msg.Write(ms.ToArray());
             }
+            return msg;
         }
 
-        public bool TryRead(GameFrameMessage msg,
+        public bool TryRead(NetBuffer msg,
             out uint clientFrameId,
             out ClientState state)
         {

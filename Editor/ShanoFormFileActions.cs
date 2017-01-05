@@ -22,8 +22,6 @@ namespace Shanism.Editor
 
         async void create()
         {
-            const string placeholderText = "Folder Selection";
-
             //save currently opened scenario, if any
             var wasClosed = await close();
             if (!wasClosed)

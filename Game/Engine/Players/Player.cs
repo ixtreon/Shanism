@@ -169,10 +169,16 @@ namespace Shanism.Engine
 
             var oneIsPlayer = (p.IsHuman || this.IsHuman);
             var bothArePlayers = (p.IsHuman && this.IsHuman);
+
+            var oneIsFriendly = (p.IsNeutralFriendly || this.IsNeutralFriendly);
+
             var oneIsAggressive = (p.IsNeutralAggressive || this.IsNeutralAggressive);
             var bothAreAggressive = (p.IsNeutralAggressive && this.IsNeutralAggressive);
 
-            return (oneIsPlayer && oneIsAggressive) || bothAreAggressive || bothArePlayers;
+            return (oneIsPlayer && oneIsAggressive) 
+                || bothAreAggressive 
+                || (oneIsAggressive && oneIsFriendly)
+                || bothArePlayers;
         }
 
         /// <summary>

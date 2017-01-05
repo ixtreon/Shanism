@@ -8,13 +8,15 @@ using Shanism.Common.StubObjects;
 using System.IO;
 using Shanism.Common.Serialization;
 using Shanism.Network.Common;
+using Shanism.Network.Serialization;
+using Lidgren.Network;
 
 namespace Shanism.Network.Client
 {
     /// <summary>
     /// Holds all GameObjects sent by the server. 
     /// </summary>
-    class ObjectCache
+    public class ObjectCache
     {
         //grows to infinity...
         readonly Dictionary<uint, ObjectStub> _objectCache = new Dictionary<uint, ObjectStub>();
@@ -24,38 +26,37 @@ namespace Shanism.Network.Client
 
         public IReadOnlyCollection<EntityStub> VisibleEntities => _visibleEntities;
 
+        public uint CurrentFrame { get; set; }
 
-        internal void ReadServerFrame(ServerFrameBuilder serializer, GameFrameMessage msg)
+
+        public void ReadFrame(NetBuffer msg)
         {
-            _visibleEntities.Clear();
-            serializer.Read(msg, _objectCache, _visibleEntities);
-        }
+            // if a diff from a previous frame, ignore
+            var lastFrameId = msg.ReadUInt32();
+            var curFrameId = msg.ReadUInt32();
 
-        public void ReadDiff(GameFrameMessage msg)
-        {
-            var diff = msg.Data;
 
-            using(var ms = new MemoryStream(diff))
-            using(var r = new BinaryReader(ms))
+            if (lastFrameId < CurrentFrame)
+                return;
+
+            //read frame ID
+            CurrentFrame = curFrameId;
+
+            //read vis change mask
+            //sync in-game objects with server diff
+            var pages = new PageReader(msg);
+            foreach (var id in pages.VisibleGuids)
             {
-                //read frame ID
-                var newFrameId = r.ReadUInt32();
+                if (_objectCache.ContainsKey(id))
+                    _objectCache.Remove(id);
+                else
+                    _objectCache.Add(id, null);
+            }
 
-                //read vis change mask
-                var pages = new PageReader(r);
-                foreach(var id in pages.ChangedIds)
-                {
-                    if(_objectCache.ContainsKey(id))
-                        _objectCache.Remove(id);
-                    else
-                        _objectCache.Add(id, null);
-                }
-
-                //read object diffs
-                foreach(var kvp in _objectCache.OrderBy(kvp => kvp.Key))
-                {
-
-                }
+            //read object diffs
+            foreach (var kvp in _objectCache.OrderBy(kvp => kvp.Key))
+            {
+                //TODO
             }
         }
     }

@@ -20,8 +20,8 @@ namespace Shanism.Common.Util
 
         public static uint Allocate()
         {
-            if (freeIds.Count > 0)
-                return freeIds.Pop();
+            //if (freeIds.Count > 0)
+            //    return freeIds.Pop();
 
             return maxId++;
         }
@@ -29,7 +29,7 @@ namespace Shanism.Common.Util
         
         public static void Deallocate(uint i)
         {
-            Debug.Assert(maxId < i);
+            Debug.Assert(maxId > i);
             Debug.Assert(!freeIds.Contains(i));
 
             freeIds.Add(i);

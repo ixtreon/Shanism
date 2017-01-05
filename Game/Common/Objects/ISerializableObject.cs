@@ -10,8 +10,8 @@ namespace Shanism.Common.Serialization
 {
     interface ISerializableObject
     {
-        void WriteDiff(FieldWriter w, IGameObject newObject);
+        void WriteDiff(IWriter w, IGameObject newObject);
 
-        void ReadDiff(FieldReader r);
+        void ReadDiff(IReader r);
     }
 }

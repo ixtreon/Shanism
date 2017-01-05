@@ -15,7 +15,7 @@ namespace Shanism.Engine.Objects.Items
     public class Item : GameObject, IItem
     {
         /// <summary>
-        /// Gets the <see cref="Shanism.Common.Game.ObjectType" /> of this game object. 
+        /// Gets the <see cref="Shanism.Common.ObjectType" /> of this game object. 
         /// Always returns <see cref="ObjectType.Item"/>. 
         /// </summary>
         public override ObjectType ObjectType { get; } = ObjectType.Item;

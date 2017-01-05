@@ -8,21 +8,34 @@ using System.Threading.Tasks;
 
 namespace Shanism.Network.Serialization
 {
-    public class PageReader
+    public class PageReader : PageBase
     {
-        /// <summary>
-        /// The sorted list of IDs that changed
-        /// </summary>
-        public List<uint> VisibleGuids { get; } = new List<uint>();
+        
+        public readonly List<uint> VisibleGuids = new List<uint>();
 
-        public PageReader()
+        public PageReader(NetBuffer msg)
         {
+            VisibleGuids.Clear();
 
+            for(int i = 0; i < NBooks; i++)
+                readBook(msg, i, msg.ReadUInt64());
         }
 
-        public PageReader(NetIncomingMessage r)
+        void readBook(NetBuffer msg, int bookId, ulong book)
         {
-            throw new NotImplementedException();
+            var basePageId = bookId * BookLength;
+
+            for(int i = 0; i < BookLength; i++)
+                if(GetBit(book, i))
+                    readPage(basePageId + i, msg.ReadUInt64());
+        }
+        void readPage(int pageId, ulong page)
+        {
+            var baseGuid = pageId * PageLength;
+
+            for(int i = 0; i < PageLength; i++)
+                if(GetBit(page, i))
+                    VisibleGuids.Add((uint)(baseGuid + i));
         }
     }
 }

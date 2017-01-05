@@ -34,7 +34,7 @@ namespace Shanism.Network.Client
         public IShanoClient GameClient { get; private set; }
 
 
-        NetClient NetClient => (NetClient)peer;
+        public NetClient NetClient => (NetClient)peer;
 
         public bool IsConnected => isConnected;
 
@@ -92,24 +92,23 @@ namespace Shanism.Network.Client
         internal override void ReadMessage(NetIncomingMessage msg)
         {
             var isProtoMessage = msg.ReadByte() == 0;
-
-            if(isProtoMessage)
+            if (!isProtoMessage)
             {
-                //parse it as an IOMessage
-                var ioMsg = msg.ToIOMessage();
-                if(ioMsg == null)
-                {
-                    Log.Default.Warning($"Received a faulty message of length {msg.LengthBytes}.");
-                    return;
-                }
+                //game-frame message
+                receptor.HandleGameFrame(msg);
+                return;
+            }
 
-                //if valid, pass it to the receptor
-                receptor.HandleMessage(ioMsg);
-            }
-            else
+            //parse it as an IOMessage
+            var ioMsg = msg.ToIOMessage();
+            if (ioMsg == null)
             {
-                //non-proto message => game-frame message
+                Log.Default.Warning($"Received a faulty message of length {msg.LengthBytes}.");
+                return;
             }
+
+            //if valid, pass it to the receptor
+            receptor.HandleMessage(ioMsg);
         }
 
         internal void SendMessage(IOMessage ioMsg,
