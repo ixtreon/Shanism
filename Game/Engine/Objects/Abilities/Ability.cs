@@ -214,7 +214,7 @@ namespace Shanism.Engine.Objects.Abilities
         /// </summary>
         public bool CanCast(Entity e)
         {
-            return canCast() && RequiresTarget && checkDistance(e.Position);
+            return canCast() && RequiresTarget && checkDistance(e);
         }
 
         /// <summary>
@@ -307,7 +307,10 @@ namespace Shanism.Engine.Objects.Abilities
             => IsActive && CurrentCooldown <= 0 && Owner.Mana >= ManaCost;
 
         bool checkDistance(Vector tar)
-            => Owner.Position.DistanceToSquared(tar) <= CastRangeSquared;
+            => Owner.Position.DistanceTo(tar) <= CastRange + (Owner.Scale / 2);
+
+        bool checkDistance(Entity tar)
+            => Owner.Position.DistanceTo(tar.Position) <= CastRange + ((Owner.Scale + tar.Scale) / 2);
 
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.
