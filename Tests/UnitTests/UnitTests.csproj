@@ -81,10 +81,6 @@
       <Project>{d2fa8685-b964-498d-a34f-d191be2cba6b}</Project>
       <Name>Network</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\lib\BsDiffLib\BsDiffLib.csproj">
-      <Project>{266c8ab4-020a-49ee-beb7-e7a6a409940a}</Project>
-      <Name>BsDiffLib</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
