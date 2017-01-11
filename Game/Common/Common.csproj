@@ -95,14 +95,6 @@
     <Compile Include="Message\Client\ChatMessage.cs" />
     <Compile Include="MBWTFState\ClientState.cs" />
     <Compile Include="Objects\BuffStub.cs" />
-    <Compile Include="Serialization\Old\SerializerBase.cs" />
-    <Compile Include="Serialization\Old\Objects\AbilitySerializer.cs" />
-    <Compile Include="Serialization\Old\Objects\BuffSerializer.cs" />
-    <Compile Include="Serialization\Old\Entities\Hero.cs" />
-    <Compile Include="Serialization\Old\Entities\Unit.cs" />
-    <Compile Include="Serialization\Old\Entities\Entity.cs" />
-    <Compile Include="Serialization\Old\ObjectHeader.cs" />
-    <Compile Include="Serialization\Old\Serializer.cs" />
     <Compile Include="Util\Allocator.cs" />
     <Compile Include="Util\Color.cs" />
     <Compile Include="Content\AnimationDef.cs" />
