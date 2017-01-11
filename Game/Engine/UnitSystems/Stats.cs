@@ -119,7 +119,7 @@ namespace Shanism.Engine.Systems
             Constants.Heroes.Attributes.DodgePerAgility,
         };
 
-        static readonly int[] statTypes =
+        static readonly HeroAttribute[] statModTypes =
         {
             HeroAttribute.Vitality,
             HeroAttribute.Vitality,
@@ -141,9 +141,9 @@ namespace Shanism.Engine.Systems
         {
             target.updateHeroStats();
 
-            for (int i = 0; i < UnitStat.Count; i++)
+            for (int i = 0; i < Enum<UnitStat>.Count; i++)
             {
-                var attrMod = target.attributes[statTypes[i]] * statModMults[i];
+                var attrMod = target.attributes[statModTypes[i]] * statModMults[i];
                 target.stats.Add(i, attrMod);
             }
         }

@@ -5,119 +5,128 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shanism.Common.Serialization;
 
 namespace Shanism.Common
 {
-    public static class UnitStat
+    public enum UnitStat
     {
-        public const int MaxLife = 0;
-        public const int MaxMana = 1;
+        MaxLife,
+        MaxMana,
 
-        public const int LifeRegen = 2;
-        public const int ManaRegen = 3;
-        public const int MagicDamage = 4;
+        LifeRegen,
+        ManaRegen,
+        MagicDamage,
 
-        public const int MinDamage = 5;
-        public const int MaxDamage = 6;
-        public const int Defense = 7;
+        MinDamage,
+        MaxDamage,
+        Defense,
 
-        public const int MoveSpeed = 8;
-        public const int AttacksPerSecond = 9;
-        public const int AttackRange = 10;
-
-
-        public const int Count = 11;
+        MoveSpeed,
+        AttacksPerSecond,
+        AttackRange,
     }
 
-    public static class HeroAttribute
+    public enum HeroAttribute
     {
-        public const int Strength = 0;
-        public const int Agility = 1;
-        public const int Vitality = 2;
-        public const int Intellect = 3;
-
-        public const int Count = 4;
+        Strength, Agility, Vitality, Intellect,
     }
 
-    public class UnitStats : Stats, IUnitStats
+    public class UnitStats : Stats<UnitStat>, IUnitStats
     {
-        public int Count { get; } = UnitStat.Count;
+        public UnitStats() { }
 
-        public UnitStats() : base(UnitStat.Count)
+        public UnitStats(float val) : base(val) { }
+
+
+        public float this[UnitStat val]
         {
+            get { return RawStats[(int)val]; }
+            set { RawStats[(int)val] = value; }
         }
     }
 
-    public class HeroAttributes : Stats, IHeroAttributes
+    public class HeroAttributes : Stats<HeroAttribute>, IHeroAttributes
     {
-        public int Count { get; } = HeroAttribute.Count;
+        public HeroAttributes() { }
 
-        public HeroAttributes() : base(HeroAttribute.Count) { }
+        public HeroAttributes(float val) : base(val) { }
 
-        public HeroAttributes(float val) : base(HeroAttribute.Count, val) { }
+
+        public float this[HeroAttribute val]
+        {
+            get { return RawStats[(int)val]; }
+            set { RawStats[(int)val] = value; }
+        }
     }
 
-    public interface IUnitStats : IStats { }
-    public interface IHeroAttributes : IStats { }
-
-    public interface IStats
+    public interface IUnitStats : IStats<UnitStat>
     {
-        float this[int val] { get; set; }
+        float this[UnitStat val] { get; }
+    }
+
+    public interface IHeroAttributes : IStats<HeroAttribute>
+    {
+        float this[HeroAttribute val] { get; }
+    }
+
+    public interface IStats<T>
+    {
+        float[] RawStats { get; }
 
         int Count { get; }
 
-        void Write(BinaryWriter wr);
-        void Read(BinaryReader r);
+        void Write(IWriter wr, IStats<T> oldStats);
+        void Read(IReader r);
     }
 
-    public class Stats
+    public class Stats<T> : IStats<T>
+        where T : struct, IConvertible, IComparable, IFormattable
     {
-        readonly float[] stats;
+        public float[] RawStats { get; }
 
-        internal Stats(int count)
+        public int Count { get; }
+
+        internal Stats()
         {
-            stats = new float[count];
+            Count = Enum<T>.Count;
+            RawStats = new float[Count];
         }
 
-        internal Stats(int count, float initVal)
+        internal Stats(float initVal)
         {
-            stats = Enumerable.Repeat(initVal, count).ToArray();
+            Count = Enum<T>.Count;
+            RawStats = Enumerable.Repeat(initVal, Count).ToArray();
         }
 
         public void Add(float[] other, int offset, int count)
         {
             for (int i = offset; i < count; i++)
-                stats[i] += other[i];
+                RawStats[i] += other[i];
         }
 
         public void Set(float[] other, int offset, int count)
         {
             for (int i = offset; i < count; i++)
-                stats[i] = other[i];
+                RawStats[i] = other[i];
         }
 
-        public void Add(Stats other) => Add(other.stats, 0, stats.Length);
-        public void Set(Stats other) => Set(other.stats, 0, stats.Length);
+        public void Add(Stats<T> other) => Add(other.RawStats, 0, RawStats.Length);
+        public void Set(Stats<T> other) => Set(other.RawStats, 0, RawStats.Length);
 
-        public void Add(int id, float val) => stats[id] += val;
-        public void Set(int id, float val) => stats[id] = val;
-
-        public float this[int id]
+        public void Add(int id, float val) => RawStats[id] += val;
+        public void Set(int id, float val) => RawStats[id] = val;
+        
+        public void Write(IWriter wr, IStats<T> oldVals)
         {
-            get { return stats[id]; }
-            set { stats[id] = value; }
+            for (int i = 0; i < RawStats.Length; i++)
+                wr.WriteFloat(oldVals.RawStats[i], RawStats[i]);
         }
 
-        public void Write(BinaryWriter wr)
+        public void Read(IReader r)
         {
-            for (int i = 0; i < stats.Length; i++)
-                wr.Write(stats[i]);
-        }
-
-        public void Read(BinaryReader r)
-        {
-            for (int i = 0; i < stats.Length; i++)
-                stats[i] = r.ReadSingle();
+            for (int i = 0; i < RawStats.Length; i++)
+                RawStats[i] = r.ReadFloat(RawStats[i]);
         }
     }
 }

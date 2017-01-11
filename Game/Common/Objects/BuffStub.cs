@@ -33,7 +33,6 @@ namespace Shanism.Common.StubObjects
         {
             FullDuration = r.ReadVarInt(FullDuration);
 
-            FullDuration = r.ReadVarInt(FullDuration);
             StackType = (BuffStackType)r.ReadByte((byte)StackType);
             Name = r.ReadString(Name);
             Description = r.ReadString(Description);
@@ -41,11 +40,8 @@ namespace Shanism.Common.StubObjects
             Icon = r.ReadString(Icon);
             IconTint = r.ReadColor(IconTint);
 
-            for (int i = 0; i < Attributes.Count; i++)
-                Attributes[i] = r.ReadFloat(Attributes[i]);
-            
-            for (int i = 0; i < Stats.Count; i++)
-                Stats[i] = r.ReadFloat(Stats[i]);
+            Attributes.Read(r);
+            Stats.Read(r);
 
             StateFlags = (StateFlags)r.ReadVarInt((int)StateFlags);
             AttackSpeedPercentage = r.ReadVarInt(AttackSpeedPercentage);
@@ -70,11 +66,8 @@ namespace Shanism.Common.StubObjects
             w.WriteString(Icon, b.Icon);
             w.WriteColor(IconTint, b.IconTint);
 
-            for (int i = 0; i < b.Attributes.Count; i++)
-                w.WriteFloat(Attributes[i], b.Attributes[i]);
-
-            for (int i = 0; i < b.Stats.Count; i++)
-                w.WriteFloat(Stats[i], b.Stats[i]);
+            b.Attributes.Write(w, Attributes);
+            b.Stats.Write(w, Stats);
 
             w.WriteVarInt((int)StateFlags, (int)b.StateFlags);
             w.WriteVarInt(AttackSpeedPercentage, b.AttackSpeedPercentage);
