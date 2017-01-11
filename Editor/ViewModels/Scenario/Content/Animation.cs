@@ -133,6 +133,9 @@ namespace Shanism.Editor.ViewModels
 
         public void Paint(System.Drawing.Graphics g, Vector[] dest, int frame = 0)
         {
+            if (Animation == null)
+                return;
+
             var srcBounds = Animation.Span;
             if (Animation.IsDynamic && srcBounds.Area != 0)
             {
