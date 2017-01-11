@@ -8,10 +8,10 @@ namespace Shanism.Network.Serialization
 {
     public class PageBase
     {
-        public const int BookLength = 64;
         public const int PageLength = 64;
-        public const int NBooks = 2;
-        public const int NPages = NBooks * PageLength;
+        public const int LineLength = 64;
+        public const int PageCount = 2;
+        public const int TotalLineCount = PageCount * LineLength;
 
         public static void SetBit(ref ulong mask, int bit)
             => mask |= (1ul << bit);

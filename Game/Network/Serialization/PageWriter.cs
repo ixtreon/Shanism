@@ -16,15 +16,15 @@ namespace Shanism.Network.Serialization
 
         readonly HashSet<uint> oldObjects = new HashSet<uint>();
 
-        readonly ulong[] books = new ulong[NBooks];
+        readonly ulong[] pages = new ulong[PageCount];
 
-        readonly ulong[] pages = new ulong[NPages];
+        readonly ulong[] lines = new ulong[TotalLineCount];
 
         public void UpdatePages(IReadOnlyCollection<IGameObject> objects)
         {
             //reset pages/books
-            Array.Clear(books, 0, NBooks);
-            Array.Clear(pages, 0, NPages);
+            Array.Clear(pages, 0, PageCount);
+            Array.Clear(lines, 0, TotalLineCount);
 
 
             //Add objects that were NOT in the old objects collection
@@ -48,23 +48,23 @@ namespace Shanism.Network.Serialization
 
         public void Add(uint id)
         {
-            var pageRowId = (int)(id % PageBase.PageLength);
-            var pageId = id / PageBase.PageLength;
-            SetBit(ref pages[pageId], pageRowId);
+            var pageRowId = (int)(id % LineLength);
+            var pageId = id / LineLength;
+            SetBit(ref lines[pageId], pageRowId);
 
-            var bookRowId = (int)(pageId % PageBase.BookLength);
-            var bookId = pageId / PageBase.BookLength;
-            SetBit(ref books[bookId], bookRowId);
+            var bookRowId = (int)(pageId % PageLength);
+            var bookId = pageId / PageLength;
+            SetBit(ref pages[bookId], bookRowId);
         }
 
         public void Write(NetBuffer msg)
         {
-            for(int i = 0; i < PageBase.NBooks; i++)
-                msg.Write(books[i]);
+            for(int i = 0; i < PageCount; i++)
+                msg.Write(pages[i]);
 
-            for(int i = 0; i < PageBase.NPages; i++)
+            for(int i = 0; i < TotalLineCount; i++)
             {
-                var page = pages[i];
+                var page = lines[i];
                 if(page != 0)
                     msg.Write(page);
             }
