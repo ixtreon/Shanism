@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common.Message.Network;
 using Shanism.Common.StubObjects;
-using System.IO;
-using Shanism.Common.Serialization;
-using Shanism.Network.Common;
 using Shanism.Network.Serialization;
 using Lidgren.Network;
+using Shanism.Common;
 
 namespace Shanism.Network.Client
 {
@@ -54,9 +51,15 @@ namespace Shanism.Network.Client
             }
 
             //read object diffs
+            var fr = new FieldReader(msg);
             foreach (var kvp in _objectCache.OrderBy(kvp => kvp.Key))
             {
-                //TODO
+                var curObj = kvp.Value;
+                var curObjType = (ObjectType)fr.ReadByte(0);
+                if (curObj == null || curObj.ObjectType != curObjType)
+                    _objectCache[kvp.Key] = curObj = ObjectStub.GetDefaultObject(curObjType);
+
+                curObj.ReadDiff(fr);
             }
         }
     }
