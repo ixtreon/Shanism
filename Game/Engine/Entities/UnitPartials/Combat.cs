@@ -29,6 +29,18 @@ namespace Shanism.Engine.Entities
         public event Action<UnitDamagedArgs> DamageReceived;
 
         /// <summary>
+        /// The event executed right before the unit is dealt damage by someone else. 
+        /// </summary>
+        public event Action<UnitDamagingArgs> ReceivingDamage;
+
+
+
+        /// <summary>
+        /// The event executed right after the unit deals damage to a target. 
+        /// </summary>
+        public event Action<UnitDamagedArgs> DealtDamage;
+
+        /// <summary>
         /// The event executed right before the unit deals damage to a target. 
         /// </summary>
         public event Action<UnitDamagingArgs> DealingDamage;
@@ -148,6 +160,7 @@ namespace Shanism.Engine.Entities
 
             // raise the pre-damage event
             var dmgArgs = new UnitDamagingArgs(this, target, dmgType, flags, amount);
+            target.ReceivingDamage?.Invoke(dmgArgs);
             DealingDamage?.Invoke(dmgArgs);
 
             // Damage damping (armor, +magic def)
@@ -159,6 +172,7 @@ namespace Shanism.Engine.Entities
             // raise the post-damage event
             var receiveArgs = new UnitDamagedArgs(this, target, dmgType, flags, amount, finalDmg);
             target.DamageReceived?.Invoke(receiveArgs);
+            DealtDamage?.Invoke(receiveArgs);
 
             //send a message yo
             if (displayText)
