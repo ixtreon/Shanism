@@ -7,9 +7,6 @@ using Microsoft.CodeAnalysis.CSharp;
 using System.Text;
 using System;
 using System.Reflection;
-using System.Security;
-using System.Security.Permissions;
-using System.Security.Policy;
 using Shanism.Common;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -84,7 +81,6 @@ namespace Shanism.ScenarioLib
         /// </summary>
         static ScenarioCompiler()
         {
-            Sandboxer.Init();
         }
 
 
@@ -107,12 +103,7 @@ namespace Shanism.ScenarioLib
 
             var rawAssembly = File.ReadAllBytes(OutputFilePath);
             var rawSymbols = File.ReadAllBytes(OutputPdbPath);
-
-            /// Using a sandboxed assembly
-            //Sandboxer.Init();
-            //var loader = Sandboxer.Create();
-            //loader.LoadAssembly(rawAssembly, rawSymbols);
-
+            
             /// Using the current assembly
             try
             {
@@ -219,7 +210,7 @@ namespace Shanism.ScenarioLib
                     Invocation = i,
                 }))
                 .Where(s
-                    => !s.Namespace.StartsWith("Shanism")
+                    => !s.Namespace.StartsWith("Shanism", StringComparison.Ordinal)
                     && !wlns.Contains(s.Namespace))
                 .Select(s => customError(
                     s.Invocation.GetLocation(),

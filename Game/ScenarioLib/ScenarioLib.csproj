@@ -155,20 +155,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Scenario.cs" />
-    <Compile Include="CompilerException.cs" />
     <Compile Include="Config\ContentConfig.cs" />
     <Compile Include="Config\ObjectConstructors.cs" />
-    <Compile Include="Designer\ObjectsDesigner.cs" />
     <Compile Include="Ext.cs" />
     <Compile Include="Config\MapConfig.cs" />
-    <Compile Include="Sandboxing\Sandboxer.cs" />
     <Compile Include="ScenarioCompiler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScenarioConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="..\..\key.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
