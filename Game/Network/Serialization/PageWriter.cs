@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Shanism.Network.Serialization
 {
-    public class PageBuilder : PageBase
+    public class PageWriter : PageBase
     {
 
         readonly HashSet<uint> oldObjects = new HashSet<uint>();
