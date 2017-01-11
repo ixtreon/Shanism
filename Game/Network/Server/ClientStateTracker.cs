@@ -24,7 +24,7 @@ namespace Shanism.Network.Server
         readonly Dictionary<uint, ObjectStub> VisibleObjects = new Dictionary<uint, ObjectStub>();
 
 
-        readonly Dictionary<uint, NetBuffer> Diffs;
+        readonly Dictionary<uint, NetBuffer> Diffs = new Dictionary<uint, NetBuffer>();
 
         /// <summary>
         /// Writes a new game frame message.
@@ -36,7 +36,7 @@ namespace Shanism.Network.Server
             msg.Write(curFrameId);
 
             //write vis. change mask
-            var pages = new PageBuilder();
+            var pages = new PageWriter();
             pages.UpdatePages(objects);
             pages.Write(msg);
 
@@ -46,9 +46,11 @@ namespace Shanism.Network.Server
             {
                 //get last object state
                 ObjectStub oldObject;
-                if (!VisibleObjects.TryGetValue(obj.Id, out oldObject))
+                if (!VisibleObjects.TryGetValue(obj.Id, out oldObject)
+                    || oldObject.ObjectType != obj.ObjectType)
                     oldObject = ObjectStub.GetDefaultObject(obj.ObjectType);
 
+                fw.WriteByte(0, (byte)obj.ObjectType);
                 oldObject.WriteDiff(fw, obj);
             }
 
