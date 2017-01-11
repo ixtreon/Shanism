@@ -65,7 +65,7 @@ namespace Shanism.Network.Serialization
 
         public void WriteString(string oldVal, string newVal)
         {
-            var areEqual = oldVal.Equals(newVal);
+            var areEqual = oldVal == newVal;
             Message.Write(areEqual);
 
             if(areEqual)
