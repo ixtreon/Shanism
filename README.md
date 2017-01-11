@@ -1,8 +1,8 @@
-# ShanoRpg
+# Shanism
 
-ShanoRpg is a highly extendable top-down 2D RPG game platform. It is written entirely in C# and all of the scripting is done in C#, too, (ab)using the powers of the [Roslyn](https://github.com/dotnet/Roslyn) compiler. 
+Shanism is a highly extendable top-down 2D RPG game platform. It is written entirely in C# and all of the scripting is done in C#, too, (ab)using the powers of the [Roslyn](https://github.com/dotnet/Roslyn) compiler. 
 
-The game exposes a complete API which can be leveraged to create custom maps (scenarios) with no knowledge of the game engine internals, as long as one's aware of common RPG mechanics (buffs, auras, abilities). It started as a fun side-project to teach some friends "serious" programming (thus the C# )
+The game exposes a complete API which can be leveraged to create custom maps (scenarios) with no knowledge of the game engine internals, as long as one's aware of common RPG mechanics (buffs, auras, abilities). It started as a fun side-project to teach some friends "serious" programming (thus the C# instead of a more widely-used scripting language.. sorry LUA). 
 
 
 ## Building (Windows)
@@ -11,8 +11,7 @@ The game is most easily compiled using a recent version of Visual Studio but sho
 
 1. Grab the source code from Github
 2. Download the MonoGame framework (along with the latest DX runtime)
-3a. Add the directory containing the `MGCB.exe` tool to your PATH (should be `%ProgramFiles%/MSBuild/MonoGame/v3.0/Tools`)
-3b. Modify the pre-build event in `/Game/ClientContent/ClientContent.csproj` to point to the directory where the MGCB tool is installed (see 3a). 
+3. Add the directory containing the `MGCB.exe` tool to your system path **OR** modify the pre-build event in `/Game/ClientContent/ClientContent.csproj` to point to the directory where the MGCB tool is installed.  (MGCB.exe can be found in the `%ProgramFiles%/MSBuild/MonoGame/v3.0/Tools` directory)
 4. You should now be able to compile the game using Visual Studio or MSBuild from the command line.
 
 If you have problems following these instructions, please file an issue with details of the errors you are getting and I will try to get 'em fixed ASAP.
@@ -25,7 +24,7 @@ WIP
 ## Current Status
 
 * Most™ in-game features ready - units, heroes, abilities, buffs, AI behaviours
-* Earlier builds had a crappy no-diff networking. A rewrite with proper networking (a la [Doom 3](http://fabiensanglard.net/doom3_documentation/The-DOOM-III-Network-Architecture.pdf)) support is under way, currently being tested. 
+* Earlier builds had a crappy no-diff networking. A rewrite with proper networking (a la Quake / [Doom 3](http://fabiensanglard.net/doom3_documentation/The-DOOM-III-Network-Architecture.pdf)) support is under way, currently being tested. 
 * A WinForms editor with crude map editing support + texture & animation editor. 
 
 ## A WORD OF CAUTION
@@ -38,7 +37,7 @@ Since maps are essentially .NET libraries, DO NOT EVER CONNECT TO SERVERS UNLESS
 
 ### Obligatory disclaimer:
 
-In no event can the developers of ShanoRPG (Shanism) can be blamed for any damages, perceived or real, stemming from the use of the software. Go blame someone else: natural selection would be my first bet.
+In no event can the developers of Shanism can be blamed for any damages, perceived or real, stemming from the use of the software. Go blame someone else: natural selection would be my first bet.
 
 ## Further Reading
 
