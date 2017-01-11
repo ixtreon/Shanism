@@ -4,19 +4,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shanism.Common;
 
 namespace Shanism.Engine.Objects.Orders
 {
     /// <summary>
     /// A behaviour that makes the controlled unit go to the specified target unit. 
     /// </summary>
-    class MoveToUnit : Order
+    class MoveToUnit : MoveToGround
     {
-        public Unit Target { get; set; }
+        public new Unit Target { get; set; }
 
-        public float MinDistance { get; set; }
-
-        public MoveToUnit(Unit u) : base(u) { }
+        public MoveToUnit(Unit u) : base(u, Vector.Zero) { }
 
         public MoveToUnit(Unit u, Unit target) : this(u)
         {
@@ -28,14 +27,14 @@ namespace Shanism.Engine.Objects.Orders
             if (Target == null)
                 return false;
 
-            return (float)Owner.Position.DistanceTo(Target.Position) > MinDistance;
+            base.Target = Target.Position;
+            return base.TakeControl();
         }
 
         public override void Update(int msElapsed)
         {
-            var maxDist = (float)Owner.Position.DistanceTo(Target.Position) - MinDistance;
-            var ang = (float)Owner.Position.AngleTo(Target.Position);
-            CurrentState = new Shanism.Common.MovementState(ang, maxDist);
+            base.Target = Target.Position;
+            base.Update(msElapsed);
         }
 
         public override string ToString() => $"Following {Target}";

@@ -190,6 +190,9 @@ namespace Shanism.Engine.Entities
         /// </summary>
         public float AttackRange => stats[UnitStat.AttackRange];
 
+
+        public bool CanMove => MoveSpeed > 0;
+
         #endregion
 
 

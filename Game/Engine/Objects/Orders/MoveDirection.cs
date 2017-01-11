@@ -13,11 +13,7 @@ namespace Shanism.Engine.Objects.Orders
     /// </summary>
     class MoveDirection : Order
     {
-        public new MovementState CurrentState
-        {
-            get { return base.CurrentState; }
-            set { base.CurrentState = value; }
-        }
+
         public MoveDirection(Unit owner) : base(owner)
         {
         }

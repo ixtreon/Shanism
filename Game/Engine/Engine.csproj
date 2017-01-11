@@ -116,7 +116,6 @@
     <Compile Include="Objects\Orders\Hold.cs" />
     <Compile Include="Objects\Orders\MoveAttack.cs" />
     <Compile Include="Objects\Orders\MoveToGround.cs" />
-    <Compile Include="Objects\Orders\FollowUnit.cs" />
     <Compile Include="Objects\Orders\MoveDirection.cs" />
     <Compile Include="Objects\Orders\Guard.cs" />
     <Compile Include="Players\Alliance.cs" />

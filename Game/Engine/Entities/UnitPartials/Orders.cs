@@ -38,7 +38,7 @@ namespace Shanism.Engine.Entities
         #region Property Shortcuts
 
 
-        public MovementState MovementState { get; internal set; }
+        public MovementState MovementState { get; internal set; } = MovementState.Stand;
 
         #endregion
 
@@ -153,11 +153,11 @@ namespace Shanism.Engine.Entities
         /// <param name="target">The unit to move to.</param>
         public void OrderMove(Unit target) => SetOrder(new MoveToUnit(this, target));
 
-        /// <summary>
-        /// Orders the unit to follow the target unit unti it dies.
-        /// </summary>
-        /// <param name="target">The unit to follow.</param>
-        public void OrderFollow(Unit target) => SetOrder(new FollowUnit(this, target));
+        ///// <summary>
+        ///// Orders the unit to follow the target unit unti it dies.
+        ///// </summary>
+        ///// <param name="target">The unit to follow.</param>
+        //public void OrderFollow(Unit target) => SetOrder(new FollowUnit(this, target));
 
         /// <summary>
         /// Orders the unit to attack the target unit until it dies. 
@@ -168,7 +168,7 @@ namespace Shanism.Engine.Entities
             if (!Owner.IsEnemyOf(target))
                 return;
 
-            SetOrder(new SpamAbilities(this, target));
+            SetOrder(new SpamCast(this, target));
         }
 
         public void OrderPatrol(Vector target)

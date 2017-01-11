@@ -16,14 +16,14 @@ namespace Shanism.Engine.Objects.Orders
         /// <summary>
         /// The target position.
         /// </summary>
-        public Vector Target { get; }
+        public Vector Target { get; set; }
 
         /// <summary>
         /// The distance from the target at which to stop.
         /// </summary>
-        public float MinDistance { get; }
+        public float MinDistance { get; set; }
 
-        public MoveToGround(Unit u, Vector target, float minDistance = 0) : base(u)
+        public MoveToGround(Unit owner, Vector target, float minDistance = 0) : base(owner)
         {
             Target = target;
             MinDistance = minDistance;
@@ -38,6 +38,7 @@ namespace Shanism.Engine.Objects.Orders
         {
             var maxDist = (float)Owner.Position.DistanceTo(Target) - MinDistance;
             var ang = (float)Owner.Position.AngleTo(Target);
+
             CurrentState = new Shanism.Common.MovementState(ang, maxDist);
         }
 

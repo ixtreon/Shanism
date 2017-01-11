@@ -15,8 +15,10 @@ namespace Shanism.Engine.Objects.Orders
 
         readonly Vector startPosition;
         readonly Vector targetPosition;
+
         private double RetreatDistance = 20;
         private double RetreatStopDistance = 10;
+
         bool isRetreating;
 
         public MoveAttack(Unit owner, Vector target) : base(owner)

@@ -18,7 +18,7 @@ namespace Shanism.Engine.Objects.Orders
 
         readonly Dictionary<Unit, double> aggroTable = new Dictionary<Unit, double>();
 
-        readonly SpamAbilities SpamBehaviour;              // forces the unit to continuously cast its spammable abilities, if it can
+        readonly SpamCast SpamBehaviour;              // forces the unit to continuously cast its spammable abilities, if it can
         readonly MoveToUnit FollowBehaviour;          // forces the unit to chase enemy units in its vision range
 
         public Unit CurrentTarget { get; private set; }
@@ -27,7 +27,7 @@ namespace Shanism.Engine.Objects.Orders
         public Aggro(Unit u)
             : base(u)
         {
-            SpamBehaviour = new SpamAbilities(this);
+            SpamBehaviour = new SpamCast(this);
             FollowBehaviour = new MoveToUnit(u);
 
             AddRange(new Order[]
