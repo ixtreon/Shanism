@@ -28,12 +28,12 @@ namespace Shanism.Engine.Systems
         public override void Update(int msElapsed)
         {
             var state = Owner.MovementState;
-            if (Owner.IsStunned || !state.IsMoving)
+            if (Owner.IsStunned || !Owner.CanMove || !state.IsMoving)
                 return;
-
+            
 
             //get the suggested move position
-            var speed = Owner.MoveSpeed;
+                var speed = Owner.MoveSpeed;
             var dist = speed * msElapsed / 1000;
             if (state.HasMaxDistance)
                 dist = Math.Min(state.MaxDistance, dist);
