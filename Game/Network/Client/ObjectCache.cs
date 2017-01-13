@@ -57,7 +57,7 @@ namespace Shanism.Network.Client
                 var curObj = kvp.Value;
                 var curObjType = (ObjectType)fr.ReadByte(0);
                 if (curObj == null || curObj.ObjectType != curObjType)
-                    _objectCache[kvp.Key] = curObj = ObjectStub.GetDefaultObject(curObjType);
+                    _objectCache[kvp.Key] = curObj = ObjectStub.CreateObject(curObjType, kvp.Key);
 
                 curObj.ReadDiff(fr);
             }
