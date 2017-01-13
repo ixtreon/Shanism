@@ -51,8 +51,8 @@ technique Technique1
 {
 	pass Pass1
 	{
-		VertexShader = compile vs_4_0 VS();
-		//GeometryShader = compile gs_4_0 GS();
-		PixelShader = compile ps_4_0 PS();
+		//VertexShader = compile vs_3_0 VS();
+		//GeometryShader = compile gs_3_0 GS();
+		PixelShader = compile ps_3_0 PS();
 	}
 }

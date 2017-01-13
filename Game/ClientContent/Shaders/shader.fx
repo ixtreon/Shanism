@@ -15,10 +15,10 @@ float2 TexSize = float2(100, 100);
 float SightRange = 500;
 
 
-const float4 NONE = float4(0, 0, 0, 0);
-const float4 SHADOW = float4(0, 0, 0, 0.7);
+static const float4 NONE = float4(0, 0, 0, 0);
+static const float4 SHADOW = float4(0, 0, 0, 0.7);
 
-const float2 CENTER = float2(0.5, 0.5);
+static const float2 CENTER = float2(0.5, 0.5);
 
 
 float2 getPointOffset(float2 pt, float ratio)
@@ -70,7 +70,7 @@ technique Technique1
 {
 	pass Pass1
 	{
-		PixelShader = compile ps_4_0_level_9_3 PixelShaderFunction();
+		PixelShader = compile ps_3_0 PixelShaderFunction();
 		//VertexShader = compile vs_4_0_level_9_3 ColorVertexShader();
 	}
 }
