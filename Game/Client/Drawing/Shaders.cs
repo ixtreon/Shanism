@@ -44,8 +44,9 @@ namespace Shanism.Client
             {
                 return content.Load<Effect>(name);
             }
-            catch
+            catch(Exception e)
             {
+                Console.WriteLine($"Error loading shader '{name}': {e}");
                 return null;
             }
         }
