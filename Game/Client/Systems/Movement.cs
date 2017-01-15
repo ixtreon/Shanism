@@ -36,23 +36,13 @@ namespace Shanism.Client.Systems
             /// Keyboard movement
             var dx = Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveRight)) - Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveLeft));
             var dy = Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveDown)) - Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveUp));
-            if (dx != 0 || dy != 0)
+            ClientState.IsMoving = (dx != 0 || dy != 0);
+
+            if (ClientState.IsMoving)
             {
                 var moveAngle = (float)(Math.Atan2(dy, dx));
 
-                ClientState.IsMoving = true;
                 ClientState.MoveAngle = moveAngle;
-            }
-            else if(MouseInfo.LeftDown && Control.HoverControl == ui.Root) // mouse movement
-            {
-                var ang = ((Vector)Screen.HalfSize).AngleTo(MouseInfo.ScreenPosition);
-                //var ang = Vector.Zero.AngleTo(MouseInfo.UiPosition);
-                ClientState.IsMoving = true;
-                ClientState.MoveAngle = (float)ang;
-            }
-            else
-            {
-                ClientState.IsMoving = false;
             }
         }
     }

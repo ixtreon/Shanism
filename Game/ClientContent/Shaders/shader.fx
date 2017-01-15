@@ -70,7 +70,7 @@ technique Technique1
 {
 	pass Pass1
 	{
-		PixelShader = compile ps_3_0 PixelShaderFunction();
+		PixelShader = compile ps_4_0_level_9_3 PixelShaderFunction();
 		//VertexShader = compile vs_4_0_level_9_3 ColorVertexShader();
 	}
 }

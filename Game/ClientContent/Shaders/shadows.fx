@@ -53,6 +53,6 @@ technique Technique1
 	{
 		//VertexShader = compile vs_3_0 VS();
 		//GeometryShader = compile gs_3_0 GS();
-		PixelShader = compile ps_3_0 PS();
+		PixelShader = compile ps_4_0_level_9_3 PS();
 	}
 }
