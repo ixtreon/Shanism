@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace Shanism.Engine.Objects.Abilities
 {
     /// <summary>
-    /// Specifies that an ability is meant to be constantly spammed towards one's opponent. 
+    /// Specifies the <see cref="AbilityTypeFlags"/> of an ability. 
+    /// These are used to inform the engine (and eventually the behaviour/AI subsystem) of an ability's intended use.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     class AbilityTypeAttribute : Attribute

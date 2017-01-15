@@ -69,9 +69,10 @@ namespace Shanism.Engine.Objects.Abilities
                 target = (Unit)e.TargetEntity;
             else
             {
-                target = Map.GetUnitsInRange(Owner.Position, CastRange)
+                target = Map.GetUnitsInRange(Owner.Position, CastRange + Constants.Entities.MaxSize)
                     .Where(Owner.Owner.IsEnemyOf)
                     .OrderBy(u => u.Position.DistanceTo(e.TargetLocation))
+                    .Where(u => u.Position.DistanceTo(e.TargetLocation) < (CastRange + (u.Scale + Owner.Scale) / 2))
                     .FirstOrDefault();
 
                 if (target == null)

@@ -19,10 +19,15 @@ namespace Shanism.Engine.Objects.Abilities
         public static IEnumerable<Ability> GetAbilitiesOfType(this Unit u, AbilityTypeFlags type)
         {
             return u.Abilities
-                .Where(a => a.GetType()
-                    .GetCustomAttributes(typeof(AbilityTypeAttribute), false)
-                    .Cast<AbilityTypeAttribute>()
-                    .FirstOrDefault()?.Type.HasFlag(type) ?? false);
+                .Where(a => a.HasTypeFlag(type));
+        }
+
+        private static bool HasTypeFlag(this Ability a, AbilityTypeFlags type)
+        {
+            return a.GetType()
+                .GetCustomAttributes(typeof(AbilityTypeAttribute), false)
+                .Cast<AbilityTypeAttribute>()
+                .Any(attr => attr.Type.HasFlag(type));
         }
     }
 
