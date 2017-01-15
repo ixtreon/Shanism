@@ -102,7 +102,7 @@ namespace Shanism.Engine.Systems
         /// <param name="a">The ability that is to be added. </param>
         public void Add(Ability a)
         {
-            if (a.Owner == this)
+            if (a.Owner == Owner)
                 return;
 
             if (a.Owner != null)
