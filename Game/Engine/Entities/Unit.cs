@@ -193,7 +193,17 @@ namespace Shanism.Engine.Entities
         /// <summary>
         /// Gets whether the unit attacks using projectiles. 
         /// </summary>
-        public bool HasRangedAttack => StateFlags.HasFlag(StateFlags.RangedAttack);
+        public bool HasRangedAttack
+        {
+            get { return (StateFlags & StateFlags.RangedAttack) != 0; }
+            set
+            {
+                if (value)
+                    StateFlags |= StateFlags.RangedAttack;
+                else
+                    StateFlags &= ~StateFlags.RangedAttack;
+            }
+        }
 
 
 
