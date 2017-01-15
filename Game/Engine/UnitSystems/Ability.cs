@@ -102,6 +102,9 @@ namespace Shanism.Engine.Systems
         /// <param name="a">The ability that is to be added. </param>
         public void Add(Ability a)
         {
+            if (a.Owner == this)
+                return;
+
             if (a.Owner != null)
                 throw new InvalidOperationException($"The ability {a} already belongs to the unit {Owner}.");
 
@@ -116,9 +119,6 @@ namespace Shanism.Engine.Systems
         /// <returns>Whether the ability was successfully found and removed. </returns>
         public bool Remove(Ability a)
         {
-            if (a.Owner != Owner)
-                throw new InvalidOperationException($"The ability {a} does not belong to the unit {Owner}.");
-
             var result = abilities.Remove(a.Id);
             if (result)
             {
