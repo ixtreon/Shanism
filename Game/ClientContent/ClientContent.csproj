@@ -13,7 +13,7 @@
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup>
-    <MonoGamePlatform>DesktopGL</MonoGamePlatform>
+    <MonoGamePlatform>Windows</MonoGamePlatform>
     <ContentRootDirectory>/</ContentRootDirectory>
     <ParentOutputDir>bin/</ParentOutputDir>
     <ParentIntermediateDir>obj/</ParentIntermediateDir>
