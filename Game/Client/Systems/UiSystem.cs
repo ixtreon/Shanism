@@ -63,10 +63,9 @@ namespace Shanism.Client.Systems
         void updateBarAbilities(IHero h)
         {
             var abilities = h.Abilities ?? Enumerable.Empty<IAbility>();
-            root.HeroAbilities.Controls
-                .OfType<SpellButton>()
-                .Zip(abilities, (sb, a) => sb.Ability = a)
-                .ToList();
+            root.HeroAbilities.SetAbilities(abilities);
+            root.HeroAbilities.SelectButton(0);
+                
         }
 
 
