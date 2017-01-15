@@ -33,7 +33,7 @@ namespace Shanism.Client.Systems
 
         public override void Update(int msElapsed)
         {
-            if (Objects.MainHero == null)
+            if (Hero == null)
                 return;
 
             //make some checks so we don't spam the server
