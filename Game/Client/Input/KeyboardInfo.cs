@@ -33,7 +33,11 @@ namespace Shanism.Client.Input
         /// <param name="msElapsed"></param>
         public static void Update(int msElapsed, bool isActive)
         {
-            if (!isActive) return;
+            if (!isActive)
+            {
+                JustActivatedActions = Enumerable.Empty<ClientAction>();
+                return;
+            }
 
             oldKeysDown = newKeysDown;
             newKeysDown = new HashSet<Keys>(Keyboard.GetState().GetPressedKeys());

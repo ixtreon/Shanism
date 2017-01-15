@@ -29,6 +29,30 @@ namespace Shanism.Client.UI
 
         public Keybind CurrentKeybind { get; private set; }
 
+        public override bool IsSelected
+        {
+            get { return base.IsSelected; }
+            set
+            {
+                if (value == base.IsSelected)
+                    return;
+
+                base.IsSelected = value;
+
+                if (value)
+                {
+                    PreviousSpellButton = CurrentSpellButton;
+
+                    if (CurrentSpellButton != null)
+                        CurrentSpellButton.IsSelected = false;
+
+                    CurrentSpellButton = this;
+                }
+                else if (CurrentSpellButton == this)
+                    CurrentSpellButton = null;
+            }
+        }
+
 
         public SpellBarButton(int barId, int buttonId)
         {
@@ -37,6 +61,7 @@ namespace Shanism.Client.UI
             CanSelect = true;
 
             Selected += onSelected;
+            //Deselected += onDeselected;
             OnDrop += onDrop;
         }
 
@@ -57,11 +82,12 @@ namespace Shanism.Client.UI
 
         void onSelected(Button obj)
         {
-            if (CurrentSpellButton != this && CurrentSpellButton != null)
-                CurrentSpellButton.IsSelected = false;
+            //if (CurrentSpellButton != this && CurrentSpellButton != null)
+            //    CurrentSpellButton.IsSelected = false;
 
-            PreviousSpellButton = CurrentSpellButton;
-            CurrentSpellButton = this;
+            //PreviousSpellButton = CurrentSpellButton;
+            //CurrentSpellButton = this;
+
         }
 
         public override void OnDraw(Graphics g)

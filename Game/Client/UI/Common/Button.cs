@@ -22,6 +22,7 @@ namespace Shanism.Client.UI
 
 
         public event Action<Button> Selected;
+        public event Action<Button> Deselected;
 
         /// <summary>
         /// Gets the texture color (tint). 
@@ -47,7 +48,7 @@ namespace Shanism.Client.UI
         /// <summary>
         /// Gets or sets whether this button is currently selected (toggled). 
         /// </summary>
-        public bool IsSelected
+        public virtual bool IsSelected
         {
             get { return _isSelected; }
             set
@@ -78,13 +79,16 @@ namespace Shanism.Client.UI
         void Button_MouseDown(Input.MouseButtonArgs obj)
         {
             if (CanSelect && !IsSelected)
-                select(true);
+                IsSelected = true;
         }
 
         void select(bool val)
         {
             _isSelected = val;
-            Selected?.Invoke(this);
+            if(val)
+                Selected?.Invoke(this);
+            else
+                Deselected?.Invoke(this);
         }
 
         public override void OnDraw(Graphics g)
