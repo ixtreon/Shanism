@@ -29,7 +29,7 @@ namespace Shanism.Engine.Entities
         /// Gets or sets the kind of terrain this unit can walk on,
         /// considering it can move at all.
         /// </summary>
-        public MovementFlags MovementType { get; set; }
+        public MovementFlags MovementType { get; set; } = MovementFlags.Ground;
 
         /// <summary>
         /// Gets or sets whether this unit can move at all. 
