@@ -36,7 +36,8 @@ namespace Shanism.Client.Systems
             if (Hero == null)
                 return;
 
-            //make some checks so we don't spam the server
+
+            //cast only if there's an ability
             var ab = Interface.CurrentSpellButton?.Ability;
             if (ab == null)
             {
@@ -45,7 +46,7 @@ namespace Shanism.Client.Systems
             }
 
             //cast only if rightdown or if instacast
-            if (!(MouseInfo.RightDown || ab.TargetType == AbilityTargetType.NoTarget))
+            if (!MouseInfo.RightDown && ab.TargetType != AbilityTargetType.NoTarget)
             {
                 ClientState.ActionId = 0;
                 return;
@@ -59,7 +60,8 @@ namespace Shanism.Client.Systems
             }
 
             //instacasts are spammed until server registers it
-            if (Objects.MainHero.CastingAbilityId == ab.Id && ab.TargetType == AbilityTargetType.NoTarget)
+            if (ab.TargetType == AbilityTargetType.NoTarget
+                && ab.CurrentCooldown > 0)
             {
                 ClientState.ActionId = 0;
 

@@ -92,6 +92,21 @@ namespace Shanism.Client.UI
             reflow();
         }
 
+        internal void SelectButton(int id)
+        {
+            buttons[id].IsSelected = true;
+        }
+
+        internal void SetAbilities(IEnumerable<IAbility> abilities)
+        {
+            var i = 0;
+            foreach (var ab in abilities)
+            {
+                buttons[i].Ability = ab;
+                i++;
+            }
+        }
+
         void addButton()
         {
             var id = buttons.Count;
