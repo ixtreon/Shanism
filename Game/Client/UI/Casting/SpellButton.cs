@@ -19,6 +19,7 @@ namespace Shanism.Client.UI
         /// </summary>
         public event Action AbilityChanged;
 
+        string currentTexture = string.Empty;
 
         public IAbility Ability
         {
@@ -43,20 +44,28 @@ namespace Shanism.Client.UI
 
         void OnAbilityChanged()
         {
-            if (ability == null)
+            AbilityChanged?.Invoke();
+        }
+
+        protected override void OnUpdate(int msElapsed)
+        {
+            if (ability != null)
             {
-                ToolTip = string.Empty;
-                Texture = Content.Icons.Default;    //TODO: change to empty
-                TextureColor = Color.Black;
+                ToolTip = ability;
+                if (ability.Icon != currentTexture)
+                {
+                    Texture = Content.Icons.TryGet(ability.Icon) ?? Content.Icons.Default;
+                    currentTexture = ability.Icon;
+                }
+
+                TextureColor = ability.IconTint;
             }
             else
             {
-                ToolTip = ability;
-                Texture = Content.Icons.TryGet(ability.Icon) ?? Content.Icons.Default;
-                TextureColor = ability.IconTint;
+                ToolTip = null;
+                Texture = Content.Icons.Default;
+                TextureColor = Color.Black;
             }
-
-            AbilityChanged?.Invoke();
         }
 
         public override void OnDraw(Graphics g)

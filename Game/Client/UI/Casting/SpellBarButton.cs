@@ -79,6 +79,7 @@ namespace Shanism.Client.UI
         protected override void OnUpdate(int msElapsed)
         {
             CurrentKeybind = Settings.Current.Keybinds[BarId, ButtonId];
+            base.OnUpdate(msElapsed);
         }
     }
 }
