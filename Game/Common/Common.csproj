@@ -93,7 +93,7 @@
     <Compile Include="Interfaces\Base\IGame.cs" />
     <Compile Include="Interfaces\Objects\IItem.cs" />
     <Compile Include="Message\Client\ChatMessage.cs" />
-    <Compile Include="MBWTFState\ClientState.cs" />
+    <Compile Include="Serialization\ClientState.cs" />
     <Compile Include="Objects\BuffStub.cs" />
     <Compile Include="Util\Allocator.cs" />
     <Compile Include="Util\Color.cs" />

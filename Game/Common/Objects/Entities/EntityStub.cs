@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common.Util;
 using Shanism.Common.Interfaces.Entities;
-using Shanism.Common.Serialization;
-using Shanism.Common.Interfaces.Objects;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
@@ -38,16 +35,6 @@ namespace Shanism.Common.StubObjects
         public EntityStub(uint id)
             : base(id)
         {
-        }
-
-        public override void ReadDiff(IReader r)
-        {
-            base.ReadDiff(r);
-        }
-
-        public override void WriteDiff(IWriter w, IGameObject newObject)
-        {
-            base.WriteDiff(w, newObject);
         }
     }
 }

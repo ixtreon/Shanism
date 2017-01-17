@@ -25,8 +25,8 @@ namespace Shanism.Common.StubObjects
 
         IReadOnlyCollection<IAbility> IUnit.Abilities => Abilities;
 
-        public IUnitStats Stats => currentStats;
-        public IUnitStats BaseStats => baseStats;
+        public IUnitStats Stats { get; set; } = new UnitStats();
+        public IUnitStats BaseStats { get; set; } = new UnitStats();
 
         public uint OwnerId { get; set; }
 

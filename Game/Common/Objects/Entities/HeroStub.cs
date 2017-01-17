@@ -13,14 +13,16 @@ namespace Shanism.Common.StubObjects
     public class HeroStub : UnitStub, IHero
     {
 
-        readonly HeroAttributes baseAttributes = new HeroAttributes(10);
-        readonly HeroAttributes attributes = new HeroAttributes();
-
-        IHeroAttributes IHero.BaseAttributes => baseAttributes;
-        IHeroAttributes IHero.Attributes => attributes;
+        public IHeroAttributes BaseAttributes { get; set; } = new HeroAttributes();
+        public IHeroAttributes Attributes { get; set; } = new HeroAttributes();
 
         public int Experience { get; private set; }
         public int ExperienceNeeded { get; private set; }
+
+        public HeroStub()
+        {
+
+        }
 
         public HeroStub(uint guid)
             : base(guid)
