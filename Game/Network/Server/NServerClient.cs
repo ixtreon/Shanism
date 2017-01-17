@@ -7,6 +7,7 @@ using Shanism.Common.Util;
 using Shanism.Common.Message.Client;
 using Shanism.Common.Message.Network;
 using Shanism.Network.Common;
+using System.IO;
 
 namespace Shanism.Network.Server
 {
@@ -19,8 +20,6 @@ namespace Shanism.Network.Server
     /// </summary>
     public class NServerClient : IShanoClient
     {
-
-        readonly ClientFrameBuilder clientFrameBuilder;
 
         /// <summary>
         /// Gets the underlying NetConnection. 
@@ -121,22 +120,27 @@ namespace Shanism.Network.Server
             }
         }
 
-        internal void handleFrameMessage(NetBuffer msg)
+        internal void readClientFrame(NetBuffer msg)
         {
-            Shanism.Common.Message.Client.ClientState newState;
-            uint lastFrame;
-            if (clientFrameBuilder.TryRead(msg, out lastFrame, out newState))
+            try
             {
-                State = newState;
-                LastAckFrame = lastFrame;
+                using (var ms = new MemoryStream(msg.Data))
+                {
+                    LastAckFrame = ms.ReadUint24();
+                    State = ProtoBuf.Serializer.Deserialize<ClientState>(ms);
+                }
+            }
+            catch
+            {
+                //invalid frame: do not do anything, hope we get a proper frame eventually
             }
         }
 
 
-            /// <summary>
-            /// Sends the given message to the game client. 
-            /// </summary>
-            void sendMessage(IOMessage msg)
+        /// <summary>
+        /// Sends the given message to the game client. 
+        /// </summary>
+        void sendMessage(IOMessage msg)
             => sendMessage(msg, NetDeliveryMethod.ReliableUnordered);
 
         void sendMessage(IOMessage msg, NetDeliveryMethod deliveryMethod)

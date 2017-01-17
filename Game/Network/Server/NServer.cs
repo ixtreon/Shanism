@@ -1,10 +1,6 @@
 ﻿using Shanism.Common;
 using Shanism.Common.Message;
 using Shanism.Common.Message.Client;
-using Shanism.Common.Message.Server;
-using Shanism.Common.StubObjects;
-using Shanism.Common.Serialization;
-using IxLog;
 using Lidgren.Network;
 using Shanism.Network.Server;
 using System;
@@ -89,7 +85,7 @@ namespace Shanism.Network
                     return;
                 }
 
-                client.handleFrameMessage(msg);
+                client.readClientFrame(msg);
                 return;
             }
 

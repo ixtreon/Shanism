@@ -5,12 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common.Serialization;
 using Shanism.Common;
 
 namespace Shanism.Network.Serialization
 {
-    public class FieldReader : IReader
+    public class FieldReader
     {
         NetBuffer Message { get; }
 
@@ -83,6 +82,39 @@ namespace Shanism.Network.Serialization
         public void ReadPadBits()
         {
             Message.ReadPadBits();
+        }
+
+        public Vector ReadVector(Vector oldVal)
+        {
+            return new Vector(ReadFloat((float)oldVal.X), ReadFloat((float)oldVal.Y));
+        }
+
+        public short ReadShort(short oldVal)
+        {
+            return (short)ReadVarInt(oldVal);
+        }
+
+        public uint ReadVarUInt(uint oldVal)
+        {
+            var areEqual = Message.ReadBoolean();
+            if(areEqual)
+                return oldVal;
+
+            return oldVal + Message.ReadVariableUInt32();
+        }
+
+        public IUnitStats ReadStats(IUnitStats r)
+        {
+            for (int i = 0; i < r.RawStats.Length; i++)
+                r.RawStats[i] = ReadFloat(r.RawStats[i]);
+            return r;
+        }
+
+        public IHeroAttributes ReadAttributes(IHeroAttributes r)
+        {
+            for (int i = 0; i < r.RawStats.Length; i++)
+                r.RawStats[i] = ReadFloat(r.RawStats[i]);
+            return r;
         }
     }
 }

@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Shanism.Network.Serialization;
+using Shanism.Network.Common;
 
 namespace Shanism.Network.Server
 {
@@ -16,6 +17,8 @@ namespace Shanism.Network.Server
     /// </summary>
     public class ClientStateTracker
     {
+        static readonly EntityMapper mapper = new EntityMapper();
+
         public uint LastAck { get; private set; }
 
         /// <summary>
@@ -29,7 +32,8 @@ namespace Shanism.Network.Server
         /// <summary>
         /// Writes a new game frame message.
         /// </summary>
-        public void WriteFrame(NetBuffer msg, uint curFrameId, IReadOnlyCollection<IGameObject> objects)
+        public void WriteFrame(NetBuffer msg, uint curFrameId, 
+            IReadOnlyCollection<IGameObject> objects)
         {
             //write previous + current frames ID
             msg.Write(LastAck);
@@ -48,10 +52,10 @@ namespace Shanism.Network.Server
                 ObjectStub oldObject;
                 if (!VisibleObjects.TryGetValue(obj.Id, out oldObject)
                     || oldObject.ObjectType != obj.ObjectType)
-                    oldObject = ObjectStub.GetDefaultObject(obj.ObjectType);
+                    oldObject = mapper.GetDefault(obj.ObjectType);
 
                 fw.WriteByte(0, (byte)obj.ObjectType);
-                oldObject.WriteDiff(fw, obj);
+                mapper.Write(oldObject, obj, fw);
             }
 
             //save diff with cur state

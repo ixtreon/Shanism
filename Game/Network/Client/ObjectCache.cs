@@ -7,6 +7,7 @@ using Shanism.Common.StubObjects;
 using Shanism.Network.Serialization;
 using Lidgren.Network;
 using Shanism.Common;
+using Shanism.Network.Common;
 
 namespace Shanism.Network.Client
 {
@@ -15,6 +16,8 @@ namespace Shanism.Network.Client
     /// </summary>
     public class ObjectCache
     {
+        static readonly EntityMapper mapper = new EntityMapper();
+
         //grows to infinity...
         readonly Dictionary<uint, ObjectStub> _objectCache = new Dictionary<uint, ObjectStub>();
 
@@ -57,9 +60,9 @@ namespace Shanism.Network.Client
                 var curObj = kvp.Value;
                 var curObjType = (ObjectType)fr.ReadByte(0);
                 if (curObj == null || curObj.ObjectType != curObjType)
-                    _objectCache[kvp.Key] = curObj = ObjectStub.CreateObject(curObjType, kvp.Key);
+                    _objectCache[kvp.Key] = curObj = mapper.Create(curObjType, kvp.Key);
 
-                curObj.ReadDiff(fr);
+                mapper.Read(curObj, fr);
             }
         }
     }

@@ -8,9 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Shanism.Common.Message;
 using Shanism.Common.Message.Server;
-using Shanism.Common.Message.Network;
 using Shanism.Common.Interfaces.Entities;
-using Shanism.Network.Common;
+using System.IO;
 
 namespace Shanism.Network.Client
 {
@@ -24,18 +23,17 @@ namespace Shanism.Network.Client
     {
         const int StateRefreshFps = 60;
 
+
         readonly Counter stateRefreshCounter = new Counter(1000 / StateRefreshFps);
+
+        readonly NClient server;
+
+        readonly ObjectCache objects = new ObjectCache();
 
 
         public uint Id { get; private set; }
 
         public string Name { get; }
-
-        readonly ClientFrameBuilder clientFrameBuilder = new ClientFrameBuilder();
-
-        readonly NClient server;
-
-        readonly ObjectCache objects = new ObjectCache();
 
         public IHero MainHero { get; private set; }
 
@@ -98,10 +96,20 @@ namespace Shanism.Network.Client
 
         public void Update(int msElapsed)
         {
-            //send state to server
+            //send current state to server
             if (stateRefreshCounter.Tick(msElapsed))
             {
-                var msg = clientFrameBuilder.Write(server.NetClient, CurrentFrame, GameClient.State);
+                NetOutgoingMessage msg;
+
+                using (var ms = new MemoryStream())
+                {
+                    ProtoBuf.Serializer.Serialize(ms, GameClient.State);
+
+                    msg = server.NetClient.CreateMessage(4 + (int)ms.Length);
+                    msg.Write(CurrentFrame);
+                    msg.Write(ms.ToArray());
+                }
+
                 server.NetClient.SendMessage(msg, NetDeliveryMethod.UnreliableSequenced);
             }
         }

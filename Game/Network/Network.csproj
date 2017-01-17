@@ -75,8 +75,9 @@
   <ItemGroup>
     <Compile Include="Client\NReceptor.cs" />
     <Compile Include="Client\ObjectCache.cs" />
-    <Compile Include="Common\ClientFrameBuilder.cs" />
+    <Compile Include="Common\DiffMethodCache.cs" />
     <Compile Include="Common\ObjectData.cs" />
+    <Compile Include="Common\PropertyMapper.cs" />
     <Compile Include="Serialization\PageBase.cs" />
     <Compile Include="Server\ClientStateTracker.cs" />
     <Compile Include="Diff\DiffGuy.cs" />

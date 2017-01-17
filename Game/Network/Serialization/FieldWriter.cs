@@ -5,12 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common.Serialization;
 using Shanism.Common;
 
 namespace Shanism.Network.Serialization
 {
-    public class FieldWriter : IWriter
+    public class FieldWriter
     {
         NetBuffer Message { get; }
 
@@ -93,6 +92,38 @@ namespace Shanism.Network.Serialization
         public void WritePadBits()
         {
             Message.WritePadBits();
+        }
+
+        public void WriteVector(Vector oldVal, Vector newVal)
+        {
+            WriteFloat((float)oldVal.X, (float)newVal.X);
+            WriteFloat((float)oldVal.Y, (float)newVal.Y);
+        }
+
+        public void WriteShort(short oldVal, short newVal)
+        {
+            WriteVarInt(oldVal, newVal);
+        }
+
+        public void WriteVarUInt(uint oldVal, uint newVal)
+        {
+            var areEqual = (oldVal == newVal);
+            Message.Write(areEqual);
+
+            if(areEqual)
+                return;
+
+            Message.WriteVariableUInt32(newVal - oldVal);
+        }
+        public void WriteStats(IUnitStats oldVals, IUnitStats newVals)
+        {
+            for (int i = 0; i < newVals.RawStats.Length; i++)
+                WriteFloat(oldVals.RawStats[i], newVals.RawStats[i]);
+        }
+        public void WriteAttributes(IHeroAttributes oldVals, IHeroAttributes newVals)
+        {
+            for (int i = 0; i < newVals.RawStats.Length; i++)
+                WriteFloat(oldVals.RawStats[i], newVals.RawStats[i]);
         }
     }
 }

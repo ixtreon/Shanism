@@ -63,6 +63,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="AsyncT.cs" />
+    <Compile Include="AutoDiffTests.cs" />
     <Compile Include="Common\Color.cs" />
     <Compile Include="Common\IOTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
