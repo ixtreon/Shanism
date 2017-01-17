@@ -9,18 +9,19 @@ The game exposes a complete API which can be leveraged to create custom maps (sc
 
 ### Windows
 
-The game is most easily compiled using a recent version of Visual Studio but should be straightforward to compile from the command line (using MSBuild) as well. Most dependencies are in the form of NuGet packages, with the notable exception of shaders which use the [MonoGame Pipeline Tool]() for compilation. 
+You'll need a recent version of Visual Studio, although using a recent version of MSBuild should also do the trick (untested).
 
 1. Grab the source code from Github
-2. Download the MonoGame framework (along with the latest DX runtime, as indicated on the "Development Builds" section of the [download page](http://www.monogame.net/downloads/))
-3. Open the `Shanism.sln` file in Visual Studio, select build config (debug or release), build the solution!
-4. If compiling in Release mode, binaries can be found in the `bin/` folder. 
+2. Download the MonoGame framework, along with the latest DX runtime, as indicated on the "Development Builds" section of the [download page](http://www.monogame.net/downloads/).
+3. Open the `Shanism.sln` file in Visual Studio, select build config (any cpu, debug or release), hit build
 
-If you have problems following these instructions, please file an issue with details of the errors you are getting and I will try to get 'em fixed ASAP.
+When compiling in Release mode, binaries can be found in the `bin/` folder. 
 
 ### Other Platforms
 
-While, theoretically, MonoGame can run on other platforms (notably Desktop Linux & Mac OS) there are some issues supporting them out of the box. The game currently uses the Windows DX MonoGame library, as opposed to the Desktop GL one, which supports 
+While MonoGame supports other platforms (e.g. Linux & OSX) there are issues supporting them out of the box. MonoGame does not support WinForms-embedded drawing under GL as required by the Editor. Changing the MonoGame runtime (from DX to GL) should, in theory, allow compilation under different platforms, but doing that means the editor will become unusable. 
+
+Furthermore, the MonoGame libraries share the same name, no matter the platform. Thus if the editor uses DX (i.e. available only for Windows) with the rest of the game being compiled for OpenGL, one of them will fail during runtime since it won't find the backend it requires. This can be avoided if one builds only the game, or if the game and editor are placed in different directories. 
 
 ## Screenshots
 
