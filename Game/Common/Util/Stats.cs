@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common.Serialization;
 
 namespace Shanism.Common
 {
@@ -75,9 +74,6 @@ namespace Shanism.Common
         float[] RawStats { get; }
 
         int Count { get; }
-
-        void Write(IWriter wr, IStats<T> oldStats);
-        void Read(IReader r);
     }
 
     public class Stats<T> : IStats<T>
@@ -116,17 +112,5 @@ namespace Shanism.Common
 
         public void Add(int id, float val) => RawStats[id] += val;
         public void Set(int id, float val) => RawStats[id] = val;
-        
-        public void Write(IWriter wr, IStats<T> oldVals)
-        {
-            for (int i = 0; i < RawStats.Length; i++)
-                wr.WriteFloat(oldVals.RawStats[i], RawStats[i]);
-        }
-
-        public void Read(IReader r)
-        {
-            for (int i = 0; i < RawStats.Length; i++)
-                RawStats[i] = r.ReadFloat(RawStats[i]);
-        }
     }
 }

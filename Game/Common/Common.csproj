@@ -86,9 +86,6 @@
     <Compile Include="Game\EquipSlot.cs" />
     <Compile Include="Game\MovementState.cs" />
     <Compile Include="Message\Server\Disconnected.cs" />
-    <Compile Include="Objects\ISerializableObject.cs" />
-    <Compile Include="Serialization\IReader.cs" />
-    <Compile Include="Serialization\IWriter.cs" />
     <Compile Include="ServerState.cs" />
     <Compile Include="Interfaces\Base\IGame.cs" />
     <Compile Include="Interfaces\Objects\IItem.cs" />
