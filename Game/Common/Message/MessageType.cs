@@ -18,7 +18,7 @@ namespace Shanism.Common.Message
         /// <summary>
         /// A message sent by the client to the server to initiate a handshake. 
         /// </summary>
-        HandshakeInit = 2,
+        HandshakeInit = 1,
 
         /// <summary>
         /// A message sent by the client to request a map chunk. 

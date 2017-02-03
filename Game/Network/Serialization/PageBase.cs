@@ -14,9 +14,13 @@ namespace Shanism.Network.Serialization
         public const int TotalLineCount = PageCount * LineLength;
 
         public static void SetBit(ref ulong mask, int bit)
-            => mask |= (1ul << bit);
+        {
+            mask |= (1ul << bit);
+        }
 
         public static bool GetBit(ulong mask, int bit)
-            => (mask & (1ul << bit)) != 0;
+        {
+            return (mask & (1ul << bit)) != 0;
+        }
     }
 }

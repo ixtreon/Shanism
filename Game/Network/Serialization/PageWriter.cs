@@ -14,47 +14,47 @@ namespace Shanism.Network.Serialization
     public class PageWriter : PageBase
     {
 
-        readonly HashSet<uint> oldObjects = new HashSet<uint>();
-
         readonly ulong[] pages = new ulong[PageCount];
 
         readonly ulong[] lines = new ulong[TotalLineCount];
 
-        public void UpdatePages(IReadOnlyCollection<IGameObject> objects)
+        public void UpdatePages(IReadOnlyDictionary<uint, ObjectStub> oldObjects,
+            IReadOnlyCollection<IGameObject> objects)
         {
             //reset pages/books
             Array.Clear(pages, 0, PageCount);
             Array.Clear(lines, 0, TotalLineCount);
 
 
+            var oldSet = new HashSet<uint>(oldObjects.Keys);
+
             //Add objects that were NOT in the old objects collection
             foreach(var obj in objects)
             {
                 var objId = obj.Id;
-                if(!oldObjects.Remove(objId))
+                if(!oldSet.Remove(objId))
                     Add(objId);
             }
 
             //Add objects that were in the old collection but NOT in the new 
-            foreach(var objId in oldObjects)
+            foreach(var objId in oldSet)
                 Add(objId);
 
-
-            //reset the old objects collection
-            oldObjects.Clear();
-            foreach (var obj in objects)
-                oldObjects.Add(obj.Id);
         }
 
         public void Add(uint id)
         {
-            var pageRowId = (int)(id % LineLength);
-            var pageId = id / LineLength;
-            SetBit(ref lines[pageId], pageRowId);
+            var lineId = id / LineLength;
+            var lineChar = (int)(id % LineLength);
 
-            var bookRowId = (int)(pageId % PageLength);
-            var bookId = pageId / PageLength;
-            SetBit(ref pages[bookId], bookRowId);
+            if (GetBit(lines[lineId], lineChar))
+                throw new Exception();
+
+            SetBit(ref lines[lineId], lineChar);
+
+            var pageChar = (int)(lineId % PageLength);
+            var pageId = lineId / PageLength;
+            SetBit(ref pages[pageId], pageChar);
         }
 
         public void Write(NetBuffer msg)

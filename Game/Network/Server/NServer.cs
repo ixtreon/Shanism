@@ -65,8 +65,12 @@ namespace Shanism.Network
             if (!clients.TryGetValue(conn, out client))
                 return;
 
+
+            Console.WriteLine($"Client {conn} has disconnected!");
+
             //TODO: do some proper disconnect?
             clients.Remove(conn);
+            engine.Disconnect(client.Name);
         }
 
 

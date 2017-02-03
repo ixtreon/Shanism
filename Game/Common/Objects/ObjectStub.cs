@@ -12,16 +12,11 @@ namespace Shanism.Common.StubObjects
     public class ObjectStub : IGameObject
     {
         public static readonly ObjectStub Default = new ObjectStub();
+        
 
-        /// <summary>
-        /// To be used for flagging objects that disappeared!
-        /// True if object existed before. False otherwise. 
-        /// </summary>
-        public bool _ReaderFlag { get; set; }
+        public uint Id { get; }
 
-        public uint Id { get; set; }
-
-        public ObjectType ObjectType { get; set; }
+        public virtual ObjectType ObjectType { get; }
 
         public ObjectStub() { }
 

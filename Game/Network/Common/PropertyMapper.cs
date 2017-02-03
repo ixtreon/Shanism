@@ -6,8 +6,6 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common;
-using Shanism.Common.Interfaces.Entities;
 using Shanism.Common.Interfaces.Objects;
 using Shanism.Common.StubObjects;
 using Shanism.Network.Serialization;
@@ -173,90 +171,4 @@ namespace Shanism.Network.Common
         public static Action<ObjectStub, IGameObject, FieldWriter> Writer { get; } = CreateWriter();
     }
 
-    public class EntityMapper
-    {
-        const int MaxTypeId = 10;
-
-        Action<ObjectStub, FieldReader>[] readers
-            = new Action<ObjectStub, FieldReader>[MaxTypeId];
-        Action<ObjectStub, IGameObject, FieldWriter>[] writers
-            = new Action<ObjectStub, IGameObject, FieldWriter>[MaxTypeId];
-        ObjectStub[] defaultObjects
-            = new ObjectStub[MaxTypeId];
-
-        public EntityMapper()
-        {
-            addType<HeroStub, IHero>(ObjectType.Hero);
-            addType<UnitStub, IUnit>(ObjectType.Unit);
-            addType<DoodadStub, IDoodad>(ObjectType.Doodad);
-            addType<EffectStub, IEffect>(ObjectType.Effect);
-        }
-
-        void addType<TStub, TInt>(ObjectType ty)
-            where TStub : ObjectStub, new()
-            where TInt : IGameObject
-        {
-            readers[(int)ty] = PropertyMapper<TStub, TInt>.Reader;
-            writers[(int)ty] = PropertyMapper<TStub, TInt>.Writer;
-            defaultObjects[(int)ty] = new TStub();
-        }
-
-        public ObjectStub GetDefault(ObjectType ty)
-            => defaultObjects[(byte)ty];
-
-        public void Write(ObjectStub oldObj, IGameObject obj, FieldWriter w)
-        {
-            writers[(int)obj.ObjectType](oldObj, obj, w);
-        }
-
-        public ObjectStub Read(ObjectStub obj, FieldReader r)
-        {
-            readers[(int)obj.ObjectType](obj, r);
-            return obj;
-        }
-
-        public ObjectStub Create(ObjectType type, uint id)
-        {
-            ObjectStub obj;
-            switch (type)
-            {
-                case ObjectType.Unit:
-                    obj = new UnitStub(id);
-                    break;
-
-                case ObjectType.Effect:
-                    obj = new EffectStub(id);
-                    break;
-
-                case ObjectType.Doodad:
-                    obj = new DoodadStub(id);
-                    break;
-
-                case ObjectType.Hero:
-                    obj = new HeroStub(id);
-                    break;
-
-                case ObjectType.Buff:
-                    obj = new BuffStub();
-                    break;
-
-                case ObjectType.BuffInstance:
-                    obj = new BuffInstanceStub(id);
-                    break;
-
-                case ObjectType.Ability:
-                    obj = new AbilityStub(id);
-                    break;
-
-                case ObjectType.Item:
-                    throw new NotImplementedException();
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            obj.ObjectType = type;
-            return obj;
-        }
-    }
 }

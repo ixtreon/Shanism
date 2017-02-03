@@ -117,6 +117,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Scenarios\ScenarioLibrary.cs" />
     <Compile Include="Scenarios\ScenarioList.cs" />
+    <Compile Include="Settings\ServerSettings.cs" />
     <Compile Include="Systems\Ability.cs" />
     <Compile Include="Systems\ClientSystem.cs" />
     <Compile Include="Systems\Actions.cs" />
@@ -142,7 +143,7 @@
     <Compile Include="UI\Menus\Options.cs" />
     <Compile Include="UI\GameRoot.cs" />
     <Compile Include="UI\Common\MessageBox.cs" />
-    <Compile Include="UI\Ticker.cs" />
+    <Compile Include="UI\GlowTimer.cs" />
     <Compile Include="Assets\ContentList.cs" />
     <Compile Include="Assets\FontCache.cs" />
     <Compile Include="Assets\TerrainCache.cs" />
@@ -163,7 +164,7 @@
     <Compile Include="UI\Menus\Keybinds\KeyBoxLabel.cs" />
     <Compile Include="UI\Menus\MenuBar.cs" />
     <Compile Include="UI\Casting\SpellBarButton.cs" />
-    <Compile Include="Settings\ShanoSettings.cs" />
+    <Compile Include="Settings\Settings.cs" />
     <Compile Include="Settings\Keybinds.cs" />
     <Compile Include="Drawing\Shaders.cs" />
     <Compile Include="ClientFactory.cs" />

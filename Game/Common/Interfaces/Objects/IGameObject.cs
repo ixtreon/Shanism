@@ -1,5 +1,4 @@
-﻿using ProtoBuf;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,13 +11,11 @@ namespace Shanism.Common.Interfaces.Objects
         /// <summary>
         /// Gets the ID of the object. 
         /// </summary>
-        [ProtoIgnore]
         uint Id { get; }
 
         /// <summary>
         /// Gets the type of the object.
         /// </summary>
-        [ProtoIgnore]
         ObjectType ObjectType { get; }
     }
 }

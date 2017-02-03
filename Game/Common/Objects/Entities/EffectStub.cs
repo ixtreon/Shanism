@@ -12,6 +12,8 @@ namespace Shanism.Common.StubObjects
 {
     public class EffectStub : EntityStub, IEffect
     {
+        public override ObjectType ObjectType => ObjectType.Effect;
+
         public EffectStub() { }
 
         public EffectStub(uint guid)

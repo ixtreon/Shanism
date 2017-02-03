@@ -15,6 +15,8 @@ namespace Shanism.Common.StubObjects
     /// </summary>
     public class BuffInstanceStub : ObjectStub, IBuffInstance
     {
+        public override ObjectType ObjectType => ObjectType.BuffInstance;
+
         public int DurationLeft { get; set; }
 
         public BuffStub Prototype { get; } = new BuffStub();

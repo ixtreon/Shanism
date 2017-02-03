@@ -36,6 +36,9 @@ namespace Shanism.Client.UI
             {
                 if (value != _currentText)
                 {
+                    if (value == null)
+                        value = string.Empty;
+
                     setText(value);
 
                     _cursorPosition = value.Length;

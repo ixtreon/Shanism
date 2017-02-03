@@ -36,5 +36,10 @@ namespace Shanism.Editor.MapAdapter
         public void SendMessage(IOMessage msg) => MessageSent?.Invoke(msg);
 
         public string GetDebugString() => "All is OK!";
+
+        public void Disconnect()
+        {
+            server.Disconnect(Name);
+        }
     }
 }

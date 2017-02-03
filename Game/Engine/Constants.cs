@@ -24,17 +24,17 @@ namespace Shanism.Engine
             /// <summary>
             /// The default size of a unit. 
             /// </summary>
-            public const double DefaultSize = 2.5;
+            public const float DefaultSize = 2.5f;
 
             /// <summary>
             /// The minimum size of an entity. 
             /// </summary>
-            public const double MinSize = 0.1;
+            public const float MinSize = 0.1f;
 
             /// <summary>
             /// The maximum size of an entity. 
             /// </summary>
-            public const double MaxSize = 20;
+            public const float MaxSize = 20;
         }
 
         public static class Units

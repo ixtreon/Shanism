@@ -7,6 +7,6 @@ class ShanoDoodad : Doodad
     {
         Name = "Dummy Doodad";
 
-        Scale = 0.5;
+        Scale = 0.5f;
     }
 }

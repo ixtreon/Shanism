@@ -108,7 +108,7 @@
     <Compile Include="GameSystems\RangeSystem.cs" />
     <Compile Include="GameSystems\Entities.cs" />
     <Compile Include="Noise\IModule.cs" />
-    <Compile Include="Noise\Perlin2.cs" />
+    <Compile Include="Noise\RidgedMulti.cs" />
     <Compile Include="Noise\Perlin.cs" />
     <Compile Include="Noise\White.cs" />
     <Compile Include="Objects\Abilities\Aura.cs" />

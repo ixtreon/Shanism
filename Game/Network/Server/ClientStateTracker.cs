@@ -15,66 +15,68 @@ namespace Shanism.Network.Server
     /// Client's objects' state as seen by the network module. 
     /// Contains last ack, as well as all diffs for the last ack. 
     /// </summary>
-    public class ClientStateTracker
+    public class ClientStateTracker : ObjectCache
     {
-        static readonly EntityMapper mapper = new EntityMapper();
+        readonly Dictionary<uint, byte[]> Diffs = new Dictionary<uint, byte[]>();
 
-        public uint LastAck { get; private set; }
-
-        /// <summary>
-        /// The visible objects corresponding to the last client ACK
-        /// </summary>
-        readonly Dictionary<uint, ObjectStub> VisibleObjects = new Dictionary<uint, ObjectStub>();
+        readonly PageWriter pages = new PageWriter();
 
 
-        readonly Dictionary<uint, NetBuffer> Diffs = new Dictionary<uint, NetBuffer>();
+        public ClientStateTracker(long bufferStart)
+            : base(bufferStart)
+        {
+
+        }
+
 
         /// <summary>
         /// Writes a new game frame message.
         /// </summary>
-        public void WriteFrame(NetBuffer msg, uint curFrameId, 
+        public void WriteFrame(NetBuffer msg, uint newFrame, 
             IReadOnlyCollection<IGameObject> objects)
         {
+            if (CurrentFrame >= newFrame)
+                throw new InvalidOperationException($"Writing frame {newFrame}");
+
             //write previous + current frames ID
-            msg.Write(LastAck);
-            msg.Write(curFrameId);
+            msg.Write(CurrentFrame);
+            msg.Write(newFrame);
+            
 
             //write vis. change mask
-            var pages = new PageWriter();
-            pages.UpdatePages(objects);
+            pages.UpdatePages(Cache, objects);
             pages.Write(msg);
 
             //write object diffs
             var fw = new FieldWriter(msg);
-            foreach (var obj in objects)
+            foreach (var obj in objects.OrderBy(o => o.Id))
             {
                 //get last object state
                 ObjectStub oldObject;
-                if (!VisibleObjects.TryGetValue(obj.Id, out oldObject)
+                if (!Cache.TryGetValue(obj.Id, out oldObject)
                     || oldObject.ObjectType != obj.ObjectType)
-                    oldObject = mapper.GetDefault(obj.ObjectType);
+                    oldObject = Mapper.GetDefault(obj.ObjectType);
 
                 fw.WriteByte(0, (byte)obj.ObjectType);
-                mapper.Write(oldObject, obj, fw);
+                Mapper.Write(oldObject, obj, fw);
             }
 
             //save diff with cur state
-            Diffs.Add(curFrameId, msg);
-
+            Diffs.Add(newFrame, msg.Data.ToArray());
         }
+
 
         public void SetLastAck(uint ack)
         {
-            if (LastAck == ack)
+            if (CurrentFrame == ack)
                 return;
 
-            LastAck = ack;
 
             var diff = Diffs[ack];
             Diffs.Clear();
 
             //update all objects in VisibleObjects, recreating them if necessary
-            throw new NotImplementedException();
+            ReadFrame(new NetBuffer { Data = diff, LengthBytes = diff.Length });
         }
 
     }

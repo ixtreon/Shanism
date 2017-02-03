@@ -668,5 +668,12 @@ namespace Shanism.Client.UI
 
             return CanHover ? this : null;
         }
+
+        public void ShowMessageBox(string caption, string text)
+        {
+            foreach (var c in Controls.OfType<MessageBox>())
+                Remove(c);
+            Add(new MessageBox(caption, text));
+        }
     }
 }

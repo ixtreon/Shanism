@@ -95,6 +95,7 @@ namespace Shanism.Editor.Views.Content
         {
             var g = e.Graphics;
             g.Clear(Color.Black);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 
             if (Animation?.Texture == null)
                 return;

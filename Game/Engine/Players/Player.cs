@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using Shanism.Common;
+using Shanism.Engine.Objects.Orders;
 
 namespace Shanism.Engine
 {
@@ -194,11 +195,15 @@ namespace Shanism.Engine
         /// </summary>
         public void SetMainHero(Hero h)
         {
-            if (HasHero)
-                throw new Exception("Player already has a hero!");
+            if (MainHero == h)
+                return;
+
+            if (HasHero)    //todo: handle somehow
+                return;
 
             MainHero = h;
-            MainHeroChanged?.Invoke(MainHero);
+            h.DefaultOrder = new MoveDirection(h);
+            MainHeroChanged?.Invoke(h);
         }
 
         /// <summary>

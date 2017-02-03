@@ -7,7 +7,7 @@ using Shanism.Common;
 using Shanism.Common.Interfaces.Objects;
 using Shanism.Engine.Objects.Buffs;
 using Shanism.Network;
-using Shanism.Network.Client;
+using Shanism.Network.Common;
 using Shanism.Network.Server;
 
 namespace NetworkTests
@@ -15,26 +15,29 @@ namespace NetworkTests
     [TestClass]
     public class NetworkClientTests
     {
+
         [TestMethod]
-        public void InitialObjectSend()
+        public void MyTestMethod()
         {
-            var b = new Buff { Agility = 42, Intellect = 13, Strength = 5 };
-            var objs = new List<IGameObject> { b };
+            const int max = 1000;
+            for (int i = 0; i < max; i++)
+            {
+                var ang = 2 * (float)Math.PI * i / max;
 
-            var msg = new NetBuffer();
-            var writer = new ClientStateTracker();
-            var reader = new ObjectCache();
 
-            writer.WriteFrame(msg, 1, objs);
-            msg.Position = 0;
-            reader.ReadFrame(msg);
+                var ms1 = new MovementState(ang);
+                var ms1b = ms1.GetDirectionByte();
+                var ms2 = new MovementState(ms1b);
+                var ms2b = ms2.GetDirectionByte();
 
-            var bOut = reader.VisibleEntities.SingleOrDefault() as IBuff;
-            Assert.AreEqual(bOut.Attributes[HeroAttribute.Agility], 42);
-            Assert.AreEqual(bOut.Attributes[HeroAttribute.Intellect], 13);
-            Assert.AreEqual(bOut.Attributes[HeroAttribute.Strength], 5);
+                if (ms1b != ms2b)
+                {
+                    var life = 42;
+                }
+
+                Assert.AreEqual(ms1b, ms2b);
+            }
         }
-
 
 
     }

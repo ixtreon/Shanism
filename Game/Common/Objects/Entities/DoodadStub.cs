@@ -14,6 +14,8 @@ namespace Shanism.Common.StubObjects
     [ProtoContract(ImplicitFields = ImplicitFields.AllFields)]
     public class DoodadStub : EntityStub, IDoodad
     {
+        public override ObjectType ObjectType => ObjectType.Doodad;
+
         public DoodadStub() { }
 
         public DoodadStub(uint guid)

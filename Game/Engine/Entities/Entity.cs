@@ -24,7 +24,7 @@ namespace Shanism.Engine
         /// The size of the *texture*. 
         /// TODO: make it a Vector. 
         /// </summary>
-        double _scale = Constants.Entities.DefaultSize;
+        float _scale = Constants.Entities.DefaultSize;
 
 
         /// <summary>
@@ -44,12 +44,12 @@ namespace Shanism.Engine
         /// Gets or sets the scale of this entity, also the size of its texture. 
         /// The size must be positive and less than <see cref="Constants.Entities.MaxSize"/>. 
         /// </summary>
-        public double Scale
+        public float Scale
         {
             get { return _scale; }
             set
             {
-                _scale = value.Clamp(0.1, Constants.Entities.MaxSize);
+                _scale = value.Clamp(Constants.Entities.MinSize, Constants.Entities.MaxSize);
             }
         }
 

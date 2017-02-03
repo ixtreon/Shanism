@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using ProtoBuf;
 using Shanism.Common.Message.Client;
-using System.Reflection;
 using Shanism.Common.Message.Server;
-using System.Threading;
-using Shanism.Common.Message.Network;
 
 namespace Shanism.Common.Message
 {
@@ -28,8 +24,8 @@ namespace Shanism.Common.Message
     [ProtoInclude((int)MessageType.HandshakeReply, typeof(HandshakeReplyMessage))]
     [ProtoInclude((int)MessageType.PlayerStatusUpdate, typeof(PlayerStatusMessage))]
     [ProtoInclude((int)MessageType.MapReply, typeof(MapDataMessage))]
-    [ProtoInclude((int)MessageType.ServerChat, typeof(Server.ChatMessage))]
     [ProtoInclude((int)MessageType.DamageEvent, typeof(DamageEventMessage))]
+    [ProtoInclude((int)MessageType.ServerChat, typeof(Server.ChatMessage))]
     [ProtoInclude((int)MessageType.Disconnected, typeof(DisconnectedMessage))]
 
     //common?

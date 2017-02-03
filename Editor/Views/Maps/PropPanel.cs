@@ -20,7 +20,7 @@ namespace Shanism.Editor.Views.Maps
             TypeName = DoodadType,
             Model = string.Empty,
             Owner = string.Empty,
-            Size = 2.5,
+            Size = 2.5f,
             Tint = Common.Color.White,
         };
 
@@ -80,7 +80,7 @@ namespace Shanism.Editor.Views.Maps
 
         void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
-            constr.Size = (double)btnSize.Value;
+            constr.Size = (float)btnSize.Value;
 
             BrushChanged?.Invoke(constr);
         }

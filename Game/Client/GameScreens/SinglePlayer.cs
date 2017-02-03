@@ -46,8 +46,7 @@ namespace Shanism.Client.GameScreens
             string errors;
             if (!eng.TryLoadScenario(sc.BaseDirectory, 0, out errors))
             {
-                Root.Add(new MessageBox("Error",
-                    $"There was an error compiling the scenario:\n\n{errors}"));
+                Root.ShowMessageBox("Compilation Error", errors);
                 return;
             }
 

@@ -13,6 +13,9 @@ namespace Shanism.Common.StubObjects
 {
     public class UnitStub : EntityStub, IUnit
     {
+        public override ObjectType ObjectType => ObjectType.Unit;
+
+
         #region IUnit implementation
 
         public readonly List<IBuffInstance> Buffs = new List<IBuffInstance>();

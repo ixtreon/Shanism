@@ -66,7 +66,7 @@ namespace Shanism.Network
                         OnDisconnected(msg.SenderConnection);
 
                     string reason = msg.ReadString();
-                    Log.Default.Info(status.ToString() + ": " + reason);
+                    Log.Default.Info($"{status}: {reason}");
                     break;
 
                 default:

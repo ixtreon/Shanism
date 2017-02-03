@@ -35,7 +35,7 @@ namespace Shanism.ScenarioLib
         public Color? Tint { get; set; }
 
 
-        public double Size { get; set; }
+        public float Size { get; set; }
 
 
         public ObjectConstructor Clone()

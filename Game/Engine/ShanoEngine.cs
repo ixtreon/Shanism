@@ -155,6 +155,12 @@ namespace Shanism.Engine
             return new ShanoReceptor(this, c);
         }
 
+        public void Disconnect(string name)
+        {
+            ShanoReceptor receptor;
+            players.TryRemove(name, out receptor);
+        }
+
         public void StartPlaying(IReceptor rec)
         {
             if (!IsRunning)

@@ -116,5 +116,11 @@ namespace Shanism.Network.Serialization
                 r.RawStats[i] = ReadFloat(r.RawStats[i]);
             return r;
         }
+
+        public MovementState ReadMovementState(MovementState ms)
+        {
+            var b = ReadByte(ms.GetDirectionByte());
+            return new MovementState(b);
+        }
     }
 }

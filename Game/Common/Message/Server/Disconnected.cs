@@ -12,9 +12,10 @@ namespace Shanism.Common.Message.Server
     {
         public override MessageType Type => MessageType.Disconnected;
 
-        [ProtoMember(0)]
-        public DisconnectReason Reason { get; }
+        [ProtoMember(1)]
+        public DisconnectReason Reason { get; set; }
 
+        DisconnectedMessage() { }
 
         public DisconnectedMessage(DisconnectReason reason)
         {

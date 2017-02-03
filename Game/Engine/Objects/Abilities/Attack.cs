@@ -47,7 +47,7 @@ namespace Shanism.Engine.Objects.Abilities
             {
                 Position = Owner.Position,
                 Model = "objects/arrowz",
-                Scale = 2.5,
+                Scale = 2.5f,
 
                 Direction = (float)Owner.Position.AngleTo(targetLoc),
                 Speed = 20,

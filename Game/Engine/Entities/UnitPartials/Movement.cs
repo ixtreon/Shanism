@@ -13,17 +13,17 @@ namespace Shanism.Engine.Entities
         /// Gets whether this unit can walk on any terrain 
         /// without collision. 
         /// </summary>
-        public bool CanFly => (MovementType & MovementFlags.All) != 0;
+        public bool CanFly => (MovementType & MovementFlags.All) == MovementFlags.All;
 
         /// <summary>
         /// Gets whether this unit can walk on water. 
         /// </summary>
-        public bool CanSwim => (MovementType & MovementFlags.Water) != 0;
+        public bool CanSwim => (MovementType & MovementFlags.Water) == MovementFlags.Water;
 
         /// <summary>
         /// Gets whether this unit can walk on non-water terrain. 
         /// </summary>
-        public bool CanWalk => (MovementType & MovementFlags.Ground) != 0;
+        public bool CanWalk => (MovementType & MovementFlags.Ground) == MovementFlags.Ground;
 
         /// <summary>
         /// Gets or sets the kind of terrain this unit can walk on,

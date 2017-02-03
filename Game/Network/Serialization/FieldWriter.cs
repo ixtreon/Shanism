@@ -23,7 +23,7 @@ namespace Shanism.Network.Serialization
             var areEqual = (oldVal == newVal);
             Message.Write(areEqual);
 
-            if(areEqual)
+            if (areEqual)
                 return;
 
             Message.Write(newVal - oldVal, nBits);
@@ -34,7 +34,7 @@ namespace Shanism.Network.Serialization
             var areEqual = (oldVal == newVal);
             Message.Write(areEqual);
 
-            if(areEqual)
+            if (areEqual)
                 return;
 
             Message.WriteVariableInt32(newVal - oldVal);
@@ -45,7 +45,7 @@ namespace Shanism.Network.Serialization
             var areEqual = (oldVal == newVal);
             Message.Write(areEqual);
 
-            if(areEqual)
+            if (areEqual)
                 return;
 
             Message.Write((byte)(newVal - oldVal));
@@ -56,7 +56,7 @@ namespace Shanism.Network.Serialization
             var areEqual = oldVal.Equals(newVal);
             Message.Write(areEqual);
 
-            if(areEqual)
+            if (areEqual)
                 return;
 
             Message.Write(newVal - oldVal);
@@ -67,7 +67,7 @@ namespace Shanism.Network.Serialization
             var areEqual = oldVal == newVal;
             Message.Write(areEqual);
 
-            if(areEqual)
+            if (areEqual)
                 return;
 
             Message.Write(newVal);
@@ -110,7 +110,7 @@ namespace Shanism.Network.Serialization
             var areEqual = (oldVal == newVal);
             Message.Write(areEqual);
 
-            if(areEqual)
+            if (areEqual)
                 return;
 
             Message.WriteVariableUInt32(newVal - oldVal);
@@ -124,6 +124,12 @@ namespace Shanism.Network.Serialization
         {
             for (int i = 0; i < newVals.RawStats.Length; i++)
                 WriteFloat(oldVals.RawStats[i], newVals.RawStats[i]);
+        }
+
+        public void WriteMovementState(MovementState oldVal, MovementState newVal)
+        {
+            Console.WriteLine($"Written ms: {newVal.GetDirectionByte()}");
+            WriteByte(oldVal.GetDirectionByte(), newVal.GetDirectionByte());
         }
     }
 }

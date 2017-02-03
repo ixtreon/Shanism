@@ -13,7 +13,7 @@ namespace Shanism.Engine.Noise
         {
             var rnd = new Random(seed);
             for (var i = 0; i < width; i++)
-                for (var j = 0; j < height; j++)
+                for (var j = 0; j < height; j++) 
                     arr[i, j] = (byte)rnd.Next(0, 256);
         }
     }

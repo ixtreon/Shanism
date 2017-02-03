@@ -10,6 +10,7 @@ using Shanism.Common.Message;
 using Shanism.Common.Message.Server;
 using Shanism.Common.Interfaces.Entities;
 using System.IO;
+using Shanism.Network.Common;
 
 namespace Shanism.Network.Client
 {
@@ -28,7 +29,7 @@ namespace Shanism.Network.Client
 
         readonly NClient server;
 
-        readonly ObjectCache objects = new ObjectCache();
+        readonly ObjectCache objects = new ObjectCache(8);
 
 
         public uint Id { get; private set; }
@@ -52,6 +53,10 @@ namespace Shanism.Network.Client
         /// </summary>
         public event Action<IOMessage> MessageSent;
 
+        bool handshakeConfirmed;
+
+        bool isPlaying => server.IsConnected && handshakeConfirmed;
+
 
         public NReceptor(NClient server, IShanoClient client)
         {
@@ -67,6 +72,12 @@ namespace Shanism.Network.Client
             MessageSent?.Invoke(new DisconnectedMessage(DisconnectReason.TimeOut));
         }
 
+        public void Disconnect()
+        {
+            if (server.IsConnected)
+                server.Disconnect();
+        }
+
         public void HandleMessage(IOMessage msg)
         {
             switch (msg.Type)
@@ -77,7 +88,12 @@ namespace Shanism.Network.Client
 
                 //grab the player id from a handshake reply message
                 case MessageType.HandshakeReply:
-                    Id = ((HandshakeReplyMessage)msg).PlayerId;
+                    var hsMsg = (HandshakeReplyMessage)msg;
+                    if (hsMsg.Success)
+                    {
+                        handshakeConfirmed = true;
+                        Id = hsMsg.PlayerId;
+                    }
                     MessageSent(msg);
                     break;
 
@@ -86,8 +102,9 @@ namespace Shanism.Network.Client
                     MessageSent(msg);
                     break;
             }
-            Log.Default.Info($"Received a {msg.Type}. ");
+            //Log.Default.Info($"Received a {msg.Type}. ");
         }
+
 
         public void HandleGameFrame(NetIncomingMessage msg)
         {
@@ -97,7 +114,7 @@ namespace Shanism.Network.Client
         public void Update(int msElapsed)
         {
             //send current state to server
-            if (stateRefreshCounter.Tick(msElapsed))
+            if (isPlaying && stateRefreshCounter.Tick(msElapsed))
             {
                 NetOutgoingMessage msg;
 
@@ -105,7 +122,8 @@ namespace Shanism.Network.Client
                 {
                     ProtoBuf.Serializer.Serialize(ms, GameClient.State);
 
-                    msg = server.NetClient.CreateMessage(4 + (int)ms.Length);
+                    msg = server.NetClient.CreateMessage(5 + (int)ms.Length);
+                    msg.Write((byte)1);
                     msg.Write(CurrentFrame);
                     msg.Write(ms.ToArray());
                 }

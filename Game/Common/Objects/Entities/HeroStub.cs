@@ -12,6 +12,7 @@ namespace Shanism.Common.StubObjects
 {
     public class HeroStub : UnitStub, IHero
     {
+        public override ObjectType ObjectType => ObjectType.Hero;
 
         public IHeroAttributes BaseAttributes { get; set; } = new HeroAttributes();
         public IHeroAttributes Attributes { get; set; } = new HeroAttributes();

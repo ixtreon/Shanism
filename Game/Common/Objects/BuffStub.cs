@@ -8,6 +8,8 @@ namespace Shanism.Common.StubObjects
 {
     public class BuffStub : ObjectStub, IBuff
     {
+        public override ObjectType ObjectType => ObjectType.Buff;
+
         public int FullDuration { get; set; }
         public BuffStackType StackType { get; set; }
 

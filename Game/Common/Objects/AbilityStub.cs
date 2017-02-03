@@ -9,6 +9,8 @@ namespace Shanism.Common.StubObjects
 {
     public class AbilityStub : ObjectStub, IAbility
     {
+        public override ObjectType ObjectType => ObjectType.Ability;
+
         public double CastRange { get; set; }
 
         public int CastTime { get; set; }

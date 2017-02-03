@@ -33,5 +33,6 @@ namespace Shanism.Common
         void RestartScenario();
 
         void Update(int msElapsed);
+        void Disconnect(string name);
     }
 }

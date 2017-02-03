@@ -9,10 +9,21 @@ using System.Threading.Tasks;
 namespace Shanism.Engine.Objects.Orders
 {
     /// <summary>
-    /// A behaviour that makes the controlled unit go in the given direction. 
+    /// The order for a unit to move in the specified direction. 
     /// </summary>
     class MoveDirection : Order
     {
+        float _angle = float.NaN;
+
+        public float Angle
+        {
+            get { return _angle; }
+            set
+            {
+                _angle = value;
+                CurrentState = new MovementState(value);
+            }
+        }
 
         public MoveDirection(Unit owner) : base(owner)
         {
@@ -20,7 +31,7 @@ namespace Shanism.Engine.Objects.Orders
 
         public MoveDirection(Unit owner, float ang) : base(owner)
         {
-            CurrentState = new MovementState(ang);
+            Angle = ang;
         }
 
         public override bool TakeControl()

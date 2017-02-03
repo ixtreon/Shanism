@@ -15,12 +15,10 @@ namespace Shanism.Common.Message.Client
         public string PlayerName;
 
 
-        public override MessageType Type { get { return MessageType.HandshakeInit; } }
-
-        HandshakeInitMessage() { }
+        public override MessageType Type => MessageType.HandshakeInit;
+        public HandshakeInitMessage() { }
 
         public HandshakeInitMessage(string playerName)
-            : this()
         {
             PlayerName = playerName;
         }

@@ -178,5 +178,10 @@ namespace Shanism.Editor.MapAdapter
         {
             // do nothing
         }
+
+        public void Disconnect(string name)
+        {
+            // do nothing
+        }
     }
 }

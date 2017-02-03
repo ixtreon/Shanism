@@ -39,6 +39,9 @@ namespace Shanism.Common
 
         IReadOnlyCollection<IEntity> VisibleEntities { get; }
 
+
+        void Disconnect();
+
         //event Action Connected;
         //event Action Disconnected;
     }

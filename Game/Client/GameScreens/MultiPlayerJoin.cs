@@ -38,9 +38,10 @@ namespace Shanism.Client.GameScreens
 
             flowPanel.Add(hostAddress = new TextBox
             {
-                BackColor = Color.White.SetAlpha(50),
+                BackColor = Color.Black.SetAlpha(100),
                 Width = btnSize.X,
             });
+            hostAddress.Text = Settings.Current.Servers.LastPlayed;
 
             flowPanel.Add(connectButton = new Button("Connect")
             {
@@ -57,20 +58,22 @@ namespace Shanism.Client.GameScreens
 
         void ConnectButton_MouseUp(Input.MouseButtonArgs obj)
         {
-            if (string.IsNullOrEmpty(hostAddress.Text))
+            var server = hostAddress.Text;
+
+            if (string.IsNullOrEmpty(server))
             {
-                foreach (var c in Root.Controls.OfType<MessageBox>())
-                    Root.Remove(c);
-                Root.Add(new MessageBox("Host", "Please enter a host address."));
+                Root.ShowMessageBox("Host", "Please enter a host address.");
                 return;
             }
 
+            Settings.Current.Servers.Add(server);
+            Settings.Current.Servers.SetLast(server);
+            Settings.Current.Save();
+
             NClient client;
-            if (!NClient.TryConnect(hostAddress.Text, out client))
+            if (!NClient.TryConnect(server, out client))
             {
-                foreach (var c in Root.Controls.OfType<MessageBox>())
-                    Root.Remove(c);
-                Root.Add(new MessageBox("Host", "The selected host is unreachable."));
+                Root.ShowMessageBox("Host", "The selected host is unreachable.");
                 return;
             }
                 

@@ -77,6 +77,8 @@ namespace Shanism.Client
         public KeybindSettings Keybinds { get; set; } = new KeybindSettings(true);
 
 
+        public ServerSettings Servers { get; set; } = new ServerSettings();
+
         Settings() { }
 
         /// <summary>

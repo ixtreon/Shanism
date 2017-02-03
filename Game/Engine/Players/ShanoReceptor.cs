@@ -8,6 +8,7 @@ using Shanism.Common.Message.Client;
 using Shanism.Engine.Entities;
 using System.Collections.Generic;
 using Shanism.Common.Interfaces.Entities;
+using Shanism.Engine.Objects.Orders;
 
 namespace Shanism.Engine.Players
 {
@@ -128,6 +129,10 @@ namespace Shanism.Engine.Players
             MessageSent?.Invoke(msg);
         }
 
+        public void Disconnect()
+        {
+            Engine.Disconnect(Name);
+        }
 
         public string GetDebugString() => Engine.DebugString;
 
@@ -135,11 +140,15 @@ namespace Shanism.Engine.Players
         {
             if (MainHero != null)
             {
+                var moveOrder = MainHero.DefaultOrder as MoveDirection;
+                if(moveOrder == null)
+                    MainHero.DefaultOrder = moveOrder = new MoveDirection(MainHero);
+
                 //movement
                 if (Client.State.IsMoving)
-                    MainHero.MovementState = new MovementState(Client.State.MoveAngle);
+                    moveOrder.Angle = Client.State.MoveAngle;
                 else
-                    MainHero.MovementState = MovementState.Stand;
+                    moveOrder.Angle = float.NaN;
 
                 //actions
                 MainHero.TryCastAbility(Client.State);

@@ -48,7 +48,7 @@ namespace Shanism.Common.Interfaces.Entities
         /// Gets the scale of the entity, also the size of its texture. 
         /// This value is always positive. 
         /// </summary>
-        double Scale { get; }
+        float Scale { get; }
 
 
         /// <summary>

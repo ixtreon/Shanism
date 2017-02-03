@@ -9,14 +9,14 @@ using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Common.StubObjects
 {
-    public class EntityStub : ObjectStub, IEntity
+    public abstract class EntityStub : ObjectStub, IEntity
     {
 
         public Vector Position { get; set; }
 
         public string Name { get; set; }
 
-        public double Scale { get; set; }
+        public float Scale { get; set; }
 
         public float Orientation { get; set; }
 

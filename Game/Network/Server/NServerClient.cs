@@ -33,7 +33,7 @@ namespace Shanism.Network.Server
 
         readonly uint Id;
 
-        readonly ClientStateTracker stateTracker = new ClientStateTracker();
+        readonly ClientStateTracker stateTracker = new ClientStateTracker(8);
 
         /// <summary>
         /// The receptor serving this connection
@@ -91,8 +91,9 @@ namespace Shanism.Network.Server
 
             //send a GameFrame to the client
             var msg = Server.CreateMessage();
+            msg.Write((byte)1);
             stateTracker.WriteFrame(msg, gameFrame, gameReceptor.VisibleEntities);
-             
+
             Server.SendMessage(msg, ConnectionHandle, NetDeliveryMethod.Unreliable);
         }
 
@@ -114,28 +115,39 @@ namespace Shanism.Network.Server
                     break;
 
                 default:
-                    Log.Default.Info($"[{Id}] Received a {msg.Type}");
+                    //Log.Default.Info($"[{Id}] Received a {msg.Type}");
                     MessageSent?.Invoke(msg);
                     break;
             }
         }
 
-        internal void readClientFrame(NetBuffer msg)
+        internal void readClientFrame(NetIncomingMessage msg)
         {
+            uint frameId = 0;
+            ClientState state = null;
+
             try
             {
-                using (var ms = new MemoryStream(msg.Data))
-                {
-                    LastAckFrame = ms.ReadUint24();
-                    State = ProtoBuf.Serializer.Deserialize<ClientState>(ms);
-                }
+                frameId = msg.ReadUInt32();
+                using (var ms = new MemoryStream(msg.Data, msg.PositionInBytes, msg.LengthBytes - msg.PositionInBytes))
+                    state = ProtoBuf.Serializer.Deserialize<ClientState>(ms);
             }
             catch
             {
                 //invalid frame: do not do anything, hope we get a proper frame eventually
+                Log.Default.Warning($"Unable to deserialize a frame from {msg.SenderEndPoint} (length: {msg.LengthBytes} bytes)");
             }
-        }
 
+            //try
+            //{
+                stateTracker.SetLastAck(frameId);
+            //}
+            //catch (Exception e)
+            //{
+            //    Log.Default.Warning($"Client {msg.SenderEndPoint} sent invalid frame:\n{e}");
+            //}
+            this.State = state;
+        }
 
         /// <summary>
         /// Sends the given message to the game client. 
@@ -146,8 +158,7 @@ namespace Shanism.Network.Server
         void sendMessage(IOMessage msg, NetDeliveryMethod deliveryMethod)
         {
             Server.SendMessage(msg.ToNetMessage(Server), ConnectionHandle, deliveryMethod);
-            if(msg.Type != MessageType.GameFrame)
-                Log.Default.Info($"[{Id}] Sent a {msg.Type}");
+            //Log.Default.Info($"[{Id}] Sent a {msg.Type}");
         }
     }
 }

@@ -30,26 +30,15 @@ namespace Shanism.Client.Drawing
             //update unit orientation
             if (Unit.MovementState.IsMoving)
             {
-                var curPosition = Unit.Position;
-                var ang = lastPosition.AngleTo(curPosition);
-                var dist = curPosition.DistanceTo(lastPosition) * 1000 / msElapsed;
-
-                if (dist > Unit.Stats[UnitStat.MoveSpeed] / 10)
-                {
-                    SetOrientation((float)ang);
-                    SetAnimation("move", true);
-
-                    lastPosition = Unit.Position;
-                }
-                else
-                    SetAnimation(string.Empty, true);
+                SetAnimation("move", true);
+                SetOrientation(Unit.MovementState.MoveDirection);
             }
             else if (Unit.IsCasting())
             {
                 SetOrientation((float)Input.MouseInfo.UiPosition.Angle);
                 SetAnimation("attack", false);
             }
-            else if (AnimationName == "move")
+            else
                 SetAnimation(string.Empty, true);
 
             //tint black if dead

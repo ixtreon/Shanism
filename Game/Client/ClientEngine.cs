@@ -90,7 +90,7 @@ namespace Shanism.Client
             if (server == null)
                 throw new ArgumentNullException(nameof(server));
 
-            disconnect();
+            Disconnect();
             this.server = server;
 
             //request a new receptor
@@ -115,13 +115,16 @@ namespace Shanism.Client
             }
         }
 
-        void disconnect()
+        public void Disconnect()
         {
             if (receptor != null)
+            {
+                receptor.Disconnect();
                 receptor.MessageSent -= server_MessageSent;
+                receptor = null;
+            }
 
             isConnected = false;
-            receptor = null;
             server = null;
         }
 

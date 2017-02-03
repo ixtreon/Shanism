@@ -30,10 +30,10 @@ namespace Shanism.Engine.Systems
             var state = Owner.MovementState;
             if (Owner.IsStunned || !Owner.CanMove || !state.IsMoving)
                 return;
-            
+
 
             //get the suggested move position
-                var speed = Owner.MoveSpeed;
+            var speed = Owner.MoveSpeed;
             var dist = speed * msElapsed / 1000;
             if (state.HasMaxDistance)
                 dist = Math.Min(state.MaxDistance, dist);
@@ -85,12 +85,12 @@ namespace Shanism.Engine.Systems
             //fix objects
             nearbies.Clear();
             Owner.Map.GetObjectsInRect(
-                suggestedPos, 
+                suggestedPos,
                 new Vector((Owner.Scale + Constants.Entities.MaxSize) / 2),
                 nearbies);
 
             foreach (var obj in nearbies)
-                if(obj != Owner && obj.HasCollision)
+                if (obj != Owner && obj.HasCollision)
                     suggestedPos = fixEntity(suggestedPos, obj, r);
 
             return suggestedPos;

@@ -8,9 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Shanism.Common.Message.Client;
 using Shanism.Common.Message;
-using Shanism.Common.Message.Server;
-using Shanism.Common.Message.Network;
-using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Network.Client
 {
@@ -71,6 +68,8 @@ namespace Shanism.Network.Client
             }
         }
 
+        public void Disconnect()
+            => NetClient.Disconnect("!@#$ this game, srsly");
 
         internal override void OnConnected(NetConnection conn)
         {
@@ -186,6 +185,11 @@ namespace Shanism.Network.Client
         public void RestartScenario()
         {
             Log.Default.Info("Unable to restart a scenario over the network.");
+        }
+
+        public void Disconnect(string name)
+        {
+            Disconnect();
         }
         #endregion
     }

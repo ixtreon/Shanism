@@ -32,7 +32,8 @@ namespace Shanism.Engine.Systems
                 return;
 
             //or don't do anything
-            Owner.MovementState = Shanism.Common.MovementState.Stand;
+            if (Owner.MovementState.IsMoving)
+                Owner.MovementState = Shanism.Common.MovementState.Stand;
         }
 
         bool tryTakeControl(Order ord, int msElapsed)

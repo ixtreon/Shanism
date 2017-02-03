@@ -86,6 +86,7 @@ namespace Shanism.Client.Drawing
                 && frameElapsedCounter.Tick(msElapsed))
             {
                 var resetFrames = frameIdCounter.Tick();
+
                 if (!LoopAnimation && resetFrames)
                     SetAnimation(string.Empty, true);
                 else
@@ -142,7 +143,7 @@ namespace Shanism.Client.Drawing
 
             //only update facing if moving at least a bit along X
             var xDist = Math.Cos(angle);
-            if (Math.Abs(xDist) > 1e-3)
+            if (Math.Abs(xDist) > 0.01)
                 isFacingRight = xDist > 0;
 
             refreshOrientation();

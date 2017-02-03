@@ -95,13 +95,14 @@ namespace Shanism.Client
 
         void GameHelper_QuitToTitle()
         {
+            inGameScreen.Disconnect();
             setScreen(mainMenuScreen);
         }
 
         void mainMenuScreen_GameStarted(Common.IShanoEngine engine)
         {
             Common.IReceptor receptor;
-            if (!inGameScreen.TryConnect(engine, "Pesho i Gosho", out receptor))
+            if (!inGameScreen.TryConnect(engine, "???", out receptor))
                 throw new Exception("Unable to connect to the local server!");
 
             engine.StartPlaying(receptor);
@@ -176,6 +177,7 @@ namespace Shanism.Client
             }
         }
 
+        readonly Counter updateCounter
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -186,11 +188,15 @@ namespace Shanism.Client
         {
             var msElapsed = (int)gameTime.ElapsedGameTime.TotalMilliseconds;
 
+            //first run
             if (!_isLoaded)
             {
                 _isLoaded = true;
                 Console.WriteLine("Boom! Let's play");
             }
+
+            var vsync = graphics.SynchronizeWithVerticalRetrace;
+            if(!vsync && 
 
             //input
             MouseInfo.Update(msElapsed, IsActive);
