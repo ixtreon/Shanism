@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Shanism.Client.Input
 {
+    /// <summary>
+    /// A combination of one or more of the Ctrl, Alt, Shift keys. 
+    /// </summary>
     [Flags]
     enum ModifierKeys : byte
     {

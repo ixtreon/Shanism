@@ -117,10 +117,7 @@ namespace Shanism.Client.UI.Menus
 
         protected override void OnUpdate(int msElapsed)
         {
-            if (HoverControl is SpellBarButton)
-            {
 
-            }
         }
 
         protected override void OnCloseButtonClicked()

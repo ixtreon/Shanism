@@ -1,11 +1,8 @@
 ﻿using Shanism.Common;
-using Shanism.Common.StubObjects;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Client
 {
@@ -30,7 +27,7 @@ namespace Shanism.Client
         /// <summary>
         /// Gets the size of the screen window in pixels. 
         /// </summary>
-        public static Point Size { get; private set; } = new Point(800, 600);
+        public static Point Size { get; private set; } = DefaultSize;
 
         /// <summary>
         /// Gets half the size of the sreen window in pixels. 
@@ -65,8 +62,6 @@ namespace Shanism.Client
         /// </summary>
         public static Vector GameCenter => _pannedLocation;
 
-
-        static Vector backBufferScale = new Vector(1);
 
         static Vector _pannedLocation;
 
@@ -119,7 +114,7 @@ namespace Shanism.Client
         /// <summary>
         /// Converts the given in-game point to Ui co-ordinates. 
         /// </summary>
-        public static Vector GameToUi(Vector v) 
+        public static Vector GameToUi(Vector v)
             => ScreenToUi(GameToScreen(v));
 
         public static Vector UiToGame(Vector absolutePosition) 
@@ -130,8 +125,6 @@ namespace Shanism.Client
         /// </summary>
         public static Vector UiToScreen(Vector p)
             => p * UiScale;
-
-
 
         /// <summary>
         /// Converts the given screen point to Ui co-ordinates.  
