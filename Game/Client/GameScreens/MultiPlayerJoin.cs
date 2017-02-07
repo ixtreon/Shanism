@@ -67,7 +67,7 @@ namespace Shanism.Client.GameScreens
             }
 
             Settings.Current.Servers.Add(server);
-            Settings.Current.Servers.SetLast(server);
+            Settings.Current.Servers.SetLastPlayed(server);
             Settings.Current.Save();
 
             NClient client;

@@ -12,10 +12,10 @@ namespace Shanism.Client
 {
     class KeybindSettings
     {
-        [JsonProperty]
-        Dictionary<ClientAction, Keybind> rawKeybinds = new Dictionary<ClientAction, Keybind>();
+        Dictionary<ClientAction, Keybind> keymap = new Dictionary<ClientAction, Keybind>();
 
-        public IReadOnlyDictionary<ClientAction, Keybind> BoundActions => rawKeybinds;
+        [JsonIgnore]
+        public IReadOnlyDictionary<ClientAction, Keybind> BoundActions => keymap;
 
         [JsonConstructor]
         KeybindSettings() { }
@@ -57,7 +57,7 @@ namespace Shanism.Client
             get
             {
                 Keybind val;
-                if (rawKeybinds.TryGetValue(act, out val))
+                if (keymap.TryGetValue(act, out val))
                     return val;
                 return Keybind.None;
             }
@@ -65,12 +65,17 @@ namespace Shanism.Client
             set { setKeybind(act, value); }
         }
 
+        /// <summary>
+        /// Gets or sets the <see cref="Keybind"/> that activates the given spell bar button. 
+        /// </summary>
+        /// <param name="barId">The spell bar identifier.</param>
+        /// <param name="keyId">The key identifier within the spell bar.</param>
         public Keybind this[int barId, int keyId]
         {
             get
             {
                 Keybind val;
-                if (rawKeybinds.TryGetValue(ClientAbilityActions.FromId(barId, keyId), out val))
+                if (keymap.TryGetValue(ClientAbilityActions.FromId(barId, keyId), out val))
                     return val;
                 return Keybind.None;
             }
@@ -83,19 +88,19 @@ namespace Shanism.Client
             //clear keybind if none
             if (button == Keybind.None)
             {
-                rawKeybinds.Remove(act);
+                keymap.Remove(act);
                 return;
             }
 
             //see if binding is new
-            var oldKeyAction = rawKeybinds.FirstOrDefault(kvp => kvp.Value == button).Key;
+            var oldKeyAction = keymap.FirstOrDefault(kvp => kvp.Value == button).Key;
             if (oldKeyAction != act)
             {
                 //remove old binding, if any
-                rawKeybinds.Remove(oldKeyAction);
+                keymap.Remove(oldKeyAction);
 
                 //add new binding
-                rawKeybinds[act] = button;
+                keymap[act] = button;
             }
         }
     }

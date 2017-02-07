@@ -10,16 +10,19 @@ namespace Shanism.Client
     {
         public string LastPlayed { get; set; }
 
-        public SortedSet<string> All = new SortedSet<string>();
+        /// <summary>
+        /// Gets all servers ever played.
+        /// </summary>
+        public List<string> All = new List<string>();
 
-        public void Add(string serverName)
+        public void Add(string hostAddress)
         {
-            All.Add(serverName);
+            All.Add(hostAddress);
         }
 
-        public void SetLast(string serverName)
+        public void SetLastPlayed(string hostAddress)
         {
-            LastPlayed = serverName;
+            LastPlayed = hostAddress;
         }
     }
 }
