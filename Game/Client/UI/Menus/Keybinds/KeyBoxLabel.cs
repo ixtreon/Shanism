@@ -14,6 +14,9 @@ namespace Shanism.Client.UI.Menus.Keybinds
         readonly Label lblText;
         readonly Label lblValue;
 
+
+        readonly GlowTimer glow = new GlowTimer();
+
         /// <summary>
         /// Gets the gameaction this keybox can change the binding to. 
         /// </summary>
@@ -83,7 +86,7 @@ namespace Shanism.Client.UI.Menus.Keybinds
             ToolTip = kb.ToString();
 
             if (HasFocus)
-                BackColor = Color.Black.SetAlpha((int)GlowTimer.Default.GetValue(150, 200));
+                BackColor = Color.Black.SetAlpha((int)glow.GetValue(150, 200));
             else
                 BackColor = Color.Black.SetAlpha(HasHover ? 100 : 50);
         }

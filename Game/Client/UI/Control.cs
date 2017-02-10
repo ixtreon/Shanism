@@ -671,7 +671,7 @@ namespace Shanism.Client.UI
 
         public void ShowMessageBox(string caption, string text)
         {
-            foreach (var c in Controls.OfType<MessageBox>())
+            foreach (var c in Controls.OfType<MessageBox>().ToList())
                 Remove(c);
             Add(new MessageBox(caption, text));
         }

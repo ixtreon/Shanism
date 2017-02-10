@@ -10,8 +10,8 @@ namespace Shanism.Client.UI.Menus.Character
     {
         static readonly Vector DefaultSize = new Vector(0.4, 0.15);
 
-        TextureFont statNameFont => Content.Fonts.FancyFont;
-        TextureFont labelNameFont => Content.Fonts.NormalFont;
+        TextureFont mainLabelFont => Content.Fonts.FancyFont;
+        TextureFont childLabelFont => Content.Fonts.NormalFont;
 
         TextureFont valueFont => Content.Fonts.NormalFont;
 
@@ -20,20 +20,20 @@ namespace Shanism.Client.UI.Menus.Character
         Color ValueColor = Color.White;
 
 
-        readonly ValueLabel mainStatLabel;
-        readonly List<ValueLabel> secondaryStatLabels = new List<ValueLabel>();
+        readonly ValueLabel mainLabel;
+        readonly List<ValueLabel> childLabels = new List<ValueLabel>();
 
 
-        public string StatText
+        public string MainText
         {
-            get { return mainStatLabel.Text; }
-            set { mainStatLabel.Text = value; }
+            get { return mainLabel.Text; }
+            set { mainLabel.Text = value; }
         }
 
-        public string StatTooltip
+        public string MainTooltip
         {
-            get { return mainStatLabel.TextToolTip as string; }
-            set { mainStatLabel.TextToolTip = value; }
+            get { return mainLabel.TextToolTip as string; }
+            set { mainLabel.TextToolTip = value; }
         }
 
 
@@ -43,37 +43,38 @@ namespace Shanism.Client.UI.Menus.Character
             Size = DefaultSize;
             BackColor = Color.Black.SetAlpha(50);
 
-            mainStatLabel = new ValueLabel
+            var font = mainLabelFont;
+            mainLabel = new ValueLabel
             {
                 CanHover = true,
 
                 Location = Vector.Zero,
-                Size = new Vector(Size.X, statNameFont.HeightUi + 2 * Padding),
+                Size = new Vector(Size.X, font.HeightUi + 2 * Padding),
                 ParentAnchor = AnchorMode.Top | AnchorMode.Left | AnchorMode.Right,
 
 
-                TextFont = statNameFont,
+                TextFont = font,
                 ValueFont = valueFont,
             };
-            Add(mainStatLabel);
+            Add(mainLabel);
         }
 
         public void AddLabel(string name, string description)
         {
-            double SecondaryIndent = 0.05;
+            const double SecondaryIndent = 0.05;
 
-            var id = secondaryStatLabels.Count;
-            var lblHeight = statNameFont.HeightUi;
+            var font = childLabelFont;
+            var id = childLabels.Count;
             var lbl = new ValueLabel
             {
                 CanHover = true,
 
-                Location = new Vector(SecondaryIndent, mainStatLabel.Bottom + id * lblHeight),
-                Size = new Vector(Size.X - SecondaryIndent, lblHeight),
+                Location = new Vector(SecondaryIndent, mainLabel.Bottom + id * font.HeightUi),
+                Size = new Vector(Size.X - SecondaryIndent, font.HeightUi),
                 ParentAnchor = AnchorMode.Top | AnchorMode.Left | AnchorMode.Right,
 
 
-                TextFont = statNameFont,
+                TextFont = font,
                 ValueFont = valueFont,
 
                 Text = name,
@@ -81,25 +82,25 @@ namespace Shanism.Client.UI.Menus.Character
             };
 
             Add(lbl);
-            secondaryStatLabels.Add(lbl);
+            childLabels.Add(lbl);
         }
 
         public void Resize()
-            => Size = new Vector(Size.X, (secondaryStatLabels.LastOrDefault() ?? mainStatLabel).Bottom + Padding);
+            => Size = new Vector(Size.X, (childLabels.LastOrDefault() ?? mainLabel).Bottom + Padding);
 
-        public void SetStatValue(double baseVal, double curVal, string suffix = "")
-            => setVal(mainStatLabel, baseVal, curVal, suffix);
+        public void SetMainValue(double baseVal, double curVal, string suffix = "")
+            => setStat(mainLabel, baseVal, curVal, suffix);
 
-        public void SetLabelValue(int id, double baseVal, double curVal, string suffix = "")
-            => setVal(secondaryStatLabels[id], baseVal, curVal, suffix);
+        public void SetChildValue(int id, double baseVal, double curVal, string suffix = "")
+            => setStat(childLabels[id], baseVal, curVal, suffix);
 
-        public void SetLabelValue(int id, string text, string tooltip)
+        public void SetChildValue(int id, string text, string tooltip)
         {
-            secondaryStatLabels[id].Value = text;
-            secondaryStatLabels[id].ValueToolTip = tooltip;
+            childLabels[id].Value = text;
+            childLabels[id].ValueToolTip = tooltip;
         }
 
-        static void setVal(ValueLabel lbl, double baseVal, double curVal, string suffix)
+        static void setStat(ValueLabel lbl, double baseVal, double curVal, string suffix)
         {
             var dVal = curVal - baseVal;
             lbl.Value = curVal.ToString("0");

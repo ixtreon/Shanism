@@ -13,13 +13,7 @@ namespace Shanism.Client.UI
     /// </summary>
     class GlowTimer
     {
-        /// <summary>
-        /// Gets the default timer with a period of 2000 ms. 
-        /// </summary>
-        public static GlowTimer Default { get; } = new GlowTimer(2000);
-
         static readonly Stopwatch ticker = Stopwatch.StartNew();
-
 
         readonly long start;
 
@@ -28,7 +22,14 @@ namespace Shanism.Client.UI
         /// </summary>
         public int Period { get; }
 
+        /// <summary>
+        /// Creates a glow timer with a period of 2000 ms per direction.
+        /// </summary>
+        public GlowTimer() : this(1000) { }
 
+        /// <summary>
+        /// Creates a glow timer with a given period, in milliseconds, per direction.
+        /// </summary>
         public GlowTimer(int period)
         {
             Period = period;

@@ -60,8 +60,8 @@ namespace Shanism.Client.UI.Menus
                 Size = new Vector(Size.X - 2 * Padding, 0.12),
                 ParentAnchor = AnchorMode.Left | AnchorMode.Top | AnchorMode.Right,
 
-                StatText = "Vitality",
-                StatTooltip = "Each point increases your life by X and life regen by Y. ",
+                MainText = "Vitality",
+                MainTooltip = "Each point increases your life by X and life regen by Y. ",
 
             };
             vitalityBox.AddLabel("Life", "Your current and total life. ");
@@ -74,8 +74,8 @@ namespace Shanism.Client.UI.Menus
                 Size = vitalityBox.Size,
                 ParentAnchor = AnchorMode.Left | AnchorMode.Top | AnchorMode.Right,
 
-                StatText = "Strength",
-                StatTooltip = "Each point increases your damage by X and crit by Y. ",
+                MainText = "Strength",
+                MainTooltip = "Each point increases your damage by X and crit by Y. ",
             };
             strengthBox.AddLabel("Damage", "The damage dealt with each attack. ");
             strengthBox.AddLabel("Crit", "The chance to deal critical damage with each attack. ");
@@ -87,8 +87,8 @@ namespace Shanism.Client.UI.Menus
                 Size = vitalityBox.Size,
                 ParentAnchor = AnchorMode.Left | AnchorMode.Top | AnchorMode.Right,
 
-                StatText = "Agility",
-                StatTooltip = "Each point increases your dodge by X and attack speed by Y. ",
+                MainText = "Agility",
+                MainTooltip = "Each point increases your dodge by X and attack speed by Y. ",
             };
             agilityBox.AddLabel("Dodge", "Your total chance to dodge attacks. ");
             agilityBox.AddLabel("Attack Speed", "The amount of attacks that can be done per second. ");
@@ -101,8 +101,8 @@ namespace Shanism.Client.UI.Menus
                 Size = vitalityBox.Size,
                 ParentAnchor = AnchorMode.Left | AnchorMode.Top | AnchorMode.Right,
 
-                StatText = "Intellect",
-                StatTooltip = "Each point increases your mana by X, mana regen by Y, and magic damage by Z. ",
+                MainText = "Intellect",
+                MainTooltip = "Each point increases your mana by X, mana regen by Y, and magic damage by Z. ",
             };
             intellectBox.AddLabel("Mana", "Your total mana. ");
             intellectBox.AddLabel("Mana Regen", "The amount of mana regained or lost each second. ");
@@ -135,46 +135,46 @@ namespace Shanism.Client.UI.Menus
 
             var maxLife = Target.Stats[UnitStat.MaxLife];
             var lifeRegen = Target.Stats[UnitStat.LifeRegen];
-            vitalityBox.SetStatValue(Target.BaseAttributes[HeroAttribute.Vitality], Target.Attributes[HeroAttribute.Vitality]);
-            vitalityBox.SetLabelValue(0,
+            vitalityBox.SetMainValue(Target.BaseAttributes[HeroAttribute.Vitality], Target.Attributes[HeroAttribute.Vitality]);
+            vitalityBox.SetChildValue(0,
                 $"{Target.Life:0} / {maxLife:0}",
                 $"{Target.Life:0.00} / {maxLife:0.00}");
-            vitalityBox.SetLabelValue(1, 
-                $"{lifeRegen:+0.0;-0.0;0}", 
+            vitalityBox.SetChildValue(1,
+                $"{lifeRegen:+0.0;-0.0;0}",
                 $"{lifeRegen:+0.0;-0.0;0} / sec");
 
             var minDmg = Target.Stats[UnitStat.MinDamage];
             var maxDmg = Target.Stats[UnitStat.MaxDamage];
-            strengthBox.SetStatValue(Target.BaseAttributes[HeroAttribute.Strength], Target.Attributes[HeroAttribute.Strength]);
-            strengthBox.SetLabelValue(0, 
-                $"{minDmg} - {maxDmg}", 
+            strengthBox.SetMainValue(Target.BaseAttributes[HeroAttribute.Strength], Target.Attributes[HeroAttribute.Strength]);
+            strengthBox.SetChildValue(0,
+                $"{minDmg} - {maxDmg}",
                 "");
 
             var attacksPerSec = Target.Stats[UnitStat.AttacksPerSecond];
             var dodge = 0f;
             var moveSpeed = Target.Stats[UnitStat.MoveSpeed];
-            agilityBox.SetStatValue(Target.BaseAttributes[HeroAttribute.Agility], Target.Attributes[HeroAttribute.Agility]);
-            agilityBox.SetLabelValue(0, 
-                $"{dodge:0}%", 
+            agilityBox.SetMainValue(Target.BaseAttributes[HeroAttribute.Agility], Target.Attributes[HeroAttribute.Agility]);
+            agilityBox.SetChildValue(0,
+                $"{dodge:0}%",
                 $"{dodge:0.00}%");
-            agilityBox.SetLabelValue(1,
+            agilityBox.SetChildValue(1,
                 $"{attacksPerSec:0.0}",
                 $"{attacksPerSec:0.0} attacks / sec\n{1f / attacksPerSec:0.0} sec / attack.");
-            agilityBox.SetLabelValue(2,
+            agilityBox.SetChildValue(2,
                 $"{moveSpeed:0.0}",
                 $"{moveSpeed:0.0#}");
 
             var maxMana = Target.Stats[UnitStat.MaxMana];
             var manaRegen = Target.Stats[UnitStat.ManaRegen];
             var magicDmg = Target.Stats[UnitStat.MagicDamage];
-            intellectBox.SetStatValue(Target.BaseAttributes[HeroAttribute.Intellect], Target.Attributes[HeroAttribute.Intellect]);
-            intellectBox.SetLabelValue(0,
+            intellectBox.SetMainValue(Target.BaseAttributes[HeroAttribute.Intellect], Target.Attributes[HeroAttribute.Intellect]);
+            intellectBox.SetChildValue(0,
                 $"{Target.Mana:0} / {maxMana:0}",
                 $"{Target.Mana:0.00} / {maxMana:0.00}");
-            intellectBox.SetLabelValue(1, 
-                $"{manaRegen:+0.0;-0.0;0}", 
+            intellectBox.SetChildValue(1,
+                $"{manaRegen:+0.0;-0.0;0}",
                 $"{manaRegen:+0.0;-0.0;0} / sec");
-            intellectBox.SetLabelValue(2, 
+            intellectBox.SetChildValue(2,
                 $"{magicDmg}",
                 "");
         }
