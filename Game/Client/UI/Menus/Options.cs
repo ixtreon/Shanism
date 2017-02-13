@@ -37,7 +37,7 @@ namespace Shanism.Client.UI.Menus
 
                 Text = "Apply",
             });
-            btnApply.MouseUp += BtnAccept_MouseUp;
+            btnApply.MouseClick += saveAndHide;
 
             Add(mainPanel = new FlowPanel
             {
@@ -46,12 +46,13 @@ namespace Shanism.Client.UI.Menus
                 ParentAnchor = AnchorMode.All,
             });
 
+            var rowSize = new Vector(mainPanel.Size.X - 2 * Padding, 0.07);
 
             addHeader("Graphics");
             {
                 mainPanel.Add(vSync = new CheckBox
                 {
-                    Size = new Vector(mainPanel.Size.X - 2 * Padding, 0.07),
+                    Size = rowSize,
                     ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
 
                     Text = "VSync",
@@ -62,7 +63,7 @@ namespace Shanism.Client.UI.Menus
 
                 mainPanel.Add(fullScreen = new CheckBox
                 {
-                    Size = new Vector(mainPanel.Size.X - 2 * Padding, 0.07),
+                    Size = rowSize,
                     ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
 
                     Text = "Full Screen",
@@ -74,7 +75,7 @@ namespace Shanism.Client.UI.Menus
 
                 mainPanel.Add(renderSize = new SliderLabel
                 {
-                    Size = new Vector(mainPanel.Size.X - 2 * Padding, 0.07),
+                    Size = rowSize,
                     ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
 
                     TextFont = Content.Fonts.NormalFont,
@@ -95,7 +96,7 @@ namespace Shanism.Client.UI.Menus
             {
                 mainPanel.Add(extendCast = new CheckBox
                 {
-                    Size = new Vector(mainPanel.Size.X - 2 * Padding, 0.07),
+                    Size = rowSize,
                     ParentAnchor = AnchorMode.Left | AnchorMode.Right | AnchorMode.Top,
 
                     Text = "Extend Cast",
@@ -154,7 +155,7 @@ namespace Shanism.Client.UI.Menus
             extendCast.IsChecked = Settings.Current.ExtendCast;
         }
 
-        void BtnAccept_MouseUp(Input.MouseButtonArgs obj)
+        void saveAndHide(Input.MouseButtonArgs obj)
         {
             Settings.Current.Save();
             IsVisible = false;

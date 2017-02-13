@@ -114,13 +114,13 @@ namespace Shanism.Client.UI
 
                 BackColor = Color.Black.SetAlpha(100),
             };
-            titleBar.MouseDown += onTitleBarMouseDown;
-            titleBar.MouseMove += onTitleBarMouseMove;
-            titleBar.MouseUp += onTitleBarMouseUp;
+            titleBar.MouseDown += startMouseMove;
+            titleBar.MouseMove += doMouseMove;
+            titleBar.MouseUp += endMouseMove;
 
-            MouseDown += onMouseDown;
-            MouseMove += onMouseMove;
-            MouseUp += onMouseUp;
+            MouseDown += startMouseResize;
+            MouseMove += doMouseResize;
+            MouseUp += endMouseResize;
 
             CloseButton = new Button
             {
@@ -133,7 +133,7 @@ namespace Shanism.Client.UI
 
                 BackColor = Color.Red.SetAlpha(150),
             };
-            CloseButton.MouseUp += CloseButton_MouseUp;
+            CloseButton.MouseClick += clickCloseButton;
 
             Add(titleBar);
             titleBar.Add(CloseButton);
@@ -143,7 +143,7 @@ namespace Shanism.Client.UI
         #region Drag to resize
         Vector? sizeLoc;
 
-        void onMouseDown(MouseButtonArgs ev)
+        void startMouseResize(MouseButtonArgs ev)
         {
             var dFromCorner = Size - ev.Position;
             if (CanResize && dFromCorner.X + dFromCorner.Y < 3 * Padding)
@@ -152,7 +152,7 @@ namespace Shanism.Client.UI
             }
         }
 
-        void onMouseMove(MouseArgs ev)
+        void doMouseResize(MouseArgs ev)
         {
             if (sizeLoc != null)
             {
@@ -161,7 +161,7 @@ namespace Shanism.Client.UI
             }
         }
 
-        void onMouseUp(MouseButtonArgs ev)
+        void endMouseResize(MouseButtonArgs ev)
         {
             sizeLoc = null;
         }
@@ -169,7 +169,7 @@ namespace Shanism.Client.UI
 
         #region Drag to move
         Vector? dragLoc;
-        void onTitleBarMouseDown(MouseButtonArgs ev)
+        void startMouseMove(MouseButtonArgs ev)
         {
             if (CanMove)
             {
@@ -177,14 +177,14 @@ namespace Shanism.Client.UI
             }
         }
 
-        void onTitleBarMouseMove(MouseArgs ev)
+        void doMouseMove(MouseArgs ev)
         {
             if (dragLoc != null)
                 Location = (Location + ev.Position - dragLoc.Value)
                     .Clamp(Vector.Zero, Screen.UiSize - Size);
         }
 
-        void onTitleBarMouseUp(MouseButtonArgs ev)
+        void endMouseMove(MouseButtonArgs ev)
         {
             dragLoc = null;
         }
@@ -204,12 +204,12 @@ namespace Shanism.Client.UI
                 IsVisible = !IsVisible;
         }
 
-        void CloseButton_MouseUp(MouseButtonArgs e)
+        void clickCloseButton(MouseButtonArgs e)
         {
-            OnCloseButtonClicked();
+            OnClosed();
             IsVisible = false;
         }
 
-        protected virtual void OnCloseButtonClicked() { }
+        protected virtual void OnClosed() { }
     }
 }

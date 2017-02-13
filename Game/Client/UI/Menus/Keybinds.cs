@@ -51,7 +51,6 @@ namespace Shanism.Client.UI.Menus
                 Text = "Reset",
                 ToolTip = "Reset all keybindings to their default values. ",
             };
-            btnResetKeybinds.MouseDown += BtnResetKeybinds_MouseDown;
 
             keybinds = new KeybindPanel
             {
@@ -82,7 +81,6 @@ namespace Shanism.Client.UI.Menus
                 Text = "Cancel",
                 ToolTip = "Discards all changes made so far. ",
             };
-            btnCancel.MouseUp += BtnCancel_MouseUp;
 
             btnOk = new Button
             {
@@ -93,7 +91,10 @@ namespace Shanism.Client.UI.Menus
                 Text = "Accept",
                 ToolTip = "Saves all changed keybindings. ",
             };
-            btnOk.MouseUp += BtnOk_MouseUp;
+
+            btnResetKeybinds.MouseClick += (e) => resetKeybindings();
+            btnCancel.MouseClick += (e) => discardAndHide();
+            btnOk.MouseClick += (e) => saveAndHide();
 
             Add(lblKeybinds);
             Add(btnResetKeybinds);
@@ -120,26 +121,24 @@ namespace Shanism.Client.UI.Menus
 
         }
 
-        protected override void OnCloseButtonClicked()
+        protected override void OnClosed()
         {
             Settings.Reload();
         }
 
-        void BtnOk_MouseUp(MouseButtonArgs obj)
+        void saveAndHide()
         {
             Settings.Current.Save();
-
             IsVisible = false;
         }
 
-        void BtnCancel_MouseUp(MouseButtonArgs obj)
+        void discardAndHide()
         {
             Settings.Reload();
-
             IsVisible = false;
         }
 
-        void BtnResetKeybinds_MouseDown(MouseButtonArgs e)
+        void resetKeybindings()
         {
             Settings.Current.ResetKeybinds();
         }

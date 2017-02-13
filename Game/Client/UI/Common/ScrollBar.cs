@@ -48,9 +48,9 @@ namespace Shanism.Client.UI
             });
             updateSlider();
 
-            slider.MouseDown += Slider_MouseDown;
-            slider.MouseUp += Slider_MouseUp;
-            slider.MouseMove += Slider_MouseMove;
+            slider.MouseDown += startScrolling;
+            slider.MouseMove += continueScrolling;
+            slider.MouseUp += endScrolling;
         }
 
         void updateSlider()
@@ -59,7 +59,7 @@ namespace Shanism.Client.UI
             slider.Location = new Vector(0, _start / _total * Size.Y);
         }
 
-        private void Slider_MouseMove(Input.MouseArgs e)
+        void continueScrolling(Input.MouseArgs e)
         {
             if (sliderDragPt == null)
                 return;
@@ -71,12 +71,12 @@ namespace Shanism.Client.UI
             updateSlider();
         }
 
-        void Slider_MouseUp(Input.MouseButtonArgs e)
+        void endScrolling(Input.MouseButtonArgs e)
         {
             sliderDragPt = null;
         }
 
-        void Slider_MouseDown(Input.MouseButtonArgs e)
+        void startScrolling(Input.MouseButtonArgs e)
         {
             sliderDragPt = e.Position;
         }

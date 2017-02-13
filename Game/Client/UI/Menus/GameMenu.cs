@@ -63,19 +63,15 @@ namespace Shanism.Client.UI
                 Location = btnPos,
                 Size = ButtonSize,
             };
-            lastButton.MouseUp += onButtonClick;
             Add(lastButton);
 
+            lastButton.MouseClick += (args) =>
+            {
+                IsVisible = false;
+                ButtonClicked?.Invoke(btnType);
+            };
+
             return lastButton;
-        }
-
-        void onButtonClick(MouseButtonArgs ev)
-        {
-            var btn = (MenuButton)ev.Control;
-            var btnType = btn.Type;
-
-            IsVisible = false;
-            ButtonClicked?.Invoke(btnType);
         }
     }
 }

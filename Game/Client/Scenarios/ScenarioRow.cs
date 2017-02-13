@@ -35,6 +35,11 @@ namespace Shanism.Client.GameScreens
 
         public event Action<ScenarioRow> Expanded;
 
+        string authorName => string.IsNullOrWhiteSpace(Scenario.Author)
+            ? "Unknown"
+            : Scenario.Author;
+
+
         public ScenarioRow(ScenarioConfig sc)
         {
             Scenario = sc;
@@ -65,11 +70,7 @@ namespace Shanism.Client.GameScreens
 
                 IsVisible = false,
             });
-            select.MouseUp += (e) => ScenarioSelected?.Invoke(Scenario);
 
-            var authorName = string.IsNullOrEmpty(Scenario.Author)
-                ? "Unknown"
-                : Scenario.Author;
             Add(author = new Label
             {
                 Font = Content.Fonts.NormalFont,
@@ -84,13 +85,10 @@ namespace Shanism.Client.GameScreens
                 IsVisible = false,
             });
 
-            ToolTip = sc.BaseDirectory;
-            MouseUp += onMouseUp;
-        }
+            select.MouseClick += (e) => ScenarioSelected?.Invoke(Scenario);
 
-        void onMouseUp(Input.MouseButtonArgs obj)
-        {
-            IsExpanded = true;
+            ToolTip = sc.BaseDirectory;
+            MouseClick += (args) => { IsExpanded = true; };
         }
 
         void updateExpansion()

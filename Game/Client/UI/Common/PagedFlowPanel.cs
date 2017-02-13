@@ -28,6 +28,7 @@ namespace Shanism.Client.UI
             ParentAnchor = AnchorMode.All;
 
             var barSize = 0.08;
+            var btnSize = new Vector(0.25, barSize - 2 * Padding);
 
             Add(List = new FlowPanel
             {
@@ -36,9 +37,6 @@ namespace Shanism.Client.UI
 
                 ParentAnchor = AnchorMode.All,
             });
-            List.ControlAdded += List_ControlAdded;
-
-            var btnSize = new Vector(0.25, barSize - 2 * Padding);
             Add(Prev = new Button
             {
                 Text = "< Prev",
@@ -50,8 +48,6 @@ namespace Shanism.Client.UI
 
                 ParentAnchor = AnchorMode.Bottom | AnchorMode.Left,
             });
-            Prev.MouseUp += Prev_MouseUp;
-
             Add(Next = new Button
             {
                 Text = "Next >",
@@ -63,8 +59,6 @@ namespace Shanism.Client.UI
 
                 ParentAnchor = AnchorMode.Bottom | AnchorMode.Right,
             });
-            Next.MouseUp += Next_MouseUp;
-
             Add(Text = new Label
             {
                 Font = Content.Fonts.NormalFont,
@@ -77,20 +71,15 @@ namespace Shanism.Client.UI
                 
                 ParentAnchor = AnchorMode.Bottom | AnchorMode.Left | AnchorMode.Right,
             });
+
+            List.ControlAdded += updateChildControl;
+            Prev.MouseClick += (args) => setPage(CurrentPage - 1);
+            Next.MouseClick += (args) => setPage(CurrentPage + 1);
+
             updateText();
         }
 
-        void Next_MouseUp(Input.MouseButtonArgs obj)
-        {
-            setPage(CurrentPage + 1);
-        }
-
-        void Prev_MouseUp(Input.MouseButtonArgs obj)
-        {
-            setPage(CurrentPage - 1);
-        }
-
-        void List_ControlAdded(Control c)
+        void updateChildControl(Control c)
         {
             var min = CurrentPage * ItemsPerPage;
             var max = min + ItemsPerPage;

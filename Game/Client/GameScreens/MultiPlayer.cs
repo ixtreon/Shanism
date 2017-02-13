@@ -33,13 +33,13 @@ namespace Shanism.Client.GameScreens
             {
                 Size = btnSize,
             });
-            hostGame.MouseUp += HostGame_MouseUp;
+            hostGame.MouseClick += HostGame_MouseClick;
 
             flowPanel.Add(joinGame = new Button("Join")
             {
                 Size = btnSize,
             });
-            joinGame.MouseUp += JoinGame_MouseUp;
+            joinGame.MouseClick += JoinGame_MouseClick;
 
             flowPanel.AutoSize = true;
             flowPanel.CenterBoth();
@@ -56,12 +56,12 @@ namespace Shanism.Client.GameScreens
 
         UiScreen mpHost, mpJoin;
 
-        void JoinGame_MouseUp(Input.MouseButtonArgs obj)
+        void JoinGame_MouseClick(Input.MouseButtonArgs obj)
         {
             SetScreen(mpJoin);
         }
 
-        void HostGame_MouseUp(Input.MouseButtonArgs obj)
+        void HostGame_MouseClick(Input.MouseButtonArgs obj)
         {
             SetScreen(mpHost);
         }

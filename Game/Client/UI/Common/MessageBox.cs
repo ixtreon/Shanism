@@ -83,7 +83,7 @@ namespace Shanism.Client.UI
                 else
                     btn.Left = (Size.X - buttonWidth) / 2;
 
-                btn.MouseUp += (e) =>
+                btn.MouseClick += (e) =>
                 {
                     if (RemoveOnButtonClick && Parent != null)
                         Parent.Remove(this);

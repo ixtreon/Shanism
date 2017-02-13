@@ -180,19 +180,25 @@ namespace Shanism.Client.UI
         public event Action<MouseArgs> MouseLeave;
 
         /// <summary>
-        /// Raised whenever the mouse moves over the control's boundary. 
+        /// Raised whenever the mouse moves while the control is on focus. 
         /// </summary>
         public event Action<MouseArgs> MouseMove;
 
         /// <summary>
-        /// Raised whenever a mouse button is pressed on this control. 
+        /// Raised whenever a mouse button is pressed while the control is on focus. 
         /// </summary>
         public event Action<MouseButtonArgs> MouseDown;
 
         /// <summary>
-        /// Raised whenever a mouse button is released while previously pressed on the control.
+        /// Raised whenever a mouse button is released while the control is on focus.
         /// </summary>
         public event Action<MouseButtonArgs> MouseUp;
+
+        /// <summary>
+        /// Raised whenever a mouse button is released while the control is on focus 
+        /// and the mouse cursor is inside the control's bounds.
+        /// </summary>
+        public event Action<MouseButtonArgs> MouseClick;
 
         /// <summary>
         /// Raised whenever the control's visibility changes. 
@@ -205,7 +211,7 @@ namespace Shanism.Client.UI
         public event Action<Control> SizeChanged;
 
         /// <summary>
-        /// The event whenever a game action (a key plus/minus some modifier keys) 
+        /// Raised whenever a game action (a key plus/minus some modifier keys) 
         /// is activated (pressed or released as per <see cref="Settings.QuickButtonPress"/>)
         /// while this control has focus (see <see cref="FocusControl"/>. 
         /// </summary>
@@ -215,8 +221,14 @@ namespace Shanism.Client.UI
 
         public event Action<Keybind> KeyReleased;
 
+        /// <summary>
+        /// Occurs when another control is added as a child of this control.
+        /// </summary>
         public event Action<Control> ControlAdded;
 
+        /// <summary>
+        /// Occurs when another control is removed from the child controls of this control.
+        /// </summary>
         public event Action<Control> ControlRemoved;
 
         #endregion
@@ -441,7 +453,7 @@ namespace Shanism.Client.UI
             if (FocusControl == null || !FocusControl.IsChildOf(this))
                 FocusControl = this;
 
-            raiseMoveEvents();
+            raiseMouseEvents();
             raiseKeyboardEvents();
         }
 
@@ -449,23 +461,34 @@ namespace Shanism.Client.UI
         MouseButtonArgs leftArgs => new MouseButtonArgs(HoverControl, MouseInfo.UiPosition, MouseButton.Left);
         MouseButtonArgs rightArgs => new MouseButtonArgs(HoverControl, MouseInfo.UiPosition, MouseButton.Right);
 
-        void raiseMoveEvents()
+
+        void raiseMouseReleasedEvents(MouseButtonArgs buttonReleasedArgs, bool isCursorInsideControl)
+        {
+            HoverControl?.MouseUp?.Invoke(buttonReleasedArgs);
+
+            //raise MouseClick only if mouse is inside the control
+            if (isCursorInsideControl)
+                HoverControl?.MouseClick?.Invoke(buttonReleasedArgs);
+        }
+
+        void raiseMouseEvents()
         {
             if (HoverControl == null)
                 HoverControl = this;
 
+            var newHover = getHover(MouseInfo.UiPosition - _location);
+            var isSameControl = (newHover == HoverControl);
+
             //button release
             if (MouseInfo.LeftJustReleased)
-                HoverControl?.MouseUp?.Invoke(leftArgs);
+                raiseMouseReleasedEvents(leftArgs, isSameControl);
 
             if (MouseInfo.RightJustReleased)
-                HoverControl?.MouseUp?.Invoke(rightArgs);
-
+                raiseMouseReleasedEvents(rightArgs, isSameControl);
 
             //hover update
             if (!MouseInfo.LeftDown)
             {
-                var newHover = getHover(MouseInfo.UiPosition - _location);
                 if (newHover != HoverControl)
                 {
                     //leave old control

@@ -5,18 +5,19 @@ using Shanism.Client.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Shanism.Common;
 
 namespace Shanism.Client
 {
     /// <summary>
     /// The entry game class that starts the <see cref="ClientEngine"/>. 
-    /// Extends the <see cref="Microsoft.Xna.Framework.Game"/> class.
+    /// Extends the <see cref="Game"/> class.
     /// </summary>
     class ClientGame : Game, IClientInstance
     {
         GraphicsDeviceManager graphics;
 
-        Rectangle _windowSize;
+        Microsoft.Xna.Framework.Rectangle _windowSize;
         bool _stopResizeRecurse;
         bool _isLoaded;
 
@@ -99,9 +100,9 @@ namespace Shanism.Client
             setScreen(mainMenuScreen);
         }
 
-        void mainMenuScreen_GameStarted(Common.IShanoEngine engine)
+        void mainMenuScreen_GameStarted(IShanoEngine engine)
         {
-            Common.IReceptor receptor;
+            IReceptor receptor;
             if (!inGameScreen.TryConnect(engine, "???", out receptor))
                 throw new Exception("Unable to connect to the local server!");
 
@@ -177,7 +178,8 @@ namespace Shanism.Client
             }
         }
 
-        readonly Counter updateCounter
+        const int MaxFps = 60;
+        readonly Counter updateCounter = new Counter(1000 / MaxFps);
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -188,7 +190,7 @@ namespace Shanism.Client
         {
             var msElapsed = (int)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-            //first run
+            //detect first run
             if (!_isLoaded)
             {
                 _isLoaded = true;
@@ -196,7 +198,10 @@ namespace Shanism.Client
             }
 
             var vsync = graphics.SynchronizeWithVerticalRetrace;
-            if(!vsync && 
+            if (!vsync && updateCounter.Tick(msElapsed))
+            {
+
+            }
 
             //input
             MouseInfo.Update(msElapsed, IsActive);

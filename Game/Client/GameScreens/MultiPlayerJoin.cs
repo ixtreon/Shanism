@@ -47,7 +47,7 @@ namespace Shanism.Client.GameScreens
             {
                 Size = btnSize,
             });
-            connectButton.MouseUp += ConnectButton_MouseUp;
+            connectButton.MouseClick += ConnectButton_MouseClick;
 
 
             flowPanel.AutoSize = true;
@@ -56,7 +56,7 @@ namespace Shanism.Client.GameScreens
 
         }
 
-        void ConnectButton_MouseUp(Input.MouseButtonArgs obj)
+        void ConnectButton_MouseClick(Input.MouseButtonArgs obj)
         {
             var server = hostAddress.Text;
 

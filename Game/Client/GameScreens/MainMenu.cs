@@ -42,25 +42,26 @@ namespace Shanism.Client.GameScreens
             {
                 Size = btnSize,
             });
-            singlePlayer.MouseUp += SinglePlayer_MouseUp;
 
             flowPanel.Add(multiPlayer = new Button("Multi Player")
             {
                 Size = btnSize,
             });
-            multiPlayer.MouseUp += MultiPlayer_MouseUp;
 
             flowPanel.Add(settings = new Button("Settings")
             {
                 Size = btnSize,
             });
-            settings.MouseUp += Settings_MouseUp;
 
             flowPanel.Add(exit = new Button("Exit")
             {
                 Size = btnSize,
             });
-            exit.MouseUp += Exit_MouseUp;
+
+            singlePlayer.MouseClick += SinglePlayer_MouseClick;
+            multiPlayer.MouseClick += MultiPlayer_MouseClick;
+            settings.MouseClick += Settings_MouseClick;
+            exit.MouseClick += Exit_MouseClick;
 
             flowPanel.AutoSize = true;
             flowPanel.CenterBoth();
@@ -90,7 +91,7 @@ namespace Shanism.Client.GameScreens
             //flowPanel.Location = obj.Position;
         }
 
-        private void Settings_MouseUp(Input.MouseButtonArgs obj)
+        private void Settings_MouseClick(Input.MouseButtonArgs obj)
         {
             optionsWindow.IsVisible = !optionsWindow.IsVisible;
         }
@@ -103,12 +104,12 @@ namespace Shanism.Client.GameScreens
             }
         }
 
-        void Exit_MouseUp(Input.MouseButtonArgs obj)
+        void Exit_MouseClick(Input.MouseButtonArgs obj)
         {
             exitDialog.IsVisible = true;
         }
 
-        void MultiPlayer_MouseUp(Input.MouseButtonArgs e)
+        void MultiPlayer_MouseClick(Input.MouseButtonArgs e)
         {
             var mpScreen = new MultiPlayer(device);
             mpScreen.GameStarted += onGameStarted;
@@ -116,7 +117,7 @@ namespace Shanism.Client.GameScreens
             SetScreen(mpScreen);
         }
 
-        void SinglePlayer_MouseUp(Input.MouseButtonArgs e)
+        void SinglePlayer_MouseClick(Input.MouseButtonArgs e)
         {
             var spScreen = new SinglePlayer(device);
             spScreen.GameStarted += onGameStarted;
