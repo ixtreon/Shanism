@@ -65,11 +65,33 @@ namespace Shanism.Engine
         /// <summary>
         /// Generates a point drawn uniformly from the given rectangle. 
         /// </summary>
-        /// <param name="rect"></param>
-        /// <returns></returns>
         public static Vector PointInside(Rectangle rect)
         {
             return new Vector(NextDouble(rect.Left, rect.Right), NextDouble(rect.Bottom, rect.Top));
+        }
+
+        /// <summary>
+        /// Generates a point drawn uniformly from the given rectangle. 
+        /// </summary>
+        public static Vector PointInside(RectangleF rect)
+        {
+            return new Vector(NextDouble(rect.Left, rect.Right), NextDouble(rect.Bottom, rect.Top));
+        }
+
+        /// <summary>
+        /// Generates a value drawn from the specified normal distribution. 
+        /// Uses a box-muller transform to generate the output.
+        /// </summary>
+        /// <param name="mean">The mean of the normal distribution.</param>
+        /// <param name="sigma">The standard deviation of the normal distribution.</param>
+        public static double NextGaussian(double mean, double sigma)
+        {
+            var u1 = 1.0 - NextDouble(); //uniform(0,1] random doubles
+            var u2 = 1.0 - NextDouble();
+            var randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) *
+             Math.Sin(2.0 * Math.PI * u2); //random normal(0,1)
+
+            return mean + sigma * randStdNormal; //random normal(mean,stdDev^2)
         }
 
         /// <summary>
