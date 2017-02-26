@@ -15,7 +15,7 @@ namespace Shanism.Network.Common
     /// </summary>
     public class ObjectCache
     {
-        protected static readonly EntityMapper Mapper = new EntityMapper();
+        protected static readonly ObjectMapper Mapper = new ObjectMapper();
 
         //grows to infinity...
         readonly Dictionary<uint, ObjectStub> _objects = new Dictionary<uint, ObjectStub>();

@@ -11,7 +11,7 @@ using Shanism.Network.Serialization;
 
 namespace Shanism.Network.Common
 {
-    public class EntityMapper
+    public class ObjectMapper
     {
         const int MaxTypeId = 10;
 
@@ -22,12 +22,16 @@ namespace Shanism.Network.Common
         ObjectStub[] defaultObjects
             = new ObjectStub[MaxTypeId];
 
-        public EntityMapper()
+        public ObjectMapper()
         {
             addType<HeroStub, IHero>(ObjectType.Hero);
             addType<UnitStub, IUnit>(ObjectType.Unit);
             addType<DoodadStub, IDoodad>(ObjectType.Doodad);
             addType<EffectStub, IEffect>(ObjectType.Effect);
+
+            addType<BuffStub, IBuff>(ObjectType.Buff);
+            addType<BuffInstanceStub, IEffect>(ObjectType.BuffInstance);
+            addType<AbilityStub, IAbility>(ObjectType.Effect);
         }
 
         void addType<TStub, TInt>(ObjectType ty)

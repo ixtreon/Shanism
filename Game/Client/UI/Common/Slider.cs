@@ -62,7 +62,7 @@ namespace Shanism.Client.UI
                 base.ForeColor = ForeColor;
         }
 
-        public override void OnDraw(Graphics g)
+        public override void OnDraw(Canvas g)
         {
             base.OnDraw(g);
         }

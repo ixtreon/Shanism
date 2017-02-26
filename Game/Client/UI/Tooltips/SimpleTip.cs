@@ -51,7 +51,7 @@ namespace Shanism.Client.UI.Tooltips
         }
 
 
-        public override void OnDraw(Graphics g)
+        public override void OnDraw(Canvas g)
         {
             if (IsVisible)
             {

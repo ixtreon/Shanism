@@ -10,7 +10,7 @@ namespace Shanism.Client
     /// <summary>
     /// A graphics object used to draw on top of some or all the MonoGame SpriteBatch. 
     /// </summary>
-    class Graphics : SpriteBatch
+    class Canvas : SpriteBatch
     {
         readonly Stack<RectangleF> drawStack = new Stack<RectangleF>();
 
@@ -32,7 +32,7 @@ namespace Shanism.Client
         /// </summary>
         public Vector Size => Bounds.Size;
 
-        public Graphics(GraphicsDevice gd)
+        public Canvas(GraphicsDevice gd)
             : base(gd)
         {
             device = gd;

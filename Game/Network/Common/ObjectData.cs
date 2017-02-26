@@ -10,9 +10,9 @@ namespace Shanism.Network.Common
 {
     struct ObjectData : IComparable<ObjectData>
     {
-        public IGameObject Object;
+        public readonly IGameObject Object;
 
-        public ObjectType Type;
+        public readonly ObjectType Type;
 
         //dreams of FP lands...
         public static bool operator ==(ObjectData a, ObjectData b)

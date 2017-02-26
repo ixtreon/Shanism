@@ -176,8 +176,8 @@ namespace Shanism.Engine
             var oneIsAggressive = (p.IsNeutralAggressive || this.IsNeutralAggressive);
             var bothAreAggressive = (p.IsNeutralAggressive && this.IsNeutralAggressive);
 
-            return (oneIsPlayer && oneIsAggressive) 
-                || bothAreAggressive 
+            return (oneIsPlayer && oneIsAggressive)
+                || bothAreAggressive
                 || (oneIsAggressive && oneIsFriendly)
                 || bothArePlayers;
         }
@@ -191,19 +191,24 @@ namespace Shanism.Engine
 
         /// <summary>
         /// Sets the main hero of a player. 
-        /// Throws an exception if the player already has a hero.
+        /// Returns false if the player already has a hero.
         /// </summary>
-        public void SetMainHero(Hero h)
+        public bool TrySetMainHero(Hero h)
         {
             if (MainHero == h)
-                return;
+                return true;
 
             if (HasHero)    //todo: handle somehow
-                return;
+                return false;
+
+            //add hero to the map
+            if (h.Map.GetByGuid(h.Id) == null)
+                h.Map.Add(h);
 
             MainHero = h;
             h.DefaultOrder = new MoveDirection(h);
             MainHeroChanged?.Invoke(h);
+            return true;
         }
 
         /// <summary>

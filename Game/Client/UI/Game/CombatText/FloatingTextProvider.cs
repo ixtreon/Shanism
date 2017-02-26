@@ -104,7 +104,7 @@ namespace Shanism.Client.UI.Game
             Maximize();
         }
 
-        public override void OnDraw(Graphics g)
+        public override void OnDraw(Canvas g)
         {
             foreach (var td in labels)
             {

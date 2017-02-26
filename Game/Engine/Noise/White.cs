@@ -8,13 +8,25 @@ namespace Shanism.Engine.Noise
 {
     public class WhiteNoise : IModule
     {
+        readonly int seed;
 
-        protected override void generate(int width, int height, byte[,] arr, int seed)
+        public WhiteNoise(int seed)
         {
-            var rnd = new Random(seed);
-            for (var i = 0; i < width; i++)
-                for (var j = 0; j < height; j++) 
-                    arr[i, j] = (byte)rnd.Next(0, 256);
+            this.seed = seed;
         }
+
+        public override float GetValue(float x, float y)
+        {
+            unchecked
+            {
+                uint hash = 23;
+                hash = hash * 31 + (uint)x.GetHashCode();
+                hash = hash * 31 + (uint)y.GetHashCode();
+                hash = hash * 31 + (uint)seed;
+
+                return (float)((double)hash / uint.MaxValue);
+            }
+        }
+
     }
 }

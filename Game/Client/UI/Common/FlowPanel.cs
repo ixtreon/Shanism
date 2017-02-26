@@ -32,6 +32,9 @@ namespace Shanism.Client.UI
             }
         }
 
+        /// <summary>
+        /// Gets or sets the direction in which the controls are laid out.
+        /// </summary>
         public FlowDirection Direction
         {
             get { return _direction; }
@@ -52,23 +55,23 @@ namespace Shanism.Client.UI
         protected override void OnControlAdded(Control c)
         {
             Reflow();
-            c.SizeChanged += onControlSizeChanged;
+            c.SizeChanged += reflow;
         }
 
         protected override void OnControlRemoved(Control c)
         {
             Reflow();
-            c.SizeChanged -= onControlSizeChanged;
+            c.SizeChanged -= reflow;
         }
 
-        void onControlSizeChanged(Control c) => Reflow();
+        void reflow(Control c) => Reflow();
+
 
         public void Reflow()
         {
             var startPos = new Vector(Padding);
-            var v = (Direction == FlowDirection.Horizontal) ? new Vector(1, 0) : new Vector(0, 1);
-
             var curPos = startPos;
+            var growUnit = (Direction == FlowDirection.Horizontal) ? Vector.XUnit : Vector.YUnit;
 
             foreach (var btn in Controls)
             {
@@ -79,22 +82,26 @@ namespace Shanism.Client.UI
 
                 if (!AutoSize)
                 {
+                    //if curPos is beyond the panel bounds, make the next column/row
                     if (Direction == FlowDirection.Horizontal)
                     {
+                        //make another row
                         if (farPos.X + Padding > Size.X)
                             curPos = startPos + new Vector(0, farPos.Y + Padding);
                     }
                     else
                     {
+                        //make another column
                         if (farPos.Y + Padding > Size.Y)
                             curPos = startPos + new Vector(farPos.X + Padding, 0);
                     }
                 }
 
                 btn.Location = curPos;
-                curPos += (btn.Size + Padding) * v;
+                curPos += (btn.Size + Padding) * growUnit;
             }
 
+            //expand to accommodate all controls
             if (AutoSize)
             {
                 var max = Vector.Zero;

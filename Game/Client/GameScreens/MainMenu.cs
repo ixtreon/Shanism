@@ -25,14 +25,15 @@ namespace Shanism.Client.GameScreens
         readonly ConfirmExit exitDialog;
         readonly Control optionsWindow;
 
-        public MainMenu(GraphicsDevice device)
-            : base(device)
+        public MainMenu(GraphicsDevice device, ContentList content)
+            : base(device, content)
         {
             //main menu & entries
             Root.Add(flowPanel = new FlowPanel
             {
-                Width = panelSize.X,
+                Top = ContentStartY,
 
+                AutoSize = true,
                 BackColor = Color.Black.SetAlpha(100),
 
                 ParentAnchor = AnchorMode.None,
@@ -58,13 +59,7 @@ namespace Shanism.Client.GameScreens
                 Size = btnSize,
             });
 
-            singlePlayer.MouseClick += SinglePlayer_MouseClick;
-            multiPlayer.MouseClick += MultiPlayer_MouseClick;
-            settings.MouseClick += Settings_MouseClick;
-            exit.MouseClick += Exit_MouseClick;
-
-            flowPanel.AutoSize = true;
-            flowPanel.CenterBoth();
+            flowPanel.CenterX();
 
             //options & exit
             Root.Add(optionsWindow = new OptionsWindow
@@ -77,8 +72,11 @@ namespace Shanism.Client.GameScreens
             Root.Add(exitDialog = new ConfirmExit());
 
 
+            singlePlayer.MouseClick += SinglePlayer_MouseClick;
+            multiPlayer.MouseClick += MultiPlayer_MouseClick;
+            settings.MouseClick += (e) => optionsWindow.IsVisible = !optionsWindow.IsVisible;
+            exit.MouseClick += (e) => exitDialog.IsVisible = true;
             Root.KeyPressed += Root_KeyPressed;
-            Root.MouseDown += Root_MouseDown;
         }
 
         public override void Shown()
@@ -86,32 +84,18 @@ namespace Shanism.Client.GameScreens
             SynchronizationContext.SetSynchronizationContext(null);
         }
 
-        private void Root_MouseDown(Input.MouseButtonArgs obj)
-        {
-            //flowPanel.Location = obj.Position;
-        }
 
-        private void Settings_MouseClick(Input.MouseButtonArgs obj)
-        {
-            optionsWindow.IsVisible = !optionsWindow.IsVisible;
-        }
 
         void Root_KeyPressed(Input.Keybind kb)
         {
             if (kb.Key == Microsoft.Xna.Framework.Input.Keys.Escape)
-            {
                 exitDialog.IsVisible = true;
-            }
-        }
 
-        void Exit_MouseClick(Input.MouseButtonArgs obj)
-        {
-            exitDialog.IsVisible = true;
         }
 
         void MultiPlayer_MouseClick(Input.MouseButtonArgs e)
         {
-            var mpScreen = new MultiPlayer(device);
+            var mpScreen = new MultiPlayer(GraphicsDevice, Content);
             mpScreen.GameStarted += onGameStarted;
 
             SetScreen(mpScreen);
@@ -119,7 +103,7 @@ namespace Shanism.Client.GameScreens
 
         void SinglePlayer_MouseClick(Input.MouseButtonArgs e)
         {
-            var spScreen = new SinglePlayer(device);
+            var spScreen = new SinglePlayer(GraphicsDevice, Content);
             spScreen.GameStarted += onGameStarted;
 
             SetScreen(spScreen);

@@ -37,7 +37,7 @@ namespace Shanism.Client.Systems
         public Control Root => root;
 
         readonly GraphicsDevice device;
-        readonly Graphics g;
+        readonly Canvas g;
 
         public ActionSystem actions;
 
@@ -45,7 +45,7 @@ namespace Shanism.Client.Systems
         {
             this.device = device;
             this.objects = objects;
-            g = new Graphics(device);
+            g = new Canvas(device);
 
             root = new GameRoot();
             root.AbilityActivated += onAbilityActivated;
@@ -68,11 +68,13 @@ namespace Shanism.Client.Systems
                 
         }
 
+        readonly RasterizerState aa = new RasterizerState { MultiSampleAntiAlias = true };
 
         public void Draw()
         {
-            g.Begin();
-
+            g.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend,
+                SamplerState.AnisotropicWrap, DepthStencilState.DepthRead,
+                RasterizerState.CullNone);
             Root.Draw(g);
 
             g.End();

@@ -18,21 +18,14 @@ using Shanism.Client.GameScreens;
 
 namespace Shanism.Client
 {
-
-
     /// <summary>
     /// Contains all the drawing and update logic of the client. 
     /// </summary>
     class ClientEngine : GameScreen, IClientEngine
     {
-        public static bool ShowDebugStats;
-
+        static readonly Keybind cancelConnectKeybind = new Keybind(Microsoft.Xna.Framework.Input.Keys.Escape);
 
         string playerName;
-
-        readonly IGraphicsDeviceService graphics;
-
-        readonly ContentManager ContentManager;
 
         readonly ConcurrentQueue<IOMessage> pendingMessages = new ConcurrentQueue<IOMessage>();
 
@@ -41,22 +34,8 @@ namespace Shanism.Client
 
         IShanoEngine server;
         IReceptor receptor;
-
-        ContentList Content;
-
-        SpriteBatch spriteBatch;
-
-        ShaderContainer shaders;
-
-        /// <summary>
-        /// The average time to render a frame. 
-        /// </summary>
-        double timeToRender;
-
-        string debugString;
-
+        
         bool isDesignMode;
-
 
         bool isConnected;
 
@@ -67,22 +46,22 @@ namespace Shanism.Client
 
         public event Action<IOMessage> MessageSent;
 
-        GraphicsDevice graphicsDevice => graphics.GraphicsDevice;
 
         string IShanoClient.Name => playerName;
 
-        TextureCache IClientEngine.Textures => Content.Textures;
 
-
-        public ClientEngine(IGraphicsDeviceService graphics, ContentManager content, string playerName = "Shanist")
+        public ClientEngine(GraphicsDevice graphics, ContentList content, string playerName = "Shanist")
+            : base(graphics, content)
         {
-            ContentManager = content;
             this.playerName = playerName;
-            this.graphics = graphics;
+
+            initSystems();
         }
 
 
         #region IClientEngine implementation
+
+        TextureCache IClientEngine.Textures => Content.Textures;
 
         public bool TryConnect(IShanoEngine server, string playerName, out IReceptor receptor)
         {
@@ -134,7 +113,7 @@ namespace Shanism.Client
             if (Systems != null)
                 Systems.MessageSent -= sendMessage;
 
-            Systems = new SystemGod(graphicsDevice, Content, receptor, State);
+            Systems = new SystemGod(GraphicsDevice, Content, receptor, State);
             Systems.MessageSent += sendMessage;
         }
 
@@ -143,35 +122,18 @@ namespace Shanism.Client
             if (msg != null)
                 pendingMessages.Enqueue(msg);
         }
-
-        bool IClientEngine.LoadContent()
-        {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(graphicsDevice);
-
-            //load default content (textures,fonts,animations)
-            Content = new ContentList(graphicsDevice);
-            if (!Content.LoadDefault(ContentManager))
-            {
-                return false;
-            }
-
-            //shaders
-            shaders = new ShaderContainer(ContentManager);
-
-            // ??? 
-            graphicsDevice.RasterizerState = new RasterizerState
-            {
-                CullMode = CullMode.CullClockwiseFace,
-            };
-
-            initSystems();
-            return true;
-        }
-
-        static readonly Keybind cancelConnectKeybind = new Keybind(Microsoft.Xna.Framework.Input.Keys.Escape);
+        
         public override void Update(int msElapsed)
         {
+            base.Update(msElapsed);
+
+            //quit while loading
+            if (!isConnected && KeyboardInfo.IsActivated(cancelConnectKeybind))
+            {
+                GameHelper.Quit();
+                return;
+            }
+
             //update the local server
             if (server != null)
                 server.Update(msElapsed);
@@ -181,23 +143,16 @@ namespace Shanism.Client
             while (pendingMessages.TryDequeue(out msg))
                 parseMessage(msg);
 
-            if (isConnected)
-            {
-                //pan camera to the hero
-                if (Systems.MainHero != null)
-                    Screen.MoveCamera(Systems.MainHero.Position);
 
-                //ui, objects
-                Systems.Update(msElapsed);
+            if (!isConnected)
+                return;
 
-                //debug
-                updateDebugStats(msElapsed);
-            }
-            else
-            {
-                if (KeyboardInfo.IsActivated(cancelConnectKeybind))
-                    GameHelper.Quit();
-            }
+            //pan camera to the hero
+            if (Systems.MainHero != null)
+                Screen.MoveCamera(Systems.MainHero.Position);
+
+            //update all systems
+            Systems.Update(msElapsed);
         }
 
         public override void Draw()
@@ -213,9 +168,9 @@ namespace Shanism.Client
             if (receptor == null)
                 return;
 
-            graphicsDevice.Clear(Color.Black);
-            graphicsDevice.SetRenderTarget(RenderTarget);
-            graphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.SetRenderTarget(RenderTarget);
+            GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
             // 1. draw terrain
             Systems.DrawTerrain();
@@ -226,7 +181,7 @@ namespace Shanism.Client
             if (!isDesignMode)
             {
                 // 3. draw shadow layer
-                var shader = shaders.FogOfWar;
+                var shader = Content.Shaders.FogOfWar;
                 if (shader != null && Systems.MainHero != null)
                 {
                     var destRect = new Microsoft.Xna.Framework.Rectangle(0, 0, (int)(Screen.Size.X * Screen.RenderSize), (int)(Screen.Size.Y * Screen.RenderSize));
@@ -236,43 +191,37 @@ namespace Shanism.Client
                     shader.Parameters["TexSize"].SetValue((Screen.GameSize).ToVector2());
                     shader.Parameters["SightRange"].SetValue((float)Systems.MainHero.VisionRange);
 
-                    spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend,
+                    Canvas.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend,
                         SamplerState.PointClamp, DepthStencilState.DepthRead,
                         RasterizerState.CullNone, shader);
-
-                    spriteBatch.Draw(tex, destRect, tint);
-
-                    spriteBatch.End();
+                    Canvas.Draw(tex, destRect, tint);
+                    Canvas.End();
                 }
 
-                //draw the buffer to screen
+                // draw to screen if all drawing was done to a texture
                 if (RenderTarget != null)
                 {
-                    graphicsDevice.SetRenderTarget(null);
-                    using (var sb = new SpriteBatch(graphicsDevice))
+                    GraphicsDevice.SetRenderTarget(null);
+
+                    using (var sb = new SpriteBatch(GraphicsDevice))
                     {
-                        sb.Begin();
+                        Canvas.Begin();
                         var sz = Screen.Size;
-                        sb.Draw(RenderTarget,
+                        Canvas.Draw(RenderTarget,
                             new Microsoft.Xna.Framework.Rectangle(0, 0, (int)sz.X, (int)sz.Y),
                             new Microsoft.Xna.Framework.Rectangle(0, 0, RenderTarget.Width, RenderTarget.Height),
                             Color.White);
-                        sb.End();
+                        Canvas.End();
                     }
                 }
 
 
                 // 4. interface
-                graphicsDevice.SetRenderTarget(null);
+                GraphicsDevice.SetRenderTarget(null);
                 Systems.DrawUi();
-                //debug
-                if (ShowDebugStats)
-                {
-                    spriteBatch.Begin();
-                    drawDebugStats(spriteBatch);
-                    spriteBatch.End();
-                }
             }
+
+            base.Draw();
         }
 
         void IClientEngine.SetWindowSize(Point sz)
@@ -325,7 +274,7 @@ namespace Shanism.Client
             if (isConnected)
             {
                 //load content n start playing!
-                Content.LoadScenario(ContentManager, msg);
+                Content.LoadScenario(msg);
             }
         }
 
@@ -337,55 +286,44 @@ namespace Shanism.Client
             var font = Content.Fonts.LargeFont;
             var pos = new Point(Screen.Size.X / 10);
 
-            graphicsDevice.SetRenderTarget(RenderTarget);
-            graphicsDevice.Clear(Color.Black);
+            GraphicsDevice.SetRenderTarget(RenderTarget);
+            GraphicsDevice.Clear(Color.Black);
 
-            spriteBatch.Begin();
-            font.DrawString(spriteBatch, txt, Color.DarkRed, pos, 0f, 0f);
-            spriteBatch.End();
+            Canvas.Begin();
+            font.DrawString(Canvas, txt, Color.DarkRed, pos, 0f, 0f);
+            Canvas.End();
         }
 
         #endregion
 
-        #region Debug Stats
-
-
-        void updateDebugStats(int msElapsed)
+        /// <summary>
+        /// Recreates the 
+        /// </summary>
+        /// <param name="windowSize"></param>
+        public void RecreateBuffer(Point windowSize)
         {
-            const double frameConst = 0.5;
-
-            // FPS
-            timeToRender = (1 - frameConst) * timeToRender + frameConst * msElapsed;
-            var curFps = 1000 / timeToRender;
-
-            // mouse
-            var mpUi = MouseInfo.UiPosition;
-            var mpGame = MouseInfo.InGamePosition;
-            var heroPos = Systems.MainHero?.Position;
-
-            debugString = string.Join("\n", new[]
+            //if rendersize == 1 we can just draw to the screen
+            if (Screen.RenderSize > 0.99f)
             {
-                $"FPS: {curFps:00}",
+                RenderTarget = null;
+                return;
+            }
 
-                $"BackBuffer Size: {RenderTarget?.Bounds.Size}",
-                $"Window Size: {Screen.Size}",
-                $"Mouse: {MouseInfo.ScreenPosition}",
+            //get new buffer size, see if it changed
+            var bufferSize = ((Vector)windowSize * Screen.RenderSize).ToPoint();
+            if (RenderTarget?.Bounds.Size.ToPoint() == bufferSize)
+                return;
 
-                $"Mouse UI: {mpUi:0.00}",
-                $"Mouse InGame: {mpGame:0.00}",
-                $"Hero X/Y: {heroPos:0.00}",
-
-                $"UI Hover: {Control.HoverControl.GetType().Name}",
-                $"UI Focus: {Control.FocusControl?.GetType().Name }",
-
-                receptor?.GetDebugString(),
-            });
+            RenderTarget = new RenderTarget2D(GraphicsDevice, bufferSize.X, bufferSize.Y);
         }
 
-        void drawDebugStats(SpriteBatch sb)
+        #region Debug Stats
+
+        protected override void writeDebugStats(List<string> lines)
         {
-            Content.Fonts.NormalFont.DrawString(sb, debugString, Color.Goldenrod,
-                new Point(24, 18), 0, 0);
+            lines.Insert(2, $"Buffer Size: {RenderTarget?.Bounds.Size}");
+
+            lines.Add(receptor?.GetDebugString());
         }
 
         #endregion

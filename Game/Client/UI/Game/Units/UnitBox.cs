@@ -126,7 +126,7 @@ namespace Shanism.Client.UI.Game
 
         }
 
-        public override void OnDraw(Graphics g)
+        public override void OnDraw(Canvas g)
         {
             //background
             base.OnDraw(g);

@@ -9,7 +9,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Shanism.Client</RootNamespace>
-    <AssemblyName>Shanism.Client</AssemblyName>
+    <AssemblyName>Shanism</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile />
@@ -82,6 +82,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>..\..\bin\</OutputPath>
@@ -97,10 +98,12 @@
     <Compile Include="Assets\IconCache.cs" />
     <Compile Include="Drawing\CircleDict.cs" />
     <Compile Include="ClientGame.cs" />
+    <Compile Include="Drawing\Shadows.cs" />
     <Compile Include="Drawing\Sprites\EntitySprite.cs" />
     <Compile Include="Drawing\Sprites\IconSprite.cs" />
     <Compile Include="Drawing\Sprites\SpriteBase.cs" />
     <Compile Include="Drawing\Sprites\UnitSprite.cs" />
+    <Compile Include="Drawing\UnitShadow.cs" />
     <Compile Include="Exceptions\ContentDirectoryMissing.cs" />
     <Compile Include="GameScreens\ConfirmExit.cs" />
     <Compile Include="GameScreens\MultiPlayerJoin.cs" />
@@ -173,7 +176,7 @@
     <Compile Include="Systems\Terrain.cs" />
     <Compile Include="Screen.cs" />
     <Compile Include="Ext\General.cs" />
-    <Compile Include="Drawing\Graphics.cs" />
+    <Compile Include="Drawing\Canvas.cs" />
     <Compile Include="Assets\TextureCache.cs" />
     <Compile Include="ClientEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -211,6 +214,14 @@
       <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NGraphics, Version=0.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NGraphics.0.4.0\lib\net45\NGraphics.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NGraphics.Net, Version=1.0.5842.23158, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NGraphics.0.4.0\lib\net45\NGraphics.Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -221,6 +232,10 @@
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\lib\Ix.Graphics\Ix.Graphics.csproj">
+      <Project>{81825a42-212e-4c4d-bd15-a42de826b039}</Project>
+      <Name>Ix.Graphics</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ClientContent\ClientContent.csproj">
       <Project>{3088ee46-46f9-441d-a2b8-e044c30cd0b3}</Project>
       <Name>ClientContent</Name>

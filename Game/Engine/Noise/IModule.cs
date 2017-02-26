@@ -8,20 +8,25 @@ namespace Shanism.Engine.Noise
 {
     public abstract class IModule
     {
-        protected abstract void generate(int width, int height, byte[,] arr, int seed);
 
-        public void Generate(int width, int height, byte[,] arr, int? seed = null)
+        public void Generate(int width, int height, byte[,] arr)
         {
             ensureArraySize(width, height, arr);
-            generate(width, height, arr, seed ?? Rnd.Next());
+
+            for(int ix = 0; ix < width; ix++)
+                for(int iy = 0; iy < height; iy++)
+                    arr[ix, iy] = (byte)(GetValue(ix, iy) * 255);
         }
 
-        public byte[,] Generate(int width, int height, int? seed = null)
+        public byte[,] Generate(int width, int height)
         {
             var arr = new byte[width, height];
-            generate(width, height, arr, seed ?? Rnd.Next());
+            Generate(width, height, arr);
+
             return arr;
         }
+
+        public abstract float GetValue(float x, float y);
 
         protected void ensureArraySize(int width, int height, byte[,] arr)
         {

@@ -26,14 +26,16 @@ namespace Shanism.Client
         readonly Dictionary<string, AnimationDef> animations = new Dictionary<string, AnimationDef>();
 
 
+        public AnimationDef DefaultAnimation { get; private set; }
+
+        public TextureCache Textures { get; } = new TextureCache();
+
         /// <summary>
         /// Gets a list of the currently loaded animations. 
         /// </summary>
         public IReadOnlyDictionary<string, AnimationDef> Animations => animations;
 
-        public AnimationDef DefaultAnimation { get; private set; }
-
-        public TextureCache Textures { get; } = new TextureCache();
+        public ContentManager ContentManager { get; }
 
         /// <summary>
         /// Gets the currently loaded fonts. 
@@ -48,14 +50,20 @@ namespace Shanism.Client
 
         public CircleDict Circles { get; }
 
+        public ShaderContainer Shaders { get; private set; }
 
-        public ContentList(GraphicsDevice graphics)
+
+        public ContentList(GraphicsDevice graphics, ContentManager contentManager)
         {
+            ContentManager = contentManager;
+
             Circles = new CircleDict(graphics, 65600, 8);
         }
 
-        public bool LoadDefault(ContentManager content)
+        public bool LoadDefault()
         {
+            Shaders = new ShaderContainer(ContentManager);
+
             string errors;
             var sc = ScenarioConfig.LoadFromDisk(".", out errors);
             if (sc == null)
@@ -64,7 +72,7 @@ namespace Shanism.Client
                 return false;
             }
 
-            loadConfig(content, sc.Content, "Textures");
+            loadConfig(sc.Content, "Textures");
 
             DefaultAnimation = animations["dummy"];
 
@@ -72,7 +80,7 @@ namespace Shanism.Client
         }
 
 
-        public bool LoadScenario(ContentManager content, HandshakeReplyMessage msg)
+        public bool LoadScenario(HandshakeReplyMessage msg)
         {
             var sc = ScenarioConfig.LoadFromBytes(msg.ScenarioData);
             if (sc == null)
@@ -81,7 +89,7 @@ namespace Shanism.Client
             try
             {
                 unzipMessage(msg, ScenarioDir);
-                loadConfig(content, sc.Content, ScenarioDir);
+                loadConfig(sc.Content, ScenarioDir);
                 return true;
             }
             catch (Exception e)
@@ -91,11 +99,11 @@ namespace Shanism.Client
             }
         }
 
-        void loadConfig(ContentManager content, ContentConfig config, string textureDir)
+        void loadConfig(ContentConfig config, string textureDir)
         {
             //load textures
-            content.RootDirectory = textureDir;
-            Textures.Load(content, textureDir, config.Textures);
+            ContentManager.RootDirectory = textureDir;
+            Textures.Load(ContentManager, textureDir, config.Textures);
 
             //load animations
             foreach (var a in config.Animations)
@@ -103,7 +111,7 @@ namespace Shanism.Client
 
             //reload terrain, fonts, icons, ui elems
             Terrain = new TerrainCache(Textures);
-            Fonts = new FontCache(content);
+            Fonts = new FontCache(ContentManager);
             UI = new UiCache(this);
             Icons = new IconCache(this);
         }

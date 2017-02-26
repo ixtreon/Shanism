@@ -15,14 +15,17 @@ namespace Shanism.Client.GameScreens
         static readonly Vector btnSize = new Vector(panelSize.X - 2 * Control.Padding, 0.15);
 
 
-        public MultiPlayer(GraphicsDevice device)
-            : base(device)
+        public MultiPlayer(GraphicsDevice device, ContentList content)
+            : base(device, content)
         {
             SubTitle = "Multi Player";
 
             var flowPanel = new FlowPanel
             {
-                Width = panelSize.X,
+                Top = ContentStartY,
+
+                AutoSize = true,
+
                 ParentAnchor = AnchorMode.None,
                 BackColor = Color.Black.SetAlpha(100),
             };
@@ -41,17 +44,16 @@ namespace Shanism.Client.GameScreens
             });
             joinGame.MouseClick += JoinGame_MouseClick;
 
-            flowPanel.AutoSize = true;
-            flowPanel.CenterBoth();
+            flowPanel.CenterX();
 
             Root.Add(flowPanel);
 
             //create sub-screens
-            mpJoin = new MultiPlayerJoin(device);
-            mpJoin.GameStarted += onGameStarted;
+            mpJoin = new MultiPlayerJoin(device, Content);
+            mpJoin.GameStarted += StartGame;
 
-            mpHost = new MultiPlayerHost(device);
-            mpHost.GameStarted += onGameStarted;
+            mpHost = new MultiPlayerHost(device, Content);
+            mpHost.GameStarted += StartGame;
         }
 
         UiScreen mpHost, mpJoin;
@@ -64,11 +66,6 @@ namespace Shanism.Client.GameScreens
         void HostGame_MouseClick(Input.MouseButtonArgs obj)
         {
             SetScreen(mpHost);
-        }
-
-        void onGameStarted(IShanoEngine engine)
-        {
-            StartGame(engine);
         }
     }
 }

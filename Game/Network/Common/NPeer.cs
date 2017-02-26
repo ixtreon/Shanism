@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Shanism.Network
 {
+    /// <summary>
+    /// The base class for all participants in the networking stuff.
+    /// </summary>
     public abstract class NPeer
     {
         public const string AppIdentifier = "ShanoRpg";

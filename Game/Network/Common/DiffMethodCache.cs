@@ -9,14 +9,20 @@ using Shanism.Network.Serialization;
 
 namespace Shanism.Network.Common
 {
-    public class DiffMethodCache
+    public class DiffMethodCache : MethodCache<FieldWriter, FieldReader>
     {
-        public static readonly DiffMethodCache Default = new DiffMethodCache();
+
+    }
+
+    public class MethodCache<TWriter, TReader>
+    {
+        Type writerType => typeof(TWriter);
+        Type readerType => typeof(TReader);
 
         public Dictionary<Type, MethodInfo> Reads { get; } = new Dictionary<Type, MethodInfo>();
         public Dictionary<Type, MethodInfo> Writes { get; } = new Dictionary<Type, MethodInfo>();
 
-        public DiffMethodCache()
+        public MethodCache()
         {
             FindWriteMethods();
             FindReadMethods();
@@ -27,7 +33,7 @@ namespace Shanism.Network.Common
             Debug.WriteLine("Finding write methods...");
             Writes.Clear();
 
-            var mis = typeof(FieldWriter).GetMethods();
+            var mis = writerType.GetMethods();
             foreach (var m in mis)
             {
                 var mParams = m.GetParameters();
@@ -49,7 +55,7 @@ namespace Shanism.Network.Common
             Debug.WriteLine("Finding read methods...");
             Reads.Clear();
 
-            var mis = typeof(FieldReader).GetMethods();
+            var mis = readerType.GetMethods();
             foreach (var m in mis)
             {
                 var mParams = m.GetParameters();

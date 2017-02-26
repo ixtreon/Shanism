@@ -128,7 +128,7 @@ namespace Shanism.Network.Serialization
 
         public void WriteMovementState(MovementState oldVal, MovementState newVal)
         {
-            Console.WriteLine($"Written ms: {newVal.GetDirectionByte()}");
+            //Console.WriteLine($"Written ms: {newVal.GetDirectionByte()}");
             WriteByte(oldVal.GetDirectionByte(), newVal.GetDirectionByte());
         }
     }

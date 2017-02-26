@@ -43,9 +43,7 @@ namespace Shanism.Engine.Systems
         public bool RemoveEvent(RangeEvent e) => events.Remove(e);
 
 
-        double MaxEventRange => events.Max.Range;
-
-        double MaxEventRangeSquared => events.Max.RangeSquared;
+        double maxEventRangeSquared;
 
 
         internal void FireEvents()
@@ -61,8 +59,10 @@ namespace Shanism.Engine.Systems
                 return;
             }
 
+            maxEventRangeSquared = events.Max.RangeSquared;
+
             //refresh the nearby units field
-            Owner.Map.GetObjectsInRect(Owner.Position, new Vector(MaxEventRange), nearbyEntities);
+            Owner.Map.GetObjectsInRect(Owner.Position, new Vector(events.Max.Range), nearbyEntities);
 
             //fire events, remove units that left range
             nearbyEntities.RemoveWhere(updateEntity);
@@ -115,7 +115,7 @@ namespace Shanism.Engine.Systems
         /// <summary>
         /// Refreshes the distances between the Owner and the other entity.
         /// Makes sure <see cref="nearbyDistancesSquared"/> contains only units that
-        /// are in the same map, and at most <see cref="MaxEventRange"/> units away.
+        /// are in the same map, and at most <see cref="maxEventRangeSquared"/> units away.
         /// Returns whether the other entity has left our range. 
         /// </summary>
         bool refreshDistances(Entity other,
@@ -132,7 +132,7 @@ namespace Shanism.Engine.Systems
                 dNew = other.Position.DistanceToSquared(Owner.Position);
 
             //remove from distance-map
-            if (dOld > MaxEventRangeSquared && dNew > MaxEventRangeSquared)
+            if (dOld > maxEventRangeSquared && dNew > maxEventRangeSquared)
             {
                 nearbyDistancesSquared.Remove(other);
                 return true;

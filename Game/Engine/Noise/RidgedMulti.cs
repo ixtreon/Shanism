@@ -14,20 +14,12 @@ namespace Shanism.Engine.Noise
         {
         }
 
-
-        protected override void generate(int width, int height, byte[,] arr, int seed)
+        public override float GetValue(float x, float y)
         {
-            for (var i = 0; i < width; i++)
-                for (var j = 0; j < height; j++)
-                {
-                    var x = (float)i / width / scale;
-                    var y = (float)j / height / scale;
+            var pVal = perlin(x, y);
+            var outVal = Math.Abs(pVal) / OutputRange;
 
-                    var fVal = Math.Abs(perlin(x, y));
-                    var bVal = (fVal) * 256;
-
-                    arr[i, j] = (byte)bVal.Clamp(0, 255);
-                }
+            return outVal;
         }
     }
 }

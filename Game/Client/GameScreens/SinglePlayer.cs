@@ -14,8 +14,8 @@ namespace Shanism.Client.GameScreens
     {
         readonly ScenarioListControl scenarioList;
 
-        public SinglePlayer(GraphicsDevice device) 
-            : base(device)
+        public SinglePlayer(GraphicsDevice device, ContentList content) 
+            : base(device, content)
         {
             SubTitle = "Single Player";
 
@@ -23,11 +23,12 @@ namespace Shanism.Client.GameScreens
             Root.Add(scenarioList = new ScenarioListControl
             {
                 Size = listSz,
-                Location = new Vector((Root.Size.X - listSz.X) / 2, 0.7),
+                Top = ContentStartY,
+
                 ParentAnchor = AnchorMode.None,
                 BackColor = Color.Black.SetAlpha(100),
             });
-
+            scenarioList.CenterX();
             scenarioList.ScenarioSelected += ScenarioList_ScenarioSelected;
 
             Root.MouseDown += Root_MouseDown;

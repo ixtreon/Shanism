@@ -74,7 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client\NReceptor.cs" />
-    <Compile Include="Common\EntityMapper.cs" />
+    <Compile Include="Common\ObjectMapper.cs" />
     <Compile Include="Common\ObjectCache.cs" />
     <Compile Include="Common\DiffMethodCache.cs" />
     <Compile Include="Common\ObjectData.cs" />

@@ -46,7 +46,7 @@ namespace Shanism.Client.UI.Game
             base.OnUpdate(msElapsed);
         }
 
-        public override void OnDraw(Graphics g)
+        public override void OnDraw(Canvas g)
         {
             if (durationLeft <= 0)
                 return;

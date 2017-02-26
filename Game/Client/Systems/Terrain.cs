@@ -82,16 +82,10 @@ namespace Shanism.Client.Map
 
         public void Draw()
         {
-            var device = effect.GraphicsDevice;
             device.SamplerStates[0] = SamplerState.PointClamp;
-            //device.RasterizerState = new RasterizerState
-            //{
-            //    MultiSampleAntiAlias = true,
-            //};
-            //device.PresentationParameters.MultiSampleCount = 4;
 
             //draw all chunks around us
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            foreach (var pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
 

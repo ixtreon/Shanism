@@ -15,7 +15,7 @@ namespace Shanism.Client.Systems
 
         public override void Update(int msElapsed)
         {
-            base.Update(msElapsed);
+
         }
 
         public override void HandleMessage(IOMessage ioMsg)

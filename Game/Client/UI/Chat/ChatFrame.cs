@@ -38,7 +38,7 @@ namespace Shanism.Client.UI.Chat
                 chatProvider.ChatSent += onMessageReceived;
         }
 
-        public override void OnDraw(Graphics g)
+        public override void OnDraw(Canvas g)
         {
             base.OnDraw(g);
 

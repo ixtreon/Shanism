@@ -31,11 +31,6 @@ namespace Shanism.Client
         /// <param name="receptor">The receptor for the engine, in case we connected to it.</param>
         bool TryConnect(IShanoEngine engine, string playerName, out IReceptor receptor);
 
-        /// <summary>
-        /// Loads the default game content.
-        /// </summary>
-        bool LoadContent();
-
         void RestartScenario();
 
         /// <summary>

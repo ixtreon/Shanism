@@ -139,7 +139,7 @@ namespace Shanism.Client.UI.Menus
             }
         }
 
-        public override void OnDraw(Graphics g)
+        public override void OnDraw(Canvas g)
         {
             base.OnDraw(g);
         }

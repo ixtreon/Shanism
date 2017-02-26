@@ -94,7 +94,7 @@ namespace Shanism.Client.UI
                 curBackColor = BackColor;
         }
 
-        public override void OnDraw(Graphics g)
+        public override void OnDraw(Canvas g)
         {
 
             var blank = Content.Textures.Blank;

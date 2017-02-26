@@ -28,7 +28,7 @@ namespace Shanism.Client.UI.Game
                 currentIcon = Content.Icons.TryGet(CurrentItem.Icon) ?? Content.Icons.Default;
         }
 
-        public override void OnDraw(Graphics g)
+        public override void OnDraw(Canvas g)
         {
             if(currentIcon != null)
                 g.Draw(currentIcon, Vector.Zero, Size);

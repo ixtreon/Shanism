@@ -269,7 +269,12 @@ namespace Shanism.Engine.Entities
             {
                 //update generic subsystems
                 foreach (var sys in Systems)
-                    UnitSystemPerfCounter.RunAndLog(sys.GetType().Name, sys.Update, msElapsed);
+                {
+                    UnitSystemPerfCounter.Start(sys.GetType().Name);
+                    sys.Update(msElapsed);
+                }
+
+                UnitSystemPerfCounter.End();
             }
 
             base.Update(msElapsed);

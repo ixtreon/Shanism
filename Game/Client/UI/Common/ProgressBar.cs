@@ -33,7 +33,7 @@ namespace Shanism.Client.UI
             CanHover = true;
         }
 
-        public override void OnDraw(Graphics g)
+        public override void OnDraw(Canvas g)
         {
             //background
             g.Draw(Content.Textures.Blank, Vector.Zero, Size, BackColor);

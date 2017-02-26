@@ -27,10 +27,12 @@ namespace Shanism.Client
 
         GameScreen currentGameScreen;
 
+        ContentList contentList;
+
 
         #region IClientInstance implementation
 
-        public IClientEngine GameScreen => inGameScreen;
+        public IClientEngine Engine => inGameScreen;
 
         #endregion
 
@@ -43,9 +45,6 @@ namespace Shanism.Client
             graphics.HardwareModeSwitch = false;
 
             Window.Title = "ShanoRPG";
-
-            // game screens
-            inGameScreen = new ClientEngine(graphics, Content);
 
         }
 
@@ -73,13 +72,6 @@ namespace Shanism.Client
 
             //setup screen dimensions
             Screen.SetWindowSize(Window.ClientBounds.Size.ToPoint());
-
-
-            // game screens
-            mainMenuScreen = new MainMenu(graphics.GraphicsDevice);
-            mainMenuScreen.GameStarted += mainMenuScreen_GameStarted;
-
-            setScreen(mainMenuScreen);
 
 
             //reload graphics settings from settings + hook settings saved
@@ -113,25 +105,25 @@ namespace Shanism.Client
 
         void recreateDrawBuffer()
         {
-            var s = Screen.RenderSize;
-            var w = (int)(Window.ClientBounds.Width * s);
-            var h = (int)(Window.ClientBounds.Height * s);
+            var windowSize = Window.ClientBounds.Size.ToPoint();
 
-            if (w == Window.ClientBounds.Width && h == Window.ClientBounds.Height)
-                inGameScreen.RenderTarget = null;
-            else
-                inGameScreen.RenderTarget = new RenderTarget2D(GraphicsDevice, w, h);
+            inGameScreen.RecreateBuffer(windowSize);
         }
 
         void reloadGraphicsEngine()
         {
-            Screen.SetRenderSize(Settings.Current.RenderSize);
-
+            //vsync
             IsFixedTimeStep = Settings.Current.VSync;
             graphics.SynchronizeWithVerticalRetrace = Settings.Current.VSync;
+
+            //full screen
             graphics.IsFullScreen = Settings.Current.FullScreen;
 
+            //draw buffer
+            Screen.SetRenderSize(Settings.Current.RenderSize);
             recreateDrawBuffer();
+
+
             graphics.ApplyChanges();
         }
 
@@ -152,7 +144,7 @@ namespace Shanism.Client
 
                 //drawbuffer
                 recreateDrawBuffer();
-                GameScreen.SetWindowSize(sz.Size.ToPoint());
+                Engine.SetWindowSize(sz.Size.ToPoint());
 
                 //actual backbuffer
                 graphics.PreferredBackBufferWidth = (int)(sz.Width);
@@ -172,13 +164,23 @@ namespace Shanism.Client
         protected override void LoadContent()
         {
             Console.WriteLine("Loading content...");
-            if (!GameScreen.LoadContent())
+            //load default content (textures,fonts,animations)
+            contentList = new ContentList(GraphicsDevice, Content);
+            if (!contentList.LoadDefault())
             {
-                //TODO
+                //TODO: content loading failed
             }
+
+            // game screens
+            inGameScreen = new ClientEngine(graphics.GraphicsDevice, contentList);
+
+            mainMenuScreen = new MainMenu(graphics.GraphicsDevice, contentList);
+            mainMenuScreen.GameStarted += mainMenuScreen_GameStarted;
+
+            setScreen(mainMenuScreen);
         }
 
-        const int MaxFps = 60;
+        const int MaxFps = 30;
         readonly Counter updateCounter = new Counter(1000 / MaxFps);
 
         /// <summary>
@@ -190,6 +192,7 @@ namespace Shanism.Client
         {
             var msElapsed = (int)gameTime.ElapsedGameTime.TotalMilliseconds;
 
+
             //detect first run
             if (!_isLoaded)
             {
@@ -197,11 +200,8 @@ namespace Shanism.Client
                 Console.WriteLine("Boom! Let's play");
             }
 
-            var vsync = graphics.SynchronizeWithVerticalRetrace;
-            if (!vsync && updateCounter.Tick(msElapsed))
-            {
-
-            }
+            //if (!IsFixedTimeStep && !updateCounter.Tick(msElapsed))
+            //    return;
 
             //input
             MouseInfo.Update(msElapsed, IsActive);

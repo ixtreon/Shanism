@@ -58,7 +58,7 @@ namespace Shanism.Client.UI.Game
             Maximize();
         }
 
-        public override void OnDraw(Graphics g)
+        public override void OnDraw(Canvas g)
         {
             var currentY = TextYStart;
             foreach(var ed in errors.Reverse())

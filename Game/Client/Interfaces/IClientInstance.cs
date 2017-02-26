@@ -16,7 +16,7 @@ namespace Shanism.Client
         /// <summary>
         /// Gets the underlying client engine. 
         /// </summary>
-        IClientEngine GameScreen { get; }
+        IClientEngine Engine { get; }
 
         void Run();
     }

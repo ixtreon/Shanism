@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Shanism.Client
 {
-    //Provides hacky methods for manipulating the main game - exit, restart.
+    //Provides hacky methods for manipulating the main game - quit, exit, restart
     static class GameHelper
     {
         static ClientGame TheGame;
@@ -30,7 +30,7 @@ namespace Shanism.Client
 
         public static void Restart()
         {
-            TheGame.GameScreen.RestartScenario();
+            TheGame.Engine.RestartScenario();
         }
     }
 }

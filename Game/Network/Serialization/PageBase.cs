@@ -10,7 +10,7 @@ namespace Shanism.Network.Serialization
     {
         public const int PageLength = 64;
         public const int LineLength = 64;
-        public const int PageCount = 2;
+        public const int PageCount = 64;
         public const int TotalLineCount = PageCount * LineLength;
 
         public static void SetBit(ref ulong mask, int bit)

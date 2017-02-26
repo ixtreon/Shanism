@@ -49,7 +49,7 @@ namespace Shanism.Client.UI.Game
                 shadeRatio = (float)Buff.DurationLeft / b.FullDuration;
         }
 
-        public override void OnDraw(Graphics g)
+        public override void OnDraw(Canvas g)
         {
             base.OnDraw(g);
 

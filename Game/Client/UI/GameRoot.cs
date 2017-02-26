@@ -113,9 +113,6 @@ namespace Shanism.Client.UI
                     Settings.Current.AlwaysShowHealthBars = !Settings.Current.AlwaysShowHealthBars;
                     break;
 
-                case ClientAction.ToggleDebugInfo:
-                    ClientEngine.ShowDebugStats = !ClientEngine.ShowDebugStats;
-                    break;
 
                 case ClientAction.Chat:
                     if (!ChatBar.HasFocus)

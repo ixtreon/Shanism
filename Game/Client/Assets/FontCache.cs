@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Shanism.Client.Drawing
 {
     /// <summary>
-    /// Contains a listing of common fonts. 
+    /// Contains a listing of common fonts of type <see cref="TextureFont"/>. 
     /// </summary>
     class FontCache
     {

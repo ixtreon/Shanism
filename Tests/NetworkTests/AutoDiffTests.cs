@@ -44,7 +44,7 @@ namespace UnitTests
         [TestMethod]
         public void MapperBasicEntitySerialization()
         {
-            EntityMapper mapper = new EntityMapper();
+            ObjectMapper mapper = new ObjectMapper();
 
             var msg = new NetBuffer();
 

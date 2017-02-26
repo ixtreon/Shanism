@@ -16,6 +16,9 @@ namespace Shanism.Engine.Objects.Range
 
     public delegate void RangeEventCallback(Entity e, RangeEventTriggerType tty);
 
+    /// <summary>
+    /// An event raised when one or all units cross a range boundary with 
+    /// </summary>
     public class RangeEvent : IComparable<RangeEvent>
     {
         internal readonly double RangeSquared;

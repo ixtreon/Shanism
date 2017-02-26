@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Shanism")]
-[assembly: AssemblyProduct("Shanism")]
-[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyTitle("Ix.Graphics")]
 [assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyCopyright("")]
+[assembly: AssemblyProduct("Ix.Graphics")]
+[assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("c6bf922e-a676-494a-b2d6-869ea04fdc94")]
+[assembly: Guid("81825a42-212e-4c4d-bd15-a42de826b039")]
 
 // Version information for an assembly consists of the following four values:
 //

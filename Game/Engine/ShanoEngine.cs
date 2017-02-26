@@ -248,8 +248,15 @@ namespace Shanism.Engine
                 GamePerfCounter.Reset();
             }
 
-            foreach (var sys in systems)
-                GamePerfCounter.RunAndLog(sys.SystemName, sys.Update, msElapsed);
+            for (int i = 0; i < systems.Count; i++)
+            {
+                var sys = systems[i];
+
+                GamePerfCounter.Start(sys.SystemName);
+                sys.Update(msElapsed);
+            }
+
+            GamePerfCounter.End();
 
             foreach (var kvp in players)
                 if (kvp.Value != null)

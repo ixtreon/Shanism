@@ -110,12 +110,10 @@ namespace Shanism.Engine.GameSystems.Maps
                     leafNodes.Clear();
                 }
 
-                Debug.Assert(countNodes() == count);
                 return;
             }
 
             addToBranch(n);
-            Debug.Assert(countNodes() == count);
         }
 
 
@@ -127,11 +125,9 @@ namespace Shanism.Engine.GameSystems.Maps
                 {
                     count--;
 
-                    Debug.Assert(countNodes() == count);
                     return true;
                 }
 
-                Debug.Assert(countNodes() == count);
                 return false;
             }
 
@@ -148,11 +144,9 @@ namespace Shanism.Engine.GameSystems.Maps
                     isLeaf = true;
                 }
 
-                Debug.Assert(countNodes() == count);
                 return true;
             }
 
-            Debug.Assert(countNodes() == count);
             return false;
         }
 

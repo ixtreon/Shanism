@@ -71,7 +71,6 @@ namespace Shanism.Editor.MapAdapter
 
             //create the client, load its content
             _client = ClientFactory.CreateGameEngine(GraphicsDeviceService, _editorContent);
-            _client.LoadContent();
             _client.SetWindowSize(new Point(Width, Height));
             _client.SetDesignMode(true);
 

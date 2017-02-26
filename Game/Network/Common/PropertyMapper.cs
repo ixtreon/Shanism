@@ -23,7 +23,7 @@ namespace Shanism.Network.Common
             public Type UnderlyingType;
         }
 
-        static DiffMethodCache miCache => DiffMethodCache.Default;
+        static readonly DiffMethodCache miCache = new DiffMethodCache();
 
         static IEnumerable<PropertyTuple> GetProperties()
         {

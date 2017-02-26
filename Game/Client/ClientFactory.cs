@@ -13,7 +13,10 @@ namespace Shanism.Client
     {
         public static IClientEngine CreateGameEngine(IGraphicsDeviceService graphics, ContentManager content)
         {
-            return new ClientEngine(graphics, content);
+            var cl = new ContentList(graphics.GraphicsDevice, content);
+            cl.LoadDefault();
+
+            return new ClientEngine(graphics.GraphicsDevice, cl);
         }
     }
 }

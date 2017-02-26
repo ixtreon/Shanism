@@ -215,7 +215,7 @@ namespace Shanism.Client.UI
             textPositions = Font.GetLineCharsUi(value);
         }
 
-        public override void OnDraw(Graphics g)
+        public override void OnDraw(Canvas g)
         {
             //background
             base.OnDraw(g);

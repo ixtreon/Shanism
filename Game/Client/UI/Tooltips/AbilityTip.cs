@@ -109,7 +109,7 @@ namespace Shanism.Client.UI.Tooltips
             IsVisible = true;
         }
 
-        public override void OnDraw(Graphics g)
+        public override void OnDraw(Canvas g)
         {
             if (IsVisible)
             {

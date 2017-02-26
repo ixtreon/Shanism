@@ -26,7 +26,7 @@ namespace Shanism.Client.Systems
 
         public virtual void HandleMessage(IOMessage ioMsg) { }
 
-        public virtual void Update(int msElapsed) { }
+        public abstract void Update(int msElapsed);
     }
 
 }

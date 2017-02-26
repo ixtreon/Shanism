@@ -13,13 +13,13 @@ namespace Shanism.Common.Util
     {
         public const int DefaultBarLength = 20;
 
-        static readonly Stopwatch Stopwatch = Stopwatch.StartNew();
+        static readonly Stopwatch timer = Stopwatch.StartNew();
 
 
-        readonly Dictionary<string, long> stats = new Dictionary<string, long>();
+        readonly Dictionary<string, double> stats = new Dictionary<string, double>();
 
-        public IReadOnlyDictionary<string, long> Stats => stats;
-
+        string category;
+        TimeSpan? catStart;
 
 
         /// <summary>
@@ -33,46 +33,42 @@ namespace Shanism.Common.Util
         /// <summary>
         /// Logs the time taken to run the given benchmarked category. 
         /// </summary>
-        public void Log(string category, long timeTaken)
+        public void Log(string category, double timeTaken)
         {
-            long t;
+            double t;
             if (!stats.TryGetValue(category, out t))
                 t = 0;
             stats[category] = t + timeTaken;
         }
 
-        public void RunAndLog(string categoryName, Action act)
-        {
-            var st = Stopwatch.ElapsedTicks;
-            act();
-            var end = Stopwatch.ElapsedTicks;
 
-            Log(categoryName, end - st);
+        public void Start(string catName)
+        {
+            if (catStart != null)
+                Log(category, (timer.Elapsed - catStart.Value).TotalMilliseconds);
+
+            catStart = timer.Elapsed;
+            category = catName;
         }
 
-        public void RunAndLog<T>(string categoryName, Action<T> act, T arg0)
+        public void End()
         {
-            var st = Stopwatch.ElapsedTicks;
-            act(arg0);
-            var end = Stopwatch.ElapsedTicks;
+            Log(category, (timer.Elapsed - catStart.Value).TotalMilliseconds);
 
-            Log(categoryName, end - st);
+            catStart = null;
+            category = null;
         }
 
         public string GetPerformanceData(int barLength = DefaultBarLength)
         {
-            return GetPerformanceData(stats.Sum(s => s.Value), barLength);
-        }
-
-        public string GetPerformanceData(long totalTimeTaken, int barLength = DefaultBarLength)
-        {
-            var lines = Stats
+            var totalTimeTaken = stats.Sum(s => s.Value);
+            var lines = stats
                 .OrderByDescending(kvp => kvp.Key)
-                .Select(kvp => $"{kvp.Key}  {kvp.Value:0000000}    {writeBar(kvp.Value, totalTimeTaken, barLength)}");
+                .Select(kvp => $"{kvp.Value:000000.00} [{writeBar(kvp.Value, totalTimeTaken, barLength)}] {kvp.Key}");
 
             var logData = string.Join("\n", lines);
 
-            return $"Total: {totalTimeTaken}\n{logData}";
+            return $"Total: {totalTimeTaken:0.00}\n{logData}";
         }
 
         static string writeBar(double curT, double totalT, int totalLength)

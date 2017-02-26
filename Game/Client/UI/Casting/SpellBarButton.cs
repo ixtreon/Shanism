@@ -90,7 +90,7 @@ namespace Shanism.Client.UI
 
         }
 
-        public override void OnDraw(Graphics g)
+        public override void OnDraw(Canvas g)
         {
             base.OnDraw(g);
 

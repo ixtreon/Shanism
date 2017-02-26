@@ -49,7 +49,7 @@ namespace Shanism.Client.UI
         /// </summary>
         internal static Control FocusControl { get; private set; }
 
-        internal static ContentList Content { get; private set; }
+        protected static ContentList Content { get; private set; }
 
 
         public static void SetContent(ContentList content)
@@ -384,7 +384,7 @@ namespace Shanism.Client.UI
             => GameActionActivated?.Invoke(act);
 
 
-        public void Draw(Graphics g)
+        public void Draw(Canvas g)
         {
             if (!IsVisible)
                 return;
@@ -426,7 +426,7 @@ namespace Shanism.Client.UI
         /// Draws a background over the whole control. 
         /// </summary>
         /// <param name="sb"></param>
-        public virtual void OnDraw(Graphics g)
+        public virtual void OnDraw(Canvas g)
         {
             if (BackColor.A > 0)
                 g.Draw(Content.Textures.Blank, Vector.Zero, Size, BackColor);
@@ -631,28 +631,31 @@ namespace Shanism.Client.UI
         /// <summary>
         /// Places the control in the middle of its <see cref="Parent"/>'s central Y axis.
         /// </summary>
-        public void CenterX()
+        public double CenterX()
         {
             var sz = Parent?.Width ?? Screen.UiSize.X;
             Left = (sz - Width) / 2;
+            return Left;
         }
 
         /// <summary>
         /// Places the control in the middle of its <see cref="Parent"/>'s central X axis.
         /// </summary>
-        public void CenterY()
+        public double CenterY()
         {
             var sz = Parent?.Height ?? Screen.UiSize.Y;
             Top = (sz - Height) / 2;
+            return Top;
         }
 
         /// <summary>
         /// Places the control in the middle of its <see cref="Parent"/>
         /// </summary>
-        public void CenterBoth()
+        public Vector CenterBoth()
         {
             var sz = Parent?.Size ?? Screen.UiSize;
             Location = (sz - Size) / 2;
+            return Location;
         }
 
 

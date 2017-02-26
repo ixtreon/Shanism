@@ -15,9 +15,7 @@ namespace Shanism.Client.GameScreens
     abstract class UiScreen : GameScreen
     {
         static readonly Color BackColor = new Color(48, 24, 48);
-
-        static readonly TextureFont TitleFont = Control.Content.Fonts.ShanoFont;
-        static readonly TextureFont SubTitleFont = Control.Content.Fonts.FancyFont;
+        static readonly Vector TitleLocation = new Vector(0, 0.2);
 
 
         public virtual Control Root { get; } = new Control
@@ -25,13 +23,11 @@ namespace Shanism.Client.GameScreens
             BackColor = BackColor,
         };
 
-        UiScreen subScreen;
 
         readonly Label title;
         readonly Label subTitle;
 
-        protected readonly GraphicsDevice device;
-        readonly Graphics g;
+        UiScreen subScreen;
 
         Control actualRoot
             => subScreen?.actualRoot ?? Root;
@@ -40,7 +36,7 @@ namespace Shanism.Client.GameScreens
 
         public event Action<IShanoEngine> GameStarted;
 
-
+        public double ContentStartY { get; }
 
         public string SubTitle
         {
@@ -48,13 +44,13 @@ namespace Shanism.Client.GameScreens
             set { subTitle.Text = value; }
         }
 
-        public UiScreen(GraphicsDevice device)
+        public UiScreen(GraphicsDevice device, ContentList content)
+            : base(device, content)
         {
-            this.device = device;
-            g = new Graphics(device);
+            var titleFont = Content.Fonts.ShanoFont;
+            var SubTitleFont = Content.Fonts.FancyFont;
 
             Root.Maximize();
-            var titleFont = Control.Content.Fonts.ShanoFont;
             Root.Add(title = new Label
             {
                 Font = titleFont,
@@ -63,7 +59,7 @@ namespace Shanism.Client.GameScreens
                 ParentAnchor = AnchorMode.Left | AnchorMode.Right,
 
                 Size = new Vector(Screen.UiSize.X, titleFont.HeightUi),
-                Location = new Vector(0, 0.3),
+                Location = TitleLocation,
                 TextXAlign = 0.5f,
 
             });
@@ -85,9 +81,12 @@ namespace Shanism.Client.GameScreens
             Root.Add(new UI.Tooltips.SimpleTip());
 
             Root.KeyPressed += root_KeyActivated;
+
+            ContentStartY = subTitle.Bottom + Control.LargePadding * 5;
         }
 
-        public void StartGame(IShanoEngine game) => GameStarted?.Invoke(game);
+        public void StartGame(IShanoEngine game) 
+            => GameStarted?.Invoke(game);
 
         void root_KeyActivated(Keybind k)
         {
@@ -99,20 +98,22 @@ namespace Shanism.Client.GameScreens
 
         public override void Draw()
         {
-            g.Begin();
+            Canvas.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend,
+                SamplerState.PointClamp, DepthStencilState.DepthRead,
+                RasterizerState.CullNone);
+            actualRoot.Draw(Canvas);
+            Canvas.End();
 
-            actualRoot.Draw(g);
-
-            g.End();
+            base.Draw();
         }
 
         public override void Update(int msElapsed)
         {
-            g.Bounds = new RectangleF(Vector.Zero, Screen.UiSize);
-
             actualRoot.Maximize();
             actualRoot.UpdateMain(msElapsed);
             actualRoot.Update(msElapsed);
+
+            base.Update(msElapsed);
         }
 
         /// <summary>

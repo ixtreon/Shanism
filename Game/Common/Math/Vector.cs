@@ -28,6 +28,17 @@ namespace Shanism.Common
         public static readonly Vector One = new Vector(1);
 
         /// <summary>
+        /// Gets the unit vector along the X axis.
+        /// </summary>
+        public static readonly Vector XUnit = new Vector(1, 0);
+
+        /// <summary>
+        /// Gets the unit vector along the Y axis.
+        /// </summary>
+        public static readonly Vector YUnit = new Vector(0, 1);
+
+
+        /// <summary>
         /// Gets the vector with both coordinates set to <see cref="double.NaN"/>. 
         /// </summary>
         public static readonly Vector NaN = new Vector(double.NaN);
@@ -185,6 +196,22 @@ namespace Shanism.Common
         public static bool operator <(Vector a, Vector b)
         {
             return a.X < b.X && a.Y < b.Y;
+        }
+
+        /// <summary>
+        /// Returns whether both elements of the first vector are smaller than their counterparts in the second vector. 
+        /// </summary>
+        public static bool operator <=(Vector a, Vector b)
+        {
+            return a.X <= b.X && a.Y <= b.Y;
+        }
+
+        /// <summary>
+        /// Returns whether both elements of the first vector are smaller than their counterparts in the second vector. 
+        /// </summary>
+        public static bool operator >=(Vector a, Vector b)
+        {
+            return a.X >= b.X && a.Y >= b.Y;
         }
 
         /// <summary>

@@ -70,7 +70,7 @@ namespace Shanism.Client.UI
             base.OnUpdate(msElapsed);
         }
 
-        public override void OnDraw(Graphics g)
+        public override void OnDraw(Canvas g)
         {
 
             var maxTextLen = Size.X - 2 * Padding;

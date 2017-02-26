@@ -46,6 +46,7 @@ namespace Shanism.Client.UI
                 Left = Padding,
                 Bottom = Size.Y - Padding,
 
+                IsVisible = false,
                 ParentAnchor = AnchorMode.Bottom | AnchorMode.Left,
             });
             Add(Next = new Button
@@ -57,6 +58,7 @@ namespace Shanism.Client.UI
                 Right = Size.X - Padding,
                 Bottom = Size.Y - Padding,
 
+                IsVisible = false,
                 ParentAnchor = AnchorMode.Bottom | AnchorMode.Right,
             });
             Add(Text = new Label
@@ -92,6 +94,8 @@ namespace Shanism.Client.UI
         void updateText()
         {
             Text.Text = $"{CurrentPage + 1} / {PagesCount}";
+            Prev.IsVisible = PagesCount > 1 && CurrentPage > 0;
+            Next.IsVisible = PagesCount > 1 && CurrentPage < PagesCount - 1;
         }
 
         void setPage(int id)

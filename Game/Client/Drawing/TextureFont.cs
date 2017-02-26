@@ -6,6 +6,7 @@ using System.Text;
 
 using Color = Microsoft.Xna.Framework.Color;
 using Shanism.Common;
+using System.Text.RegularExpressions;
 
 namespace Shanism.Client.Drawing
 {
@@ -19,6 +20,8 @@ namespace Shanism.Client.Drawing
         /// </summary>
         readonly double _userScale;
 
+        //matches characters NOT part of this font.
+        readonly Regex invalidCharFinder;
 
 
         /// <summary>
@@ -52,6 +55,8 @@ namespace Shanism.Client.Drawing
         {
             _userScale = scale;
             Font = font;
+
+            invalidCharFinder = new Regex($"[^{string.Join(string.Empty, font.Characters)}]");
         }
 
         public void DrawString(SpriteBatch sb, string text,
@@ -138,15 +143,20 @@ namespace Shanism.Client.Drawing
 
             maxWidth /= Scale;
 
-            foreach (var baseLn in text.Split('\n'))
-            {
-                curLine.Clear();
+            text = removeInvalidChars(text);
 
-                foreach (var word in baseLn.Split(' '))
+            var lines = text.Split('\n');
+            for(int i = 0; i < lines.Length; i++)
+            {
+                var line = lines[i];
+                var words = line.Split(' ');
+                for(int j = 0; j < words.Length; j++)
                 {
+                    var word = words[j];
                     if (curLine.Length > 0)
                     {
                         var newWidth = Font.MeasureString($"{curLine} {word}").X; //becomes O(N^2) in here
+
                         if (newWidth > maxWidth)
                         {
                             sb.Append(curLine);
@@ -165,10 +175,15 @@ namespace Shanism.Client.Drawing
 
                 sb.Append(curLine.ToString());
                 sb.Append('\n');
+
+                curLine.Clear();
             }
 
             sb.Length--;    //trim last newline char
             return sb.ToString();
         }
+
+        string removeInvalidChars(string s)
+            => invalidCharFinder.Replace(s, string.Empty);
     }
 }

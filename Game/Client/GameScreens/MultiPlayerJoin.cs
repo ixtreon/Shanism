@@ -18,8 +18,8 @@ namespace Shanism.Client.GameScreens
         readonly TextBox hostAddress;
         readonly Button connectButton;
 
-        public MultiPlayerJoin(GraphicsDevice device)
-            : base(device)
+        public MultiPlayerJoin(GraphicsDevice device, ContentList content)
+            : base(device, content)
         {
             SubTitle = "Join Multi Player";
 

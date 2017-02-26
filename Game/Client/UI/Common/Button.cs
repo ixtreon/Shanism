@@ -91,7 +91,7 @@ namespace Shanism.Client.UI
                 Deselected?.Invoke(this);
         }
 
-        public override void OnDraw(Graphics g)
+        public override void OnDraw(Canvas g)
         {
             //draw background
             g.Draw(Content.Textures.Blank, Vector.Zero, Size, BackColor);
