@@ -54,12 +54,12 @@
     <Folder Include="Units\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Game\Common\Common.csproj">
-      <Project>{dc89987d-5817-4f1d-95ca-80c024c8d6bb}</Project>
+    <ProjectReference Include="..\src\Common\Common.csproj">
+      <Project>{3d93587b-1c50-449e-a751-6b2b765cfa55}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Game\Engine\Engine.csproj">
-      <Project>{0b2e9f70-7046-470a-8e5d-ebd47f030ddc}</Project>
+    <ProjectReference Include="..\src\Engine\Engine.csproj">
+      <Project>{b7027f9e-bfea-4df1-9f3e-fff1967f91a8}</Project>
       <Name>Engine</Name>
     </ProjectReference>
   </ItemGroup>

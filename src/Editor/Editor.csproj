@@ -1,0 +1,389 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{17492892-96BF-446B-9A93-2D7B3687179B}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Shanism.Editor</RootNamespace>
+    <AssemblyName>ShanoEditor</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>..\publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Shanism.Editor.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>BE65221AC735313332F2C4FAAEEA91F0B84F0558</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>ShanoEditor_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>false</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Shanism.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Shanism.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MonoGame.Framework, Version=3.5.1.1679, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.5.1.1679\lib\net40\MonoGame.Framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="MapAdapter\EditorController.cs" />
+    <Compile Include="MapAdapter\EditorEngine.cs" />
+    <Compile Include="Util\Ext.cs" />
+    <Compile Include="MapAdapter\Tools\Brush.cs" />
+    <Compile Include="MapAdapter\Tools\Brushes\CustomObjectBrush.cs" />
+    <Compile Include="MapAdapter\Tools\SelectionTool.cs" />
+    <Compile Include="MapAdapter\EditorContent.cs" />
+    <Compile Include="MapAdapter\EditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MapAdapter\EditorReceptor.cs" />
+    <Compile Include="MapAdapter\GLTestControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Util\Grids\RangeAttribute.cs" />
+    <Compile Include="Util\Image.cs" />
+    <Compile Include="Util\Keyboard.cs" />
+    <Compile Include="MapAdapter\IEditorEngine.cs" />
+    <Compile Include="MapAdapter\IMapControl.cs" />
+    <Compile Include="MapAdapter\MapTool.cs" />
+    <Compile Include="MapAdapter\Tools\Brushes\ObjectConstructorBrush.cs" />
+    <Compile Include="MapAdapter\Tools\Brushes\TerrainBrush.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Util\Grids\ShanoGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ViewModels\Scenario\ContentLists\Animations.cs" />
+    <Compile Include="ViewModels\Scenario\ContentLists\Textures.cs" />
+    <Compile Include="Views\Animations\AnimationsView.Designer.cs">
+      <DependentUpon>AnimationsView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Common\IScenarioControl.cs" />
+    <Compile Include="Views\Common\ObjectButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Views\Animations\AnimationBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ViewModels\Scenario\Content\Animation.cs" />
+    <Compile Include="ViewModels\Scenario\ContentViewModel.cs" />
+    <Compile Include="Views\Animations\AnimationTree.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Views\Maps\PropPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\Maps\PropPanel.Designer.cs">
+      <DependentUpon>PropPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Maps\SelectionWindow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\Maps\SelectionWindow.Designer.cs">
+      <DependentUpon>SelectionWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ShanoTreeNode.cs" />
+    <Compile Include="Views\Textures\TextureTree.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\Textures\TextureTree.Designer.cs">
+      <DependentUpon>TextureTree.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Textures\TextureFolderNode.cs" />
+    <Compile Include="Views\Textures\TextureNode.cs" />
+    <Compile Include="Views\Textures\TextureNodeBuilder.cs" />
+    <Compile Include="Views\ScenarioView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\ScenarioView.Designer.cs">
+      <DependentUpon>ScenarioView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ScenarioTree.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Views\Common\ListPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\Common\ListPanel.Designer.cs">
+      <DependentUpon>ListPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Maps\GameObjectButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Views\Maps\GameObjectList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\Maps\GameObjectList.Designer.cs">
+      <DependentUpon>GameObjectList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Maps\TerrainList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\Maps\TerrainList.Designer.cs">
+      <DependentUpon>TerrainList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MapView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\MapView.Designer.cs">
+      <DependentUpon>MapView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Animations\AnimationsView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ViewModels\IViewModel.cs" />
+    <Compile Include="ViewModels\Scenario\ScenarioViewModel.cs" />
+    <Compile Include="ViewModels\Scenario\Content\Texture.cs" />
+    <Compile Include="Views\Textures\TextureBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\Textures\TextureBox.Designer.cs">
+      <DependentUpon>TextureBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Common\ScenarioControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Util\ScenarioViewType.cs" />
+    <Compile Include="Views\Textures\TexturesView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\Textures\TexturesView.Designer.cs">
+      <DependentUpon>TexturesView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Util\StaticImageList.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="ShanoEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ShanoEditor.Designer.cs">
+      <DependentUpon>ShanoEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShanoFormFileActions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Util\Grids\TextureTypeConverter.cs" />
+    <EmbeddedResource Include="MapAdapter\EditorControl.resx">
+      <DependentUpon>EditorControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Animations\AnimationTree.resx">
+      <DependentUpon>AnimationTree.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Maps\PropPanel.resx">
+      <DependentUpon>PropPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Maps\SelectionWindow.resx">
+      <DependentUpon>SelectionWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Textures\TextureBox.resx">
+      <DependentUpon>TextureBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Textures\TextureTree.resx">
+      <DependentUpon>TextureTree.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ScenarioView.resx">
+      <DependentUpon>ScenarioView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScenarioTree.resx">
+      <DependentUpon>ScenarioTree.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Common\ListPanel.resx">
+      <DependentUpon>ListPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Maps\GameObjectList.resx">
+      <DependentUpon>GameObjectList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Maps\TerrainList.resx">
+      <DependentUpon>TerrainList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\MapView.resx">
+      <DependentUpon>MapView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Animations\AnimationsView.resx">
+      <DependentUpon>AnimationsView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Textures\TexturesView.resx">
+      <DependentUpon>TexturesView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShanoEditor.resx">
+      <DependentUpon>ShanoEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\MGWinFormsControls\MGWinFormsControls.csproj">
+      <Project>{85bd604a-c94d-4058-94be-6977c97a1291}</Project>
+      <Name>MGWinFormsControls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Client\Client.csproj">
+      <Project>{293e1b32-27b1-4214-a4d0-f428147a428a}</Project>
+      <Name>Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{3d93587b-1c50-449e-a751-6b2b765cfa55}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Engine\Engine.csproj">
+      <Project>{b7027f9e-bfea-4df1-9f3e-fff1967f91a8}</Project>
+      <Name>Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ScenarioLib\ScenarioLib.csproj">
+      <Project>{d3100986-f258-4b73-9326-7907e3041f66}</Project>
+      <Name>ScenarioLib</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\load_icon.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\action_Cancel_16xLG.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\action_add_16xLG.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Rename_6779.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Actor_16xLG.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Event_594_exp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\folder_Closed_16xLG.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ImageFile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="EditorContent\1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="EditorContent\circle-outline.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="EditorContent\circle.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Resources\NewFolderHS.png" />
+    <None Include="Resources\refresh_16xLG.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
