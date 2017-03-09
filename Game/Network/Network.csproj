@@ -80,6 +80,7 @@
     <Compile Include="Common\ObjectData.cs" />
     <Compile Include="Common\PropertyMapper.cs" />
     <Compile Include="Serialization\PageBase.cs" />
+    <Compile Include="Serialization\PageWriter2.cs" />
     <Compile Include="Server\ClientStateTracker.cs" />
     <Compile Include="Diff\DiffGuy.cs" />
     <Compile Include="Ext.cs" />

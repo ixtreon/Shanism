@@ -109,8 +109,8 @@ namespace Shanism.Client.UI.Game
             foreach (var td in labels)
             {
                 var screenPos = Screen.GameToScreen(td.Location);
-                Content.Fonts.NormalFont
-                    .DrawString(g, td.Text, td.Color, screenPos, 0.5f, 0.5f);
+                g.DrawString(Content.Fonts.NormalFont, td.Text, 
+                    td.Color, screenPos, 0.5f, 0.5f);
             }
         }
     }

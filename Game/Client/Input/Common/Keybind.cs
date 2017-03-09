@@ -11,7 +11,7 @@ namespace Shanism.Client.Input
     /// <summary>
     /// A keyboard gesture that consists of one main key and zero or more modifier keys. 
     /// </summary>
-    struct Keybind
+    public struct Keybind
     {
         public static readonly Keybind None = new Keybind(ModifierKeys.None, Keys.None);
 

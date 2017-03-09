@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shanism.Common.Interfaces.Entities;
-using Shanism.Common.Util;
-using Microsoft.Xna.Framework.Graphics;
 using Shanism.Common;
 
 namespace Shanism.Client.Drawing
@@ -16,8 +14,8 @@ namespace Shanism.Client.Drawing
 
         Vector lastPosition;
 
-        public UnitSprite(ContentList content, IUnit unit) 
-            : base(content, unit)
+        public UnitSprite(GameComponent game, IUnit unit) 
+            : base(game, unit)
         {
             Unit = unit;
             lastPosition = unit.Position;
@@ -35,7 +33,7 @@ namespace Shanism.Client.Drawing
             }
             else if (Unit.IsCasting())
             {
-                SetOrientation((float)Input.MouseInfo.UiPosition.Angle);
+                SetOrientation((float)Game.Mouse.UiPosition.Angle);
                 SetAnimation("attack", false);
             }
             else

@@ -48,13 +48,13 @@ namespace Shanism.Client.Drawing
             var main = content.Load<SpriteFont>("helvetica");
 
             //load default fonts
-            FancyFont = new TextureFont(fancy, 0.6);
-            ShanoFont = new TextureFont(fancy, 2);
+            FancyFont = new TextureFont(fancy, 0.07);
+            ShanoFont = new TextureFont(fancy, 0.16);
 
 
-            NormalFont = new TextureFont(main, 0.6);
-            SmallFont = new TextureFont(main, 0.5);
-            LargeFont = new TextureFont(main, 0.72);
+            NormalFont = new TextureFont(main, 0.05);
+            SmallFont = new TextureFont(main, 0.03);
+            LargeFont = new TextureFont(main, 0.07);
         }
     }
 }

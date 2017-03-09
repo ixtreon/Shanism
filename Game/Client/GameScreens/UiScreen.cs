@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Shanism.Client.Drawing;
 using Shanism.Client.Input;
 using Shanism.Client.UI;
 using Shanism.Common;
@@ -12,13 +11,14 @@ using System.Threading.Tasks;
 
 namespace Shanism.Client.GameScreens
 {
+
     abstract class UiScreen : GameScreen
     {
         static readonly Color BackColor = new Color(48, 24, 48);
         static readonly Vector TitleLocation = new Vector(0, 0.2);
 
 
-        public virtual Control Root { get; } = new Control
+        public virtual RootControl Root { get; } = new RootControl
         {
             BackColor = BackColor,
         };
@@ -29,7 +29,7 @@ namespace Shanism.Client.GameScreens
 
         UiScreen subScreen;
 
-        Control actualRoot
+        RootControl actualRoot
             => subScreen?.actualRoot ?? Root;
 
         public event Action Closed;
@@ -44,13 +44,19 @@ namespace Shanism.Client.GameScreens
             set { subTitle.Text = value; }
         }
 
-        public UiScreen(GraphicsDevice device, ContentList content)
-            : base(device, content)
+        public UiScreen(GameComponent game)
+            : base(game)
         {
             var titleFont = Content.Fonts.ShanoFont;
             var SubTitleFont = Content.Fonts.FancyFont;
 
-            Root.Maximize();
+            Root  = new RootControl
+            {
+                BackColor = BackColor,
+                Size = Screen.UiSize,
+            };
+
+
             Root.Add(title = new Label
             {
                 Font = titleFont,
@@ -58,7 +64,9 @@ namespace Shanism.Client.GameScreens
 
                 ParentAnchor = AnchorMode.Left | AnchorMode.Right,
 
-                Size = new Vector(Screen.UiSize.X, titleFont.HeightUi),
+                Width = Screen.UiSize.X,
+                LineHeight = 1,
+
                 Location = TitleLocation,
                 TextXAlign = 0.5f,
 
@@ -71,7 +79,9 @@ namespace Shanism.Client.GameScreens
 
                 ParentAnchor = AnchorMode.Left | AnchorMode.Right,
 
-                Size = new Vector(Screen.UiSize.X, SubTitleFont.HeightUi),
+                Width = Screen.UiSize.X,
+                LineHeight = 1,
+
                 Location = new Vector(0, title.Bottom + Control.LargePadding),
                 TextXAlign = 0.5f,
 

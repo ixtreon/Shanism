@@ -36,7 +36,7 @@ namespace Shanism.Client.UI
             var boxMinWidth = Math.Max(0.6, btnSpace + 2 * LargePadding);
             var boxMinHeight = 0.3;
 
-            var txtSize = textFont.MeasureStringUi(text, Screen.UiSize.X - 2 * LargePadding);
+            var txtSize = textFont.MeasureString(text, Screen.UiSize.X - 2 * LargePadding);
 
             var boxWidth = Math.Max(txtSize.X + 2 * LargePadding, boxMinWidth);
             var boxHeight = Math.Max(txtSize.Y + TitleHeight + 2 * LargePadding + Button.DefaultSize.Y, boxMinHeight);
@@ -98,12 +98,13 @@ namespace Shanism.Client.UI
         }
     }
 
+    [Flags]
     enum MessageBoxButtons
     {
-        Ok = 1,
-        Cancel = 2,
-        Yes = 4,
-        No = 8,
+        Ok = 1 << 0,
+        Cancel = 1 << 1,
+        Yes = 1 << 2,
+        No = 1 << 3,
     }
 
     static class MessageBoxActionsExt

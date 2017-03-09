@@ -96,7 +96,7 @@ namespace Shanism.Client.UI.Tooltips
 
 
                 var headerWidth = Math.Max(txtName.Size.X, txtStuff.Size.X) + tipMargin;
-                var descSz = Font.MeasureStringUi(newAbility.Description, MaxDescWidth);
+                var descSz = Font.MeasureString(newAbility.Description, MaxDescWidth);
                 var w = Math.Max(headerWidth, descSz.X) + 2 * tipMargin;
                 var h = txtStuff.Bottom + descSz.Y + 2 * tipMargin;
                 Size = new Vector(w, h);
@@ -117,7 +117,7 @@ namespace Shanism.Client.UI.Tooltips
                 g.Draw(Content.Textures.Blank, Vector.Zero, Size, Color.Black.SetAlpha(150));
 
                 //text
-                g.DrawString(Font, ability.Description, Color.White, new Vector(0, txtStuff.Bottom) + tipMargin, 0, 0, txtMaxWidth: DescriptionWidth);
+                g.DrawString(Font, ability.Description, Color.White, new Vector(0, txtStuff.Bottom) + tipMargin, 0, 0, maxWidth: DescriptionWidth);
             }
         }
     }

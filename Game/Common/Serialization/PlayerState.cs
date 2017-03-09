@@ -12,7 +12,7 @@ namespace Shanism.Common.Message.Client
     /// Linked with (in SP) or beamed to (in MP) the server at the default frequency.
     /// </summary>
     [ProtoContract]
-    public class ClientState
+    public class PlayerState
     {
         const float byteAngleAdd = (float)Math.PI;
         const float byteAngleToFloat = (float)Math.PI * 2 / 256;

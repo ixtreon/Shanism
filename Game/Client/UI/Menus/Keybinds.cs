@@ -35,6 +35,10 @@ namespace Shanism.Client.UI.Menus
             {
                 ParentAnchor = AnchorMode.Left | AnchorMode.Top | AnchorMode.Right,
                 Location = new Vector(0, TitleHeight) + lblPadding,
+
+                Width = lblWidth,
+                LineHeight = 3,
+
                 Size = new Vector(lblWidth, labelFont.HeightUi * 3 + 2 * Padding),
                 AutoSize = false,
 

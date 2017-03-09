@@ -51,14 +51,15 @@ namespace Shanism.Network.Server
             var fw = new FieldWriter(msg);
             foreach (var obj in objects.OrderBy(o => o.Id))
             {
+                var objType = obj.ObjectType;
+
                 //get last object state
                 ObjectStub oldObject;
-                if (!Cache.TryGetValue(obj.Id, out oldObject)
-                    || oldObject.ObjectType != obj.ObjectType)
-                    oldObject = Mapper.GetDefault(obj.ObjectType);
+                if (!Cache.TryGetValue(obj.Id, out oldObject) || oldObject.ObjectType != objType)
+                    oldObject = Mapper.GetDefault(objType);
 
-                fw.WriteByte(0, (byte)obj.ObjectType);
-                Mapper.Write(oldObject, obj, fw);
+                fw.WriteByte(0, (byte)objType);
+                Mapper.Write(objType, oldObject, obj, fw);
             }
 
             //save diff with cur state

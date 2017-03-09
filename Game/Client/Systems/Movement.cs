@@ -13,29 +13,25 @@ namespace Shanism.Client.Systems
 {
     class MoveSystem : ClientSystem
     {
-        private UiSystem ui;
+        readonly UiSystem ui;
 
-        public MoveSystem(UiSystem ui)
+        public MoveSystem(GameComponent game, UiSystem ui)
+            : base(game)
         {
             this.ui = ui;
         }
         
         public override void Update(int msElapsed)
         {
-            updateMovement();
-        }
-
-        void updateMovement()
-        {
-            if (!Control.FocusControl.IsRootControl)
+            if (!ui.Root.HasFocus)
             {
                 ClientState.IsMoving = false;
                 return;
             }
 
             /// Keyboard movement
-            var dx = Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveRight)) - Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveLeft));
-            var dy = Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveDown)) - Convert.ToInt32(KeyboardInfo.IsDown(ClientAction.MoveUp));
+            var dx = Convert.ToInt32(Keyboard.IsDown(ClientAction.MoveRight)) - Convert.ToInt32(Keyboard.IsDown(ClientAction.MoveLeft));
+            var dy = Convert.ToInt32(Keyboard.IsDown(ClientAction.MoveDown)) - Convert.ToInt32(Keyboard.IsDown(ClientAction.MoveUp));
             ClientState.IsMoving = (dx != 0 || dy != 0);
 
             if (ClientState.IsMoving)

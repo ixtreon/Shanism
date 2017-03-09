@@ -10,23 +10,20 @@ using Shanism.Common;
 
 namespace Shanism.Client.GameScreens
 {
-    abstract class GameScreen
+    abstract class GameScreen : GameComponent
     {
         public static bool ShowDebugStats { get; set; }
 
-        double timeToRender;    //avg time per frame
+        double debugRenderTime;    //avg time per frame
         string debugString;
 
+
         protected Canvas Canvas { get; }
-        protected GraphicsDevice GraphicsDevice { get; }
-        protected ContentList Content { get; }
-
-
-        public GameScreen(GraphicsDevice device, ContentList content)
+        
+        public GameScreen(GameComponent game)
+            : base(game)
         {
-            Canvas = new Canvas(device);
-            GraphicsDevice = device;
-            Content = content;
+            Canvas = new Canvas(Screen);
         }
 
         /// <summary>
@@ -38,8 +35,9 @@ namespace Shanism.Client.GameScreens
 
             //draw debug
             Canvas.Begin();
-            Content.Fonts.NormalFont.DrawString(Canvas, debugString, Color.Goldenrod,
-                new Vector(24, 18), 0, 0);
+            Canvas.DrawString(Content.Fonts.NormalFont, debugString, 
+                Color.Goldenrod,
+                new Vector(0.01), 0, 0);
             Canvas.End();
         }
 
@@ -62,15 +60,15 @@ namespace Shanism.Client.GameScreens
             const double frameConst = 0.5;
 
             //visibility
-            if (KeyboardInfo.JustPressedKeys.Contains(Microsoft.Xna.Framework.Input.Keys.F12))
+            if (Keyboard.JustPressedKeys.Contains(Microsoft.Xna.Framework.Input.Keys.F12))
                 ShowDebugStats ^= true;
 
             if (!ShowDebugStats)
                 return;
             
             // FPS
-            timeToRender = (1 - frameConst) * timeToRender + frameConst * msElapsed;
-            var curFps = 1000 / timeToRender;
+            debugRenderTime = (1 - frameConst) * debugRenderTime + frameConst * msElapsed;
+            var curFps = 1000 / debugRenderTime;
 
             // mouse
             var debugLines = new List<string>
@@ -79,12 +77,12 @@ namespace Shanism.Client.GameScreens
 
                 $"Window Size: {Screen.Size}",
 
-                $"Mouse: {MouseInfo.ScreenPosition}",
-                $"Mouse UI: {MouseInfo.UiPosition:0.00}",
-                $"Mouse InGame: {MouseInfo.InGamePosition:0.00}",
+                $"Mouse: {Mouse.ScreenPosition}",
+                $"Mouse UI: {Mouse.UiPosition:0.00}",
+                $"Mouse InGame: {Mouse.InGamePosition:0.00}",
 
-                $"UI Hover: {Control.HoverControl?.GetType().Name}",
-                $"UI Focus: {Control.FocusControl?.GetType().Name }",
+                $"UI Hover: {RootControl.GlobalHover?.GetType().Name}",
+                $"UI Focus: {RootControl.GlobalFocus?.GetType().Name }",
             };
 
             writeDebugStats(debugLines);

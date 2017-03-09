@@ -11,7 +11,7 @@ namespace Shanism.Client.Input
     /// A combination of one or more of the Ctrl, Alt, Shift keys. 
     /// </summary>
     [Flags]
-    enum ModifierKeys : byte
+    public enum ModifierKeys : byte
     {
         None = 0,
 

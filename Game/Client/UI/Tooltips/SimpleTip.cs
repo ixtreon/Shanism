@@ -41,8 +41,9 @@ namespace Shanism.Client.UI.Tooltips
             if (Text != tipAsString)
             {
                 Text = tipAsString;
+
                 //update size, position
-                Size = Font.MeasureStringUi(Text, MaxWidth) + new Vector(Padding * 2);
+                Size = Font.MeasureString(Text, MaxWidth) + new Vector(Padding * 2);
             }
 
             Location = ((MouseInfo.ScreenPosition + MouseInfo.CursorSize) / Screen.UiScale)

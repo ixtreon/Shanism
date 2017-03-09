@@ -71,7 +71,7 @@ namespace Shanism.Engine.Entities
             => abilities.BeginCasting(ability);
 
 
-        internal bool TryCastAbility(ClientState state)
+        internal bool TryCastAbility(PlayerState state)
         {
             if (state.ActionId == 0) return false;
 

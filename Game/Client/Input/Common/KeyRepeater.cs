@@ -40,16 +40,33 @@ namespace Shanism.Client.Input
         /// <summary>
         /// The event raised whenever a character is to be displayed. 
         /// </summary>
-        public event Action<Keybind, char?> KeyRepeated;
-
-        public event Action<Keybind, char?> KeyPressed;
+        public event Action<Keybind, char?> CharacterTyped;
 
         bool hasKey => _keyCombo != Keybind.None;
+
+        readonly KeyboardInfo keyboard;
+
+        public KeyRepeater(KeyboardInfo keyboard)
+        {
+            this.keyboard = keyboard;
+        }
 
 
         public void Update(int msElapsed)
         {
-            if (!hasKey || !KeyboardInfo.IsDown(_keyCombo))
+            if(keyboard.JustPressedKeys.Any())
+            {
+                var pressedKey = new Keybind(keyboard.Modifiers, keyboard.JustPressedKeys.First());
+
+                _repeatDelay = KeyInitialDelay;
+                _keyCombo = pressedKey;
+                _currentChar = KeyMap.GetChar(_keyCombo.Key, _keyCombo.Modifiers.HasFlag(ModifierKeys.Shift));
+
+                // fire the event once on button press
+                if(hasKey)
+                    CharacterTyped?.Invoke(_keyCombo, _currentChar);
+            }
+            else if (_keyCombo == Keybind.None || !keyboard.IsDown(_keyCombo))
             {
                 _keyCombo = Keybind.None;
                 return;
@@ -60,19 +77,8 @@ namespace Shanism.Client.Input
             if (_repeatDelay <= 0)
             {
                 _repeatDelay = KeyRepeatDelay;
-                KeyRepeated?.Invoke(_keyCombo, _currentChar);
+                CharacterTyped?.Invoke(_keyCombo, _currentChar);
             }
-        }
-
-        public void PressKey(Keybind k)
-        {
-            _repeatDelay = KeyInitialDelay;
-            _keyCombo = k;
-            _currentChar = KeyMap.GetChar(_keyCombo.Key, _keyCombo.Modifiers.HasFlag(ModifierKeys.Shift));
-
-            // fire the event once on button press
-            if (hasKey)
-                KeyPressed?.Invoke(_keyCombo, _currentChar);
         }
     }
 }

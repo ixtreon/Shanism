@@ -14,8 +14,8 @@ namespace Shanism.Client.GameScreens
     {
         readonly ScenarioListControl scenarioList;
 
-        public SinglePlayer(GraphicsDevice device, ContentList content) 
-            : base(device, content)
+        public SinglePlayer(GameComponent game) 
+            : base(game)
         {
             SubTitle = "Single Player";
 

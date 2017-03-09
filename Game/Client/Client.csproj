@@ -109,6 +109,8 @@
     <Compile Include="GameScreens\MultiPlayerJoin.cs" />
     <Compile Include="GameScreens\MultiPlayerHost.cs" />
     <Compile Include="GameScreens\MultiPlayer.cs" />
+    <Compile Include="GameStruct.cs" />
+    <Compile Include="GameComponent.cs" />
     <Compile Include="Scenarios\ScenarioListControl.cs" />
     <Compile Include="Scenarios\ScenarioRow.cs" />
     <Compile Include="GameScreens\UiScreen.cs" />
@@ -121,7 +123,6 @@
     <Compile Include="Scenarios\ScenarioLibrary.cs" />
     <Compile Include="Scenarios\ScenarioList.cs" />
     <Compile Include="Settings\ServerSettings.cs" />
-    <Compile Include="Systems\Ability.cs" />
     <Compile Include="Systems\ClientSystem.cs" />
     <Compile Include="Systems\Actions.cs" />
     <Compile Include="Systems\Chat.cs" />
@@ -132,6 +133,7 @@
     <Compile Include="UI\Chat\IChatProvider.cs" />
     <Compile Include="UI\Common\PagedFlowPanel.cs" />
     <Compile Include="UI\Common\ScrollBar.cs" />
+    <Compile Include="UI\ControlInput.cs" />
     <Compile Include="UI\Game\CombatText\RangeIndicator.cs" />
     <Compile Include="UI\Common\CheckBox.cs" />
     <Compile Include="UI\Common\ProgressBar.cs" />
@@ -141,6 +143,7 @@
     <Compile Include="UI\Game\ErrorText\ErrorTextControl.cs" />
     <Compile Include="UI\Game\Units\UnitFrame.cs" />
     <Compile Include="UI\Game\Items\ItemSlot.cs" />
+    <Compile Include="UI\RootControl.cs" />
     <Compile Include="UI\Menus\Character\StatBox.cs" />
     <Compile Include="UI\Common\FlowPanel.cs" />
     <Compile Include="UI\Menus\Options.cs" />
@@ -152,7 +155,7 @@
     <Compile Include="Assets\TerrainCache.cs" />
     <Compile Include="GameHelper.cs" />
     <Compile Include="Input\Common\Keybind.cs" />
-    <Compile Include="Input\KeyMap.cs" />
+    <Compile Include="Input\Common\KeyMap.cs" />
     <Compile Include="EventArgs\MouseButtonArgs.cs" />
     <Compile Include="EventArgs\MouseArgs.cs" />
     <Compile Include="Ext\Effects.cs" />

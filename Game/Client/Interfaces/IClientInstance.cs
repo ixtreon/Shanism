@@ -9,7 +9,7 @@ namespace Shanism.Client
 {
     /// <summary>
     /// A local game instance. 
-    /// Contains the client engine along with the code necessary to run it. 
+    /// Contains the client engine along with the code necessary to launch it standalone. 
     /// </summary>
     public interface IClientInstance
     {
@@ -18,6 +18,9 @@ namespace Shanism.Client
         /// </summary>
         IClientEngine Engine { get; }
 
+        /// <summary>
+        /// Starts the engine.
+        /// </summary>
         void Run();
     }
 }

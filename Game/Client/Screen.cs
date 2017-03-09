@@ -3,69 +3,91 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Shanism.Client
 {
     /// <summary>
-    /// Contains information about the current camera, screen and UI parameters. 
+    /// Contains all the necessary information to display things on the screen. 
+    /// Includes the window dimensions, as well as mappings to UI and in-game coordinates.
     /// </summary>
-    static class Screen
+    public class Screen
     {
         static readonly Point DefaultSize = new Point(800, 600);
-        static readonly int DefaultUiScale = Math.Min(DefaultSize.X, DefaultSize.Y) / 2;
+        public static int DefaultUiScale { get; } = Math.Min(DefaultSize.X, DefaultSize.Y) / 2;
 
         /// <summary>
         /// Gets the size of the screen window in in-game units. 
         /// </summary>
-        public static Vector GameSize { get; private set; } = Constants.Client.WindowSize;
+        public Vector GameSize { get; private set; } = Constants.Client.WindowSize;
 
         /// <summary>
         /// Gets the in-game bounds of the screen rectangle. 
         /// </summary>
-        public static RectangleF GameBounds { get; private set; }
+        public RectangleF GameBounds { get; private set; }
 
         /// <summary>
         /// Gets the size of the screen window in pixels. 
         /// </summary>
-        public static Point Size { get; private set; } = DefaultSize;
+        public Point Size { get; private set; } = DefaultSize;
 
         /// <summary>
         /// Gets half the size of the sreen window in pixels. 
         /// </summary>
-        public static Point HalfSize { get; private set; }
+        public Point HalfSize { get; private set; }
 
         /// <summary>
         /// Gets the font-to-pixel ratio, 
         /// which is defined as the curent Ui scale over the default one. 
         /// </summary>
-        public static double FontScale { get; private set; } = 1;
+        public double FontScale { get; private set; } = 1;
 
         /// <summary>
         /// Gets the UI-to-pixel scaling factor. 
         /// </summary>
-        public static double UiScale { get; private set; } = DefaultUiScale;
+        public double UiScale { get; private set; } = DefaultUiScale;
 
-        public static float RenderSize { get; private set; } = Settings.Current.RenderSize;
+        public float RenderSize { get; private set; } = Settings.Current.RenderSize;
 
         /// <summary>
         /// Gets the Game-to-pixel scaling factor. 
         /// </summary>
-        public static Vector GameScale => Size / GameSize;
+        public Vector GameScale => Size / GameSize;
 
         /// <summary>
         /// Gets the size of the screen in UI units. 
         /// </summary>
-        public static Vector UiSize => (Vector)Size / UiScale;
+        public Vector UiSize => (Vector)Size / UiScale;
 
         /// <summary>
         /// Gets the camera center point in in-game coordinates. 
         /// </summary>
-        public static Vector GameCenter => _pannedLocation;
+        public Vector GameCenter => _pannedLocation;
 
 
-        static Vector _pannedLocation;
+        Vector _pannedLocation;
 
-        public static void SetWindowSize(Point windowSz)
+        public GraphicsDevice GraphicsDevice { get; }
+
+        public Screen(GraphicsDevice device)
+        {
+            GraphicsDevice = device;
+        }
+
+
+        public void Update()
+        {
+            //window size
+            //var winSize = Window.ClientBounds.Size;
+            //if(winSize.X != Size.X || winSize.Y != Size.Y)
+            //    SetWindowSize(winSize.ToPoint());
+
+            //render scale
+            RenderSize = Settings.Current.RenderSize;
+        }
+
+
+        public void SetWindowSize(Point windowSz)
         {
             Size = windowSz;
             HalfSize = Size / 2;
@@ -74,20 +96,20 @@ namespace Shanism.Client
             FontScale = UiScale / DefaultUiScale;
         }
 
-        public static void SetRenderSize(float renderSize)
+        public void SetRenderSize(float renderSize)
         {
             RenderSize = renderSize;
-            FontScale = UiScale / DefaultUiScale;
         }
 
-        public static void MoveCamera(Vector inGameCenter)
+
+        public void MoveCamera(Vector inGameCenter)
         {
             _pannedLocation = inGameCenter;
 
             GameBounds = new RectangleF(GameCenter - GameSize / 2, GameSize);
         }
 
-        public static void MoveCamera(Vector inGameCenter, Vector inGameSz)
+        public void MoveCamera(Vector inGameCenter, Vector inGameSz)
         {
             GameSize = inGameSz;
             _pannedLocation = inGameCenter;
@@ -96,17 +118,18 @@ namespace Shanism.Client
             GameBounds = new RectangleF(GameCenter - GameSize / 2, GameSize);
         }
 
+        #region Unit Conversions
 
         /// <summary>
         /// Gets the screen co-ordinates of the given in-game point. 
         /// </summary>
-        public static Vector GameToScreen(Vector p) 
+        public Vector GameToScreen(Vector p) 
             => ((p - GameCenter) * GameScale + HalfSize) * RenderSize;
 
         /// <summary>
         /// Converts the given screen point to in-game co-ordinates.  
         /// </summary>
-        public static Vector ScreenToGame(Vector position) 
+        public Vector ScreenToGame(Vector position) 
             => (position / RenderSize - HalfSize) / GameScale + GameCenter;
 
 
@@ -114,36 +137,37 @@ namespace Shanism.Client
         /// <summary>
         /// Converts the given in-game point to Ui co-ordinates. 
         /// </summary>
-        public static Vector GameToUi(Vector v)
+        public Vector GameToUi(Vector v)
             => ScreenToUi(GameToScreen(v));
 
-        public static Vector UiToGame(Vector absolutePosition) 
+        public Vector UiToGame(Vector absolutePosition) 
             => ScreenToGame(UiToScreen(absolutePosition));
 
         /// <summary>
         /// Converts the given Ui point to screen co-ordinates.  
         /// </summary>
-        public static Vector UiToScreen(Vector p)
+        public Vector UiToScreen(Vector p)
             => p * UiScale;
 
         /// <summary>
         /// Converts the given screen point to Ui co-ordinates.  
         /// </summary>
-        public static Vector ScreenToUi(Vector p) 
+        public Vector ScreenToUi(Vector p) 
             => p / UiScale;
 
         /// <summary>
         /// Gets the UI size of the given screen size. 
         /// </summary>
-        public static double ScreenToUiSize(double sz)
-            => sz / UiScale;
+        public double ScreenToUi(double p)
+            => p / UiScale;
 
         /// <summary>
         /// Gets the UI size of the given screen size. 
         /// </summary>
-        public static Vector UiToScreenSize(Vector sz)
-            => sz * UiScale;
+        public double UiToScreen(double p)
+            => p * UiScale;
 
+        #endregion
 
     }
 }

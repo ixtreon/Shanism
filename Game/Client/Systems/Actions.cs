@@ -23,10 +23,13 @@ namespace Shanism.Client.Systems
         public IHero Hero { get; set; }
 
 
-        public ActionSystem(UiSystem ui, SpriteSystem objects)
+        public ActionSystem(GameComponent game,
+            UiSystem ui, SpriteSystem objects)
+            : base(game)
         {
             Interface = ui;
-            Interface.actions = this;
+            Interface.AbilityActivated += CastAbility;
+
             Objects = objects;
         }
 
@@ -46,7 +49,7 @@ namespace Shanism.Client.Systems
             }
 
             //cast only if rightdown or if instacast
-            if (!MouseInfo.RightDown && ab.TargetType != AbilityTargetType.NoTarget)
+            if (!Mouse.RightDown && ab.TargetType != AbilityTargetType.NoTarget)
             {
                 ClientState.ActionId = 0;
                 return;
@@ -82,7 +85,7 @@ namespace Shanism.Client.Systems
             //cooldown
             if (ab.CurrentCooldown > 0)
             {
-                if (MouseInfo.RightJustPressed)
+                if (Mouse.RightJustPressed)
                     Interface.FloatingText.AddLabel(targetLoc, $"{ab.CurrentCooldown / 1000.0:0.0} sec!", Color.Red, FloatingTextStyle.Top);
                 return;
             }
@@ -91,7 +94,7 @@ namespace Shanism.Client.Systems
             if (ab.TargetType != AbilityTargetType.NoTarget
                 && targetLoc.DistanceTo(Hero.Position) > ab.CastRange)
             {
-                if (MouseInfo.RightJustPressed)
+                if (Mouse.RightJustPressed)
                 {
                     Interface.FloatingText.AddLabel(targetLoc, "Out of range", Color.Red, FloatingTextStyle.Top);
                     Interface.RangeIndicator.Show(ab.CastRange, 1250);
@@ -102,7 +105,7 @@ namespace Shanism.Client.Systems
             //mana
             if (Hero.Mana < ab.ManaCost)
             {
-                if (MouseInfo.RightJustPressed)
+                if (Mouse.RightJustPressed)
                 {
                     Interface.FloatingText.AddLabel(targetLoc, "Not enough mana", Color.Red, FloatingTextStyle.Top);
                 }
@@ -118,7 +121,7 @@ namespace Shanism.Client.Systems
 
         Vector getCastTargetLocation(IAbility ab)
         {
-            var mousePos = MouseInfo.InGamePosition;
+            var mousePos = Mouse.InGamePosition;
             if (!Settings.Current.ExtendCast)
                 return mousePos;
 

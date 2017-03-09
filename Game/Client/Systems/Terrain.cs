@@ -44,15 +44,14 @@ namespace Shanism.Client.Map
 
 
         readonly BasicEffect effect;
-        readonly GraphicsDevice device;
-        readonly TerrainCache terrain;
+
+        TerrainCache terrain => Content.Terrain;
 
 
-        public Terrain(GraphicsDevice device, TerrainCache terrain)
+        public Terrain(GameComponent game)
+            : base(game)
         {
-            this.device = device;
-            this.terrain = terrain;
-            effect = new BasicEffect(device)
+            effect = new BasicEffect(GraphicsDevice)
             {
                 VertexColorEnabled = false,
                 TextureEnabled = true,
@@ -82,7 +81,7 @@ namespace Shanism.Client.Map
 
         public void Draw()
         {
-            device.SamplerStates[0] = SamplerState.PointClamp;
+            GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
             //draw all chunks around us
             foreach (var pass in effect.CurrentTechnique.Passes)
@@ -94,8 +93,8 @@ namespace Shanism.Client.Map
                     var chunk = ChunksAvailable.TryGet(chunkId);
                     if (chunk != null && chunk.HasBuffer)
                     {
-                        device.SetVertexBuffer(chunk.Buffer);
-                        device.DrawPrimitives(PrimitiveType.TriangleList, 0, 2 * chunk.Area);
+                        GraphicsDevice.SetVertexBuffer(chunk.Buffer);
+                        GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 2 * chunk.Area);
                     }
                 }
             }
@@ -129,7 +128,7 @@ namespace Shanism.Client.Map
 
                 if (chunkData == null)
                 {
-                    chunkData = new TerrainChunk(device, ch, effect.Texture, msg.Data, msg.Span);
+                    chunkData = new TerrainChunk(GraphicsDevice, ch, effect.Texture, msg.Data, msg.Span);
                     ChunksAvailable[ch] = chunkData;
                 }
                 else

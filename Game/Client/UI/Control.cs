@@ -24,7 +24,7 @@ namespace Shanism.Client.UI
     /// <summary>
     /// Represents a user interface control. 
     /// </summary>
-    class Control
+    partial class Control
     {
 
         #region Static/Const members
@@ -37,24 +37,33 @@ namespace Shanism.Client.UI
         public const double LargePadding = 0.02;
 
 
+        public RootControl Root { get; protected set; }
+
         /// <summary>
         /// Gets the first control that is under the mouse pointer
         /// and has <see cref="CanHover"/> set to <c>true</c>. 
         /// </summary>
-        internal static Control HoverControl { get; private set; }   //todo: make protected
+        public Control HoverControl => RootControl.GlobalHover;
 
         /// <summary>
         /// Gets the control that currently has keyboard focus. 
         /// A control must have its <see cref="CanFocus"/> property set to <c>true</c> in order to become the <see cref="FocusControl"/>.
         /// </summary>
-        internal static Control FocusControl { get; private set; }
-
-        protected static ContentList Content { get; private set; }
+        public Control FocusControl => RootControl.GlobalFocus;
 
 
-        public static void SetContent(ContentList content)
+        static GameComponent game;
+
+        protected static Screen Screen => game.Screen;
+        protected static ContentList Content => game.Content;
+
+        protected static KeyboardInfo KeyboardInfo => game.Keyboard;
+        protected static MouseInfo MouseInfo => game.Mouse;
+
+
+        public static void SetContext(GameComponent game)
         {
-            Content = content;
+            Control.game = game;
         }
 
         #endregion
@@ -337,6 +346,7 @@ namespace Shanism.Client.UI
             if (c.Parent != null) throw new ArgumentException("This control is already a child of another control.");
 
             c.Parent = this;
+            c.Root = Root;
 
             controls.Add(c);
             OnControlAdded(c);
@@ -362,6 +372,7 @@ namespace Shanism.Client.UI
             if (c.Parent != this) throw new ArgumentException("The specified control is not a child of this control.");
 
             c.Parent = null;
+            c.Root = null;
 
             controls.Remove(c);
             OnControlRemoved(c);
@@ -448,114 +459,6 @@ namespace Shanism.Client.UI
 
         #region Main Control Methods
 
-        internal void UpdateMain(int msElapsed)
-        {
-            if (FocusControl == null || !FocusControl.IsChildOf(this))
-                FocusControl = this;
-
-            raiseMouseEvents();
-            raiseKeyboardEvents();
-        }
-
-        MouseArgs baseArgs => new MouseArgs(HoverControl, MouseInfo.UiPosition);
-        MouseButtonArgs leftArgs => new MouseButtonArgs(HoverControl, MouseInfo.UiPosition, MouseButton.Left);
-        MouseButtonArgs rightArgs => new MouseButtonArgs(HoverControl, MouseInfo.UiPosition, MouseButton.Right);
-
-
-        void raiseMouseReleasedEvents(MouseButtonArgs buttonReleasedArgs, bool isCursorInsideControl)
-        {
-            HoverControl?.MouseUp?.Invoke(buttonReleasedArgs);
-
-            //raise MouseClick only if mouse is inside the control
-            if (isCursorInsideControl)
-                HoverControl?.MouseClick?.Invoke(buttonReleasedArgs);
-        }
-
-        void raiseMouseEvents()
-        {
-            if (HoverControl == null)
-                HoverControl = this;
-
-            var newHover = getHover(MouseInfo.UiPosition - _location);
-            var isSameControl = (newHover == HoverControl);
-
-            //button release
-            if (MouseInfo.LeftJustReleased)
-                raiseMouseReleasedEvents(leftArgs, isSameControl);
-
-            if (MouseInfo.RightJustReleased)
-                raiseMouseReleasedEvents(rightArgs, isSameControl);
-
-            //hover update
-            if (!MouseInfo.LeftDown)
-            {
-                if (newHover != HoverControl)
-                {
-                    //leave old control
-                    HoverControl?.MouseLeave?.Invoke(baseArgs);
-
-                    // if we also released the button this frame and the source 
-                    // supports drag-drop, raise the drag-drop events
-                    //
-                    // hover is kept when mouse is down 
-                    // so that's what a drag-drop is
-                    if (MouseInfo.LeftJustReleased && HoverControl.CanDrag)
-                    {
-                        HoverControl.OnDrag?.Invoke(newHover);
-                        newHover.OnDrop?.Invoke(HoverControl);
-                    }
-
-                    //enter new control
-                    HoverControl = newHover;
-                    HoverControl.MouseEnter?.Invoke(baseArgs);
-                }
-            }
-
-            //mouse move
-            if (MouseInfo.UiPosition != MouseInfo.OldUiPosition)
-                HoverControl?.MouseMove?.Invoke(baseArgs);
-
-
-            //button press
-            if (MouseInfo.LeftJustPressed)
-                HoverControl?.MouseDown?.Invoke(leftArgs);
-
-            if (MouseInfo.RightJustPressed)
-                HoverControl?.MouseDown?.Invoke(rightArgs);
-
-
-            //focus control
-            if ((MouseInfo.LeftJustPressed || MouseInfo.RightJustPressed) && HoverControl != null)
-            {
-                var c = HoverControl;
-                while (!c.CanFocus && c.Parent != null)
-                    c = c.Parent;
-                c.SetFocus();
-            }
-        }
-
-        void raiseKeyboardEvents()
-        {
-            var focus = FocusControl;
-            if (focus != null)
-            {
-                //release, then press
-                //actions before keys
-
-                foreach (var k in KeyboardInfo.JustReleasedKeys)
-                    if (!k.IsModifier())
-                        focus.KeyReleased?.Invoke(new Keybind(KeyboardInfo.Modifiers, k));
-
-
-                foreach (var k in KeyboardInfo.JustPressedKeys)
-                    if (!k.IsModifier())
-                        focus.KeyPressed?.Invoke(new Keybind(KeyboardInfo.Modifiers, k));
-
-                foreach (var ga in KeyboardInfo.JustActivatedActions)
-                    focus.GameActionActivated?.Invoke(ga);
-            }
-        }
-
         #endregion
 
 
@@ -573,8 +476,7 @@ namespace Shanism.Client.UI
         /// </summary>
         public void SetFocus()
         {
-            if (CanFocus)
-                FocusControl = this;
+            Root?.SetFocus(this);
         }
 
         /// <summary>
@@ -582,13 +484,15 @@ namespace Shanism.Client.UI
         /// </summary>
         public void ClearFocus()
         {
-            if (FocusControl != this)
+            if (FocusControl != this || Parent == null )
                 return;
 
+            //find control to give the focus to
             var c = Parent;
-            while (c != null && !c.CanFocus)
+            while (!c.CanFocus && c.Parent != null)
                 c = c.Parent;
-            FocusControl = c;
+
+            Root.SetFocus(c);
         }
 
 
@@ -676,7 +580,7 @@ namespace Shanism.Client.UI
             }
         }
 
-        Control getHover(Vector mousePos)
+        protected Control getHover(Vector mousePos)
         {
             //search child controls first
             //order by descending zorder
@@ -701,5 +605,7 @@ namespace Shanism.Client.UI
                 Remove(c);
             Add(new MessageBox(caption, text));
         }
+
+
     }
 }

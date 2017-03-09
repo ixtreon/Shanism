@@ -84,7 +84,7 @@ namespace Shanism.Engine.Objects.Buffs
                 }
             }
 
-            Scripts.Enqueue(() => Prototype.OnUpdate(this));
+            Prototype.OnUpdate(this);
         }
 
         /// <summary>

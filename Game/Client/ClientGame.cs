@@ -22,17 +22,31 @@ namespace Shanism.Client
         bool _isLoaded;
 
 
-        ClientEngine inGameScreen;
+        ClientEngine gameScreen;
         MainMenu mainMenuScreen;
 
         GameScreen currentGameScreen;
 
-        ContentList contentList;
+
+        /// <summary>
+        /// All resources loaded with the game.
+        /// </summary>
+        ContentList contentList => game.Content;
+
+        /// <summary>
+        /// The main game screen structure.
+        /// </summary>
+        Screen screen => game.Screen;
+
+        /// <summary>
+        /// The main game input structure.
+        /// </summary>
+        GameComponent game;
 
 
         #region IClientInstance implementation
 
-        public IClientEngine Engine => inGameScreen;
+        public IClientEngine Engine => gameScreen;
 
         #endregion
 
@@ -44,8 +58,12 @@ namespace Shanism.Client
             graphics = new GraphicsDeviceManager(this);
             graphics.HardwareModeSwitch = false;
 
-            Window.Title = "ShanoRPG";
+            //setup MonoGame vars
+            IsMouseVisible = true;
 
+            Window.Title = "Shanism";
+            Window.AllowUserResizing = true;
+            Window.ClientSizeChanged += Window_ClientSizeChanged;
         }
 
 
@@ -56,28 +74,17 @@ namespace Shanism.Client
         {
             Console.WriteLine("Initializing...");
 
-            base.Initialize();
-
             GameHelper.SetGame(this);
             GameHelper.QuitToTitle += GameHelper_QuitToTitle;
 
 
-            //setup MonoGame vars
-            IsMouseVisible = true;
-
-            Window.AllowUserResizing = true;
-            Window.ClientSizeChanged += Window_ClientSizeChanged;
-
             GraphicsDevice.RasterizerState = new RasterizerState { CullMode = CullMode.None };
 
-            //setup screen dimensions
-            Screen.SetWindowSize(Window.ClientBounds.Size.ToPoint());
+            //IO
+            game = new GameComponent(GraphicsDevice, Content);
+            screen.SetWindowSize(Window.ClientBounds.Size.ToPoint());
 
-
-            //reload graphics settings from settings + hook settings saved
-            reloadGraphicsEngine();
-            Settings.Saved += (s) => reloadGraphicsEngine();
-
+            base.Initialize();
         }
 
         void setScreen(GameScreen scr)
@@ -88,26 +95,26 @@ namespace Shanism.Client
 
         void GameHelper_QuitToTitle()
         {
-            inGameScreen.Disconnect();
+            gameScreen.Disconnect();
             setScreen(mainMenuScreen);
         }
 
         void mainMenuScreen_GameStarted(IShanoEngine engine)
         {
             IReceptor receptor;
-            if (!inGameScreen.TryConnect(engine, "???", out receptor))
+            if (!gameScreen.TryConnect(engine, "???", out receptor))
                 throw new Exception("Unable to connect to the local server!");
 
             engine.StartPlaying(receptor);
 
-            setScreen(inGameScreen);
+            setScreen(gameScreen);
         }
 
         void recreateDrawBuffer()
         {
             var windowSize = Window.ClientBounds.Size.ToPoint();
 
-            inGameScreen.RecreateBuffer(windowSize);
+            gameScreen.RecreateBuffer(windowSize);
         }
 
         void reloadGraphicsEngine()
@@ -120,9 +127,8 @@ namespace Shanism.Client
             graphics.IsFullScreen = Settings.Current.FullScreen;
 
             //draw buffer
-            Screen.SetRenderSize(Settings.Current.RenderSize);
+            screen.SetRenderSize(Settings.Current.RenderSize);
             recreateDrawBuffer();
-
 
             graphics.ApplyChanges();
         }
@@ -164,19 +170,23 @@ namespace Shanism.Client
         protected override void LoadContent()
         {
             Console.WriteLine("Loading content...");
+
             //load default content (textures,fonts,animations)
-            contentList = new ContentList(GraphicsDevice, Content);
             if (!contentList.LoadDefault())
             {
                 //TODO: content loading failed
             }
 
             // game screens
-            inGameScreen = new ClientEngine(graphics.GraphicsDevice, contentList);
-
-            mainMenuScreen = new MainMenu(graphics.GraphicsDevice, contentList);
+            gameScreen = new ClientEngine(game);
+            mainMenuScreen = new MainMenu(game);
             mainMenuScreen.GameStarted += mainMenuScreen_GameStarted;
 
+            //reload graphics settings from settings + hook settings saved
+            reloadGraphicsEngine();
+            Settings.Saved += (s) => reloadGraphicsEngine();
+
+            // set the starting screen
             setScreen(mainMenuScreen);
         }
 
@@ -204,8 +214,7 @@ namespace Shanism.Client
             //    return;
 
             //input
-            MouseInfo.Update(msElapsed, IsActive);
-            KeyboardInfo.Update(msElapsed, IsActive);
+            game.Update(msElapsed, IsActive);
 
             //screen
             currentGameScreen.Update(msElapsed);

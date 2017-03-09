@@ -8,6 +8,7 @@ using Shanism.Common.Interfaces.Objects;
 using Shanism.Engine.Objects.Buffs;
 using Shanism.Network;
 using Shanism.Network.Common;
+using Shanism.Network.Serialization;
 using Shanism.Network.Server;
 
 namespace NetworkTests
@@ -37,6 +38,22 @@ namespace NetworkTests
 
                 Assert.AreEqual(ms1b, ms2b);
             }
+        }
+
+        [TestMethod]
+        public void PageWRiter2()
+        {
+            var w = new PageWriter2(15);
+            w = new PageWriter2(63);
+            w = new PageWriter2(64);
+            w = new PageWriter2(65);
+            w = new PageWriter2(66);
+            w = new PageWriter2(129);
+            w = new PageWriter2(4000);
+            w = new PageWriter2(4096);
+            w = new PageWriter2(4097);
+            w = new PageWriter2(4100);
+
         }
 
 

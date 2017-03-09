@@ -60,8 +60,6 @@ namespace Shanism.Client.UI
             => new Vector(Font.HeightUi / 10, Font.HeightUi);
 
 
-        readonly KeyRepeater keyRepeater = new KeyRepeater();
-
 
         public TextBox()
         {
@@ -74,10 +72,7 @@ namespace Shanism.Client.UI
             SelectionColor = Color.White.SetAlpha(150);
 
 
-            KeyPressed += keyRepeater.PressKey;
-            keyRepeater.KeyPressed += OnKeyRepeated;
-            keyRepeater.KeyRepeated += OnKeyRepeated;
-
+            KeyboardInfo.CharacterTyped += OnCharTyped;
         }
 
         protected override void OnUpdate(int msElapsed)
@@ -86,13 +81,10 @@ namespace Shanism.Client.UI
             if (HasFocus)
                 cursorBlink = (cursorBlink + msElapsed) % CursorBlinkRate;
 
-            //update repeated keys
-            keyRepeater.Update(msElapsed);
-
             base.OnUpdate(msElapsed);
         }
 
-        protected virtual void OnKeyRepeated(Keybind k, char? c)
+        protected virtual void OnCharTyped(Keybind k, char? c)
         {
             switch (k.Key)
             {
@@ -212,7 +204,7 @@ namespace Shanism.Client.UI
         void setText(string value)
         {
             _currentText = value;
-            textPositions = Font.GetLineCharsUi(value);
+            textPositions = Font.GetCharPositions(value);
         }
 
         public override void OnDraw(Canvas g)

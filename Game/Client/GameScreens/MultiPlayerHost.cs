@@ -14,8 +14,8 @@ namespace Shanism.Client.GameScreens
         static readonly Vector panelSize = new Vector(0.6, 0.7);
         static readonly Vector btnSize = new Vector(panelSize.X - 2 * Control.Padding, 0.15);
 
-        public MultiPlayerHost(GraphicsDevice device, ContentList content)
-            : base(device, content)
+        public MultiPlayerHost(GameComponent game)
+            : base(game)
         {
             SubTitle = "Host Multi Player";
 

@@ -38,7 +38,7 @@ namespace Shanism.Client.UI.Game
                 isForced = false;
 
             var curAbilityHover = (HoverControl as SpellButton)?.Ability;
-            if (!isForced && curAbilityHover != null && ((curAbilityHover.TargetType & AbilityTargetType.PointOrUnitTarget) != 0))
+            if ((!isForced || durationLeft <= 0) && curAbilityHover != null && ((curAbilityHover.TargetType & AbilityTargetType.PointOrUnitTarget) != 0))
             {
                 durationLeft = 1;
                 range = curAbilityHover.CastRange;

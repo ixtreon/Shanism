@@ -11,6 +11,8 @@ namespace Shanism.Client.Systems
 {
     class ChatSystem : ClientSystem, IChatProvider
     {
+        public ChatSystem(GameComponent game) : base(game) { }
+
         public event Action<string> ChatSent;
 
         public override void Update(int msElapsed)

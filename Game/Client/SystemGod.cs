@@ -19,19 +19,26 @@ namespace Shanism.Client
     /// <summary>
     /// The keeper of all in-game systems. 
     /// </summary>
-    class SystemGod
+    class SystemGod : GameComponent
     {
-        readonly ClientState clientState;
+        readonly PlayerState clientState;
+
         readonly IReceptor server;
 
         readonly List<ClientSystem> systems = new List<ClientSystem>();
 
-        readonly GraphicsDevice device;
+
+        readonly GameComponent game;
+
+        Screen Screen => game.Screen;
+
+        ContentList Content => game.Content;
+
 
         #region Systems
 
         /// <summary>
-        /// Lists and draws objects. 
+        /// Lists and draws objects.
         /// </summary>
         readonly SpriteSystem objects;
 
@@ -53,22 +60,21 @@ namespace Shanism.Client
         ChatSystem chat;
 
         UiSystem @interface;
-        private readonly ContentList content;
 
         #endregion
 
 
-        public SystemGod(GraphicsDevice device, ContentList content, 
-            IReceptor server, ClientState clientState)
+        public SystemGod(GameComponent game, 
+            IReceptor server, PlayerState playerState)
+            : base(game)
         {
+            this.game = game;
             this.server = server;
-            this.device = device;
-            this.clientState = clientState;
-            this.content = content;
+            this.clientState = playerState;
 
-            Control.SetContent(content);
+            Control.SetContext(game);
 
-            objects = new SpriteSystem(device, content);
+            objects = new SpriteSystem(game);
             Reload();
         }
 
@@ -97,12 +103,12 @@ namespace Shanism.Client
         {
             //systems
             systems.Clear();
-            systems.Add(terrain = new Terrain(device, content.Terrain));
+            systems.Add(terrain = new Terrain(this));
             systems.Add(objects);
-            systems.Add(chat = new ChatSystem());
-            systems.Add(@interface = new UiSystem(device, objects, chat));
-            systems.Add(movement = new MoveSystem(@interface));
-            systems.Add(actions = new ActionSystem(@interface, objects));
+            systems.Add(chat = new ChatSystem(this));
+            systems.Add(@interface = new UiSystem(this, objects, chat));
+            systems.Add(movement = new MoveSystem(this, @interface));
+            systems.Add(actions = new ActionSystem(this, @interface, objects));
 
             foreach (var sys in systems)
             {
@@ -123,7 +129,7 @@ namespace Shanism.Client
         {
             actions.Hero = objects.MainHero;
 
-            if(KeyboardInfo.JustActivatedActions.Contains(ClientAction.ReloadUi))
+            if(Keyboard.JustActivatedActions.Contains(ClientAction.ReloadUi))
                 Reload();
 
 

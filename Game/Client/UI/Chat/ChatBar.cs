@@ -15,8 +15,6 @@ namespace Shanism.Client.UI.Chat
 
         readonly LinkedList<string> messageHistory = new LinkedList<string>();
 
-        readonly KeyRepeater keyRepeater = new KeyRepeater();
-
         LinkedListNode<string> currentMsgHistoryNode;
 
 
@@ -34,7 +32,7 @@ namespace Shanism.Client.UI.Chat
             base.OnUpdate(msElapsed);
         }
 
-        protected override void OnKeyRepeated(Keybind k, char? c)
+        protected override void OnCharTyped(Keybind k, char? c)
         {
             switch (k.Key)
             {
@@ -88,7 +86,7 @@ namespace Shanism.Client.UI.Chat
                     break;
             }
 
-            base.OnKeyRepeated(k, c);
+            base.OnCharTyped(k, c);
         }
     }
 }

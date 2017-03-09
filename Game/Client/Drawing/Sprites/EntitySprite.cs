@@ -34,7 +34,9 @@ namespace Shanism.Client.Drawing
         /// </summary>
         public readonly IEntity Entity;
 
-        readonly ContentList content;
+        protected GameComponent Game { get; }
+
+        ContentList Content => Game.Content;
 
 
         TextureDef currentTexture;
@@ -47,13 +49,10 @@ namespace Shanism.Client.Drawing
         /// <summary>
         /// Gets or sets the draw depth. 0 is back, 1 is front. 
         /// </summary>
-        /// <value>
-        /// The draw depth.
-        /// </value>
         public float DrawDepth { get; protected set; }
 
-        double minDepth => Screen.GameBounds.Bottom;
-        double depthRange => Screen.GameBounds.Height;
+        double minDepth => Game.Screen.GameBounds.Bottom;
+        double depthRange => Game.Screen.GameBounds.Height;
 
         public bool RemoveFlag { get; set; }
 
@@ -61,12 +60,13 @@ namespace Shanism.Client.Drawing
         bool LoopAnimation;
         protected string AnimationName;
 
-        public EntitySprite(ContentList content, IEntity obj)
+        public EntitySprite(GameComponent game, IEntity obj)
         {
-            this.content = content;
+            this.Game = game;
+
             Entity = obj;
 
-            trySetAnimation(content.DefaultAnimation);
+            trySetAnimation(Content.DefaultAnimation);
             SetOrientation(obj.Orientation);
         }
         string modelName;
@@ -117,7 +117,7 @@ namespace Shanism.Client.Drawing
             if (ClientEngine.ShowDebugStats)
             {
                 const int texSz = 512;
-                sb.ShanoDraw(content.Circles.GetTexture(texSz),
+                sb.ShanoDraw(Content.Circles.GetTexture(texSz),
                     new Rectangle(0, 0, texSz, texSz),
                     new RectangleF(Entity.Position - Entity.Scale / 2, new Vector(Entity.Scale)),
                     Color.Red.SetAlpha(50));
@@ -153,7 +153,7 @@ namespace Shanism.Client.Drawing
         bool trySetAnimation(string fullName)
         {
             AnimationDef outAnim;
-            if (!content.Animations.TryGetValue(fullName ?? string.Empty, out outAnim))
+            if (!Content.Animations.TryGetValue(fullName ?? string.Empty, out outAnim))
                 return false;
 
             return trySetAnimation(outAnim);
@@ -167,11 +167,11 @@ namespace Shanism.Client.Drawing
             var texName = anim.Texture.ToLowerInvariant();
 
             TextureDef texDef;
-            if (!content.Textures.TryGet(texName, out texDef))
+            if (!Content.Textures.TryGet(texName, out texDef))
                 return false;
 
             Texture2D tex;
-            if (!content.Textures.TryGet(texName, out tex))
+            if (!Content.Textures.TryGet(texName, out tex))
                 return false;
 
             //set vars
@@ -195,14 +195,16 @@ namespace Shanism.Client.Drawing
         {
             //check if same model+anim
             var modelAnim = ShanoPath.Combine(Entity.Model, AnimationName);
-            if (ShanoPath.Equals(currentAnimation.Name, modelAnim))
+            if (currentAnimation.Name == modelAnim)
                 return modelAnim;
 
-            //try refetch model+anim
+            // try refetch model+anim
+            // e.g. "units/hero/move"
             if (trySetAnimation(modelAnim))
                 return modelAnim;
 
-            //try just model
+            // try just model
+            // e.g. "units/hero"
             if (trySetAnimation(Entity.Model))
             {
                 AnimationName = string.Empty;
@@ -210,10 +212,10 @@ namespace Shanism.Client.Drawing
                 return Entity.Model;
             }
 
-            //set default
-            trySetAnimation(content.DefaultAnimation);
+            //set default/dummy
+            trySetAnimation(Content.DefaultAnimation);
             AnimationName = string.Empty;
-            return content.DefaultAnimation.Name;
+            return Content.DefaultAnimation.Name;
         }
 
         const float PiOverTwo = (float)Math.PI / 2;

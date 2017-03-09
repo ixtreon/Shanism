@@ -13,135 +13,72 @@ namespace Shanism.Client.Drawing
     class TextureFont
     {
 
-        readonly SpriteFont Font;
-
-        /// <summary>
-        /// The user-defined scale of this font. 
-        /// </summary>
-        readonly double _userScale;
+        internal readonly SpriteFont Font;
 
         //matches characters NOT part of this font.
         readonly Regex invalidCharFinder;
 
+        /// <summary>
+        /// The user-defined scale of this font. 
+        /// </summary>
+        public double UserScale { get; }
 
         /// <summary>
-        /// Gets the current scaling factor based on the screen size and the user scaling. 
+        /// Gets the line spacing (the distance from baseline to baseline)
+        /// of this font in pixels.
         /// </summary>
-        double Scale => _userScale * Screen.FontScale;
-
-        /// <summary>
-        /// Gets the current height of the font in pixels. 
-        /// </summary>
-        public int HeightPx => (int)(Font.LineSpacing * Scale);
-
-        /// <summary>
-        /// Gets the character spacing of the font in pixels. 
-        /// </summary>
-        public int CharSpacingPx => (int)(Font.Spacing * Scale);
-
+        public double LineSpacing => Font.LineSpacing;
+        
         /// <summary>
         /// Gets the height of the font in UI units. 
         /// </summary>
-        public double HeightUi => HeightPx / Screen.UiScale;
+        public double HeightUi => UserScale;
 
-
-        /// <summary>
-        /// Gets the char character of this font in UI units. 
-        /// </summary>
-        public double CharSpacingUi => CharSpacingPx / Screen.UiScale;
-
+        public double pixelToUiz { get; }
 
         public TextureFont(SpriteFont font, double scale = 1f)
         {
-            _userScale = scale;
+            UserScale = scale;
             Font = font;
 
-            invalidCharFinder = new Regex($"[^{string.Join(string.Empty, font.Characters)}]");
+            pixelToUiz = scale / font.LineSpacing;
+
+            var recognizedCharacters = new string(font.Characters.ToArray());
+            invalidCharFinder = new Regex($"[^{Regex.Escape(recognizedCharacters)}]");
         }
 
-        public void DrawString(SpriteBatch sb, string text,
-            Common.Color color, Vector p,
-            float xAnchor, float yAnchor,
-            double? maxWidth = null)
-            => DrawString(sb, text, color.ToXnaColor(), p, xAnchor, yAnchor, maxWidth);
 
-        /// <summary>
-        /// Draws the given multi-line string at the given screen coordinates. 
-        /// </summary>
-        /// <param name="sb">The SpriteBatch instance to draw on. </param>
-        /// <param name="text">The text to write. </param>
-        /// <param name="col">The color of the text. </param>
-        /// <param name="p">The screen position to draw the text on. </param>
-        /// <param name="xAnchor">The X anchor of the text. </param>
-        /// <param name="yAnchor">The Y anchor of the text. </param>
-        /// <param name="maxWidth">The maximum width the string is allowed to be. </param>
-        /// <returns>The height of the string, in pixels. </returns>
-        public void DrawString(SpriteBatch sb, string text,
-            Color color, Vector p,
-            float xAnchor, float yAnchor,
-            double? maxWidth = null)
+        /// UI string sizes
+
+        //char position breakdown
+        public double[] GetCharPositions(string text)
         {
             if (string.IsNullOrEmpty(text))
-                return;
+                return new[] { 0.0 };
 
-            if (maxWidth != null)
-                text = getLines(text, maxWidth.Value);
+            var vals = new double[text.Length + 1];
+            for (int i = 1; i <= text.Length; i++)
+                vals[i] = Font.MeasureString(text.Substring(0, i)).X * pixelToUiz;
 
-            var sz = Font.MeasureString(text).ToVector() * Scale;
-            var drawPos = p - new Vector(sz.X * xAnchor, sz.Y * yAnchor);
-
-            sb.DrawString(Font, text, drawPos.ToVector2(), color,
-                0, Microsoft.Xna.Framework.Vector2.Zero,
-                (float)Scale, SpriteEffects.None, 0);
-
+            return vals;
         }
 
-
-        public Vector MeasureStringUi(string text, double? maxWidth = null)
+        // measure no max
+        public Vector MeasureString(string text)
         {
-            return MeasureString(text, (maxWidth * Screen.UiScale)) / Screen.UiScale;
+            return Font.MeasureString(text).ToVector() * pixelToUiz;
         }
 
-        public Vector MeasureString(string text,
-            double? maxWidth = null)
+
+        //split lines
+        public string SplitLines(string text, double maxWidth)
         {
             if (string.IsNullOrEmpty(text))
-                return Vector.Zero;
+                return string.Empty;
 
-            if (maxWidth.HasValue)
-                text = getLines(text, maxWidth.Value);
-
-            return Font.MeasureString(text).ToVector() * Scale;
-        }
-
-
-        public double[] GetLineCharsPx(string s)
-        {
-            if (string.IsNullOrEmpty(s))
-                return new double[] { 0 };
-
-            return Enumerable.Range(0, s.Length + 1)
-                .Select(i => (double)Font.MeasureString(s.Substring(0, i)).X * Scale)
-                .ToArray();
-        }
-
-        public double[] GetLineCharsUi(string s)
-        {
-            var ws = GetLineCharsPx(s);
-
-            for (int i = 1; i < ws.Length; i++)
-                ws[i] = Screen.ScreenToUiSize(ws[i]);
-
-            return ws;
-        }
-
-        string getLines(string text, double maxWidth)
-        {
             var midLen = 2 * Font.Spacing + Font.MeasureString(" ").X;
             var sb = new StringBuilder(text.Length);
             var curLine = new StringBuilder();
-
-            maxWidth /= Scale;
 
             text = removeInvalidChars(text);
 
@@ -155,7 +92,7 @@ namespace Shanism.Client.Drawing
                     var word = words[j];
                     if (curLine.Length > 0)
                     {
-                        var newWidth = Font.MeasureString($"{curLine} {word}").X; //becomes O(N^2) in here
+                        var newWidth = Font.MeasureString($"{curLine} {word}").X * pixelToUiz; //method becomes O(N^2) in here
 
                         if (newWidth > maxWidth)
                         {
@@ -183,7 +120,25 @@ namespace Shanism.Client.Drawing
             return sb.ToString();
         }
 
-        string removeInvalidChars(string s)
+        //measure with max
+        public Vector MeasureString(string text, double maxWidth)
+            => MeasureString(SplitLines(text, maxWidth));
+
+
+        /// Px string sizes
+
+        // measure no max
+        public Vector MeasureStringPx(Screen s, string text)
+            => MeasureString(text) * s.UiScale;
+        //split lines
+        public string SplitLinesPx(Screen s, string text, double maxWidthPx)
+            => SplitLines(text, maxWidthPx / s.UiScale);
+        // measure with max
+        public Vector MeasureStringPx(Screen s, string text, double maxWidthPx)
+            => MeasureString(text, maxWidthPx / s.UiScale) * s.UiScale;
+
+
+        string removeInvalidChars(string s) 
             => invalidCharFinder.Replace(s, string.Empty);
     }
 }

@@ -78,22 +78,22 @@ namespace Shanism.Network.Common
             var fr = new FieldReader(msg);
             foreach (var kvp in _objects.OrderBy(kvp => kvp.Key))
             {
-                var curObj = kvp.Value;
-                var curObjType = (ObjectType)fr.ReadByte(0);
+                var obj = kvp.Value;
+                var objType = (ObjectType)fr.ReadByte(0);
 
                 //create or replace the object, if needed
-                if (curObj == null || curObj.ObjectType != curObjType)
+                if (obj == null || obj.ObjectType != objType)
                 {
-                    if (curObj is EntityStub)
-                        _visibleEntities.Remove((EntityStub)curObj);
+                    if (obj is EntityStub)
+                        _visibleEntities.Remove((EntityStub)obj);
 
-                    _objects[kvp.Key] = curObj = Mapper.Create(curObjType, kvp.Key);
+                    _objects[kvp.Key] = obj = Mapper.Create(objType, kvp.Key);
 
-                    if (curObj is EntityStub)
-                        _visibleEntities.Add((EntityStub)curObj);
+                    if (obj is EntityStub)
+                        _visibleEntities.Add((EntityStub)obj);
                 }
 
-                Mapper.Read(curObj, fr);
+                Mapper.Read(objType, obj, fr);
             }
 
             CurrentFrame = toFrame;

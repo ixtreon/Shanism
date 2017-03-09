@@ -53,7 +53,7 @@ namespace UnitTests
             {
                 var testObj = testObjects[i];
                 var defaultObj = mapper.GetDefault(testObj.ObjectType);
-                mapper.Write(defaultObj, testObj, w);
+                mapper.Write(testObj.ObjectType, defaultObj, testObj, w);
             }
 
             msg.Position = 0;
@@ -62,10 +62,11 @@ namespace UnitTests
             var r = new FieldReader(msg);
             for (uint i = 0; i < outObjects.Length; i++)
             {
-                var baseObj = mapper.Create(testObjects[i].ObjectType, i + 1);
+                var testObj = testObjects[i];
+                var baseObj = mapper.Create(testObj.ObjectType, i + 1);
                 outObjects[i] = baseObj;
 
-                mapper.Read(baseObj, r);
+                mapper.Read(testObj.ObjectType, baseObj, r);
             }
 
             Assert.AreEqual(hero.Name,

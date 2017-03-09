@@ -46,14 +46,14 @@ namespace Shanism.Network.Common
         public ObjectStub GetDefault(ObjectType ty)
             => defaultObjects[(byte)ty];
 
-        public void Write(ObjectStub oldObj, IGameObject obj, FieldWriter w)
+        public void Write(ObjectType objType, ObjectStub oldObj, IGameObject obj, FieldWriter w)
         {
-            writers[(int)obj.ObjectType](oldObj, obj, w);
+            writers[(int)objType](oldObj, obj, w);
         }
 
-        public ObjectStub Read(ObjectStub obj, FieldReader r)
+        public ObjectStub Read(ObjectType objType, ObjectStub obj, FieldReader r)
         {
-            readers[(int)obj.ObjectType](obj, r);
+            readers[(int)objType](obj, r);
             return obj;
         }
 

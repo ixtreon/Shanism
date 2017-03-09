@@ -8,35 +8,44 @@ using System.Threading.Tasks;
 
 namespace Shanism.Client.Input
 {
-    static class MouseInfo
+    public class MouseInfo
     {
         public static readonly Vector CursorSize = new Vector(14, 26);
 
-        static MouseState oldMouseState;
-        static MouseState mouseState;
+
+        readonly Screen screen;
+
+        MouseState oldMouseState;
+        MouseState mouseState;
 
 
-        public static Vector ScreenPosition { get; private set; }
-        public static Vector InGamePosition { get; private set; }
-        public static Vector UiPosition { get; private set; }
+        public Vector ScreenPosition { get; private set; }
+        public Vector InGamePosition { get; private set; }
+        public Vector UiPosition { get; private set; }
 
-        public static Vector OldScreenPosition { get; private set; }
-        public static Vector OldInGamePosition { get; private set; }
-        public static Vector OldUiPosition { get; private set; }
-
-
-        public static bool LeftDown => mouseState.LeftButton == ButtonState.Pressed;
-        public static bool RightDown => mouseState.RightButton == ButtonState.Pressed;
-
-        public static bool LeftHeldDown => mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Pressed;
-        public static bool RightHeldDown => mouseState.RightButton == ButtonState.Pressed && oldMouseState.RightButton == ButtonState.Pressed;
-        public static bool LeftJustPressed => mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released;
-        public static bool RightJustPressed => mouseState.RightButton == ButtonState.Pressed && oldMouseState.RightButton == ButtonState.Released;
-        public static bool LeftJustReleased => mouseState.LeftButton == ButtonState.Released && oldMouseState.LeftButton == ButtonState.Pressed;
-        public static bool RightJustReleased => mouseState.RightButton == ButtonState.Released && oldMouseState.RightButton == ButtonState.Pressed;
+        public Vector OldScreenPosition { get; private set; }
+        public Vector OldInGamePosition { get; private set; }
+        public Vector OldUiPosition { get; private set; }
 
 
-        public static void Update(int msElapsed, bool isActive)
+        public bool LeftDown => mouseState.LeftButton == ButtonState.Pressed;
+        public bool RightDown => mouseState.RightButton == ButtonState.Pressed;
+
+        public bool LeftHeldDown => mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Pressed;
+        public bool RightHeldDown => mouseState.RightButton == ButtonState.Pressed && oldMouseState.RightButton == ButtonState.Pressed;
+        public bool LeftJustPressed => mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released;
+        public bool RightJustPressed => mouseState.RightButton == ButtonState.Pressed && oldMouseState.RightButton == ButtonState.Released;
+        public bool LeftJustReleased => mouseState.LeftButton == ButtonState.Released && oldMouseState.LeftButton == ButtonState.Pressed;
+        public bool RightJustReleased => mouseState.RightButton == ButtonState.Released && oldMouseState.RightButton == ButtonState.Pressed;
+
+
+        public MouseInfo(Screen screen)
+        {
+            this.screen = screen;
+        }
+
+
+        public void Update(int msElapsed, bool isActive)
         {
             if (!isActive) return;
 
@@ -48,8 +57,8 @@ namespace Shanism.Client.Input
             OldUiPosition = UiPosition;
 
             ScreenPosition = new Vector(mouseState.X, mouseState.Y);
-            InGamePosition = Screen.ScreenToGame(ScreenPosition);
-            UiPosition = Screen.ScreenToUi(ScreenPosition);
+            InGamePosition = screen.ScreenToGame(ScreenPosition);
+            UiPosition = screen.ScreenToUi(ScreenPosition);
         }
     }
 }

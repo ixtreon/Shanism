@@ -15,8 +15,8 @@ namespace Shanism.Client.GameScreens
         static readonly Vector btnSize = new Vector(panelSize.X - 2 * Control.Padding, 0.15);
 
 
-        public MultiPlayer(GraphicsDevice device, ContentList content)
-            : base(device, content)
+        public MultiPlayer(GameComponent game)
+            : base(game)
         {
             SubTitle = "Multi Player";
 
@@ -49,10 +49,10 @@ namespace Shanism.Client.GameScreens
             Root.Add(flowPanel);
 
             //create sub-screens
-            mpJoin = new MultiPlayerJoin(device, Content);
+            mpJoin = new MultiPlayerJoin(this);
             mpJoin.GameStarted += StartGame;
 
-            mpHost = new MultiPlayerHost(device, Content);
+            mpHost = new MultiPlayerHost(this);
             mpHost.GameStarted += StartGame;
         }
 

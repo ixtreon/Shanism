@@ -38,7 +38,7 @@ namespace Shanism.Engine.Systems
             foreach (var b in buffs)
             {
                 b.Update(msElapsed);
-                if (b.HasExpired)
+                if (b.HasExpired || b.IsDestroyed)
                     buffsToRemove.Add(b);
             }
 

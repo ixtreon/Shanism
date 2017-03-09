@@ -123,5 +123,25 @@ namespace Shanism.Engine
         {
             Allocator<GameObject>.Deallocate(Id);
         }
+
+        /// <summary>
+        /// Gets or sets whether this object 
+        /// should be removed from the game as soon as possible. 
+        /// </summary>
+        internal bool IsDestroyed { get; set; }
+
+        /// <summary>
+        /// Marks this GameObject for destruction, eventually removing it from the game. 
+        /// </summary>
+        public virtual void Destroy()
+        {
+            if (IsDestroyed)
+            {
+                Console.WriteLine("Trying to destroy an object twice!");
+                return;
+            }
+
+            IsDestroyed = true;
+        }
     }
 }

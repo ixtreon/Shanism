@@ -18,9 +18,6 @@ namespace Shanism.Client.Systems
     {
         const uint NoHeroGuid = 0;
 
-        readonly GraphicsDevice device;
-
-        readonly ContentList content;
 
         readonly Dictionary<uint, EntitySprite> unitSpriteDict = new Dictionary<uint, EntitySprite>();
 
@@ -53,12 +50,10 @@ namespace Shanism.Client.Systems
         public EntitySprite HoverSprite => hoverSprite;
 
 
-        public SpriteSystem(GraphicsDevice device, ContentList content)
+        public SpriteSystem(GameComponent game)
+            : base(game)
         {
-            this.device = device;
-            this.content = content;
 
-            objectBatch = new SpriteBatch(device);
         }
 
         public override void Update(int msElapsed)
@@ -70,7 +65,7 @@ namespace Shanism.Client.Systems
 
 
             //update all sprites + hover guy
-            var mousePos = MouseInfo.InGamePosition;
+            var mousePos = Mouse.InGamePosition;
 
             //set the `remove` flag
             foreach (var kvp in unitSpriteDict)
@@ -124,12 +119,12 @@ namespace Shanism.Client.Systems
             {
                 case ObjectType.Hero:
                 case ObjectType.Unit:
-                    sprite = new UnitSprite(content, (IUnit)e);
+                    sprite = new UnitSprite(this, (IUnit)e);
                     break;
 
                 case ObjectType.Doodad:
                 case ObjectType.Effect:
-                    sprite = new EntitySprite(content, e);
+                    sprite = new EntitySprite(this, e);
                     break;
 
                 default:

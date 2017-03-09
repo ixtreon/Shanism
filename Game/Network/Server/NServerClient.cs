@@ -47,7 +47,7 @@ namespace Shanism.Network.Server
 
         uint LastAckFrame { get; set; }
 
-        public ClientState State { get; private set; } = new ClientState();
+        public PlayerState State { get; private set; } = new PlayerState();
 
         public event Action<IOMessage> MessageSent;
 
@@ -124,13 +124,13 @@ namespace Shanism.Network.Server
         internal void readClientFrame(NetIncomingMessage msg)
         {
             uint frameId = 0;
-            ClientState state = null;
+            PlayerState state = null;
 
             try
             {
                 frameId = msg.ReadUInt32();
                 using (var ms = new MemoryStream(msg.Data, msg.PositionInBytes, msg.LengthBytes - msg.PositionInBytes))
-                    state = ProtoBuf.Serializer.Deserialize<ClientState>(ms);
+                    state = ProtoBuf.Serializer.Deserialize<PlayerState>(ms);
             }
             catch
             {

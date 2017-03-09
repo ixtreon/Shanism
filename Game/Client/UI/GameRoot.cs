@@ -12,7 +12,7 @@ using Shanism.Client.Input;
 
 namespace Shanism.Client.UI
 {
-    class GameRoot : Control
+    class GameRoot : RootControl
     {
         public readonly UnitFrame HeroFrame;
         public readonly CastBar HeroCastBar;

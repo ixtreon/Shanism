@@ -25,8 +25,8 @@ namespace Shanism.Client.GameScreens
         readonly ConfirmExit exitDialog;
         readonly Control optionsWindow;
 
-        public MainMenu(GraphicsDevice device, ContentList content)
-            : base(device, content)
+        public MainMenu(GameComponent game)
+            : base(game)
         {
             //main menu & entries
             Root.Add(flowPanel = new FlowPanel
@@ -95,7 +95,7 @@ namespace Shanism.Client.GameScreens
 
         void MultiPlayer_MouseClick(Input.MouseButtonArgs e)
         {
-            var mpScreen = new MultiPlayer(GraphicsDevice, Content);
+            var mpScreen = new MultiPlayer(this);
             mpScreen.GameStarted += onGameStarted;
 
             SetScreen(mpScreen);
@@ -103,7 +103,7 @@ namespace Shanism.Client.GameScreens
 
         void SinglePlayer_MouseClick(Input.MouseButtonArgs e)
         {
-            var spScreen = new SinglePlayer(GraphicsDevice, Content);
+            var spScreen = new SinglePlayer(this);
             spScreen.GameStarted += onGameStarted;
 
             SetScreen(spScreen);

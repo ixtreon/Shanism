@@ -75,11 +75,6 @@ namespace Shanism.Engine
         public object Data { get; set; }
 
         /// <summary>
-        /// Gets whether this entity should be removed from the map as soon as possible. 
-        /// </summary>
-        internal bool IsDestroyed { get; set; }
-
-        /// <summary>
         /// Gets or sets the location of the center of this game object. 
         /// </summary>
         public Vector Position { get; set; }
@@ -149,26 +144,14 @@ namespace Shanism.Engine
         }
 
         /// <summary>
-        /// Marks this GameObject for destruction, eventually removing it from the game. 
-        /// </summary>
-        public virtual void Destroy()
-        {
-            if (IsDestroyed)
-            {
-                Console.WriteLine("Trying to destroy an object twice!");
-                return;
-            }
-
-            IsDestroyed = true;
-        }
-
-        /// <summary>
         /// Calls the <see cref="OnUpdate(int)"/> method. 
         /// </summary>
         /// <param name="msElapsed"></param>
         internal override void Update(int msElapsed)
         {
-            Scripts.Enqueue(() => OnUpdate(msElapsed));
+            OnUpdate(msElapsed);
+            if (false)
+                Scripts.Enqueue(() => OnUpdate(msElapsed));
         }
 
         /// <summary>

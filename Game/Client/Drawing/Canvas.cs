@@ -8,13 +8,13 @@ using System.Linq;
 namespace Shanism.Client
 {
     /// <summary>
-    /// A graphics object used to draw on top of some or all the MonoGame SpriteBatch. 
+    /// A hipster SpriteBatch. 
     /// </summary>
     class Canvas : SpriteBatch
     {
         readonly Stack<RectangleF> drawStack = new Stack<RectangleF>();
 
-        readonly GraphicsDevice device;
+        readonly Screen screen;
 
 
         /// <summary>
@@ -32,10 +32,12 @@ namespace Shanism.Client
         /// </summary>
         public Vector Size => Bounds.Size;
 
-        public Canvas(GraphicsDevice gd)
-            : base(gd)
+        GraphicsDevice device => screen.GraphicsDevice;
+
+        public Canvas(Screen screen)
+            : base(screen.GraphicsDevice)
         {
-            device = gd;
+            this.screen = screen;
         }
 
         public void Begin()
@@ -97,15 +99,27 @@ namespace Shanism.Client
         }
 
 
-        public void DrawString(TextureFont f, string text, Common.Color color,
+        public void DrawString(TextureFont f, string text, Color color,
             Vector txtPos,
-            float xAnchor, float yAnchor, double? txtMaxWidth = null)
+            float xAnchor, float yAnchor, double? maxWidth = null)
         {
 
-            var screenPos = Screen.UiToScreen(Position + txtPos);
-            var screenMaxWidth = Screen.UiScale * txtMaxWidth;
-            f.DrawString(this, text, color, screenPos,
-                xAnchor, yAnchor, screenMaxWidth);
+            var screenPos = screen.UiToScreen(Position + txtPos);
+            var screenMaxWidth = screen.UiScale * maxWidth;
+
+            if (string.IsNullOrEmpty(text))
+                return;
+
+            if (screenMaxWidth != null)
+                text = f.SplitLinesPx(screen, text, screenMaxWidth.Value);
+
+            var sz = f.MeasureStringPx(screen, text);
+            var drawPos = screenPos - new Vector(sz.X * xAnchor, sz.Y * yAnchor);
+
+            DrawString(f.Font, text, drawPos.ToVector2(),
+                color.ToXnaColor(),
+                0, Microsoft.Xna.Framework.Vector2.Zero,
+                (float)(f.pixelToUiz * screen.UiScale), SpriteEffects.None, 0);
         }
 
         void clampPositionAndSize(ref Vector pos, ref Vector size)
@@ -116,8 +130,8 @@ namespace Shanism.Client
 
         void uiToScreen(ref Vector pos, ref Vector size)
         {
-            pos = Screen.UiToScreen(Position + pos);
-            size = Screen.UiToScreenSize(size);
+            pos = screen.UiToScreen(Position + pos);
+            size = screen.UiToScreen(size);
         }
 
         public override string ToString() => $"Graphics @ {Position} : {Size}";

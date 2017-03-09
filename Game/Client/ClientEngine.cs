@@ -39,7 +39,7 @@ namespace Shanism.Client
 
         bool isConnected;
 
-        public ClientState State { get; } = new ClientState();
+        public PlayerState State { get; } = new PlayerState();
 
         public RenderTarget2D RenderTarget { get; set; }
 
@@ -50,8 +50,8 @@ namespace Shanism.Client
         string IShanoClient.Name => playerName;
 
 
-        public ClientEngine(GraphicsDevice graphics, ContentList content, string playerName = "Shanist")
-            : base(graphics, content)
+        public ClientEngine(GameComponent game, string playerName = "Shanist")
+            : base(game)
         {
             this.playerName = playerName;
 
@@ -63,7 +63,8 @@ namespace Shanism.Client
 
         TextureCache IClientEngine.Textures => Content.Textures;
 
-        public bool TryConnect(IShanoEngine server, string playerName, out IReceptor receptor)
+        public bool TryConnect(IShanoEngine server, string playerName, 
+            out IReceptor receptor)
         {
             //set new server
             if (server == null)
@@ -113,7 +114,7 @@ namespace Shanism.Client
             if (Systems != null)
                 Systems.MessageSent -= sendMessage;
 
-            Systems = new SystemGod(GraphicsDevice, Content, receptor, State);
+            Systems = new SystemGod(this, receptor, State);
             Systems.MessageSent += sendMessage;
         }
 
@@ -128,7 +129,7 @@ namespace Shanism.Client
             base.Update(msElapsed);
 
             //quit while loading
-            if (!isConnected && KeyboardInfo.IsActivated(cancelConnectKeybind))
+            if (!isConnected && Keyboard.IsActivated(cancelConnectKeybind))
             {
                 GameHelper.Quit();
                 return;
@@ -184,7 +185,9 @@ namespace Shanism.Client
                 var shader = Content.Shaders.FogOfWar;
                 if (shader != null && Systems.MainHero != null)
                 {
-                    var destRect = new Microsoft.Xna.Framework.Rectangle(0, 0, (int)(Screen.Size.X * Screen.RenderSize), (int)(Screen.Size.Y * Screen.RenderSize));
+                    var destRect = new Microsoft.Xna.Framework.Rectangle(0, 0, 
+                        (int)(Screen.Size.X * Screen.RenderSize), 
+                        (int)(Screen.Size.Y * Screen.RenderSize));
                     var tint = Color.White;
                     var tex = Content.Textures.Blank;
 
@@ -224,20 +227,20 @@ namespace Shanism.Client
             base.Draw();
         }
 
-        void IClientEngine.SetWindowSize(Point sz)
-        {
-            if (sz.X == 0 || sz.Y == 0 || sz == Screen.Size)
-                return;
-
-            Screen.SetWindowSize(/*((Vector)*/sz /** Settings.Current.RenderSize).ToPoint()*/);
-        }
-
         void IClientEngine.MoveCamera(Vector? inGameCenter, Vector? inGameSz)
             => Screen.MoveCamera(inGameCenter ?? Screen.GameCenter, inGameSz ?? Screen.GameSize);
 
         void IClientEngine.SetDesignMode(bool isDesignMode)
         {
             this.isDesignMode = isDesignMode;
+        }
+
+        void IClientEngine.SetWindowSize(Point sz)
+        {
+            if(sz.X == 0 || sz.Y == 0 || sz == Screen.Size)
+                return;
+
+            Screen.SetWindowSize(sz);
         }
 
         Vector IClientEngine.GameToScreen(Vector gamePos)
@@ -290,7 +293,7 @@ namespace Shanism.Client
             GraphicsDevice.Clear(Color.Black);
 
             Canvas.Begin();
-            font.DrawString(Canvas, txt, Color.DarkRed, pos, 0f, 0f);
+            Canvas.DrawString(font, txt, Color.DarkRed.ToShanoColor(), pos, 0f, 0f);
             Canvas.End();
         }
 

@@ -53,7 +53,10 @@ namespace Shanism.Client.GameScreens
                 AutoSize = false,
                 CanHover = false,
                 Location = new Vector(Padding),
-                Size = new Vector(Size.X - 2 * Padding, nameFont.HeightUi),
+
+                Width = Size.X - 2 * Padding,
+                LineHeight = 1,
+
                 ParentAnchor = AnchorMode.Left | AnchorMode.Top | AnchorMode.Right,
                 Text = sc.Name,
             });

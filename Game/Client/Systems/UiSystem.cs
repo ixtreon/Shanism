@@ -23,7 +23,8 @@ namespace Shanism.Client.Systems
     {
         readonly GameRoot root;
 
-        readonly SpriteSystem objects;
+
+        readonly Canvas g;
 
         UnitSprite _curHeroSprite;
 
@@ -36,28 +37,27 @@ namespace Shanism.Client.Systems
 
         public Control Root => root;
 
-        readonly GraphicsDevice device;
-        readonly Canvas g;
 
-        public ActionSystem actions;
+        readonly SpriteSystem objects;
 
-        public UiSystem(GraphicsDevice device, SpriteSystem objects, IChatProvider chatProvider)
+
+        public event Action<IAbility> AbilityActivated;
+
+        public UiSystem(GameComponent game, 
+            SpriteSystem objects, IChatProvider chatProvider)
+            : base(game)
         {
-            this.device = device;
+            g = new Canvas(Screen);
             this.objects = objects;
-            g = new Canvas(device);
 
             root = new GameRoot();
-            root.AbilityActivated += onAbilityActivated;
+            root.AbilityActivated += (a) => AbilityActivated?.Invoke(a);
             root.ChatBox.SetProvider(chatProvider);
+
             root.ChatBar.ChatSent += (m) =>
                 SendMessage(new Common.Message.Client.ChatMessage(string.Empty, m));
         }
 
-        void onAbilityActivated(IAbility a)
-        {
-            actions.CastAbility(a);
-        }
 
         // adds all abilities of the hero to the default bar
         void updateBarAbilities(IHero h)
@@ -99,12 +99,12 @@ namespace Shanism.Client.Systems
             }
 
             //update target & hover ccontrols
-            if (Control.HoverControl.IsRootControl)
+            if (root.HasHover)
             {
                 var unitHover = objects.HoverSprite as UnitSprite;
                 root.HoverFrame.Target = unitHover;
 
-                if (MouseInfo.LeftJustPressed)
+                if (Mouse.LeftJustPressed)
                     root.TargetFrame.TargetSprite = unitHover;
             }
         }

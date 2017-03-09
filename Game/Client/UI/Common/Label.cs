@@ -28,8 +28,8 @@ namespace Shanism.Client.UI
 
         void resize()
         {
-            if (AutoSize)
-                Size = Font.MeasureStringUi(Text) + new Vector(Padding * 2) + 1E-5;
+            if (AutoSize && Screen != null)
+                Size = Font.MeasureString(Text) + new Vector(Padding * 2) + 1E-5;
         }
 
         public Color TextColor { get; set; } = Color.Goldenrod;
@@ -56,6 +56,8 @@ namespace Shanism.Client.UI
 
         public float TextScale { get; set; } = 1;
 
+        public int? LineHeight { get; set; } = null;
+
         public Label()
         {
             BackColor = Color.Transparent;
@@ -66,17 +68,16 @@ namespace Shanism.Client.UI
         }
         protected override void OnUpdate(int msElapsed)
         {
+            if(Screen != null && LineHeight != null)
+                Height = LineHeight.Value * font.HeightUi + (LineHeight.Value - 1) * Padding;
 
             base.OnUpdate(msElapsed);
         }
 
         public override void OnDraw(Canvas g)
         {
-
             var maxTextLen = Size.X - 2 * Padding;
             var textPos = new Vector(Padding + maxTextLen * TextXAlign, Size.Y / 2);
-
-            var maxTexLen2 = Font.MeasureStringUi(Text);
 
             g.Draw(Content.Textures.Blank, Vector.Zero, Size, BackColor);
             g.DrawString(Font, Text, TextColor, textPos, TextXAlign, 0.5f, maxTextLen);

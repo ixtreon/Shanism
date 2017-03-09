@@ -1,13 +1,10 @@
 ﻿using Shanism.Common;
-using Shanism.Common.Content;
-using Shanism.Common.Util;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common.Interfaces.Entities;
 
 namespace Shanism.Client.Drawing
 {
