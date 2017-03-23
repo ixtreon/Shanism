@@ -18,7 +18,7 @@ namespace Shanism.Common.Message
     //client
     [ProtoInclude((int)MessageType.HandshakeInit, typeof(HandshakeInitMessage))]
     [ProtoInclude((int)MessageType.MapRequest, typeof(MapRequestMessage))]
-    [ProtoInclude((int)MessageType.ClientChat, typeof(Client.ChatMessage))]
+    [ProtoInclude((int)MessageType.ClientChat, typeof(Client.PlayerChatMessage))]
 
     //server
     [ProtoInclude((int)MessageType.HandshakeReply, typeof(HandshakeReplyMessage))]

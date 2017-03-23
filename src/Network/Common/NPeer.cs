@@ -73,7 +73,7 @@ namespace Shanism.Network
                     break;
 
                 default:
-                    Log.Default.Warning("Unhandled message type: {0} ({1} bytes)", msg.MessageType, msg.LengthBytes);
+                    Log.Default.Warning($"Unhandled message type: {msg.MessageType} ({msg.LengthBytes} bytes)");
                     break;
             }
         }

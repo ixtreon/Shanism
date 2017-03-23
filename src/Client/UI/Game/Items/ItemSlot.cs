@@ -1,9 +1,9 @@
-﻿using Shanism.Client.Drawing;
-using Shanism.Common;
+﻿using Shanism.Common;
 using Shanism.Common.Interfaces.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Shanism.Client.Sprites;
 
 namespace Shanism.Client.UI.Game
 {
@@ -13,7 +13,7 @@ namespace Shanism.Client.UI.Game
 
         public IItem CurrentItem { get; set; }
 
-        IconSprite currentIcon;
+        StaticSprite currentIcon;
 
         public ItemSlot()
         {

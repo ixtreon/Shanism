@@ -44,7 +44,7 @@ namespace Shanism.Editor.MapAdapter
             var tint = Color.White;
 
             Texture2D tex;
-            if (!control.DefaultContent.TryGet(@object.Model, out tex))
+            if (!control.DefaultContent.TryGetValue(@object.Model, out tex))
             {
                 tex = control.EditorContent.Circle;
                 tint = (canPlace(inGamePos) ? Color.Blue : Color.Red).SetAlpha(50);

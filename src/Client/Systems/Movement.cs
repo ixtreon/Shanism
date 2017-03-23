@@ -3,42 +3,44 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common.Message;
 using Shanism.Client.Input;
-using Shanism.Common.Message.Client;
 using Shanism.Client.UI;
-using Shanism.Common;
+using Shanism.Common.Message.Client;
 
 namespace Shanism.Client.Systems
 {
-    class MoveSystem : ClientSystem
+    class MoveSystem : IClientSystem
     {
-        readonly UiSystem ui;
+        readonly KeyboardInfo keyboard;
+        readonly PlayerState playerState;
+        readonly GameRoot root;
 
-        public MoveSystem(GameComponent game, UiSystem ui)
-            : base(game)
+        public MoveSystem(GameRoot root, KeyboardInfo keyboard, PlayerState playerState)
         {
-            this.ui = ui;
+            this.playerState = playerState;
+            this.keyboard = keyboard;
+            this.root = root;
         }
         
-        public override void Update(int msElapsed)
+        public void Update(int msElapsed)
         {
-            if (!ui.Root.HasFocus)
+            if (!root.HasFocus)
             {
-                ClientState.IsMoving = false;
+                playerState.IsMoving = false;
                 return;
             }
 
-            /// Keyboard movement
-            var dx = Convert.ToInt32(Keyboard.IsDown(ClientAction.MoveRight)) - Convert.ToInt32(Keyboard.IsDown(ClientAction.MoveLeft));
-            var dy = Convert.ToInt32(Keyboard.IsDown(ClientAction.MoveDown)) - Convert.ToInt32(Keyboard.IsDown(ClientAction.MoveUp));
-            ClientState.IsMoving = (dx != 0 || dy != 0);
+            // Keyboard movement
+            var dx = Convert.ToInt32(keyboard.IsDown(ClientAction.MoveRight)) 
+                - Convert.ToInt32(keyboard.IsDown(ClientAction.MoveLeft));
+            var dy = Convert.ToInt32(keyboard.IsDown(ClientAction.MoveDown)) 
+                - Convert.ToInt32(keyboard.IsDown(ClientAction.MoveUp));
+            playerState.IsMoving = (dx != 0 || dy != 0);
 
-            if (ClientState.IsMoving)
+            if (playerState.IsMoving)
             {
                 var moveAngle = (float)(Math.Atan2(dy, dx));
-
-                ClientState.MoveAngle = moveAngle;
+                playerState.MoveAngle = moveAngle;
             }
         }
     }

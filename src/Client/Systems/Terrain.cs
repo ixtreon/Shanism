@@ -10,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Shanism.Client.Systems;
 using Shanism.Common.Message.Client;
-using Shanism.Client.Drawing;
+using Microsoft.Xna.Framework;
 
 namespace Shanism.Client.Map
 {
@@ -18,8 +18,14 @@ namespace Shanism.Client.Map
     /// <summary>
     /// Displays terrain chunks and sends requests for new ones. 
     /// </summary>
-    class Terrain : ClientSystem
+    class Terrain : ShanoComponent, IClientSystem
     {
+        readonly static Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(0, 0, -3), new Vector3(0, 0, 0), new Vector3(0, -1, 0));
+
+        public event Action<IOMessage> MessageSent;
+
+        protected void SendMessage(IOMessage msg) => MessageSent?.Invoke(msg);
+
         /// <summary>
         /// The time before an uncompleted chunk request is re-sent. 
         /// </summary>
@@ -30,12 +36,10 @@ namespace Shanism.Client.Map
         /// </summary>
         const int MaxChunks = 10000;
 
-
-
         /// <summary>
         /// Contains a map of all available chunks. 
         /// </summary>
-        readonly Dictionary<ChunkId, TerrainChunk> ChunksAvailable = new Dictionary<ChunkId, TerrainChunk>();
+        readonly Dictionary<ChunkId, TerrainChunk> chunksAvailable = new Dictionary<ChunkId, TerrainChunk>();
 
         /// <summary>
         /// Contains a map of all chunk requests made so far. 
@@ -45,23 +49,30 @@ namespace Shanism.Client.Map
 
         readonly BasicEffect effect;
 
-        TerrainCache terrain => Content.Terrain;
+        readonly Texture2D terrainTexture;
 
+        GraphicsDevice graphicsDevice;
 
-        public Terrain(GameComponent game)
+        public Terrain(IShanoComponent game, GraphicsDevice device)
             : base(game)
         {
-            effect = new BasicEffect(GraphicsDevice)
+            graphicsDevice = device;
+            //grab the terrain texture
+            if (!Content.Textures.TryGetValue(Constants.Content.TerrainFile, out terrainTexture))
+                Console.WriteLine("Warning: unable to load the terrain file!");
+
+            //create the XNA effect used for drawing
+            effect = new BasicEffect(graphicsDevice)
             {
                 VertexColorEnabled = false,
                 TextureEnabled = true,
+                View = viewMatrix,
             };
-            effect.SetStaticViewMatrix();
         }
 
         Vector CameraPosition => Screen.GameCenter;
 
-        public override void Update(int msElapsed)
+        public void Update(int msElapsed)
         {
             //request nearby chunks
             foreach (var c in EnumerateNearbyChunks(1))
@@ -76,12 +87,12 @@ namespace Shanism.Client.Map
                 (float)Screen.GameSize.X, 
                 (float)Screen.GameSize.Y, 
                 -5, 5);
-            effect.Texture = terrain.Texture;
+            effect.Texture = terrainTexture;
         }
 
         public void Draw()
         {
-            GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+            graphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
             //draw all chunks around us
             foreach (var pass in effect.CurrentTechnique.Passes)
@@ -90,32 +101,24 @@ namespace Shanism.Client.Map
 
                 foreach (var chunkId in EnumerateNearbyChunks())
                 {
-                    var chunk = ChunksAvailable.TryGet(chunkId);
+                    var chunk = chunksAvailable.TryGet(chunkId);
                     if (chunk != null && chunk.HasBuffer)
                     {
-                        GraphicsDevice.SetVertexBuffer(chunk.Buffer);
-                        GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 2 * chunk.Area);
+                        graphicsDevice.SetVertexBuffer(chunk.Buffer);
+                        graphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 2 * chunk.Area);
                     }
                 }
             }
         }
 
-        public override void HandleMessage(IOMessage ioMsg)
+
+
+        public void ParseMessage(MapDataMessage msg)
         {
-            //only handle MapReply
-            var msg = ioMsg as MapDataMessage;
-            if (msg == null)
-                return;
-
-            //clear map
-            if(!msg.HasMap)
-            {
+            if (msg.HasMap)
+                setMap(msg);
+            else
                 clearMap(msg);
-                return;
-            }
-
-            //set map
-            setMap(msg);
         }
 
 
@@ -124,12 +127,12 @@ namespace Shanism.Client.Map
         {
             foreach (var ch in ChunkId.ChunksBetween(msg.Span.Position, msg.Span.FarPosition - 1))
             {
-                var chunkData = ChunksAvailable.TryGet(ch);
+                var chunkData = chunksAvailable.TryGet(ch);
 
                 if (chunkData == null)
                 {
-                    chunkData = new TerrainChunk(GraphicsDevice, ch, effect.Texture, msg.Data, msg.Span);
-                    ChunksAvailable[ch] = chunkData;
+                    chunkData = new TerrainChunk(graphicsDevice, ch, effect.Texture, msg.Data, msg.Span);
+                    chunksAvailable[ch] = chunkData;
                 }
                 else
                     chunkData.SetTiles(msg.Data, msg.Span);
@@ -147,7 +150,7 @@ namespace Shanism.Client.Map
                 //remove the whole chunk if we can
                 if (overlap == ch.Span)
                     destroyChunk(ch);
-                else if(ChunksAvailable.TryGetValue(ch, out chunkData))
+                else if(chunksAvailable.TryGetValue(ch, out chunkData))
                     chunkData.ClearTiles(overlap);
             }
         }
@@ -157,13 +160,13 @@ namespace Shanism.Client.Map
         /// </summary>
         bool tryRequestChunk(ChunkId chunk)
         {
-            if (ChunksAvailable.ContainsKey(chunk))
+            if (chunksAvailable.ContainsKey(chunk))
                 return false;
 
             //make sure we don't spam the server
             long lastRequest;
             if (!chunkRequests.TryGetValue(chunk, out lastRequest))
-                lastRequest = long.MinValue;
+                lastRequest = int.MinValue;
 
             var timeNow = Environment.TickCount;
             if (timeNow - SpamInterval < lastRequest)
@@ -171,15 +174,16 @@ namespace Shanism.Client.Map
 
             //make the request and set last timestamp
             chunkRequests[chunk] = timeNow;
-            SendMessage(new MapRequestMessage(chunk));
+            MessageSent?.Invoke(new MapRequestMessage(chunk));
+
             return true;
         }
 
         void cleanupChunks()
         {
-            if (ChunksAvailable.Count > MaxChunks)
+            if (chunksAvailable.Count > MaxChunks)
             {
-                var toRemove = ChunksAvailable.Keys
+                var toRemove = chunksAvailable.Keys
                     .OrderBy(chunk => ((Vector)chunk.Center).DistanceTo(CameraPosition))
                     .Skip(MaxChunks * 3 / 4);
 
@@ -194,9 +198,9 @@ namespace Shanism.Client.Map
         void destroyChunk(ChunkId id)
         {
             TerrainChunk chunk;
-            if (ChunksAvailable.TryGetValue(id, out chunk))
+            if (chunksAvailable.TryGetValue(id, out chunk))
             {
-                ChunksAvailable.Remove(id);
+                chunksAvailable.Remove(id);
                 chunk.Dispose();
             }
         }

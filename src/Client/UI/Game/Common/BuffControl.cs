@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Shanism.Client.Sprites;
 using Shanism.Common;
 using Shanism.Common.Interfaces.Objects;
-using Shanism.Client.Drawing;
 
 namespace Shanism.Client.UI.Game
 {
@@ -19,7 +19,7 @@ namespace Shanism.Client.UI.Game
 
         public IBuffInstance Buff { get; }
 
-        IconSprite currentTexture;
+        StaticSprite currentTexture;
         float shadeRatio;
         Color currentTint;
 

@@ -71,8 +71,8 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MonoGame.Framework, Version=3.5.1.1679, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.5.1.1679\lib\net40\MonoGame.Framework.dll</HintPath>
+    <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.6.0.1625\lib\net40\MonoGame.Framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -283,6 +283,7 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="MonoGame.Framework.dll.config" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
@@ -302,6 +303,10 @@
     <ProjectReference Include="..\..\lib\MGWinFormsControls\MGWinFormsControls.csproj">
       <Project>{85bd604a-c94d-4058-94be-6977c97a1291}</Project>
       <Name>MGWinFormsControls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Client.UI\Client.UI.csproj">
+      <Project>{9d7bf384-9b4e-4ef2-87c8-ce3c987aa024}</Project>
+      <Name>Client.UI</Name>
     </ProjectReference>
     <ProjectReference Include="..\Client\Client.csproj">
       <Project>{293e1b32-27b1-4214-a4d0-f428147a428a}</Project>

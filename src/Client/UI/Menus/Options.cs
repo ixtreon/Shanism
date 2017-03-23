@@ -121,8 +121,8 @@ namespace Shanism.Client.UI.Menus
 
         void Slider_ValueChanged(Slider s)
         {
-            Settings.Current.RenderSize = (float)renderSize.Slider.Value.RoundToNearest(0.05);
-            renderSize.Slider.Value = Settings.Current.RenderSize;
+            Settings.Current.RenderScale = (float)renderSize.Slider.Value.RoundToNearest(0.05);
+            renderSize.Slider.Value = Settings.Current.RenderScale;
         }
 
         void addHeader(string name)
@@ -149,13 +149,13 @@ namespace Shanism.Client.UI.Menus
 
         void loadSettings()
         {
-            renderSize.Slider.Value = Settings.Current.RenderSize;
+            renderSize.Slider.Value = Settings.Current.RenderScale;
             vSync.IsChecked = Settings.Current.VSync;
             fullScreen.IsChecked = Settings.Current.FullScreen;
             extendCast.IsChecked = Settings.Current.ExtendCast;
         }
 
-        void saveAndHide(Input.MouseButtonArgs obj)
+        void saveAndHide(MouseButtonArgs obj)
         {
             Settings.Current.Save();
             IsVisible = false;

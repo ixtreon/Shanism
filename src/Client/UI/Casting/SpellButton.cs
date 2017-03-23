@@ -21,6 +21,12 @@ namespace Shanism.Client.UI
 
         string currentTexture = string.Empty;
 
+
+        /// <summary>
+        /// Gets or sets whether this spell button has a border drawn around it. 
+        /// </summary>
+        public bool HasBorder { get; set; }
+
         public IAbility Ability
         {
             get { return ability; }
@@ -72,8 +78,8 @@ namespace Shanism.Client.UI
         {
             base.OnDraw(g);
 
+            //cooldown indicator
             var cooldown = ability?.CurrentCooldown ?? 0;
-
             if (cooldown > 0)
             {
                 var cdSize = Size * new Vector(1, (double)cooldown / Ability.Cooldown);
@@ -82,12 +88,22 @@ namespace Shanism.Client.UI
                 g.Draw(Content.Textures.Blank, cdPos, cdSize, Color.Black.SetAlpha(120));
             }
 
+            //TODO: visuals on button hover
             if(HasHover && ability != null)
             {
                 if(ability.CastRange > 0)
                 {
-                    //TODO: visuals on button hover
                 }
+            }
+
+            //button border
+            if(HasBorder)
+            {
+                var border = Content.UI.IconBorderHover;
+                var tint = HasHover ? Color.White : new Color(32, 32, 32);
+                tint = (CanSelect && IsSelected) ? Color.Gold.Brighten(20) : tint;
+
+                g.Draw(border, Vector.Zero, Size, tint);
             }
         }
     }

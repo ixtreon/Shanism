@@ -9,27 +9,32 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shanism.Client.Input;
+using Shanism.Common.Message;
+using Shanism.Client.Systems;
+using Shanism.Client.Sprites;
 
 namespace Shanism.Client.UI
 {
-    class GameRoot : RootControl
+    partial class GameRoot : RootControl
     {
-        public readonly UnitFrame HeroFrame;
-        public readonly CastBar HeroCastBar;
-        public readonly SpellBar HeroAbilities;
-        public readonly UnitFrame TargetFrame;
-        public readonly UnitHoverFrame HoverFrame;
-        public readonly MenuBar Menus;
-        public readonly ChatBar ChatBar;
-        public readonly ChatFrame ChatBox;
-
-        readonly ErrorTextControl errors;
-        public readonly FloatingTextProvider FloatingText;
-        public readonly RangeIndicator RangeIndicator;
-
-        public event Action<string> ChatSent;
+        public UnitFrame HeroFrame { get; private set; }
+        public CastBar HeroCastBar { get; private set; }
+        public SpellBar HeroAbilities { get; private set; }
+        public UnitFrame TargetFrame { get; private set; }
+        public UnitHoverFrame HoverFrame { get; private set; }
+        public MenuBar Menus { get; private set; }
+        public ChatBar ChatBar { get; private set; }
+        public ChatFrame ChatBox { get; private set; }
+        public ErrorTextControl Errors { get; private set; }
+        public FloatingTextProvider FloatingText { get; private set; }
+        public RangeIndicator RangeIndicator { get; private set; }
 
         public event Action<IAbility> AbilityActivated;
+
+        IChatSource serverChatSource;
+        IChatConsumer serverChatEndpoint;
+
+        SpriteSystem objects;
 
         public GameRoot()
         {
@@ -37,72 +42,15 @@ namespace Shanism.Client.UI
             CanHover = true;
             CanFocus = true;
             GameActionActivated += onActionActivated;
+        }
 
-            var castBarSize = new Vector(0.5f, 0.08f);
-            var unitFrameXOffset = 0.25;
-            var chatFont = Content.Fonts.NormalFont;
+        public void Init(IChatSource chatSource, IChatConsumer chatConsumer, SpriteSystem objects)
+        {
+            this.objects = objects;
+            serverChatSource = chatSource;
+            serverChatEndpoint = chatConsumer;
 
-            /* add controls: order is important, unless ZValue is manually set. */
-
-            //game indicators
-            Add(FloatingText = new FloatingTextProvider());
-            Add(RangeIndicator = new RangeIndicator());
-            Add(errors = new ErrorTextControl());
-
-            // hero, target & hover
-            Add(HeroFrame = new UnitFrame
-            {
-                ParentAnchor = AnchorMode.Top,
-                Location = new Vector(1 - unitFrameXOffset - UnitBox.DefaultSize.X, 0),
-            });
-            Add(TargetFrame = new UnitFrame
-            {
-                ParentAnchor = AnchorMode.Top,
-                Location = new Vector(1 + unitFrameXOffset, 0),
-            });
-            Add(HoverFrame = new UnitHoverFrame(0.02, 0.02)
-            {
-                ParentAnchor = AnchorMode.Top,
-            });
-
-            Add(HeroAbilities = new SpellBar(0)
-            {
-                ParentAnchor = AnchorMode.Bottom,
-                Location = new Vector(0.6, 0.8),
-            });
-            HeroAbilities.AbilityActivated += (a) => AbilityActivated?.Invoke(a);
-            Add(HeroCastBar = new CastBar
-            {
-                ParentAnchor = AnchorMode.Bottom,
-
-                Size = castBarSize,
-                Location = new Vector(1 - castBarSize.X / 2, 0.55),
-            });
-
-            //chat
-            var chatSize = new Vector(HeroAbilities.Size.X, Content.Fonts.NormalFont.HeightUi + 2 * Control.Padding);
-            Add(ChatBar = new ChatBar
-            {
-                ParentAnchor = AnchorMode.Bottom,
-                Font = chatFont,
-                Size = chatSize,
-                Location = HeroAbilities.Location - new Vector(0, chatSize.Y),
-            });
-            Add(ChatBox = new ChatFrame
-            {
-                Size = new Vector(chatSize.X, ChatFrame.DefaultSize.Y),
-                Location = new Vector(2, 0) - new Vector(chatSize.X, 0),
-                ParentAnchor = AnchorMode.Right | AnchorMode.Top,
-            });
-            ChatBox.SetProvider(ChatBar);
-            ChatBar.ChatSent += (msg) => ChatSent?.Invoke(msg);
-
-            //menus
-            Add(Menus = new MenuBar(this));
-
-            //tooltips
-            Add(new Tooltips.SimpleTip());
-            Add(new Tooltips.AbilityTip());
+            ReloadUi();
         }
 
         private void onActionActivated(ClientAction ga)
@@ -110,7 +58,7 @@ namespace Shanism.Client.UI
             switch (ga)
             {
                 case ClientAction.ShowHealthBars:
-                    Settings.Current.AlwaysShowHealthBars = !Settings.Current.AlwaysShowHealthBars;
+                    Settings.Current.AlwaysShowHealthBars ^= true;
                     break;
 
 
@@ -127,10 +75,42 @@ namespace Shanism.Client.UI
             }
         }
 
+        UnitSprite _curHeroSprite;
+
         protected override void OnUpdate(int msElapsed)
         {
             Maximize();
             UpdateMain(msElapsed);
+
+            //update hero pointer
+            if (objects.MainHeroSprite != _curHeroSprite)
+            {
+                Menus.OurHero = objects.MainHero;
+                HeroCastBar.Target = objects.MainHero;
+                HeroFrame.TargetSprite = objects.MainHeroSprite;
+
+                _curHeroSprite = objects.MainHeroSprite;
+
+                // adds all abilities of the hero to the default bar
+                var abilities = objects.MainHero?.Abilities ?? Enumerable.Empty<IAbility>();
+                HeroAbilities.SetAbilities(abilities);
+                HeroAbilities.SelectButton(0);
+            }
+
+            //update target & hover ccontrols
+            if (HasHover)
+            {
+                var unitHover = objects.HoverSprite as UnitSprite;
+                HoverFrame.Target = unitHover;
+
+                if (MouseInfo.LeftJustPressed)
+                    TargetFrame.TargetSprite = unitHover;
+            }
+        }
+
+        public void HandleMessage(IOMessage msg)
+        {
+            throw new NotImplementedException();
         }
     }
 }

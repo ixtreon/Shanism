@@ -3,21 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Xna.Framework.Graphics;
 using Shanism.Client.UI;
 using Shanism.Common;
 
 namespace Shanism.Client.GameScreens
 {
-    class MultiPlayerHost : UiScreen
+    class MultiPlayerHost : TitleScreen
     {
         static readonly Vector panelSize = new Vector(0.6, 0.7);
         static readonly Vector btnSize = new Vector(panelSize.X - 2 * Control.Padding, 0.15);
 
-        public MultiPlayerHost(GameComponent game)
+        public MultiPlayerHost(IShanoComponent game)
             : base(game)
         {
-            SubTitle = "Host Multi Player";
+            SubTitleText = "Host Multi Player";
 
 
             var flowPanel = new FlowPanel

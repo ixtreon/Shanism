@@ -4,11 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Shanism.Common;
-using Shanism.Client.Drawing;
 
 namespace Shanism.Client.UI.Chat
 {
-    class ChatBar : TextBox, IChatProvider
+    class ChatBar : TextBox, IChatSource
     {
         const int MaxLineHistory = 256;
 
@@ -18,12 +17,11 @@ namespace Shanism.Client.UI.Chat
         LinkedListNode<string> currentMsgHistoryNode;
 
 
-        public event Action<string> ChatSent;
+        public event Action<string> ChatMessageSent;
 
-        public ChatBar()
+        public ChatBar(IChatConsumer consumer)
         {
-
-
+            ChatMessageSent += consumer.SendChatMessage;
         }
 
         protected override void OnUpdate(int msElapsed)
@@ -74,7 +72,7 @@ namespace Shanism.Client.UI.Chat
                     //send the message
                     if (!string.IsNullOrEmpty(Text))
                     {
-                        ChatSent?.Invoke(Text);
+                        sendMessage();
                         currentMsgHistoryNode = null;
                         ClearText();
                     }
@@ -87,6 +85,13 @@ namespace Shanism.Client.UI.Chat
             }
 
             base.OnCharTyped(k, c);
+        }
+
+        private void sendMessage()
+        {
+
+
+            ChatMessageSent?.Invoke(Text);
         }
     }
 }

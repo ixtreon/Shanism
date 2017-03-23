@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Xna.Framework.Graphics;
 using Shanism.Common;
 using Shanism.ScenarioLib;
 using Shanism.Client.UI;
+using Shanism.Client.UI.Scenario;
 
 namespace Shanism.Client.GameScreens
 {
-    class SinglePlayer : UiScreen
+    class SinglePlayer : TitleScreen
     {
         readonly ScenarioListControl scenarioList;
 
-        public SinglePlayer(GameComponent game) 
+        public SinglePlayer(IShanoComponent game) 
             : base(game)
         {
-            SubTitle = "Single Player";
+            SubTitleText = "Single Player";
 
             var listSz = new Vector(1.6, 1.2);
             Root.Add(scenarioList = new ScenarioListControl
@@ -34,7 +34,7 @@ namespace Shanism.Client.GameScreens
             Root.MouseDown += Root_MouseDown;
         }
 
-        void Root_MouseDown(Input.MouseButtonArgs obj)
+        void Root_MouseDown(MouseButtonArgs obj)
         {
             //var newSz = obj.Position - scenarioList.Location;
             //scenarioList.Size = newSz;

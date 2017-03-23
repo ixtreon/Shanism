@@ -88,7 +88,7 @@ namespace Shanism.Client
         /* Graphics */
         public bool VSync { get; set; } = false;
         public bool FullScreen { get; set; } = false;
-        public float RenderSize { get; set; } = 1.0f;
+        public float RenderScale { get; set; } = 1.0f;
 
 
         public KeybindSettings Keybinds { get; set; } = new KeybindSettings(true);

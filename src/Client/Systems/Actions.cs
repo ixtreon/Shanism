@@ -1,64 +1,67 @@
-﻿using Shanism.Client.Input;
-using Shanism.Client.UI.Game;
+﻿using Shanism.Client.UI.Game;
 using Shanism.Common;
 using Shanism.Common.Interfaces.Entities;
 using Shanism.Common.Interfaces.Objects;
-using Shanism.Common.Message.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shanism.Client.UI;
+using Shanism.Client.Input;
+using Shanism.Common.Message.Client;
 
 namespace Shanism.Client.Systems
 {
-    class ActionSystem : ClientSystem
+    class ActionSystem : IClientSystem
     {
 
-        FloatingTextProvider ErrorTextProvider => Interface.FloatingText;
+        FloatingTextProvider ErrorTextProvider => root.FloatingText;
 
-        readonly UiSystem Interface;
-        readonly SpriteSystem Objects;
+        readonly GameRoot root;
+        readonly SpriteSystem objects;
+        readonly MouseInfo mouse;
+        readonly PlayerState playerState;
 
-        public IHero Hero { get; set; }
+        public IHero Hero => objects.MainHero;
 
 
-        public ActionSystem(GameComponent game,
-            UiSystem ui, SpriteSystem objects)
-            : base(game)
+        public ActionSystem(GameRoot root, MouseInfo mouse, 
+            PlayerState playerState,
+            SpriteSystem objects)
         {
-            Interface = ui;
-            Interface.AbilityActivated += CastAbility;
+            this.root = root;
+            this.mouse = mouse;
+            this.playerState = playerState;
+            this.objects = objects;
 
-            Objects = objects;
+            this.root.AbilityActivated += CastAbility;
         }
 
-
-        public override void Update(int msElapsed)
+        public void Update(int msElapsed)
         {
             if (Hero == null)
                 return;
 
-
             //cast only if there's an ability
-            var ab = Interface.CurrentSpellButton?.Ability;
+            var ab = SpellBarButton.CurrentSpellButton?.Ability;
             if (ab == null)
             {
-                ClientState.ActionId = 0;
+                playerState.ActionId = 0;
                 return;
             }
 
             //cast only if rightdown or if instacast
-            if (!Mouse.RightDown && ab.TargetType != AbilityTargetType.NoTarget)
+            if (!mouse.RightDown && ab.TargetType != AbilityTargetType.NoTarget)
             {
-                ClientState.ActionId = 0;
+                playerState.ActionId = 0;
                 return;
             }
 
             //cast only if not passive
             if (ab.TargetType == AbilityTargetType.Passive)
             {
-                ClientState.ActionId = 0;
+                playerState.ActionId = 0;
                 return;
             }
 
@@ -66,12 +69,12 @@ namespace Shanism.Client.Systems
             if (ab.TargetType == AbilityTargetType.NoTarget
                 && ab.CurrentCooldown > 0)
             {
-                ClientState.ActionId = 0;
+                playerState.ActionId = 0;
 
-                if (Interface.PreviousSpellButton != null)
-                    Interface.PreviousSpellButton.IsSelected = true;
+                if (SpellBarButton.PreviousSpellButton != null)
+                    SpellBarButton.PreviousSpellButton.IsSelected = true;
                 else
-                    Interface.CurrentSpellButton.IsSelected = false;
+                    SpellBarButton.CurrentSpellButton.IsSelected = false;
                 return;
             }
 
@@ -85,8 +88,8 @@ namespace Shanism.Client.Systems
             //cooldown
             if (ab.CurrentCooldown > 0)
             {
-                if (Mouse.RightJustPressed)
-                    Interface.FloatingText.AddLabel(targetLoc, $"{ab.CurrentCooldown / 1000.0:0.0} sec!", Color.Red, FloatingTextStyle.Top);
+                if (mouse.RightJustPressed)
+                    root.FloatingText.AddLabel(targetLoc, $"{ab.CurrentCooldown / 1000.0:0.0} sec!", Color.Red, FloatingTextStyle.Top);
                 return;
             }
 
@@ -94,10 +97,10 @@ namespace Shanism.Client.Systems
             if (ab.TargetType != AbilityTargetType.NoTarget
                 && targetLoc.DistanceTo(Hero.Position) > ab.CastRange)
             {
-                if (Mouse.RightJustPressed)
+                if (mouse.RightJustPressed)
                 {
-                    Interface.FloatingText.AddLabel(targetLoc, "Out of range", Color.Red, FloatingTextStyle.Top);
-                    Interface.RangeIndicator.Show(ab.CastRange, 1250);
+                    root.FloatingText.AddLabel(targetLoc, "Out of range", Color.Red, FloatingTextStyle.Top);
+                    root.RangeIndicator.Show(ab.CastRange, 1250);
                 }
                 return;
             }
@@ -105,28 +108,28 @@ namespace Shanism.Client.Systems
             //mana
             if (Hero.Mana < ab.ManaCost)
             {
-                if (Mouse.RightJustPressed)
+                if (mouse.RightJustPressed)
                 {
-                    Interface.FloatingText.AddLabel(targetLoc, "Not enough mana", Color.Red, FloatingTextStyle.Top);
+                    root.FloatingText.AddLabel(targetLoc, "Not enough mana", Color.Red, FloatingTextStyle.Top);
                 }
                 return;
             }
 
 
             //cast abilities if button is held
-            ClientState.ActionId = ab.Id;
-            ClientState.ActionTargetId = Objects.HoverSprite?.Entity.Id ?? 0;
-            ClientState.ActionTargetLocation = targetLoc;
+            playerState.ActionId = ab.Id;
+            playerState.ActionTargetId = objects.HoverSprite?.Entity.Id ?? 0;
+            playerState.ActionTargetLocation = targetLoc;
         }
 
         Vector getCastTargetLocation(IAbility ab)
         {
-            var mousePos = Mouse.InGamePosition;
+            var mousePos = mouse.InGamePosition;
             if (!Settings.Current.ExtendCast)
                 return mousePos;
 
             var castRange = ab.CastRange;
-            var heroPos = Objects.MainHero.Position;
+            var heroPos = objects.MainHero.Position;
             var distVector = mousePos - heroPos;
             var distScalar = distVector.Length();
             if (distScalar <= castRange)

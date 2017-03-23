@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Shanism.Client.UI;
+﻿using Shanism.Client.UI;
 using Shanism.Client.UI.Menus;
 using Shanism.Common;
 using Shanism.ScenarioLib;
@@ -12,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Shanism.Client.GameScreens
 {
-    class MainMenu : UiScreen
+    class MainMenu : TitleScreen
     {
         static readonly Vector panelSize = new Vector(0.6, 0.7);
         static readonly Vector btnSize = new Vector(panelSize.X - 2 * Control.Padding, 0.15);
@@ -25,7 +24,7 @@ namespace Shanism.Client.GameScreens
         readonly ConfirmExit exitDialog;
         readonly Control optionsWindow;
 
-        public MainMenu(GameComponent game)
+        public MainMenu(IShanoComponent game)
             : base(game)
         {
             //main menu & entries
@@ -93,7 +92,7 @@ namespace Shanism.Client.GameScreens
 
         }
 
-        void MultiPlayer_MouseClick(Input.MouseButtonArgs e)
+        void MultiPlayer_MouseClick(MouseButtonArgs e)
         {
             var mpScreen = new MultiPlayer(this);
             mpScreen.GameStarted += onGameStarted;
@@ -101,7 +100,7 @@ namespace Shanism.Client.GameScreens
             SetScreen(mpScreen);
         }
 
-        void SinglePlayer_MouseClick(Input.MouseButtonArgs e)
+        void SinglePlayer_MouseClick(MouseButtonArgs e)
         {
             var spScreen = new SinglePlayer(this);
             spScreen.GameStarted += onGameStarted;

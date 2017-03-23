@@ -80,6 +80,7 @@
     <Compile Include="Common\ObjectData.cs" />
     <Compile Include="Common\PropertyMapper.cs" />
     <Compile Include="Serialization\PageBase.cs" />
+    <Compile Include="Serialization\PageReader2.cs" />
     <Compile Include="Serialization\PageWriter2.cs" />
     <Compile Include="Server\ClientStateTracker.cs" />
     <Compile Include="Diff\DiffGuy.cs" />
@@ -98,9 +99,9 @@
     <Compile Include="Server\NServerClient.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\IxLog\IxLog.csproj">
+    <ProjectReference Include="..\..\lib\Ix.Logging\Ix.Logging.csproj">
       <Project>{b1fc6d51-2a33-4ef8-bbad-d8207f2dcb02}</Project>
-      <Name>IxLog</Name>
+      <Name>Ix.Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{3d93587b-1c50-449e-a751-6b2b765cfa55}</Project>

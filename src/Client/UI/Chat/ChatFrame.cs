@@ -1,6 +1,6 @@
-﻿using Shanism.Client.Drawing;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Shanism.Common;
 
@@ -12,7 +12,7 @@ namespace Shanism.Client.UI.Chat
 
         public static readonly int MaxLineCount = 256;
 
-        IChatProvider chatProvider;
+        readonly List<IChatSource> sources = new List<IChatSource>();
 
         public TextureFont Font { get; set; }
 
@@ -20,22 +20,23 @@ namespace Shanism.Client.UI.Chat
 
         LinkedListNode<string> firstLineShown;
 
-        public ChatFrame()
+        public ChatFrame(params IChatSource[] sources)
         {
             Size = DefaultSize;
             BackColor = Color.Black.SetAlpha(100);
             Font = Content.Fonts.SmallFont;
+
+            this.sources.AddRange(sources);
+            foreach (var src in sources)
+                src.ChatMessageSent += onMessageReceived;
         }
 
-        public void SetProvider(IChatProvider provider)
+        public void AddSource(IChatSource chatSource)
         {
-            if (chatProvider != null)
-                chatProvider.ChatSent -= onMessageReceived;
+            Debug.Assert(!sources.Contains(chatSource));
 
-            chatProvider = provider;
-
-            if (chatProvider != null)
-                chatProvider.ChatSent += onMessageReceived;
+            sources.Add(chatSource);
+            chatSource.ChatMessageSent += onMessageReceived;
         }
 
         public override void OnDraw(Canvas g)

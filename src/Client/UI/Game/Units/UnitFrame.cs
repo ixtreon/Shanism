@@ -1,9 +1,9 @@
-﻿using Shanism.Client.Drawing;
-using Shanism.Common;
+﻿using Shanism.Common;
 using Shanism.Common.Interfaces.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Shanism.Client.Sprites;
 
 namespace Shanism.Client.UI.Game
 {

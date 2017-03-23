@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Xna.Framework.Graphics;
 using Shanism.Client.UI;
 using Shanism.Common;
 using Shanism.Network.Client;
 
 namespace Shanism.Client.GameScreens
 {
-    class MultiPlayerJoin : UiScreen
+    class MultiPlayerJoin : TitleScreen
     {
         static readonly Vector panelSize = new Vector(0.6, 0.7);
         static readonly Vector btnSize = new Vector(panelSize.X - 2 * Control.Padding, 0.06);
@@ -18,10 +17,10 @@ namespace Shanism.Client.GameScreens
         readonly TextBox hostAddress;
         readonly Button connectButton;
 
-        public MultiPlayerJoin(GameComponent game)
+        public MultiPlayerJoin(IShanoComponent game)
             : base(game)
         {
-            SubTitle = "Join Multi Player";
+            SubTitleText = "Join Multi Player";
 
 
             var flowPanel = new FlowPanel
@@ -56,7 +55,7 @@ namespace Shanism.Client.GameScreens
 
         }
 
-        void ConnectButton_MouseClick(Input.MouseButtonArgs obj)
+        void ConnectButton_MouseClick(MouseButtonArgs obj)
         {
             var server = hostAddress.Text;
 

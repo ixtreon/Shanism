@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Shanism.Client.Drawing;
-using Shanism.Client.Input;
 using Shanism.Common;
 using Shanism.Common.Interfaces.Entities;
 using Shanism.Common.Message;
@@ -11,10 +9,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shanism.Client.Sprites;
 
 namespace Shanism.Client.Systems
 {
-    class SpriteSystem : ClientSystem
+    /// <summary>
+    /// Lists and draws objects.
+    /// </summary>
+    class SpriteSystem : ShanoComponent, IClientSystem
     {
         const uint NoHeroGuid = 0;
 
@@ -23,13 +25,15 @@ namespace Shanism.Client.Systems
 
         readonly HashSet<uint> visibleUnits = new HashSet<uint>();
 
+        readonly IReceptor server;
+
 
         uint mainHeroGuid;
 
         UnitSprite mainSprite;
         EntitySprite hoverSprite;
 
-        SpriteBatch objectBatch;
+        Canvas canvas;
         Matrix transformMatrix;
 
 
@@ -50,18 +54,19 @@ namespace Shanism.Client.Systems
         public EntitySprite HoverSprite => hoverSprite;
 
 
-        public SpriteSystem(GameComponent game)
+        public SpriteSystem(IShanoComponent game, IReceptor server)
             : base(game)
         {
-
+            this.server = server;
+            canvas = new Canvas(game.Screen);
         }
 
-        public override void Update(int msElapsed)
+        public void Update(int msElapsed)
         {
             //update the transformation matrix
             transformMatrix = Matrix.CreateTranslation(-(float)Screen.GameCenter.X, -(float)Screen.GameCenter.Y, 0)
-                * Matrix.CreateScale((float)Screen.GameScale.X * Screen.RenderSize, (float)Screen.GameScale.Y * Screen.RenderSize, 1)
-                * Matrix.CreateTranslation(Screen.HalfSize.X * Screen.RenderSize, Screen.HalfSize.Y * Screen.RenderSize, 0);
+                * Matrix.CreateScale((float)Screen.GameScale.X * Screen.RenderScale, (float)Screen.GameScale.Y * Screen.RenderScale, 1)
+                * Matrix.CreateTranslation(Screen.HalfSize.X * Screen.RenderScale, Screen.HalfSize.Y * Screen.RenderScale, 0);
 
 
             //update all sprites + hover guy
@@ -76,7 +81,7 @@ namespace Shanism.Client.Systems
             hoverSprite = null;
 
             //go thru the freshly visible entities
-            foreach (var e in Server.VisibleEntities)
+            foreach (var e in server.VisibleEntities)
             {
                 //get or create the sprite
                 EntitySprite sprite;
@@ -98,7 +103,7 @@ namespace Shanism.Client.Systems
 
             //remove old sprites when too many of 'em
             const int CleanupFactor = 20;
-            if (unitSpriteDict.Count > CleanupFactor * Server.VisibleEntities.Count)
+            if (unitSpriteDict.Count > CleanupFactor * server.VisibleEntities.Count)
                 foreach (var kvp in unitSpriteDict.Where(kvp => kvp.Value.RemoveFlag).ToList())
                     unitSpriteDict.Remove(kvp.Key);
 
@@ -139,7 +144,7 @@ namespace Shanism.Client.Systems
         //draws objects to the device
         public void Draw()
         {
-            objectBatch.Begin(SpriteSortMode.FrontToBack,
+            canvas.Begin(SpriteSortMode.FrontToBack,
                 BlendState.AlphaBlend, SamplerState.PointClamp,
                 DepthStencilState.DepthRead, RasterizerState.CullNone,
                 null, transformMatrix);
@@ -147,20 +152,11 @@ namespace Shanism.Client.Systems
             //draw sprites at units' in-game positions
             foreach (var kvp in unitSpriteDict)
                 if (!kvp.Value.RemoveFlag)
-                    kvp.Value.Draw(objectBatch);
+                    kvp.Value.Draw(canvas);
 
-            objectBatch.End();
+            canvas.End();
         }
 
-        public override void HandleMessage(IOMessage ioMsg)
-        {
-            switch (ioMsg.Type)
-            {
-                case MessageType.PlayerStatusUpdate:
-                    SetMainHero(((PlayerStatusMessage)ioMsg).HeroId);
-                    break;
-            }
-        }
 
 
         /// <summary>

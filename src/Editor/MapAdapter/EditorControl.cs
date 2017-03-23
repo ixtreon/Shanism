@@ -3,7 +3,6 @@ using Shanism.Common;
 using MGWinForms;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using Shanism.Client.Drawing;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using GameTime = Microsoft.Xna.Framework.GameTime;
+using Shanism.Client.Assets;
 
 namespace Shanism.Editor.MapAdapter
 {

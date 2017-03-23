@@ -14,11 +14,6 @@ namespace Shanism.Client
     public interface IClientInstance
     {
         /// <summary>
-        /// Gets the underlying client engine. 
-        /// </summary>
-        IClientEngine Engine { get; }
-
-        /// <summary>
         /// Starts the engine.
         /// </summary>
         void Run();

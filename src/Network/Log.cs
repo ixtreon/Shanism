@@ -8,12 +8,12 @@ namespace Shanism.Network
 {
     class Log
     {
-        public static IxLog.Log Default;
+        public static Ix.Logging.Log Default;
 
 
         public static void Init(string name = "network")
         {
-           Default = new IxLog.Log(name);
+           Default = new Ix.Logging.Log(name);
         }
     }
 }

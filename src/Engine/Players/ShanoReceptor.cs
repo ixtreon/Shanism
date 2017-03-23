@@ -81,12 +81,12 @@ namespace Shanism.Engine.Players
                     break;
 
                 case MessageType.ClientChat:
-                    parseChat((Shanism.Common.Message.Client.ChatMessage)msg);
+                    parseChat((Shanism.Common.Message.Client.PlayerChatMessage)msg);
                     break;
             }
         }
 
-        void parseChat(Shanism.Common.Message.Client.ChatMessage msg)
+        void parseChat(Shanism.Common.Message.Client.PlayerChatMessage msg)
         {
             var text = msg.Message;
 

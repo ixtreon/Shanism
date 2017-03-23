@@ -9,28 +9,12 @@ namespace Shanism.Client
     //Provides hacky methods for manipulating the main game - quit, exit, restart
     static class GameHelper
     {
-        static ClientGame TheGame;
-
         public static event Action QuitToTitle;
+        public static event Action ExitGame;
+        public static event Action RestartScenario;
 
-        public static void SetGame(ClientGame theGame)
-        {
-            TheGame = theGame;
-        }
-
-        public static void Quit()
-        {
-            QuitToTitle?.Invoke();
-        }
-
-        public static void Exit()
-        {
-            TheGame?.Exit();
-        }
-
-        public static void Restart()
-        {
-            TheGame.Engine.RestartScenario();
-        }
+        public static void Quit() => QuitToTitle?.Invoke();
+        public static void Exit() => ExitGame?.Invoke();
+        public static void Restart() => RestartScenario?.Invoke();
     }
 }
