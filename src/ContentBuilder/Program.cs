@@ -22,7 +22,7 @@ namespace IconPacker
         {
             Client.Common.Json.JsonConfig.Initialize();
 
-            var OutputPath = args.Length < 1 ? "temp" : args[0];
+            var OutputPath = Path.GetFullPath(args.Length < 1 ? "temp" : args[0]);
             WriteLine($"Content Builder Started. Output Path: {OutputPath}");
 
             // get the last file info
