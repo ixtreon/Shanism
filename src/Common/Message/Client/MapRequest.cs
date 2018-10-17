@@ -4,21 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Shanism.Common.Message.Client
+namespace Shanism.Common.Messages
 {
     [ProtoContract]
-    public class MapRequestMessage : IOMessage
+    public class MapRequest : ClientMessage
     {
         
-
         [ProtoMember(1)]
         public ChunkId Chunk;
 
-        public override MessageType Type { get { return MessageType.MapRequest; } }
+        public override ClientMessageType Type => ClientMessageType.MapRequest;
+        MapRequest() { }
 
-        MapRequestMessage() { }
-
-        public MapRequestMessage(ChunkId chunk)
+        public MapRequest(ChunkId chunk)
             : this()
         {
             this.Chunk = chunk;

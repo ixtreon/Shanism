@@ -12,6 +12,7 @@ namespace Shanism.Common.Util
     /// </summary>
     public static class ShanoPath
     {
+        const char FileExtensionDelimiter = '.';
         const char PathDelimiter = '/';
         const char AltPathDelimiter = '\\';
 
@@ -20,15 +21,36 @@ namespace Shanism.Common.Util
         /// </summary>
         public static readonly char[] RecognizedDelimiters = { PathDelimiter, AltPathDelimiter };
 
+
+        /// <summary>
+        /// Gets a normalized version of this path. 
+        /// </summary>
+        /// <param name="path">The path to normalize. </param>
+        static string Normalize(string path)
+        {
+            if(string.IsNullOrEmpty(path))
+                return string.Empty;
+
+            return path
+                .ToLowerInvariant()
+                .Replace(AltPathDelimiter, PathDelimiter)
+                .TrimEnd(PathDelimiter);
+        }
+
+        public static string NormalizeTexture(string texName)
+            => Normalize(RemoveExtension(texName));
+
+        public static string NormalizeAnimation(string animName)
+            => Normalize(animName);
+
+
+
         /// <summary>
         /// Splits the path into segments. 
         /// </summary>
-        /// <param name="path">The path.</param>
-        /// <returns></returns>
-        public static string[] SplitPath(string path, bool toLower = true)
+        public static string[] SplitPath(string path)
         {
-            path = Normalize(path, toLower);
-            if (string.IsNullOrEmpty(path))
+            if(string.IsNullOrEmpty(path))
                 return new string[0];
 
             return path.Split(PathDelimiter);
@@ -42,39 +64,8 @@ namespace Shanism.Common.Util
         /// <returns>A single path that is a concatenation of all the given paths. </returns>
 
         public static string Combine(IEnumerable<string> paths)
-        {
-            var sb = new StringBuilder();
-            foreach (var p in paths)
-            {
-                var fp = Normalize(p);
+            => string.Join(PathDelimiter.ToString(), paths);
 
-                if (fp.Length > 0)
-                {
-                    sb.Append(fp);
-                    sb.Append(PathDelimiter);
-                }
-            }
-            if(sb.Length > 0)
-                sb.Length--;
-            return sb.ToString();
-        }
-
-        /// <summary>
-        /// Gets a normalized version of this path. 
-        /// </summary>
-        /// <param name="path">The path to normalize. </param>
-        public static string Normalize(string path, bool toLower = true)
-        {
-            if (string.IsNullOrEmpty(path))
-                return string.Empty;
-
-            if (toLower)
-                path = path.ToLowerInvariant();
-
-            return path
-                .Replace(AltPathDelimiter, PathDelimiter)
-                .Trim(PathDelimiter);
-        }
         /// <summary>
         /// Combines the specified paths using the default path delimiter. 
         /// Returns a path in normal form.
@@ -82,32 +73,43 @@ namespace Shanism.Common.Util
         /// <param name="paths">The paths to combine.</param>
         /// <returns>A single path that is a concatenation of all the given paths. </returns>
         public static string Combine(params string[] paths)
-            => Combine((IEnumerable<string>)paths);
+            => string.Join(PathDelimiter.ToString(), paths);
+
 
         /// <summary>
         /// Returns the last segment of this path. 
+        /// e.g. "a/b/c/d" -> "d"
         /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
         public static string GetLastSegment(string path)
         {
             var id = path.LastIndexOfAny(RecognizedDelimiters);
 
-            if (id < 0)     //that's a raw file
+            if(id < 0)     //that's a raw file
                 return path;
-
-            if (id + 1 >= path.Length)  //that's a dir
-                return string.Empty;
 
             return path.Substring(id + 1);
         }
 
         /// <summary>
         /// Removes the last segment from this path.
+        /// e.g. "a/b/c/d" -> "a/b/c"
         /// </summary>
-        public static string GetDirectory(string path)
+        public static string GetDirectoryPath(string path)
         {
             var id = path.LastIndexOfAny(RecognizedDelimiters);
+            if(id < 0)     //a root directory
+                return string.Empty;
+
+            return path.Substring(0, id);
+        }
+
+        /// <summary>
+        /// Gets the root directory of this path.
+        /// e.g. "a/b/c/d" -> "a"
+        /// </summary>
+        public static string GetRootDirectory(string path)
+        {
+            var id = path.IndexOfAny(RecognizedDelimiters);
             if (id < 0)     //a root directory
                 return string.Empty;
 
@@ -115,17 +117,38 @@ namespace Shanism.Common.Util
         }
 
 
-
         /// <summary>
         /// Returns a path that points to the same resourse as the path in the first argument,
         /// but is rooted at the path specified by the second argument. 
         /// </summary>
-        /// <param name="fullPath"></param>
-        /// <param name="basePath"></param>
+        /// <param name="toPath"></param>
+        /// <param name="fromPath"></param>
         /// <returns></returns>
-        public static string GetRelativePath(string fullPath, string basePath, bool toLower = true)
+        public static string GetRelativePath(string fromPath, string toPath)
         {
-            return fullPath.GetRelativePath(basePath, toLower);
+            var from = SplitPath(fromPath);
+            var to = SplitPath(toPath);
+
+            var start = 0;
+            var end = Math.Min(from.Length, to.Length);
+            while(start < end && to[start].Equals(from[start], StringComparison.Ordinal))
+                start++;
+
+            var sb = new StringBuilder();
+
+            for(var i = start; i < from.Length; i++)
+            {
+                sb.Append("..");
+                sb.Append('/');
+            }
+
+            for(int i = start; i < to.Length; i++)
+            {
+                sb.Append(to[i]);
+                sb.Append('/');
+            }
+
+            return sb.ToString(0, sb.Length - 1);
         }
 
         /// <summary>
@@ -141,34 +164,25 @@ namespace Shanism.Common.Util
                 && bSegm.Zip(fSegm, string.Equals).All(b => b);
         }
 
-        /// <summary>
-        /// Returned whether the two supplied paths are logically equivalent. 
-        /// </summary>
-        /// <param name="pathA">The first path.</param>
-        /// <param name="pathB">The second path.</param>
-        /// <returns></returns>
-        public static bool Equals(string pathA, string pathB)
-        {
-            var aSegm = SplitPath(pathA);
-            var bSegm = SplitPath(pathB);
-            return aSegm.Length == bSegm.Length
-                && aSegm.Zip(bSegm, string.Equals).All(b => b);
-        }
-
         public static string RemoveExtension(string path)
-        {
-            var id = path.LastIndexOf('.');
-            if (id < 0)
-                return path;
-            return path.Substring(0, id);
-        }
+            => path.Substring(0, findExtensionStart(path));
 
         public static string GetExtension(string path)
+            => path.Substring(findExtensionStart(path));
+
+        static int findExtensionStart(string path)
         {
-            var id = path.LastIndexOf('.');
-            if (id < 0)
-                return string.Empty;
-            return path.Substring(id);
+
+            var lastDotPos = path.LastIndexOf(FileExtensionDelimiter);
+            if(lastDotPos < 0)
+                return path.Length;
+
+            var lastDelimiter = path.LastIndexOfAny(RecognizedDelimiters);
+            if(lastDotPos < lastDelimiter)
+                return path.Length;
+
+            return lastDotPos;
         }
+
     }
 }

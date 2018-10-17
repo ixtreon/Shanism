@@ -9,7 +9,7 @@ namespace Shanism.Common.Util
     /// </summary>
     /// <typeparam name="T">The type to compare.</typeparam>
     /// <seealso cref="System.Collections.Generic.IComparer{T}" />
-    public class GenericComparer<T> : IComparer<T>, IComparer
+    public struct GenericComparer<T> : IComparer<T>, IComparer
     {
         readonly Func<T, T, int> compareFunc;
 

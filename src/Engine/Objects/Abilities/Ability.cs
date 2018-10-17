@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Shanism.Engine.Maps;
-using Shanism.Engine.Entities;
+﻿using Ix.Math;
 using Shanism.Common;
+using Shanism.Common.Objects;
+using Shanism.Engine.Entities;
 using Shanism.Engine.Events;
-using Shanism.Common.StubObjects;
-using ProtoBuf;
-using Shanism.Common.Util;
-using Shanism.Common.Interfaces.Objects;
-using System.Threading;
+using System;
+using System.Diagnostics;
+using System.Numerics;
 
 namespace Shanism.Engine.Objects.Abilities
 {
@@ -59,7 +52,7 @@ namespace Shanism.Engine.Objects.Abilities
         /// <summary>
         /// Gets or sets the icon of this ability. 
         /// </summary>
-        public virtual string Icon { get; set; } = Shanism.Common.Constants.Content.DefaultValues.Icon;
+        public virtual string Icon { get; set; } = Common.Constants.Content.DefaultValues.Icon;
 
         /// <summary>
         /// Gets or sets the tint <see cref="Color"/> of this ability's <see cref="Icon"/>.
@@ -84,7 +77,7 @@ namespace Shanism.Engine.Objects.Abilities
         /// <summary>
         /// Gets or sets the casting range of the ability in units. 
         /// </summary>
-        public virtual double CastRange { get; set; } = 15;
+        public virtual float CastRange { get; set; } = 15;
 
         /// <summary>
         /// Gets or sets whether this ability can be cast while moving.
@@ -104,7 +97,7 @@ namespace Shanism.Engine.Objects.Abilities
         /// <summary>
         /// Gets or sets the name of the animation that will be played whenever the ability is cast. 
         /// </summary>
-        public virtual string Animation { get; set; } = Shanism.Common.Constants.Animations.Cast;
+        public virtual string Animation { get; set; } = Common.Constants.Animations.Cast;
 
 
         /// <summary>
@@ -203,7 +196,7 @@ namespace Shanism.Engine.Objects.Abilities
         /// Determines whether this ability can be currently
         /// cast using the specified in-game location as a target.
         /// </summary>
-        public bool CanCast(Vector v)
+        public bool CanCast(Vector2 v)
         {
             return canCast() && CanTargetGround && checkDistance(v);
         }
@@ -280,7 +273,6 @@ namespace Shanism.Engine.Objects.Abilities
 
             var tLoc = args.TargetLocation;
             Owner.Orientation = (float)Owner.Position.AngleTo(tLoc);
-            Owner.PlayAnimation(Shanism.Common.Constants.Animations.Cast, false);
 
             return true;
         }
@@ -306,7 +298,7 @@ namespace Shanism.Engine.Objects.Abilities
         bool canCast()
             => IsActive && CurrentCooldown <= 0 && Owner.Mana >= ManaCost;
 
-        bool checkDistance(Vector tar)
+        bool checkDistance(Vector2 tar)
             => Owner.Position.DistanceTo(tar) <= CastRange + (Owner.Scale / 2);
 
         bool checkDistance(Entity tar)

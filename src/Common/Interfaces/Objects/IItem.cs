@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shanism.Common.Interfaces.Objects
+namespace Shanism.Common.Objects
 {
     public interface IItem
     {

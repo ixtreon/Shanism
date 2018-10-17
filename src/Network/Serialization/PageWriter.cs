@@ -1,6 +1,6 @@
 ﻿using Lidgren.Network;
-using Shanism.Common.Interfaces.Objects;
-using Shanism.Common.StubObjects;
+using Shanism.Common.Objects;
+using Shanism.Common.ObjectStubs;
 using System;
 using System.Collections;
 using System.Collections.Generic;

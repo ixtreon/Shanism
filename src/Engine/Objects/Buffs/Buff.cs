@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Shanism.Engine.Systems;
-using Shanism.Common.StubObjects;
 using Shanism.Common;
-using Shanism.Common.Util;
-using Shanism.Common.Interfaces.Objects;
-using Shanism.Engine.Entities;
+using Shanism.Common.Objects;
 
 namespace Shanism.Engine.Objects.Buffs
 {
@@ -15,7 +11,7 @@ namespace Shanism.Engine.Objects.Buffs
     /// <summary>
     /// Represents any in-game effect which has a temporary or permanent effect on a unit's statistics. 
     /// </summary>
-    public class Buff : GameObject, IBuff
+    public class Buff : GameObject, IBuff, IEquatable<Buff>
     {
 
         /// <summary>
@@ -27,8 +23,8 @@ namespace Shanism.Engine.Objects.Buffs
         int _moveSpeedPerc;
         string _rawDescription;
 
-        internal readonly UnitStats unitStats = new UnitStats();
-        internal readonly HeroAttributes heroStats = new HeroAttributes();
+        internal readonly UnitStats unitStats = new UnitStats(0);
+        internal readonly HeroAttributes heroStats = new HeroAttributes(0);
 
         IUnitStats IBuff.Stats => unitStats;
         IHeroAttributes IBuff.Attributes => heroStats;
@@ -104,68 +100,36 @@ namespace Shanism.Engine.Objects.Buffs
         /// <summary>
         /// Gets or sets the life modifier of this buff. 
         /// </summary>
-        public float MaxLife
-        {
-            get { return unitStats[UnitStat.MaxLife]; }
-            set { unitStats[UnitStat.MaxLife] = value; }
-        }
+        public ref float MaxLife => ref unitStats.Get(UnitField.MaxLife);
         /// <summary>
         /// Gets or sets the mana modifier of this buff. 
         /// </summary>
-        public float MaxMana
-        {
-            get { return unitStats[UnitStat.MaxMana]; }
-            set { unitStats[UnitStat.MaxMana] = value; }
-        }
+        public ref float MaxMana => ref unitStats.Get(UnitField.MaxMana);
         /// <summary>
         /// Gets or sets the life regen modifier of this buff. 
         /// </summary>
-        public float LifeRegen
-        {
-            get { return unitStats[UnitStat.LifeRegen]; }
-            set { unitStats[UnitStat.LifeRegen] = value; }
-        }
+        public ref float LifeRegen => ref unitStats.Get(UnitField.LifeRegen);
         /// <summary>
         /// Gets or sets the mana regen modifier of this buff. 
         /// </summary>
-        public float ManaRegen
-        {
-            get { return unitStats[UnitStat.ManaRegen]; }
-            set { unitStats[UnitStat.ManaRegen] = value; }
-        }
+        public ref float ManaRegen => ref unitStats.Get(UnitField.ManaRegen);
         /// <summary>
         /// Gets or sets the mnimum damage modifier of this buff. 
         /// </summary>
-        public float MinDamage
-        {
-            get { return unitStats[UnitStat.MinDamage]; }
-            set { unitStats[UnitStat.MinDamage] = value; }
-        }
+        public ref float MinDamage => ref unitStats.Get(UnitField.MinDamage);
         /// <summary>
         /// Gets or sets the maximum damage modifier of this buff. 
         /// </summary>
-        public float MaxDamage
-        {
-            get { return unitStats[UnitStat.MaxDamage]; }
-            set { unitStats[UnitStat.MaxDamage] = value; }
-        }
+        public ref float MaxDamage => ref unitStats.Get(UnitField.MaxDamage);
         /// <summary>
         /// Gets or sets the defense provided by this buff. 
         /// </summary>
-        public float Defense
-        {
-            get { return unitStats[UnitStat.Defense]; }
-            set { unitStats[UnitStat.Defense] = value; }
-        }
+        public ref float Defense => ref unitStats.Get(UnitField.Defense);
 
         /// <summary>
         /// Gets or sets the movement speed modifier of this buff. 
         /// </summary>
-        public float MoveSpeed
-        {
-            get { return unitStats[UnitStat.MoveSpeed]; }
-            set { unitStats[UnitStat.MoveSpeed] = value; }
-        }
+        public ref float MoveSpeed => ref unitStats.Get(UnitField.MoveSpeed);
         /// <summary>
         /// Gets or sets the movement speed percentage modifier of this buff. 
         /// </summary>
@@ -198,38 +162,22 @@ namespace Shanism.Engine.Objects.Buffs
         /// <summary>
         /// Gets or sets the strength modifier of this buff.
         /// </summary>
-        public float Strength
-        {
-            get { return heroStats[HeroAttribute.Strength]; }
-            set { heroStats[HeroAttribute.Strength] = value; }
-        }
+        public ref float Strength => ref heroStats.Get(HeroAttribute.Strength);
 
         /// <summary>
         /// Gets or sets the vitality modifier of this buff.
         /// </summary>
-        public float Vitality
-        {
-            get { return heroStats[HeroAttribute.Vitality]; }
-            set { heroStats[HeroAttribute.Vitality] = value; }
-        }
+        public ref float Vitality => ref heroStats.Get(HeroAttribute.Vitality);
 
         /// <summary>
         /// Gets or sets the agility modifier of this buff.
         /// </summary>
-        public float Agility
-        {
-            get { return heroStats[HeroAttribute.Agility]; }
-            set { heroStats[HeroAttribute.Agility] = value; }
-        }
+        public ref float Agility => ref heroStats.Get(HeroAttribute.Agility);
 
         /// <summary>
         /// Gets or sets the intellect modifier of this buff.
         /// </summary>
-        public float Intellect
-        {
-            get { return heroStats[HeroAttribute.Intellect]; }
-            set { heroStats[HeroAttribute.Intellect] = value; }
-        }
+        public ref float Intellect => ref heroStats.Get(HeroAttribute.Intellect);
 
         #endregion
 
@@ -278,17 +226,16 @@ namespace Shanism.Engine.Objects.Buffs
         /// <returns>
         /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
         /// </returns>
-        public override int GetHashCode() => (int)Id;
+        public override int GetHashCode() => Id.GetHashCode();
 
         /// <summary>
-        /// Determines whether the specified <see cref="object" /> is equal to this instance.
+        /// Checks whether the buffs have the same id. 
         /// </summary>
-        /// <param name="obj">The <see cref="object" /> to compare with this instance.</param>
-        /// <returns>
-        ///   <c>true</c> if the specified <see cref="object" /> is equal to this instance; otherwise, <c>false</c>.
-        /// </returns>
-        public override bool Equals(object obj) => (obj is Buff)
-            && ((Buff)obj).Id == Id;
+        public override bool Equals(object obj) => (obj is Buff b) && Equals(b);
 
+        /// <summary>
+        /// Checks whether the buffs have the same id. 
+        /// </summary>
+        public bool Equals(Buff other) => Id == other.Id;
     }
 }

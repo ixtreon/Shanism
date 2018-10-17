@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shanism.Common;
+using System.Numerics;
 
 namespace Shanism.Network.Serialization
 {
@@ -22,8 +23,7 @@ namespace Shanism.Network.Serialization
 
         public int ReadInt(int oldVal, int nBits = 32)
         {
-            var areEqual = Message.ReadBoolean();
-            if(areEqual)
+            if(!Message.ReadBoolean())
                 return oldVal;
 
             return oldVal + Message.ReadInt32(nBits);
@@ -31,17 +31,23 @@ namespace Shanism.Network.Serialization
 
         public int ReadVarInt(int oldVal)
         {
-            var areEqual = Message.ReadBoolean();
-            if(areEqual)
+            if (!Message.ReadBoolean())
                 return oldVal;
 
             return oldVal + Message.ReadVariableInt32();
         }
 
+        public uint ReadVarUInt(uint oldVal)
+        {
+            if (!Message.ReadBoolean())
+                return oldVal;
+
+            return oldVal + Message.ReadVariableUInt32();
+        }
+
         public byte ReadByte(byte oldVal)
         {
-            var areEqual = Message.ReadBoolean();
-            if(areEqual)
+            if (!Message.ReadBoolean())
                 return oldVal;
 
             return (byte)(oldVal + Message.ReadByte());
@@ -49,8 +55,7 @@ namespace Shanism.Network.Serialization
 
         public float ReadFloat(float oldVal)
         {
-            var areEqual = Message.ReadBoolean();
-            if(areEqual)
+            if (!Message.ReadBoolean())
                 return oldVal;
 
             return oldVal + Message.ReadFloat();
@@ -58,8 +63,7 @@ namespace Shanism.Network.Serialization
 
         public string ReadString(string oldVal)
         {
-            var areEqual = Message.ReadBoolean();
-            if(areEqual)
+            if (!Message.ReadBoolean())
                 return oldVal;
 
             return Message.ReadString();
@@ -67,11 +71,10 @@ namespace Shanism.Network.Serialization
 
         public Color ReadColor(Color oldVal)
         {
-            var areEqual = Message.ReadBoolean();
-            if (areEqual)
+            if (!Message.ReadBoolean())
                 return oldVal;
 
-            return new Color(Message.ReadInt32());
+            return Color.FromPacked(Message.ReadInt32());
         }
 
         public bool ReadBool(bool oldVal)
@@ -84,9 +87,9 @@ namespace Shanism.Network.Serialization
             Message.ReadPadBits();
         }
 
-        public Vector ReadVector(Vector oldVal)
+        public Vector2 ReadVector(Vector2 oldVal)
         {
-            return new Vector(ReadFloat((float)oldVal.X), ReadFloat((float)oldVal.Y));
+            return new Vector2(ReadFloat(oldVal.X), ReadFloat(oldVal.Y));
         }
 
         public short ReadShort(short oldVal)
@@ -94,25 +97,16 @@ namespace Shanism.Network.Serialization
             return (short)ReadVarInt(oldVal);
         }
 
-        public uint ReadVarUInt(uint oldVal)
-        {
-            var areEqual = Message.ReadBoolean();
-            if(areEqual)
-                return oldVal;
-
-            return oldVal + Message.ReadVariableUInt32();
-        }
-
         public IUnitStats ReadStats(IUnitStats r)
         {
-            for (int i = 0; i < r.RawStats.Length; i++)
+            for (int i = 0; i < r.Count; i++)
                 r.RawStats[i] = ReadFloat(r.RawStats[i]);
             return r;
         }
 
         public IHeroAttributes ReadAttributes(IHeroAttributes r)
         {
-            for (int i = 0; i < r.RawStats.Length; i++)
+            for (int i = 0; i < r.Count; i++)
                 r.RawStats[i] = ReadFloat(r.RawStats[i]);
             return r;
         }

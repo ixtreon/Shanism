@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Ix.Math;
 using Shanism.Common;
+using System;
+using System.Numerics;
 
 namespace Shanism.Engine.Objects.Orders
 {
 
     class ReturnOrder : Order
     {
-        public Vector ReturnPosition { get; set; }
+        public Vector2 ReturnPosition { get; set; }
 
         public double ReturnStartDistance { get; set; }
 
@@ -23,7 +21,7 @@ namespace Shanism.Engine.Objects.Orders
 
         public event Action OnReturnFinished;
 
-        public ReturnOrder(Order b, Vector origin, double maxDistance) 
+        public ReturnOrder(Order b, Vector2 origin, double maxDistance) 
             : base(b)
         {
             ReturnPosition = origin;

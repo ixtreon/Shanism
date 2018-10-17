@@ -1,0 +1,41 @@
+
+#----------------------------- Global Properties ----------------------------#
+
+/outputDir:unused
+/intermediateDir:obj
+/platform:DesktopGL
+/config:
+/profile:Reach
+/compress:False
+
+#-------------------------------- References --------------------------------#
+
+
+#---------------------------------- Content ---------------------------------#
+
+#begin Shaders/shadows.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Shaders/shadows.fx
+
+#begin Shaders/basicShadows.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Shaders/basicShadows.fx
+
+#begin Textures/arrow.png
+/copy:Textures/arrow.png
+
+#begin Textures/dummy.png
+/copy:Textures/dummy.png
+
+#begin Textures/icons.png
+/copy:Textures/icons.png
+
+#begin Textures/terrain.png
+/copy:Textures/terrain.png
+
+#begin Textures/ui.png
+/copy:Textures/ui.png

@@ -13,12 +13,12 @@ namespace Shanism.Common
         /// <summary>
         /// The current value of the counter. Zero by default. 
         /// </summary>
-        public int Value { get; private set; } = 0;
+        public int Value { get; private set; }
 
         /// <summary>
         /// Gets the max value of the counter. 
         /// </summary>
-        public int MaxValue { get; private set; } 
+        public int MaxValue { get; private set; }
 
         /// <summary>
         /// Creates a new counter with the given maximum value. 
@@ -26,6 +26,7 @@ namespace Shanism.Common
         /// <param name="maxValue">The maximum value this counter can reach. </param>
         public Counter(int maxValue)
         {
+            Value = 0;
             MaxValue = Math.Max(1, maxValue);
         }
 
@@ -33,10 +34,7 @@ namespace Shanism.Common
         /// Increments the counter by one 
         /// and returns whether the max value was reached. 
         /// </summary>
-        public bool Tick()
-        {
-            return Tick(1);
-        }
+        public bool Tick() => Tick(1);
 
         /// <summary>
         /// Increments the counter by the specified amount 
@@ -45,12 +43,9 @@ namespace Shanism.Common
         public bool Tick(int ticks)
         {
             Value += ticks;
-
-            if (Value < MaxValue)
-                return false;
-
+            var hasTicked = Value >= MaxValue;
             Value %= MaxValue;
-            return true;
+            return hasTicked;
         }
 
         /// <summary>
@@ -59,10 +54,14 @@ namespace Shanism.Common
         /// <param name="newMax">The new maximum this counter can reach. </param>
         public void Reset(int? newMax = null)
         {
-            if (newMax < 0) throw new ArgumentException($"The value of '{nameof(newMax)}' ({newMax}) must be a non-negative integer!");
+            if (newMax < 0)
+                throw new ArgumentException($"The value of '{nameof(newMax)}' ({newMax}) must be a positive integer!");
 
             Value = 0;
-            MaxValue = Math.Max(1, newMax ?? MaxValue);
+            MaxValue = newMax ?? MaxValue;
         }
+
+        public static implicit operator int(Counter c)
+            => c.Value;
     }
 }

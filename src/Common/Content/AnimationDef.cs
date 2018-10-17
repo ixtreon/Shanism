@@ -1,9 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Ix.Math;
+using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shanism.Common.Content
 {
@@ -12,9 +9,12 @@ namespace Shanism.Common.Content
     /// Animations can be either dynamic or static and are further defined by their source texture and span /frames/. 
     /// </summary>
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-    public class AnimationDef
+    public class AnimationDef : IEquatable<AnimationDef>, IComparable<AnimationDef>
     {
-        public const int DefaultDuration = 500;
+
+        static readonly Rectangle UnitRect = new Rectangle(Point.Zero, Point.One);
+
+        RectangleF _pathingRect = UnitRect;
 
         /// <summary>
         /// Gets or sets the name of this animation. 
@@ -34,7 +34,7 @@ namespace Shanism.Common.Content
         /// Gets the texture cells spanned by this animation. 
         /// </summary>
         [JsonProperty]
-        public Rectangle Span { get; set; } = new Rectangle(Point.Zero, Point.One);
+        public Rectangle Span { get; set; } = UnitRect;
 
         /// <summary>
         /// Gets or sets whether this animation is dynamic. 
@@ -56,6 +56,14 @@ namespace Shanism.Common.Content
         [JsonProperty]
         public int Period { get; set; }
 
+
+        [JsonProperty]
+        public RectangleF PathingRect
+        {
+            get => _pathingRect;
+            set => _pathingRect = (value != RectangleF.Empty) ? value : UnitRect;
+        }
+
         [JsonProperty]
         public AnimationStyle RotationStyle { get; set; } = AnimationStyle.Fixed;
 
@@ -64,25 +72,11 @@ namespace Shanism.Common.Content
         /// </summary>
         public int FrameCount => IsDynamic ? Span.Area : 1;
 
-        public int TotalDuration => IsDynamic ? Period * FrameCount : DefaultDuration;
-
 
         /// <summary>
-        /// Returns the span of the n'th frame in this animation. 
-        /// Values are whole numbers indicating the cells of the animation. 
+        /// Creates a new empty animation. 
         /// </summary>
-        /// <param name="frame">The consecutive number of the frame, starting from 0. </param>
-        public Rectangle GetFrame(int frame)
-        {
-            if (!IsDynamic)
-                return Span;
-
-            var w = Span.Width > 0 ? Span.Width : 1;
-
-            var x = Span.X + (frame % w);
-            var y = Span.Y + (frame / w);
-            return new Rectangle(x, y, 1, 1);
-        }
+        public AnimationDef() { }
 
         /// <summary>
         /// Creates a new static animation spanning all or part of a texture. 
@@ -131,9 +125,24 @@ namespace Shanism.Common.Content
             RotationStyle = @base.RotationStyle;
         }
 
-        /// <summary>
-        /// Creates a new empty animation. 
-        /// </summary>
-        public AnimationDef() { }
+        public Point GetFrame(int frame)
+        {
+            var w = Math.Max(1, Span.Width);
+            return Span.Position + new Point(frame % w, frame / w);
+        }
+
+        public int CompareTo(AnimationDef other)
+            => string.Compare(Name, other.Name, StringComparison.Ordinal);
+
+
+        public bool Equals(AnimationDef other)
+            => Name == other.Name;
+
+        public override int GetHashCode()
+            => Name.GetHashCode();
+
+        public override bool Equals(object obj)
+            => obj is AnimationDef other
+            && Name == other.Name;
     }
 }

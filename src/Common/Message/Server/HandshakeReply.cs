@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Shanism.Common.Message.Server
+namespace Shanism.Common.Messages
 {
     /// <summary>
     /// The reply of a server to a client willing to join the game. 
@@ -14,15 +14,15 @@ namespace Shanism.Common.Message.Server
     /// necessary to play the current scenario. 
     /// </summary>
     [ProtoContract]
-    public class HandshakeReplyMessage : IOMessage
+    public class HandshakeReply : ServerMessage
     {
         /// <summary>
         /// A negative response to a player joining. 
         /// </summary>
-        public static readonly HandshakeReplyMessage Negative = new HandshakeReplyMessage();
+        public static readonly HandshakeReply Negative = new HandshakeReply();
 
 
-        public override MessageType Type => MessageType.HandshakeReply;
+        public override ServerMessageType Type => ServerMessageType.HandshakeReply;
 
 
         /// <summary>
@@ -50,9 +50,9 @@ namespace Shanism.Common.Message.Server
         [ProtoMember(4)]
         public readonly byte[] ContentData;
 
-        HandshakeReplyMessage() { }
+        HandshakeReply() { }
 
-        public HandshakeReplyMessage(uint playerId, 
+        public HandshakeReply(uint playerId, 
             byte[] scenarioData, byte[] contentData)
             :this()
         {

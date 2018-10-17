@@ -1,38 +1,25 @@
-﻿using Shanism.Engine.Maps;
-using Shanism.Common;
-using Shanism.Common.Util;
-using Shanism.Common.Interfaces.Objects;
-using Shanism.ScenarioLib;
-using Shanism.Engine.Scripting;
+﻿using Shanism.Common;
+using Shanism.Common.Objects;
 using System.Threading.Tasks;
 using System;
+using System.Diagnostics;
 
 namespace Shanism.Engine
 {
+    public interface IDestructible
+    {
+        bool IsDestroyed { get; }
+    }
+
     /// <summary>
     /// Represents all things that belong to a game world. 
     /// This includes game objects, abilities, buffs, items, scripts (?)
     /// </summary>
-    public abstract class GameObject : IGameObject, IDisposable
+    public abstract class GameObject : GameComponent, IGameObject, IDestructible, IEquatable<GameObject>
     {
-        #region Static Members
-
-        internal static ShanoEngine currentGame { get; private set; }
 
         /// <summary>
-        /// Tries to set the game engine instance all game objects are part of.
-        /// Fails if there is another engine registered already. 
-        /// </summary>
-        public static bool SetGame(ShanoEngine game)
-        {
-            currentGame = game;
-            return true;
-        }
-        #endregion
-
-
-        /// <summary>
-        /// Gets the <see cref="Shanism.Common.ObjectType"/> of this game object. 
+        /// Gets the <see cref="Common.ObjectType"/> of this game object. 
         /// </summary>
         public abstract ObjectType ObjectType { get; }
 
@@ -41,36 +28,17 @@ namespace Shanism.Engine
         /// </summary>
         public uint Id { get; }
 
-        #region Game Shortcuts
-
         /// <summary>
-        /// Gets the map that contains the terrain and units in this scenario. 
+        /// Gets whether this object should be removed from the game as soon as possible. 
         /// </summary>
-        public IGameMap Map => currentGame?.Map;
-
-        /// <summary>
-        /// Gets the scenario this object is part of. 
-        /// </summary>
-        public Scenario Scenario => currentGame?.Scenario;
-
-        /// <summary>
-        /// Gets the game this object is part of. 
-        /// </summary>
-        public IGame Game => currentGame;
-
-
-        internal PerfCounter UnitSystemPerfCounter => currentGame?.UnitPerfCounter;
-
-        internal IScriptRunner Scripts => currentGame?.Scripts;
-        
-        #endregion
+        public bool IsDestroyed { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameObject"/> class.
         /// </summary>
         protected GameObject()
         {
-            Id = Allocator<GameObject>.Allocate();
+            Id = ObjectAllocator.New();
         }
 
 
@@ -81,67 +49,40 @@ namespace Shanism.Engine
         internal virtual void Update(int msElapsed) { }
 
         /// <summary>
-        /// Determines whether the specified <see cref="object" /> points to an entity with the same id.
+        /// Marks this GameObject for destruction, eventually removing it from the game. 
         /// </summary>
-        /// <param name="obj">The <see cref="object" /> to compare with this instance.</param>
-        /// <returns>
-        ///   <c>true</c> if the specified <see cref="object" /> is equal to this instance; otherwise, <c>false</c>.
-        /// </returns>
-        public override bool Equals(object obj) =>
-            (obj is Entity) && ((Entity)obj).Id == Id;
+        public virtual void Destroy()
+        {
+            Debug.Assert(!IsDestroyed);
+            IsDestroyed = true;
+        }
+
 
         /// <summary>
         /// Determines whether the two objects are the same.
         /// </summary>
-        public static bool operator ==(GameObject a, GameObject b)
-            => a?.Id == b?.Id;
+        public static bool operator ==(GameObject a, GameObject b) => a?.Id == b?.Id;
 
         /// <summary>
         /// Determines whether the two objects are different.
         /// </summary>
-        public static bool operator !=(GameObject a, GameObject b)
-            => a?.Id != b?.Id;
+        public static bool operator !=(GameObject a, GameObject b) => a?.Id != b?.Id;
 
-        /// <summary>
-        /// Returns the hash code for this instance.
-        /// </summary>
-        /// <returns>A 32-bit signed integer hash code.</returns>
+
+        public override bool Equals(object obj) => (obj is GameObject other) && Equals(other);
+
         public override int GetHashCode() => Id.GetHashCode();
 
-        /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
-        /// </returns>
         public override string ToString() => $"{ObjectType} #{Id}";
 
         /// <summary>
         /// Releases the ID of this object. 
         /// </summary>
-        public void Dispose()
+        internal void Release()
         {
-            Allocator<GameObject>.Deallocate(Id);
+            ObjectAllocator.Release(Id);
         }
 
-        /// <summary>
-        /// Gets or sets whether this object 
-        /// should be removed from the game as soon as possible. 
-        /// </summary>
-        internal bool IsDestroyed { get; set; }
-
-        /// <summary>
-        /// Marks this GameObject for destruction, eventually removing it from the game. 
-        /// </summary>
-        public virtual void Destroy()
-        {
-            if (IsDestroyed)
-            {
-                Console.WriteLine("Trying to destroy an object twice!");
-                return;
-            }
-
-            IsDestroyed = true;
-        }
+        public bool Equals(GameObject other) => Id == other?.Id;
     }
 }

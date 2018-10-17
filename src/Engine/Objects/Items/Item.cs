@@ -4,7 +4,7 @@ using System.Linq;
 using Shanism.Engine.Objects.Buffs;
 using Shanism.Common;
 using Shanism.Engine.Objects.Abilities;
-using Shanism.Common.Interfaces.Objects;
+using Shanism.Common.Objects;
 
 namespace Shanism.Engine.Objects.Items
 {

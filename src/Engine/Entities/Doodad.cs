@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common.StubObjects;
 using Shanism.Common;
-using Shanism.Common.Util;
-using Shanism.Common.Interfaces.Entities;
+using Shanism.Common.Entities;
 
 namespace Shanism.Engine.Entities
 {

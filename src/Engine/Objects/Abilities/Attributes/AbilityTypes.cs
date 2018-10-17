@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Shanism.Engine.Objects.Abilities
 {
@@ -22,9 +23,9 @@ namespace Shanism.Engine.Objects.Abilities
                 .Where(a => a.HasTypeFlag(type));
         }
 
-        private static bool HasTypeFlag(this Ability a, AbilityTypeFlags type)
+        static bool HasTypeFlag(this Ability a, AbilityTypeFlags type)
         {
-            return a.GetType()
+            return a.GetType().GetTypeInfo()
                 .GetCustomAttributes(typeof(AbilityTypeAttribute), false)
                 .Cast<AbilityTypeAttribute>()
                 .Any(attr => attr.Type.HasFlag(type));

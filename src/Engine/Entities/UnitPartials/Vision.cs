@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common.Message;
+using Shanism.Common.Messages;
 using Shanism.Engine.Players;
 using Shanism.Engine.Objects.Range;
 using Shanism.Common;
@@ -13,7 +13,7 @@ namespace Shanism.Engine.Entities
     partial class Unit
     {
         //used by the vision system
-        readonly HashSet<Entity> objectsSeen = new HashSet<Entity>();
+        readonly HashSet<Entity> visibleEntities = new HashSet<Entity>();
 
         float _visionRange = 20;
 
@@ -37,7 +37,7 @@ namespace Shanism.Engine.Entities
         /// <summary>
         /// Gets all entities this unit can see. 
         /// </summary>
-        public IEnumerable<Entity> VisibleEntities => objectsSeen;
+        public IEnumerable<Entity> VisibleEntities => visibleEntities;
 
         /// <summary>
         /// Gets or sets the vision range of the unit. 
@@ -57,11 +57,11 @@ namespace Shanism.Engine.Entities
         /// Gets whether the specified entity is visible by this unit. 
         /// </summary>
         /// <param name="o">The entity to check for visibility. </param>
-        public bool IsInVisionRange(Entity o)
-            => objectsSeen.Contains(o);
+        public bool IsVisible(Entity o)
+            => visibleEntities.Contains(o);
 
 
-        internal void SendMessageToVisibles(IOMessage msg)
+        internal void SendMessageToVisibles(ServerMessage msg)
         {
             var set = new HashSet<ShanoReceptor>();
             set.Add(Owner.Receptor);
@@ -78,14 +78,14 @@ namespace Shanism.Engine.Entities
         /// Called whenever an entity enters this unit's vision range. 
         /// Raises the <see cref="ObjectSeen"/> event. 
         /// </summary>
-        public virtual void OnObjectSeen(Entity e)
+        internal void OnObjectSeen(Entity e)
             => ObjectSeen?.Invoke(e);
 
         /// <summary>
         /// Called whenever an entity leaves this unit's vision range. 
         /// Raises the <see cref="ObjectUnseen"/> event. 
         /// </summary>
-        public virtual void OnObjectUnseen(Entity e)
+        internal void OnObjectUnseen(Entity e)
             => ObjectUnseen?.Invoke(e);
 
 
@@ -93,36 +93,38 @@ namespace Shanism.Engine.Entities
         /// Called whenever this unit's vision range changes. 
         /// Raises the <see cref="VisionRangeChanged"/> event. 
         /// </summary>
-        public virtual void OnVisionRangeChanged()
+        internal void OnVisionRangeChanged()
             => VisionRangeChanged?.Invoke(this);
 
-
-        internal void see(Entity e)
+        /// <summary>
+        /// Causes this unit to "see" the other entity.
+        /// </summary>
+        internal void See(Entity e)
         {
-            if (objectsSeen.Add(e))
+            if (visibleEntities.Add(e))
             {
                 e.visibleFromUnits.Add(this);
                 OnObjectSeen(e);
             }
         }
 
-        internal void unsee(Entity e)
+        internal void Unsee(Entity e)
         {
-            if (objectsSeen.Remove(e))
+            if (visibleEntities.Remove(e))
             {
                 e.visibleFromUnits.Remove(this);
                 OnObjectUnseen(e);
             }
         }
 
-        internal void unseeAll()
+        internal void UnseeAll()
         {
-            foreach (var e in objectsSeen)
+            foreach (var e in visibleEntities)
             {
                 e.visibleFromUnits.Remove(this);
                 OnObjectUnseen(e);
             }
-            objectsSeen.Clear();
+            visibleEntities.Clear();
         }
     }
 }

@@ -6,8 +6,8 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common.Interfaces.Objects;
-using Shanism.Common.StubObjects;
+using Shanism.Common.Objects;
+using Shanism.Common.ObjectStubs;
 using Shanism.Network.Serialization;
 
 namespace Shanism.Network.Common
@@ -29,32 +29,28 @@ namespace Shanism.Network.Common
         {
             var skippedProperties = new List<PropertyInfo>();
 
-            IEnumerable<PropertyInfo> props;
-            if (typeof(TInt).IsInterface)
-                props = (new Type[] { typeof(TInt) })
-                       .Concat(typeof(TInt).GetInterfaces())
-                       .SelectMany(i => i.GetProperties());
-            else
-                props = typeof(TInt).GetProperties();
+            var types = new List<Type> { typeof(TInt) };
+            if (typeof(TInt).GetTypeInfo().IsInterface)
+                types.AddRange(typeof(TInt).GetInterfaces());
 
-            foreach (var pInt in props)
-            {
-                var pStub = typeof(TStub).GetProperty(pInt.Name);
-
-                Type propType;
-                if (!canUseProperty(pStub, out propType))
+            foreach (var ty in types)
+                foreach (var pInt in ty.GetProperties())
                 {
-                    skippedProperties.Add(pInt);
-                    continue;
+                    var pStub = typeof(TStub).GetProperty(pInt.Name);
+
+                    if (!canUseProperty(pStub, out Type propType))
+                    {
+                        skippedProperties.Add(pInt);
+                        continue;
+                    }
+
+                    yield return new PropertyTuple
+                    {
+                        StubProperty = pStub,
+                        InterfaceProperty = pInt,
+                        UnderlyingType = propType,
+                    };
                 }
-
-                yield return new PropertyTuple
-                {
-                    StubProperty = pStub,
-                    InterfaceProperty = pInt,
-                    UnderlyingType = propType,
-                };
-            }
 
             if (skippedProperties.Any())
                 Debug.WriteLine($"Excluded properties: {string.Join(", ", skippedProperties.Select(p => p.Name))}");
@@ -70,8 +66,9 @@ namespace Shanism.Network.Common
             }
 
             var propType = prop.PropertyType;
-            readAsType = propType.IsEnum
-                    ? propType.GetEnumUnderlyingType()
+            var propTypeInfo = propType.GetTypeInfo();
+            readAsType = propTypeInfo.IsEnum
+                    ? propTypeInfo.GetEnumUnderlyingType()
                     : propType;
 
             return miCache.Reads.ContainsKey(readAsType)
@@ -91,20 +88,20 @@ namespace Shanism.Network.Common
             foreach (var pair in GetProperties())
             {
                 var propType = pair.StubProperty.PropertyType;
+                var propTypeInfo = propType.GetTypeInfo();
                 var readMethod = miCache.Reads[pair.UnderlyingType];
-
 
                 // obj.Prop
                 var accessObjProp = Expression.MakeMemberAccess(typedObj, pair.StubProperty);
 
                 // (T)obj.Prop
-                var accessReadableObjProp = propType.IsEnum
+                var accessReadableObjProp = propTypeInfo.IsEnum
                     ? (Expression)Expression.Convert(accessObjProp, pair.UnderlyingType)
                     : accessObjProp;
 
                 //(T)rdr.Read((T)obj.Prop)
                 Expression callMethod = Expression.Call(rdr, readMethod, accessReadableObjProp);
-                if (propType.IsEnum)
+                if (propTypeInfo.IsEnum)
                     callMethod = Expression.Convert(callMethod, propType);
 
                 //obj.Prop = (T)rdr.Read((T)obj.Prop)
@@ -143,7 +140,7 @@ namespace Shanism.Network.Common
                 Expression accessPropTo = Expression.MakeMemberAccess(to, pair.InterfaceProperty);
 
                 // apply cast from enum to underlying type
-                if (propType.IsEnum)
+                if (propType.GetTypeInfo().IsEnum)
                 {
                     accessPropFrom = Expression.Convert(accessPropFrom, pair.UnderlyingType);
                     accessPropTo = Expression.Convert(accessPropTo, pair.UnderlyingType);

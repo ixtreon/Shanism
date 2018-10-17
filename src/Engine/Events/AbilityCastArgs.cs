@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Shanism.Common;
 using Shanism.Engine.Objects.Abilities;
+using System.Numerics;
 
 namespace Shanism.Engine.Events
 {
@@ -42,7 +43,7 @@ namespace Shanism.Engine.Events
         /// <summary>
         /// Gets the location this spell targeted. If a unit was targeted, returns its position at the time. 
         /// </summary>
-        public Vector TargetLocation => castData.TargetLocation;
+        public Vector2 TargetLocation => castData.TargetLocation;
 
         /// <summary>
         /// Gets the ability that was cast.

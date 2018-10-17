@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shanism.Common;
-using Shanism.Common.Interfaces.Entities;
-using Shanism.Common.Interfaces.Objects;
-using Shanism.Common.StubObjects;
+using Shanism.Common.Entities;
+using Shanism.Common.Objects;
+using Shanism.Common.ObjectStubs;
 using Shanism.Network.Serialization;
 
 namespace Shanism.Network.Common

@@ -3,6 +3,7 @@ using Shanism.Engine.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,13 +15,13 @@ namespace Shanism.Engine.Objects.Abilities
         public readonly Ability Ability;
         public readonly AbilityTargetType TargetType;
         public readonly Entity TargetEntity;
-        public readonly Vector TargetLocation;
+        public readonly Vector2 TargetLocation;
 
         int progress = 0;
         public int Progress => progress;
 
 
-        public CastingData(Ability ab, Vector target)
+        public CastingData(Ability ab, Vector2 target)
         {
             Ability = ab;
             TargetType = AbilityTargetType.PointTarget;

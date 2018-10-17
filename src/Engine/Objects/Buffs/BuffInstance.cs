@@ -1,5 +1,5 @@
 ﻿using Shanism.Common;
-using Shanism.Common.Interfaces.Objects;
+using Shanism.Common.Objects;
 using Shanism.Common.Util;
 using Shanism.Engine.Entities;
 using System;
@@ -10,7 +10,7 @@ namespace Shanism.Engine.Objects.Buffs
     /// Represents one or more instances of a given <see cref="Buff"/> applied by a given <see cref="Unit"/> to a single target unit. 
     /// Implements the <see cref="IBuff"/> interface via the <see cref="Prototype"/> member. 
     /// </summary>
-    public class BuffInstance : GameObject, IBuffInstance
+    public class BuffInstance : GameObject, IBuffInstance, IEquatable<BuffInstance>
     {
 
         /// <summary>
@@ -121,12 +121,12 @@ namespace Shanism.Engine.Objects.Buffs
         /// <returns>
         /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
         /// </returns>
-        public override int GetHashCode()
-        {
-            return Hash.Get(
-                Prototype.GetHashCode(),
-                Caster?.GetHashCode() ?? 0,
-                Target.GetHashCode());
-        }
+        public override int GetHashCode() 
+            => (Prototype, Caster, Target).GetHashCode();
+
+        public bool Equals(BuffInstance other)
+            => Prototype.Equals(other.Prototype)
+            && Caster.Equals(other.Caster)
+            && Target.Equals(other.Target);
     }
 }

@@ -1,20 +1,40 @@
-﻿using Shanism.Client.Drawing;
+﻿using Shanism.Client.UI.Containers;
 using Shanism.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Numerics;
 using System.Threading.Tasks;
 
 namespace Shanism.Client.UI
 {
-    class MessageBox : Window
+    public class MessageBox : Window
     {
-        const double buttonWidth = 0.24;
+        class MessageBoxButton : Button
+        {
+            static readonly new Vector2 DefaultSize = new Vector2(0.24f, 0.06f);
 
-        readonly Label textLabel;
+            public MessageBoxButtons ButtonType { get; }
+
+            public MessageBoxButton(MessageBoxButtons type)
+            {
+                ButtonType = type;
+                Text = type.ToString();
+                Size = DefaultSize;
+            }
+        }
+
+
+        static readonly Vector2 MinContentSize = new Vector2(0.5f, 0.3f);
+        const float buttonWidth = 0.24f;
+
+        static Font DefaultFont => Content.Fonts.NormalFont;
+
+
 
         public event Action<MessageBoxButtons> ButtonClicked;
+
+        readonly TaskCompletionSource<MessageBoxButtons> Task;
 
         /// <summary>
         /// Gets or sets whether the box is removed from its parent 
@@ -27,96 +47,82 @@ namespace Shanism.Client.UI
         public MessageBox(string title, string text,
             MessageBoxButtons actions = MessageBoxButtons.Ok)
         {
-            var textFont = Content.Fonts.NormalFont;
-
-            //calc box size
-            var btnTypes = actions.GetButtons();
-            var btnSpace = btnTypes.Length * (buttonWidth + Padding) - Padding;
-
-            var boxMinWidth = Math.Max(0.6, btnSpace + 2 * LargePadding);
-            var boxMinHeight = 0.3;
-
-            var txtSize = textFont.MeasureString(text, Screen.UiSize.X - 2 * LargePadding);
-
-            var boxWidth = Math.Max(txtSize.X + 2 * LargePadding, boxMinWidth);
-            var boxHeight = Math.Max(txtSize.Y + TitleHeight + 2 * LargePadding + Button.DefaultSize.Y, boxMinHeight);
-
-
-            //set box window props
-            IsVisible = true;
+            Task = new TaskCompletionSource<MessageBoxButtons>();
             CanResize = false;
             TitleText = title;
-            Size = new Vector(boxWidth, boxHeight);
-            Top = (Screen.UiSize.Y - boxHeight).Clamp(0, 0.3);
-            CenterX();
-            ParentAnchor = AnchorMode.Top;
+            IsVisible = true;
 
-            //text
-            Add(textLabel = new Label
+            // buttons panel
+            var buttonPanel = new ListPanel(Direction.LeftToRight, sizeMode: ListSizeMode.ResizeBoth)
             {
-                Font = textFont,
+                ParentAnchor = AnchorMode.Bottom,
+                Bottom = ClientBounds.Bottom,
+            };
+            createButtons(actions.GetButtons(), buttonPanel);
 
-                AutoSize = false,
-                Location = new Vector(LargePadding, TitleHeight + LargePadding),
-                Size = new Vector(Size.X - 2 * LargePadding, txtSize.Y),
+            var textLabel = new Label
+            {
+                Font = DefaultFont,
+
+                AutoSize = true,
+                Location = ClientBounds.Position,
 
                 Text = text,
-                TextXAlign = 0.5f,
-            });
+                TextAlign = AnchorPoint.TopCenter,
+            };
 
-            //buttons
-            var buttonSpacing = (boxWidth - 2 * LargePadding - buttonWidth * btnTypes.Length)
-                / (btnTypes.Length - 1);
-            for (int i = 0; i < btnTypes.Length; i++)
+            Add(textLabel);
+            Add(buttonPanel);
+
+            buttonPanel.CenterX = true;
+
+            // sizing
+
+            var contentMinSize = new Vector2(0.5f, 0f);
+            var w = Math.Max(textLabel.Width, buttonPanel.Width);
+            var h = textLabel.Height + Padding + buttonPanel.Height;
+            var sz = Vector2.Max(contentMinSize, new Vector2(w, h));
+
+            ParentAnchor = AnchorMode.Top;
+            Size = (Size - ClientBounds.Size) + sz;
+        }
+
+        public async Task<MessageBoxButtons> GetResultAsync()
+            => await Task.Task;
+
+        Control createButtons(IEnumerable<MessageBoxButtons> btnTypes, Control container)
+        {
+            foreach(var btnType in btnTypes)
             {
-                var btnType = btnTypes[i];
-                var btn = new Button
-                {
-                    Text = btnType.ToString(),
-
-                    Width = buttonWidth,
-                    Bottom = Size.Y - LargePadding,
-                };
-
-                if (btnTypes.Length > 1)
-                    btn.Left = LargePadding + i * (buttonWidth + buttonSpacing);
-                else
-                    btn.Left = (Size.X - buttonWidth) / 2;
-
-                btn.MouseClick += (e) =>
-                {
-                    if (RemoveOnButtonClick && Parent != null)
-                        Parent.Remove(this);
-                    else
-                        IsVisible = false;
-
-                    ButtonClicked?.Invoke(btnType);
-                };
-
-                Add(btn);
+                var btn = new MessageBoxButton(btnType);
+                btn.MouseClick += onButtonClick;
+                container.Add(btn);
             }
+
+            return container;
+        }
+
+        void onButtonClick(Control sender, MouseButtonArgs e)
+        {
+            var btn = (MessageBoxButton)sender;
+
+            if(RemoveOnButtonClick && Parent != null)
+                Parent.Remove(this);
+            else
+                Hide();
+
+            // a button was clicked
+            Task.TrySetResult(btn.ButtonType);
+            ButtonClicked?.Invoke(btn.ButtonType);
         }
     }
 
-    [Flags]
-    enum MessageBoxButtons
+    public static class MessageBoxActionsExt
     {
-        Ok = 1 << 0,
-        Cancel = 1 << 1,
-        Yes = 1 << 2,
-        No = 1 << 3,
-    }
-
-    static class MessageBoxActionsExt
-    {
-        static MessageBoxButtons[] buttonTypes =
+        static readonly MessageBoxButtons[] buttonTypes =
             (MessageBoxButtons[])Enum.GetValues(typeof(MessageBoxButtons));
 
-        public static MessageBoxButtons[] GetButtons(this MessageBoxButtons act)
-        {
-            return buttonTypes
-                .Where(ty => (act & ty) == ty)
-                .ToArray();
-        }
+        public static IEnumerable<MessageBoxButtons> GetButtons(this MessageBoxButtons act)
+            => buttonTypes.Where(ty => (act & ty) == ty);
     }
 }

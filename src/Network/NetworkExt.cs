@@ -1,24 +1,24 @@
-﻿using Shanism.Common.Message;
-using Lidgren.Network;
+﻿using Lidgren.Network;
 using ProtoBuf;
+using Shanism.Network.ProtoBuf;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shanism.Network
 {
     static class NetworkExt
     {
+        static NetworkExt()
+        {
+            ProtoConfig.Initialize();
+        }
+
         /// <summary>
-        /// Converts a shano message of type <see cref="IOMessage"/> to one suitable for use by the network library. 
+        /// Serializes an object to a NetMessage.
+        /// <para/>
+        /// Puts a message header, too; see <see cref="NetMessageHeader"/>
         /// </summary>
-        /// <param name="ioMsg">The IOMessage.</param>
-        /// <param name="peer">The peer.</param>
-        /// <returns></returns>
-        public static NetOutgoingMessage ToNetMessage(this IOMessage ioMsg, NetPeer peer)
+        public static NetOutgoingMessage ToNetMessage<T>(this T ioMsg, NetPeer peer)
         {
             byte[] bytes;
             using (var ms = new MemoryStream())
@@ -28,7 +28,7 @@ namespace Shanism.Network
             }
 
             var netMsg = peer.CreateMessage(sizeof(int) + bytes.Length);
-            netMsg.Write((byte)0);
+            netMsg.Write((byte)NetMessageHeader.ProtoMessage);
             netMsg.Write((int)bytes.Length);
             netMsg.Write(bytes);
 
@@ -36,11 +36,11 @@ namespace Shanism.Network
         }
 
         /// <summary>
-        /// Converts a message coming from the network library to a shano message of type <see cref="IOMessage"/>. 
+        /// Deserializes a message coming from the network library to an object.
+        /// <para/>
+        /// Assumes the message header is already read.
         /// </summary>
-        /// <param name="msg">The network message.</param>
-        /// <returns></returns>
-        public static IOMessage ToIOMessage(this NetIncomingMessage msg)
+        public static T ProtoDeserialize<T>(this NetIncomingMessage msg)
         {
             try
             {
@@ -48,12 +48,12 @@ namespace Shanism.Network
                 var bytes = msg.ReadBytes(len);
 
                 using (var ms = new MemoryStream(bytes))
-                    return Serializer.Deserialize<IOMessage>(ms);
+                    return Serializer.Deserialize<T>(ms);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Log.Default.Error("Received a faulty message...");
-                return null;
+                NetLog.Default.Error($"Error decoding a message: {e.Message}");
+                return default(T);
             }
 
         }

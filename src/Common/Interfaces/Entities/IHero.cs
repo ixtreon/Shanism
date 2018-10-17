@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Shanism.Common.Interfaces.Entities
+namespace Shanism.Common.Entities
 {
     /// <summary>
     /// Represents a special type of unit that has secondary attributes affecting 

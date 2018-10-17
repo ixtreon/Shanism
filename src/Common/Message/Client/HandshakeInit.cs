@@ -4,21 +4,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Shanism.Common.Message.Client
+namespace Shanism.Common.Messages
 {
     [ProtoContract]
-    public class HandshakeInitMessage : IOMessage
+    public class HandshakeInit : ClientMessage
     {
-        
+        public override ClientMessageType Type => ClientMessageType.HandshakeInit;
+
 
         [ProtoMember(1)]
         public string PlayerName;
 
 
-        public override MessageType Type => MessageType.HandshakeInit;
-        public HandshakeInitMessage() { }
+        public HandshakeInit() { }
 
-        public HandshakeInitMessage(string playerName)
+        public HandshakeInit(string playerName)
         {
             PlayerName = playerName;
         }

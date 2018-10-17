@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Shanism.Common.Interfaces.Objects
+namespace Shanism.Common.Objects
 {
     /// <summary>
     /// Represents a passive or active ability that belongs to a single entity. 
@@ -31,12 +31,12 @@ namespace Shanism.Common.Interfaces.Objects
         Color IconTint { get; }
 
         /// <summary>
-        /// Gets the current cooldown of the ability. 
+        /// Gets the current cooldown of the ability in milliseconds.
         /// </summary>
         int CurrentCooldown { get; }
 
         /// <summary>
-        /// Gets the total cooldown of the ability. 
+        /// Gets the total cooldown of the ability in milliseconds.
         /// </summary>
         int Cooldown { get; }
 
@@ -53,7 +53,7 @@ namespace Shanism.Common.Interfaces.Objects
         /// <summary>
         /// Gets the casting range of the ability in in-game units. 
         /// </summary>
-        double CastRange { get; }
+        float CastRange { get; }
 
         /// <summary>
         /// Gets the target types of this ability, if it is targeted. 

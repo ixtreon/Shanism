@@ -1,124 +1,137 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Ix.Math;
 using Shanism.Common;
-using Shanism.Client.Drawing;
-using Shanism.Common.Interfaces.Objects;
-using Shanism.Client.Input;
+using Shanism.Common.Objects;
+using System;
+using System.Numerics;
+using System.Text;
 
 namespace Shanism.Client.UI.Tooltips
 {
     /// <summary>
     /// A tooltip for them abilities.
     /// </summary>
-    class AbilityTip : Control
+    public class AbilityTooltip : TooltipBase
     {
-        //The size minus the height needed to write the description. 
-        const double tipMargin = 2 * Padding;
+        const float MaxDescWidth = 0.9f;
 
-        const double MaxDescWidth = 0.9;
 
-        IAbility ability;
+        (
+            uint Id,
+            string Description,
+            int ManaCost,
+            float Cooldown,
+            float CastTime,
+            float CastRange
+        ) AbilityData;
 
-        public TextureFont Font { get; set; }
+        public Font Font { get; set; }
+
+        float maxTextWidth;
 
         readonly Label txtName;
-        readonly Label txtStuff;
+        readonly Label txtSubtitle;
 
-        public AbilityTip()
+        public AbilityTooltip()
         {
-            IsVisible = false;
             Font = Content.Fonts.NormalFont;
-            BackColor = Color.Black.SetAlpha(25);
-            Size = new Vector(0.6, 0.15);
+            Size = new Vector2(0.6f, 0.15f);
             CanHover = false;
+            BackColor = UiColors.ControlBackground;
+            Hide();
 
             txtName = new Label
             {
-
-                Location = new Vector(Padding),
-                Text = "lalalala",
+                Location = ClientBounds.Position,
+                AutoSize = true,
 
                 CanHover = false,
                 Font = Content.Fonts.FancyFont,
-                TextColor = Color.Goldenrod,
+                TextColor = UiColors.TextTitle,
+                Text = "Shano Ability",
             };
 
-            txtStuff = new Label
+            txtSubtitle = new Label
             {
-                Location = new Vector(Padding, txtName.Bottom),
-                Text = "lalalal",
+                Location = new Vector2(Padding, txtName.Bottom),
+                AutoSize = true,
 
                 CanHover = false,
                 Font = Content.Fonts.NormalFont,
-                TextColor = Color.White,
+                TextColor = UiColors.Text,
+                Text = "Shano Description",
             };
 
 
             Add(txtName);
-            Add(txtStuff);
+            Add(txtSubtitle);
         }
 
-        double DescriptionWidth => Size.X - 2 * tipMargin;
-
-        protected override void OnUpdate(int msElapsed)
+        public override void Update(int msElapsed)
         {
-
             var newAbility = HoverControl?.ToolTip as IAbility;
 
-            if (newAbility == null)
+            IsVisible = (newAbility != null);
+            if (!IsVisible)
+                return;
+
+            var newData = AbilityData;
+            newData.Id = newAbility.Id;
+            newData.Description = newAbility.Description;
+            newData.ManaCost = newAbility.ManaCost;
+            newData.Cooldown = newAbility.Cooldown / 1000f;
+            newData.CastTime = newAbility.CastTime / 1000f;
+            newData.CastRange = newAbility.CastRange;
+
+            if (newData.Equals(AbilityData))
             {
-                IsVisible = false;
+                base.Update(msElapsed);
                 return;
             }
 
-            if (newAbility != ability)
-            {
+            //update view
+            AbilityData = newData;
+            txtName.Text = newAbility.Name;
+            txtSubtitle.Text = getSubtitleText(newAbility);
 
-                txtName.Text = newAbility.Name;
+            // update size
+            var headerWidth = Math.Max(txtName.Size.X, txtSubtitle.Size.X) + LargePadding;
+            maxTextWidth = Math.Max(headerWidth, MaxDescWidth);
 
-                if (newAbility.TargetType == AbilityTargetType.Passive)
-                {
-                    txtStuff.Text = string.Empty;
-                }
-                else
-                {
-                    var mc = newAbility.ManaCost;
-                    var cd = newAbility.Cooldown / 1000.0;
-                    var ct = newAbility.CastTime / 1000.0;
-                    var cr = newAbility.CastRange;
-                    if (newAbility.TargetType == AbilityTargetType.NoTarget)
-                        txtStuff.Text = $"MC: {mc:0.#} CD: {cd:0.#}s CT: {ct:0.#}s";
-                    else
-                        txtStuff.Text = $"MC: {mc:0.#} R: {cr:0.#} CD: {cd:0.#}s CT: {ct:0.#}s";
-                }
+            var textSize = Font.MeasureString(newAbility.Description, maxTextWidth);
+            var w = Math.Max(headerWidth, textSize.X) + 2 * LargePadding;
+            var h = txtSubtitle.Bottom + textSize.Y + 2 * LargePadding;
+            Size = new Vector2(w, h);
 
-
-
-                var headerWidth = Math.Max(txtName.Size.X, txtStuff.Size.X) + tipMargin;
-                var descSz = Font.MeasureString(newAbility.Description, MaxDescWidth);
-                var w = Math.Max(headerWidth, descSz.X) + 2 * tipMargin;
-                var h = txtStuff.Bottom + descSz.Y + 2 * tipMargin;
-                Size = new Vector(w, h);
-
-                ability = newAbility;
-            }
-
-            Location = ((MouseInfo.ScreenPosition + MouseInfo.CursorSize) / Screen.UiScale)
-                .Clamp(Vector.Zero, Screen.UiSize - Size);
-            IsVisible = true;
+            base.Update(msElapsed);
         }
 
-        public override void OnDraw(Canvas g)
-        {
-            if (IsVisible)
-            {
-                //bg
-                g.Draw(Content.Textures.Blank, Vector.Zero, Size, Color.Black.SetAlpha(150));
 
-                //text
-                g.DrawString(Font, ability.Description, Color.White, new Vector(0, txtStuff.Bottom) + tipMargin, 0, 0, maxWidth: DescriptionWidth);
-            }
+        string getSubtitleText(IAbility ab)
+        {
+            if (ab.TargetType == AbilityTargetType.Passive)
+                return string.Empty;
+
+            var text = new StringBuilder();
+
+            text.Append($"MC: {AbilityData.ManaCost:0.#} ");
+            if (ab.TargetType != AbilityTargetType.NoTarget)
+                text.Append($"R: {AbilityData.CastRange:0.#} ");
+            text.Append($"CD: {AbilityData.Cooldown:0.#}s ");
+            if (AbilityData.CastTime > 0)
+                text.Append($"CT: {AbilityData.CastTime:0.#}s ");
+            text.Length--;
+
+            return text.ToString();
+        }
+
+        public override void Draw(Canvas g)
+        {
+            base.Draw(g);
+
+            //description
+            g.DrawString(Font, AbilityData.Description, UiColors.Text,
+                new Vector2(0, txtSubtitle.Bottom).Offset(LargePadding),
+                maxWidth: maxTextWidth);
         }
     }
 }

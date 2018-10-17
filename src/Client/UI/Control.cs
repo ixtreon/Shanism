@@ -1,72 +1,41 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+﻿using Ix.Math;
+using Shanism.Client.Assets;
+using Shanism.Client.IO;
+using Shanism.Client.Views;
+using Shanism.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Shanism.Common;
-using Shanism.Client.Input;
-
+using System.Numerics;
+using System.Threading.Tasks;
 
 namespace Shanism.Client.UI
 {
-    [Flags]
-    public enum AnchorMode
+
+    static class ControlContext
     {
-        None = 0,
-        Left = 1,
-        Right = 2,
-        Top = 4,
-        Bottom = 8,
-        All = Left | Right | Bottom | Top,
+        public static ScreenSystem Screen { get; private set; }
+        public static ContentList Content { get; private set; }
+
+        public static void Init(ScreenSystem screen, ContentList content)
+        {
+            Screen = screen ?? throw new ArgumentNullException(nameof(screen));
+            Content = content ?? throw new ArgumentNullException(nameof(content));
+        }
     }
 
     /// <summary>
-    /// Represents a user interface control. 
+    /// A user interface control. 
     /// </summary>
-    partial class Control
+    public partial class Control
     {
-
-        #region Static/Const members
 
         /// <summary>
         /// Specifies the default distance between elements in UI scale. 
         /// </summary>
-        public const double Padding = 0.01;
+        public const float DefaultPadding = 0.01f;
 
-        public const double LargePadding = 0.02;
-
-
-        public RootControl Root { get; protected set; }
-
-        /// <summary>
-        /// Gets the first control that is under the mouse pointer
-        /// and has <see cref="CanHover"/> set to <c>true</c>. 
-        /// </summary>
-        public Control HoverControl => RootControl.GlobalHover;
-
-        /// <summary>
-        /// Gets the control that currently has keyboard focus. 
-        /// A control must have its <see cref="CanFocus"/> property set to <c>true</c> in order to become the <see cref="FocusControl"/>.
-        /// </summary>
-        public Control FocusControl => RootControl.GlobalFocus;
-
-
-        static GameComponent game;
-
-        protected static Screen Screen => game.Screen;
-        protected static ContentList Content => game.Content;
-
-        protected static KeyboardInfo KeyboardInfo => game.Keyboard;
-        protected static MouseInfo MouseInfo => game.Mouse;
-
-
-        public static void SetContext(GameComponent game)
-        {
-            Control.game = game;
-        }
-
-        #endregion
+        public const float LargePadding = 0.02f;
 
 
         /// <summary>
@@ -74,22 +43,59 @@ namespace Shanism.Client.UI
         /// </summary>
         readonly List<Control> controls = new List<Control>();
 
+        bool isInitialized;
         bool _isVisible = true;
-        Vector _size;
-        Vector _location;
+        Vector2 _size = new Vector2(DefaultPadding);
+        Vector2 _location;
+        Vector2 _minimumSize;
+        Vector2? _maximumSize;
+        View _view;
+        Control _parent;
+
+
+        /// <summary>
+        /// Gets the first control that is under the mouse pointer
+        /// and has <see cref="CanHover"/> set to <c>true</c>. 
+        /// </summary>
+        public Control HoverControl => View?.ViewHoverControl;
+
+        /// <summary>
+        /// Gets the control that currently has keyboard focus. 
+        /// A control must have its <see cref="CanFocus"/> property set to <c>true</c> in order to become the <see cref="View.ViewFocusControl"/>.
+        /// </summary>
+        public Control FocusControl => View?.ViewFocusControl;
+
+
+
+        protected static ScreenSystem Screen => ControlContext.Screen;
+        protected static ContentList Content => ControlContext.Content;
 
 
         #region Public Properties
 
         /// <summary>
+        /// Gets the inner padding of the control
+        /// which determines its <see cref="ClientBounds"/>.
+        /// </summary>
+        public float Padding { get; set; } = DefaultPadding;
+
+        /// <summary>
         /// Gets the parent of this control. 
         /// </summary>
-        public Control Parent { get; private set; }
+        public Control Parent
+        {
+            get => _parent;
+            set
+            {
+                _parent = value;
+                View = _parent?.View;
+            }
+        }
 
         /// <summary>
         /// Defines the background color drawn behind the whole control. 
         /// </summary>
-        public Color BackColor { get; set; } = Color.Transparent;
+        public virtual Color BackColor { get; set; } = Color.Transparent;
 
         /// <summary>
         /// Gets or sets whether the control is draggable. 
@@ -109,141 +115,169 @@ namespace Shanism.Client.UI
         /// <summary>
         /// Gets or sets the tooltip of this control. 
         /// </summary>
-        public object ToolTip { get; set; }
+        public virtual object ToolTip { get; set; }
+
+        /// <summary>
+        /// The cursor displayed when the mouse is over this control.
+        /// Only used if <see cref="CanHover"/> is set to true.
+        /// </summary>
+        public GameCursor Cursor { get; set; } = GameCursor.Default;
 
         /// <summary>
         /// Gets or sets the sticky sides in relation to the parent control. 
         /// </summary>
-        public AnchorMode ParentAnchor { get; set; } = AnchorMode.Left | AnchorMode.Top;
+        public AnchorMode ParentAnchor { get; set; } = AnchorMode.Top | AnchorMode.Left;
 
+        public AnchorMode ResizeAnchor { get; set; } = AnchorMode.Top | AnchorMode.Left;
+
+        /// <summary>
+        /// Gets or recursively sets the root view
+        /// of this control and all its child controls.
+        /// </summary>
+        public View View
+        {
+            get => _view;
+            set
+            {
+                if (_view == value)
+                    return;
+
+                var oldView = _view;
+                _view = value;
+
+                OnViewChanged(new ViewChangeArgs(oldView, value));
+
+                for (int i = 0; i < controls.Count; i++)
+                    controls[i].View = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets whether the control is visible. 
         /// </summary>
         public bool IsVisible
         {
-            get { return _isVisible; }
+            get => _isVisible;
             set
             {
-                if (value != _isVisible)
-                {
-                    _isVisible = value;
-                    VisibleChanged?.Invoke(this);
-                }
+                if (value == _isVisible)
+                    return;
+
+                _isVisible = value;
+
+                OnVisibleChanged(EventArgs.Empty);
+                if (value)
+                    OnShown(EventArgs.Empty);
+                else
+                    OnHidden(EventArgs.Empty);
             }
         }
 
         /// <summary>
         /// Gets or sets the position of this control in its parent's coordinate space. 
         /// </summary>
-        public Vector Location
+        public Vector2 Location
         {
-            get { return _location; }
-            set { _location = value; }
+            get => _location;
+            set => _location = value;
+        }
+
+        /// <summary>
+        /// Clamps the given size between <see cref="MinimumSize"/> and <see cref="MaximumSize"/>.
+        /// </summary>
+        protected void ClampSize(ref Vector2 value)
+        {
+            if (_maximumSize != null)
+                value = Vector2.Clamp(value, _minimumSize, _maximumSize.Value);
+            else
+                value = Vector2.Max(value, _minimumSize);
+        }
+
+        void SetSize(Vector2 newSize)
+        {
+            if (_size == newSize) return;
+            ClampSize(ref newSize);
+            if (_size == newSize) return;
+
+            var dSize = newSize - _size;
+
+            _size = newSize;
+            Location -= ResizeAnchor.GetOffset() * dSize;
+
+            // handle custom anchors/offsets on resize
+            resizeChildren(AnchorMode.Left, AnchorMode.Right, new Vector2(dSize.X, 0));
+            resizeChildren(AnchorMode.Top, AnchorMode.Bottom, new Vector2(0, dSize.Y));
+
+            // raise an event
+            OnSizeChanged(EventArgs.Empty);
         }
 
         /// <summary>
         /// Gets or sets the size of the control in UI units. 
         /// </summary>
-        public Vector Size
+        public Vector2 Size
         {
-            get { return _size; }
+            get => _size;
+            set => SetSize(value);
+        }
+
+        public Vector2? MaximumSize
+        {
+            get => _maximumSize;
             set
             {
-                if (_size != value)
-                {
-                    var d = value - _size;
-                    _size = value;
+                _maximumSize = value;
+                if (value != null)
+                    _minimumSize = Vector2.Min(_minimumSize, value.Value);
 
-                    resizeChildren(AnchorMode.Left, AnchorMode.Right, new Vector(d.X, 0));
-                    resizeChildren(AnchorMode.Top, AnchorMode.Bottom, new Vector(0, d.Y));
-
-                    SizeChanged?.Invoke(this);
-                }
+                SetSize(Size);
             }
+        }
+
+        /// <summary>
+        /// Gets or sets the minimum size of the control.
+        /// Zero by default. Cannot become negative.
+        /// </summary>
+        public Vector2 MinimumSize
+        {
+            get => _minimumSize;
+            set
+            {
+                _minimumSize = Vector2.Max(value, Vector2.Zero);
+                if (_maximumSize != null)
+                    _maximumSize = Vector2.Max(_maximumSize.Value, value);
+
+                SetSize(Size);
+            }
+        }
+
+        /// <summary>
+        /// Gets the bounds of this control relative to its parent's coordinate space.
+        /// </summary>
+        public RectangleF Bounds
+        {
+            get => new RectangleF(Location, _size);
+            set
+            {
+                Location = value.Position;
+                Size = value.Size;
+            }
+        }
+
+        public virtual RectangleF ClientBounds
+        {
+            get => new RectangleF(Vector2.Zero, _size).Deflate(Padding);
         }
 
         #endregion
 
-
-        #region Events
-
-        /// <summary>
-        /// Raised whenever this control receives a drag-drop from another control. 
-        /// </summary>
-        public event Action<Control> OnDrop;
-
-        /// <summary>
-        /// Raised whenever this control is drag-dropped onto another control. 
-        /// </summary>
-        public event Action<Control> OnDrag;
-
-        /// <summary>
-        /// Raised whenever the mouse enters the control's boundary. 
-        /// </summary>
-        public event Action<MouseArgs> MouseEnter;
-
-        /// <summary>
-        /// Raised whenever the mouse leaves the control's boundary. 
-        /// </summary>
-        public event Action<MouseArgs> MouseLeave;
-
-        /// <summary>
-        /// Raised whenever the mouse moves while the control is on focus. 
-        /// </summary>
-        public event Action<MouseArgs> MouseMove;
-
-        /// <summary>
-        /// Raised whenever a mouse button is pressed while the control is on focus. 
-        /// </summary>
-        public event Action<MouseButtonArgs> MouseDown;
-
-        /// <summary>
-        /// Raised whenever a mouse button is released while the control is on focus.
-        /// </summary>
-        public event Action<MouseButtonArgs> MouseUp;
-
-        /// <summary>
-        /// Raised whenever a mouse button is released while the control is on focus 
-        /// and the mouse cursor is inside the control's bounds.
-        /// </summary>
-        public event Action<MouseButtonArgs> MouseClick;
-
-        /// <summary>
-        /// Raised whenever the control's visibility changes. 
-        /// </summary>
-        public event Action<Control> VisibleChanged;
-
-        /// <summary>
-        /// Raised whenever the control's size changes. 
-        /// </summary>
-        public event Action<Control> SizeChanged;
-
-        /// <summary>
-        /// Raised whenever a game action (a key plus/minus some modifier keys) 
-        /// is activated (pressed or released as per <see cref="Settings.QuickButtonPress"/>)
-        /// while this control has focus (see <see cref="FocusControl"/>. 
-        /// </summary>
-        public event Action<ClientAction> GameActionActivated;
-
-        public event Action<Keybind> KeyPressed;
-
-        public event Action<Keybind> KeyReleased;
-
-        /// <summary>
-        /// Occurs when another control is added as a child of this control.
-        /// </summary>
-        public event Action<Control> ControlAdded;
-
-        /// <summary>
-        /// Occurs when another control is removed from the child controls of this control.
-        /// </summary>
-        public event Action<Control> ControlRemoved;
-
-        #endregion
-
-
         #region Property Shortcuts
+
+
+        /// <summary>
+        /// Calculates the absolute position of this control in UI coordinates. 
+        /// </summary>
+        public Vector2 AbsoluteLocation => Location + (Parent?.AbsoluteLocation ?? Vector2.Zero);
 
         /// <summary>
         /// Gets all the children of this control. 
@@ -251,113 +285,136 @@ namespace Shanism.Client.UI
         public IReadOnlyList<Control> Controls => controls;
 
         /// <summary>
-        /// Gets the bounds of this control relative to its parent's coordinate space.
+        /// Gets the currently set UI color scheme.
         /// </summary>
-        public RectangleF Bounds => new RectangleF(_location, Size);
+        public ColorScheme UiColors => ColorScheme.Current;
 
         /// <summary>
         /// Gets or sets the width of this control.
         /// </summary>
-        public double Width
+        public float Width
         {
-            get { return Size.X; }
-            set { Size = new Vector(value, Size.Y); }
+            get => _size.X;
+            set => Size = new Vector2(value, _size.Y);
         }
 
         /// <summary>
         /// Gets or sets the height of this control.
         /// </summary>
-        public double Height
+        public float Height
         {
-            get { return Size.Y; }
-            set { Size = new Vector(Size.X, value); }
+            get => _size.Y;
+            set => Size = new Vector2(_size.X, value);
         }
 
         /// <summary>
         /// Gets the top (low Y) coordinate of this control relative to its parent. 
         /// </summary>
-        public double Top
+        public float Top
         {
-            get { return _location.Y; }
-            set { _location.Y = value; }
+            get => Location.Y;
+            set => Location = new Vector2(Location.X, value);
         }
 
         /// <summary>
         /// Gets the left X coordinate of this control relative to its parent. 
         /// </summary>
-        public double Left
+        public float Left
         {
-            get { return _location.X; }
-            set { _location.X = value; }
+            get => Location.X;
+            set => Location = new Vector2(value, Location.Y);
         }
 
         /// <summary>
         /// Gets the bottom (high Y) coordinate of this control relative to its parent. 
         /// </summary>
-        public double Bottom
+        public float Bottom
         {
-            get { return _location.Y + Size.Y; }
-            set { _location.Y = value - Size.Y; }
+            get => Location.Y + Size.Y;
+            set => Location = new Vector2(Location.X, value - Size.Y);
         }
 
         /// <summary>
         /// Gets the right X coordinate of this control relative to its parent. 
         /// </summary>
-        public double Right
+        public float Right
         {
-            get { return _location.X + Size.X; }
-            set { _location.X = value - Size.X; }
+            get => Location.X + Size.X;
+            set => Location = new Vector2(value - Size.X, Location.Y);
         }
 
         /// <summary>
-        /// Gets whether this control is the currently focused control (see <see cref="FocusControl"/>).
+        /// Gets whether this control is the currently focused control (see <see cref="View.ViewFocusControl"/>).
         /// </summary>
-        public bool HasFocus => FocusControl == this;
+        public bool IsFocusControl => View.ViewFocusControl == this;
 
         /// <summary>
-        /// Gets whether the mouse is currently over this control (see <see cref="HoverControl"/>).
+        /// Gets whether the mouse is currently over this control (see <see cref="View.ViewHoverControl"/>).
         /// </summary>
-        public bool HasHover => (HoverControl == this);
+        public bool IsHoverControl => (HoverControl == this);
 
         /// <summary>
         /// Gets whether this control is a root (top-level) control. 
         /// </summary>
         public bool IsRootControl => Parent == null;
 
-        /// <summary>
-        /// Calculates the absolute position of this control in UI coordinates. 
-        /// </summary>
-        public Vector AbsolutePosition
-            => (Parent?.AbsolutePosition ?? Vector.Zero) + _location;
-
         #endregion
 
 
-        #region Child Controls Methods
+        #region Virtual Methods
+
+        /// <summary>
+        /// Override in derived classes to implement custom update logic. 
+        /// </summary>
+        public virtual void Update(int msElapsed) { }
+
+        /// <summary>
+        /// Draws a background over the whole control. 
+        /// </summary>
+        public virtual void Draw(Canvas c)
+        {
+            DrawBackground(c, BackColor);
+        }
+
+        protected void DrawBackground(Canvas canvas, Color c)
+        {
+            if (c.A > 0)
+                canvas.FillRectangle(Vector2.Zero, Size, c);
+        }
+
+        #endregion
+
+        #region Collection
 
         /// <summary>
         /// Adds the specified control as a child of this control.
         /// </summary>
         /// <param name="c">The control that is to be added. Cannot be null.</param>
-        /// <exception cref="System.ArgumentNullException"></exception>
-        public void Add(Control c)
+        /// <returns>The same control. Just in case. </returns>
+        public Control Add(Control c)
         {
             if (c == null) throw new ArgumentNullException(nameof(c));
             if (c.Parent != null) throw new ArgumentException("This control is already a child of another control.");
 
             c.Parent = this;
-            c.Root = Root;
+            c.View = View;
 
             controls.Add(c);
-            OnControlAdded(c);
-            ControlAdded?.Invoke(c);
+
+            c.tryInitialize();
+            c.SetFocus();
+
+            OnControlAdded(new ControlChildArgs(this, c));
+            c.OnParentChanged(new ParentChangeArgs(c, null, this));
+
+            return c;
         }
+
+        public void AddRange(params Control[] controls) => AddRange((IEnumerable<Control>)controls);
 
         public void AddRange(IEnumerable<Control> controls)
         {
-            if (controls == null) throw new ArgumentNullException(nameof(controls));
-
-            foreach (var c in controls)
+            foreach (var c in controls ?? throw new ArgumentNullException(nameof(controls)))
                 Add(c);
         }
 
@@ -366,135 +423,63 @@ namespace Shanism.Client.UI
         /// Removes the given child control. 
         /// </summary>
         /// <param name="c"></param>
-        public void Remove(Control c)
+        public bool Remove(Control c)
         {
-            if (c == null) throw new ArgumentNullException(nameof(c));
-            if (c.Parent != this) throw new ArgumentException("The specified control is not a child of this control.");
+            var ans = controls.Remove(c);
 
-            c.Parent = null;
-            c.Root = null;
+            if (ans)
+                onRemove(c);
 
-            controls.Remove(c);
-            OnControlRemoved(c);
-            ControlRemoved?.Invoke(c);
+            return ans;
+        }
+
+        public void RemoveAt(int index)
+        {
+            if (index < 0 || index >= controls.Count)
+                throw new ArgumentOutOfRangeException(nameof(index));
+
+            var c = controls[index];
+            controls.RemoveAt(index);
+
+            onRemove(c);
+        }
+
+        public void RemoveRange(IEnumerable<Control> controls)
+        {
+            foreach (var c in controls)
+                Remove(c);
         }
 
         /// <summary>
         /// Removes all child controls.
         /// </summary>
-        public void RemoveAll() => controls.Clear();
-
-        #endregion
-
-
-        /// <summary>
-        /// Handles the given ClientAction. 
-        /// </summary>
-        /// <param name="act"></param>
-        public void ActivateAction(ClientAction act)
-            => GameActionActivated?.Invoke(act);
-
-
-        public void Draw(Canvas g)
+        public void RemoveAll()
         {
-            if (!IsVisible)
-                return;
+            for (int i = controls.Count - 1; i >= 0; i--)
+                RemoveAt(i);
+        }
 
-            g.PushWindow(_location, Size);
+        void onRemove(Control c)
+        {
+            c.Parent = null;
+            c.View = null;
 
-            OnDraw(g);
-            for (int i = 0; i < controls.Count; i++)
-                controls[i].Draw(g);
-
-            g.PopWindow();
+            OnControlRemoved(new ControlChildArgs(this, c));
+            c.OnParentChanged(new ParentChangeArgs(c, this, null));
         }
 
         /// <summary>
-        /// Updates the state of the control and recursively calls update for all child controls. 
+        /// Removes all child controls of the specified type.
         /// </summary>
-        /// <param name="msElapsed"></param>
-        public void Update(int msElapsed)
+        public void RemoveAll<T>()
+            => RemoveWhere(c => c is T);
+
+        public void RemoveWhere(Predicate<Control> f)
         {
-            //update self
-            OnUpdate(msElapsed);
-
-            //update controls
-            for (int i = 0; i < controls.Count; i++)
-            {
-                var c = controls[i];
-
-                c.Update(msElapsed);
-
-                if (controls[i] != c)
-                    i--;
-            }
+            for (int i = controls.Count - 1; i >= 0; i--)
+                if (f(controls[i]))
+                    RemoveAt(i);
         }
-
-
-        #region Virtual Methods
-
-        /// <summary>
-        /// Draws a background over the whole control. 
-        /// </summary>
-        /// <param name="sb"></param>
-        public virtual void OnDraw(Canvas g)
-        {
-            if (BackColor.A > 0)
-                g.Draw(Content.Textures.Blank, Vector.Zero, Size, BackColor);
-        }
-
-        /// <summary>
-        /// Override in derived classes to implement custom Update handlers. 
-        /// </summary>
-        /// <param name="msElapsed"></param>
-        protected virtual void OnUpdate(int msElapsed) { }
-
-        protected virtual void OnControlAdded(Control c) { }
-
-        protected virtual void OnControlRemoved(Control c) { }
-
-        #endregion
-
-
-
-        #region Main Control Methods
-
-        #endregion
-
-
-        /// <summary>
-        /// Makes the control span the whole game window. 
-        /// </summary>
-        public void Maximize()
-        {
-            _location = Vector.Zero;
-            Size = Parent?.Size ?? Screen.UiSize;
-        }
-
-        /// <summary>
-        /// Makes this control the currently focused control, only if <see cref="CanFocus"/> is true. 
-        /// </summary>
-        public void SetFocus()
-        {
-            Root?.SetFocus(this);
-        }
-
-        /// <summary>
-        /// Clears focus from the current control, if it is focused (see <see cref="HasFocus"/>).
-        /// </summary>
-        public void ClearFocus()
-        {
-            if (FocusControl != this || Parent == null )
-                return;
-
-            //find control to give the focus to
-            var c = Parent;
-            while (!c.CanFocus && c.Parent != null)
-                c = c.Parent;
-
-            Root.SetFocus(c);
-        }
-
 
         /// <summary>
         /// Determines whether this control is contained within the specified control.
@@ -505,107 +490,188 @@ namespace Shanism.Client.UI
         public bool IsChildOf(Control parent)
         {
             var p = this;
-            do
-            {
-                if (p == parent)
-                    return true;
-            }
-            while ((p = p.Parent) != null);
-
-            return false;
+            while (p != parent && (p = p.Parent) != null) { }
+            return p == parent;
         }
 
+        public bool IsFirstChild
+            => Parent?.controls.FirstOrDefault() == this;
+
+        public bool IsLastChild
+            => Parent?.controls.LastOrDefault() == this;
+
+        #endregion
+
+        #region Focus
+
+        /// <summary>
+        /// Makes this control the currently focused control, only if <see cref="CanFocus"/> is true. 
+        /// </summary>
+        public void SetFocus()
+        {
+            if (View != null && IsVisible && (CanFocus || IsRootControl))
+                View.SetFocus(this);
+        }
+
+        internal void InvokeFocusGained() => OnFocusGained(EventArgs.Empty);
+        internal void InvokeFocusLost() => OnFocusLost(EventArgs.Empty);
+
+        /// <summary>
+        /// Clears focus from the current control, if it is focused (see <see cref="IsFocusControl"/>).
+        /// </summary>
+        public void ClearFocus()
+        {
+            if (FocusControl != this || Parent == null)
+                return;
+
+            //find control to give the focus to
+            var c = Parent;
+            while (!c.CanFocus && c.Parent != null)
+                c = c.Parent;
+
+            c.SetFocus();
+        }
+
+        #endregion
+
+        #region Z-Order
 
         /// <summary>
         /// Brings this control to the front of the Z-order.
         /// </summary>
         public void BringToFront()
-        {
-            Parent?.controls.MoveToLast(this);
-        }
+            => Parent.controls.MoveToLast(this);
 
         /// <summary>
         /// Sends this control to the back of the Z-order.
         /// </summary>
         public void SendToBack()
+            => Parent.controls.MoveToFirst(this);
+
+        #endregion
+
+        #region Visibility & Bounds
+
+        public void Show() => IsVisible = true;
+
+        public void Hide() => IsVisible = false;
+
+
+        Vector2 _parentCenter => ((Parent?.Size ?? Screen.UI.Size) - Size) / 2;
+
+        /// <summary>
+        /// If set to true, centers the control along the X dimension, 
+        /// so middle of left-right.
+        /// </summary>
+        public bool CenterX
         {
-            Parent?.controls.MoveToFirst(this);
+            set => Left = value ? _parentCenter.X : Left;
+        }
+        /// <summary>
+        /// If set to true, centers the control along the Y dimension,
+        /// so middle of top-bottom.
+        /// </summary>
+        public bool CenterY
+        {
+            set => Top = value ? _parentCenter.Y : Top;
         }
 
         /// <summary>
-        /// Places the control in the middle of its <see cref="Parent"/>'s central Y axis.
+        /// If set to true, centers the control along both dimensions,
+        /// so middle of parent.
         /// </summary>
-        public double CenterX()
+        public bool CenterBoth
         {
-            var sz = Parent?.Width ?? Screen.UiSize.X;
-            Left = (sz - Width) / 2;
-            return Left;
+            set => Location = value ? _parentCenter : Location;
         }
+
+        #endregion
+
 
         /// <summary>
-        /// Places the control in the middle of its <see cref="Parent"/>'s central X axis.
+        /// A hacky method to walk the <see cref="Parent"/> chain up to the top.
         /// </summary>
-        public double CenterY()
+        public Control FindRoot()
         {
-            var sz = Parent?.Height ?? Screen.UiSize.Y;
-            Top = (sz - Height) / 2;
-            return Top;
-        }
-
-        /// <summary>
-        /// Places the control in the middle of its <see cref="Parent"/>
-        /// </summary>
-        public Vector CenterBoth()
-        {
-            var sz = Parent?.Size ?? Screen.UiSize;
-            Location = (sz - Size) / 2;
-            return Location;
+            var c = this;
+            while (c.Parent != null)
+                c = c.Parent;
+            return c;
         }
 
 
-        void resizeChildren(AnchorMode min, AnchorMode max, Vector d)
+        void tryInitialize()
+        {
+            if (isInitialized)
+                return;
+
+            isInitialized = true;
+            OnInitialized(EventArgs.Empty);
+        }
+
+
+        void resizeChildren(AnchorMode min, AnchorMode max, Vector2 d)
         {
             foreach (var c in controls)
             {
-                var hasMin = c.ParentAnchor.HasFlag(min);
-                var hasMax = c.ParentAnchor.HasFlag(max);
+                var hasMin = (c.ParentAnchor & min) != 0;
+                var hasMax = (c.ParentAnchor & max) != 0;
 
-                if (hasMax && hasMin)           //anchor both sides -> modify size
+                if (hasMax && hasMin)           //both anchors -> modify size
                     c.Size += d;
-                else if (hasMax && !hasMin)     //anchor at (right/top) -> modify loc
+                else if (hasMax && !hasMin)     //2nd anchor (right/top) -> modify loc
                     c.Location += d;
-                else if (!hasMin && !hasMax)    //has no anchor -> float in center
+                else if (!hasMin && !hasMax)    //no anchor -> float in center
                     c.Location += d / 2;
-                //else if                       //anchor at (left/bottom) -> don't touch
+                //else if                       //1st anchor (left/bottom) -> don't touch
             }
         }
 
-        protected Control getHover(Vector mousePos)
+        protected Control getHover(Vector2 mousePos)
         {
+
             //search child controls first
             //order by descending zorder
             Control childHover = null;
             for (int i = controls.Count - 1; i >= 0; i--)
             {
                 var c = controls[i];
-                if (c.IsVisible
-                    && c.Bounds.Contains(mousePos)
-                    && (childHover = c.getHover(mousePos - c._location)) != null)
-                {
+
+                if (!c.IsVisible)
+                    continue;
+
+                if (!mousePos.IsInside(c.Bounds))
+                    continue;
+
+                childHover = c.getHover(mousePos - c.Location);
+                if (childHover != null)
                     return childHover;
-                }
+
             }
 
-            return CanHover ? this : null;
+            if (CanHover)
+                return this;
+
+            return null;
         }
 
-        public void ShowMessageBox(string caption, string text)
+
+        public void ForChildrenRecursed(Action<Control> func)
         {
-            foreach (var c in Controls.OfType<MessageBox>().ToList())
-                Remove(c);
-            Add(new MessageBox(caption, text));
+            if (!controls.Any())
+                return;
+
+            var s = new Stack<Control>(controls);
+            do
+            {
+                var cur = s.Pop();
+
+                func(cur);
+
+                foreach (var c in cur.controls)
+                    s.Push(c);
+            }
+            while (s.Any());
         }
-
-
     }
 }

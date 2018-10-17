@@ -1,18 +1,21 @@
-﻿using Shanism.Common.StubObjects;
+﻿using Shanism.Common.ObjectStubs;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Shanism.Common.Message.Server
+namespace Shanism.Common.Messages
 {
+    /// <summary>
+    /// The server sends or relays chat to the client.
+    /// </summary>
     [ProtoContract]
-    public class ChatMessage : IOMessage
+    public class ServerChat : ServerMessage
     {
         const uint SystemMessageId = Util.GenericId<bool>.None;
 
-        public override MessageType Type => MessageType.ServerChat;
+        public override ServerMessageType Type => ServerMessageType.Chat;
 
 
         /// <summary>
@@ -26,9 +29,9 @@ namespace Shanism.Common.Message.Server
 
         public bool IsSystem => SenderGuid == SystemMessageId;
 
-        ChatMessage() { }
+        ServerChat() { }
 
-        public ChatMessage(string message, IPlayer sender)
+        public ServerChat(IPlayer sender, string message)
             : this()
         {
             if (sender == null)

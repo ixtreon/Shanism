@@ -1,9 +1,9 @@
-﻿using Shanism.Engine.Events;
-using Shanism.Engine.Entities;
+﻿using Shanism.Engine.Entities;
+using Shanism.Engine.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Shanism.Common;
+using System.Numerics;
 
 namespace Shanism.Engine.Objects.Orders
 {
@@ -15,8 +15,31 @@ namespace Shanism.Engine.Objects.Orders
     {
         public const int DefaultReturnRange = 20;
 
+        struct AggroData : IComparable<AggroData>
+        {
+            public readonly Unit Unit;
+            public readonly float Aggro;
 
-        readonly Dictionary<Unit, double> aggroTable = new Dictionary<Unit, double>();
+            public AggroData(Unit unit, float aggro)
+            {
+                Unit = unit;
+                Aggro = aggro;
+            }
+
+            public override int GetHashCode() 
+                => (int)Unit.Id;
+
+            public override bool Equals(object obj) 
+                => obj is AggroData a 
+                && a.Unit.Id == Unit.Id;
+
+            public int CompareTo(AggroData other)
+                => Aggro.CompareTo(other.Aggro);
+
+        }
+
+
+        readonly Dictionary<Unit, float> aggroTable = new Dictionary<Unit, float>();
 
         readonly SpamCast SpamBehaviour;              // forces the unit to continuously cast its spammable abilities, if it can
         readonly MoveToUnit FollowBehaviour;          // forces the unit to chase enemy units in its vision range
@@ -50,7 +73,7 @@ namespace Shanism.Engine.Objects.Orders
                 SpamBehaviour.TargetUnit = newTarget;
                 FollowBehaviour.Target = newTarget;
                 if (newTarget != null)
-                    FollowBehaviour.MinDistance = (float)(Owner.Scale + newTarget.Scale) / 2;
+                    FollowBehaviour.MinDistance = (Owner.Scale + newTarget.Scale) / 2;
 
                 CurrentTarget = newTarget;
             }
@@ -91,8 +114,8 @@ namespace Shanism.Engine.Objects.Orders
                 return null;
 
             Unit maxAggroGuy = null;
-            double maxAggro = double.MinValue;
-            double maxAggroDist = double.MaxValue;
+            float maxAggro = float.MinValue;
+            float maxAggroDist = float.MaxValue;
 
             foreach (var kvp in aggroTable)
             {
@@ -134,8 +157,7 @@ namespace Shanism.Engine.Objects.Orders
             var damageSource = args.DamagingUnit;
             var dmgAmount = args.FinalDamage;
 
-            double curAggro;
-            if (aggroTable.TryGetValue(damageSource, out curAggro))
+            if(aggroTable.TryGetValue(damageSource, out var curAggro))
                 curAggro = 0;
 
             aggroTable[damageSource] = curAggro + dmgAmount;
@@ -146,15 +168,8 @@ namespace Shanism.Engine.Objects.Orders
         /// </summary>
         void onEntitySeen(Entity e)
         {
-            var u = e as Unit;
-            if (u == null)
-                return;
-
-
-            //add it to the aggro table if it's a hero
-            if (u.Owner.IsEnemyOf(Owner))
-                if (!aggroTable.ContainsKey(u))
-                    aggroTable.Add(u, 0);
+            if(e is Unit u && u.Owner.IsEnemyOf(Owner) && !aggroTable.ContainsKey(u))
+                aggroTable.Add(u, 0);
         }
     }
 }

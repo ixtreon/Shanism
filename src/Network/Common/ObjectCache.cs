@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common.StubObjects;
+using Shanism.Common.ObjectStubs;
 using Shanism.Network.Serialization;
 using Lidgren.Network;
 using Shanism.Common;
@@ -30,7 +30,7 @@ namespace Shanism.Network.Common
         /// </summary>
         public uint CurrentFrame { get; set; }
 
-        public long BufferStart { get; set; } = 0;
+        public long? CustomMessageStart { get; set; }
 
 
         public IReadOnlyCollection<EntityStub> VisibleEntities => _visibleEntities;
@@ -40,12 +40,13 @@ namespace Shanism.Network.Common
 
         public ObjectCache(long bufferStart)
         {
-            BufferStart = bufferStart;
+            CustomMessageStart = bufferStart;
         }
 
         public void ReadFrame(NetBuffer msg)
         {
-            msg.Position = BufferStart;
+            if(CustomMessageStart != null)
+                msg.Position = CustomMessageStart.Value;
 
             //write previous + current frames ID
             var fromFrame = msg.ReadUInt32();
@@ -55,21 +56,24 @@ namespace Shanism.Network.Common
             if (fromFrame != CurrentFrame)
                 return;
 
-
+            CurrentFrame = toFrame;
 
             //read vis change mask
             pages.Read(msg);
+
+            // toggle obj. existence
             foreach (var id in pages.ChangedGuids)
             {
-                ObjectStub existingObject;
-                if (_objects.TryGetValue(id, out existingObject))
+                if(_objects.TryGetValue(id, out ObjectStub obj))
                 {
+                    // was here -> remove
                     _objects.Remove(id);
-                    if (existingObject is EntityStub)
-                        _visibleEntities.Remove((EntityStub)existingObject);
+                    if(obj is EntityStub)
+                        _visibleEntities.Remove((EntityStub)obj);
                 }
                 else
                 {
+                    // doesn't exist -> add
                     _objects.Add(id, null);
                 }
             }
@@ -81,7 +85,7 @@ namespace Shanism.Network.Common
                 var obj = kvp.Value;
                 var objType = (ObjectType)fr.ReadByte(0);
 
-                //create or replace the object, if needed
+                // create or replace the object base, if needed
                 if (obj == null || obj.ObjectType != objType)
                 {
                     if (obj is EntityStub)
@@ -93,11 +97,9 @@ namespace Shanism.Network.Common
                         _visibleEntities.Add((EntityStub)obj);
                 }
 
+                // update the object state
                 Mapper.Read(objType, obj, fr);
             }
-
-            CurrentFrame = toFrame;
-
         }
     }
 }

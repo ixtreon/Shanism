@@ -1,6 +1,5 @@
 ﻿using Shanism.Common;
-using Shanism.Common.Message;
-using Shanism.Common.Message.Client;
+using Shanism.Common.Messages;
 using Lidgren.Network;
 using Shanism.Network.Server;
 using System;
@@ -19,24 +18,24 @@ namespace Shanism.Network
     {
         static NServer()
         {
-            Log.Init("server");
+            NetLog.Init("server");
         }
 
 
-        readonly IShanoEngine engine;
+        readonly IEngine engine;
 
-        readonly Dictionary<NetConnection, NServerClient> clients = new Dictionary<NetConnection, NServerClient>();
+        readonly Dictionary<NetConnection, NetworkClient> clients = new Dictionary<NetConnection, NetworkClient>();
 
 
         internal NetServer NetServer => (NetServer)peer;
 
         uint CurrentFrame;
 
-        public NServer(IShanoEngine engine)
-            : base(new NetServer(new NetPeerConfiguration(AppIdentifier) { Port = NetworkPort }))
+        public NServer(IEngine engine)
+            : base(new NetServer(new NetPeerConfiguration(AppIdentifier) { Port = DefaultPort }))
         {
             this.engine = engine;
-            Log.Default.Info("Server started!");
+            NetLog.Default.Info("Server started!");
         }
 
 
@@ -49,9 +48,7 @@ namespace Shanism.Network
             //update all netclients
             foreach (var client in clients.Values)
                 client.Update(msElapsed, CurrentFrame);
-
         }
-
 
         internal override void OnConnected(NetConnection conn)
         {
@@ -60,96 +57,64 @@ namespace Shanism.Network
 
         internal override void OnDisconnected(NetConnection conn)
         {
-            //see if this was a tracked connection
-            NServerClient client;
-            if (!clients.TryGetValue(conn, out client))
-                return;
+            if(clients.TryGetValue(conn, out var client))
+            {
+                clients.Remove(conn);
+                engine.Disconnect(client.Name);
 
-
-            Console.WriteLine($"Client {conn} has disconnected!");
-
-            //TODO: do some proper disconnect?
-            clients.Remove(conn);
-            engine.Disconnect(client.Name);
+                Console.WriteLine($"Client {conn} has disconnected!");
+            }
         }
 
 
         internal override void ReadMessage(NetIncomingMessage msg)
         {
-            NServerClient client;
-            var isProtoMessage = msg.ReadByte() == 0;
-            if (!isProtoMessage)
+            // if client is registered, just pass to the assigned receptor.
+            if (clients.TryGetValue(msg.SenderConnection, out var client))
             {
-                //that's a game frame
-
-                //the client must already have an identity. 
-                if (!clients.TryGetValue(msg.SenderConnection, out client))
-                {
-                    Log.Default.Warning("Received a request from an unknown client. Ignoring it. ");
-                    return;
-                }
-
-                client.readClientFrame(msg);
+                client.ReadServerMessage(msg);
                 return;
             }
 
-            var ioMsg = msg.ToIOMessage();
-            if (ioMsg == null)
+            // otherwise only let through protobuf msgs...
+            var msgType = (NetMessageHeader)msg.ReadByte();
+            if(msgType != NetMessageHeader.ProtoMessage)
             {
-                Log.Default.Warning($"Unable to read incoming message of length {msg.LengthBytes}. ");
+                NetLog.Default.Warning($"Bad message header from {msg.SenderEndPoint.Address} (unknown).");
                 return;
             }
 
-            //check if it's a handshake and if so, ask the server whether to accept it
-            if (ioMsg.Type == MessageType.HandshakeInit)
+            // ...that are handshakes
+            var ioMsg = msg.ProtoDeserialize<ClientMessage>();
+            if(ioMsg == null || ioMsg.Type != ClientMessageType.HandshakeInit)
             {
-                handleHandshake(msg.SenderConnection, (HandshakeInitMessage)ioMsg);
+                NetLog.Default.Warning($"Bad message from {msg.SenderEndPoint.Address} (unknown).");
                 return;
             }
 
-            //for all other message types, the client must already have an identity. 
-            if (!clients.TryGetValue(msg.SenderConnection, out client))
-            {
-                Log.Default.Warning("Received a request from an unknown client. Ignoring it. ");
-                return;
-            }
 
-            client.handleProtoMessage(ioMsg);
-        }
-
-
-        /// <summary>
-        /// Parses an incoming <see cref="HandshakeInitMessage"></see> by handing it over to the server. 
-        /// <para/>
-        /// If the server successfully accepts the user it returns a <see cref="IReceptor"/> object
-        /// which is added to the server's list of connected peers. Otherwise the connection is dropped.  
-        /// </summary>
-        void handleHandshake(NetConnection peerConnection, HandshakeInitMessage msg)
-        {
-            //get the peer data
-            var client = new NServerClient(NetServer, peerConnection, msg.PlayerName);
-
-
-            //check if the server accepts it
-            var receptor = engine.Connect(client);
-            var accepted = (receptor != null);  //TODO: make an actual check
-            Log.Default.Info($"Player {msg.PlayerName} ({peerConnection.RemoteEndPoint.Address}) wants to join. Accepted? {accepted}");
+            // create a client object and see if server accepts it
+            var request = (HandshakeInit)ioMsg;
+            var peerConnection = msg.SenderConnection;
+            client = new NetworkClient(NetServer, peerConnection, request.PlayerName);
 
             //if so, add to our list, too
-            if (accepted)
+            var receptor = engine.Connect(client);
+            if (receptor != null)
             {
-                // do netgameclient / clients set-up
+                // inform the client & add to the connected list
                 client.Initialize(receptor);
                 clients.Add(peerConnection, client);
 
-                // inform the engine we'll be playing
-                // (this step is necessary for single-player, check out LocalShano implementation)
-                engine.StartPlaying(receptor);
-            }
+                // inform the engine we'll be playing (necessary for single-player)
+                receptor.StartPlaying();
 
-            if (!accepted)
+                NetLog.Default.Info($"Player {request.PlayerName} ({peerConnection.RemoteEndPoint.Address}) joined the game.");
+            }
+            else
             {
                 //TODO: drop connection
+                NetLog.Default.Info($"Player {request.PlayerName} ({peerConnection.RemoteEndPoint.Address}) was rejected.");
             }
         }
 

@@ -1,23 +1,22 @@
 ﻿using Shanism.Engine;
-using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
+using System.Reflection;
+using System.Runtime.Loader;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Threading;
+
 using static System.Console;
 
 namespace ShanoServer
 {
-    //  -sc:"D:\Games\War3"
+
     class Program
     {
         const string runCommand = "start";
 
         static ShanoEngine engine;
-        static Thread engineThread;
 
         static Arg scenarioArg = new Arg
         {
@@ -39,7 +38,6 @@ namespace ShanoServer
 #if !DEBUG  
             //require the presence of the "start" command
             var cmd = args.LastOrDefault();
-
             if (cmd != runCommand)
             {
                 printUsage();
@@ -60,11 +58,11 @@ namespace ShanoServer
                 switch (ln)
                 {
                     case "help":
-                        WriteLine("No commands yet");
+                        WriteLine("Just 'stop' for now...");
                         break;
 
                     case "stop":
-                        engineThread.Abort();
+                        engine.Stop();
                         return;
 
                     default:
@@ -79,12 +77,10 @@ namespace ShanoServer
             //parse input
             var scenarioPath = Path.GetFullPath(scenarioArg.Find(args));
             var mapSeedString = seedArg.Find(args);
-            int mapSeed;
 
-            if (!int.TryParse(mapSeedString, out mapSeed))
+            if (!int.TryParse(mapSeedString, out var mapSeed))
             {
                 WriteLine($"Unable to parse the given map seed: {mapSeedString}");
-
                 return false;
             }
 
@@ -93,9 +89,8 @@ namespace ShanoServer
             WriteLine($"    Scenario: {scenarioPath}");
             WriteLine($"    Map Seed: {mapSeed}");
 
-            var _engine = new ShanoEngine();
-            string errors;
-            if (!_engine.TryLoadScenario(scenarioPath, mapSeed, out errors))
+            var _engine = new ShanoEngine(LoadAssembly);
+            if (!_engine.TryLoadScenario(scenarioPath, out var errors))
             {
                 WriteLine($"Unable to load the scenario at `{scenarioPath}`");
                 WriteLine(errors);
@@ -106,8 +101,34 @@ namespace ShanoServer
             _engine.OpenToNetwork();
 
             engine = _engine;
-            engineThread = _engine.StartBackground();
+
+            var thr = new Thread(() =>
+            {
+                long start, end;
+                const double delay = 1000 / 60;
+                double elapsed;
+                while (engine.State == Shanism.Common.ServerState.Playing)
+                {
+                    start = Stopwatch.GetTimestamp();
+
+                    engine.Update((int)delay);
+
+                    end = Stopwatch.GetTimestamp();
+                    elapsed = (double)(end - start) / Stopwatch.Frequency * 1000;
+                    if (elapsed < delay)
+                        Thread.Sleep((int)(delay - elapsed));
+
+                }
+            });
+
             return true;
+        }
+
+        static Assembly LoadAssembly(byte[] assemblyBytes, byte[] pdbBytes)
+        {
+            using (var msAssembly = new MemoryStream(assemblyBytes))
+            using (var msPdb = new MemoryStream(pdbBytes))
+                return AssemblyLoadContext.Default.LoadFromStream(msAssembly, msPdb);
         }
 
         struct Arg
@@ -132,13 +153,11 @@ namespace ShanoServer
 
         static void printUsage()
         {
-            WriteLine("Usage:");
-            WriteLine("\tshanoserver start");
-            WriteLine("\t\tStarts the server");
             WriteLine("");
-            WriteLine("Optional Parameters:");
-            WriteLine("\t(-|/)(sc|scenario):<path>");
-            WriteLine("\t\tUse the scenario found at the specified path. ");
+            WriteLine("Usage:");
+            WriteLine("\tShanoServer <scenario-path>");
+            WriteLine("\t\tStarts the given scenario.");
+            WriteLine("");
         }
 
     }

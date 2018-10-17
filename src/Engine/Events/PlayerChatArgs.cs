@@ -1,4 +1,4 @@
-﻿using Shanism.Common.Message.Client;
+﻿using Shanism.Common.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Shanism.Engine.Events
 {
+    /// <summary>
+    /// Contains information about a chat message, such as its text and sender.
+    /// </summary>
     public class PlayerChatArgs : EventArgs
     {
         /// <summary>

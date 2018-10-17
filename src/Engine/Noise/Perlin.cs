@@ -16,7 +16,7 @@ namespace Shanism.Engine.Noise
 
         static PerlinNoise()
         {
-            var rnd = new Random(123);
+            var rnd = new Random(0xC0FFEE);
             for (int i = 0; i < tableSize; i++)
                 for (int j = 0; j < tableSize; j++)
                 {

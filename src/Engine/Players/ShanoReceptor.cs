@@ -2,179 +2,211 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Shanism.Common.Message;
-using Shanism.Common.Message.Server;
-using Shanism.Common.Message.Client;
+using Shanism.Common.Messages;
 using Shanism.Engine.Entities;
 using System.Collections.Generic;
-using Shanism.Common.Interfaces.Entities;
+using Shanism.Common.Entities;
 using Shanism.Engine.Objects.Orders;
 
 namespace Shanism.Engine.Players
 {
+
+    enum ReceptorState
+    {
+        Connecting, Playing, Disconnected
+    }
+
     /// <summary>
-    /// Represents (the internal parts of) a client connected to the engine. 
+    /// A player connected to a shano engine.
     /// Handles all messages coming from the given client.  
-    /// Tightly coupled with the <see cref="Player"/> class. 
+    /// Tightly coupled with the <see cref="Shanism.Engine.Player"/> class. 
     /// </summary>
-    class ShanoReceptor : IReceptor
+    class ShanoReceptor : GameComponent, IEngineReceptor
     {
         /// <summary>
-        /// The engine this player is part of. 
+        /// Gets the engine this receptor is part of. 
         /// </summary>
         ShanoEngine Engine { get; }
 
         /// <summary>
-        /// Gets the client handle of this player. 
-        /// </summary>
-        public IShanoClient Client { get; }
-
-        public ConnectionState State { get; } = ConnectionState.Playing;
-
-        /// <summary>
-        /// Gets the underlying in-game player represented by this receptor. 
+        /// Gets the in-game player behind this receptor. 
         /// </summary>
         public Player Player { get; }
 
+        /// <summary>
+        /// Gets the client instance behind this receptor. 
+        /// </summary>
+        public IClientReceptor Client { get; }
 
-        public uint Id => Player.Id;
+
+        public ReceptorState State { get; private set; }
+
+        public bool IsHost { get; }
+
+
+
+        internal event Action<ShanoReceptor> OnDisconnect;
+
+        public uint PlayerId => Player.Id;
 
         /// <summary>
         /// Gets the name of the player. 
         /// </summary>
         public string Name => Client.Name;
 
-        public IReadOnlyCollection<IEntity> VisibleEntities => (IReadOnlyCollection<IEntity>)Player.visibleEntities;
+        public IReadOnlyCollection<IEntity> VisibleEntities => Player.visibleEntities;
 
         Hero MainHero => Player.MainHero;
 
 
-        public ShanoReceptor(ShanoEngine engine, IShanoClient client)
+        public ShanoReceptor(ShanoEngine engine, IClientReceptor client, bool isHost)
         {
             Engine = engine;
-
             Client = client;
-            Client.MessageSent += parseClientMessage;
+            IsHost = isHost;
 
             Player = new Player(this, client.Name);
             Player.MainHeroChanged += onPlayerHeroChange;
         }
 
 
-        #region Player listeners
         void onPlayerHeroChange(Hero h)
         {
-            SendMessage(new PlayerStatusMessage(h.Id));
+            SendMessage(new PlayerStatus(h.Id));
 
-            Engine.Scripts.Run(s => s.OnPlayerMainHeroChanged(Player));
+            Scripts.Run(s => s.OnPlayerMainHeroChanged(Player));
         }
-        #endregion
 
         #region IShanoClient listeners
 
-        async void parseClientMessage(IOMessage msg)
+        public void HandleMessage(ClientMessage msg)
         {
-            switch (msg.Type)
+            switch(msg.Type)
             {
-                case MessageType.MapRequest:
-                    await parseMapRequest((MapRequestMessage)msg);
+                case ClientMessageType.MapRequest:
+                    handleMapRequest((MapRequest)msg);
                     break;
 
-                case MessageType.ClientChat:
-                    parseChat((Shanism.Common.Message.Client.ChatMessage)msg);
+                case ClientMessageType.Chat:
+                    parseChat((ClientChat)msg);
                     break;
+
+                default:
+                    throw new Exception();
             }
         }
 
-        void parseChat(Shanism.Common.Message.Client.ChatMessage msg)
+        void parseChat(ClientChat msg)
         {
             var text = msg.Message;
 
             var seenFromPlayers = new HashSet<Player>();
-            foreach (var ourUnit in Player.controlledUnits)
-                foreach (var seenFromUnit in ourUnit.visibleFromUnits)
-                    if (seenFromUnit.Owner.IsHuman)
+            foreach(var ourUnit in Player.controlledUnits)
+                foreach(var seenFromUnit in ourUnit.visibleFromUnits)
+                    if(seenFromUnit.Owner.IsHuman)
                         seenFromPlayers.Add(seenFromUnit.Owner);
 
             //send to nearby players (TODO)
-            var outMsg = new Shanism.Common.Message.Server.ChatMessage(text, Player);
+            var outMsg = new ServerChat(Player, text);
             //foreach (var pl in seenFromPlayers)
             //    pl.SendMessage(outMsg);
+
             SendMessage(outMsg);
 
             //finally send to scripts
             var ev = new Events.PlayerChatArgs(Player, text);
-            Engine.Scripts.Run(s => s.OnPlayerChatMessage(ev));
+            Scripts.Run(s => s.OnPlayerChatMessage(ev));
         }
 
 
-        async Task parseMapRequest(MapRequestMessage msg)
+        void handleMapRequest(MapRequest msg)
         {
             var chunk = msg.Chunk;
-            var chunkData = new TerrainType[chunk.Span.Area];
+            var chunkData = new TerrainType[chunk.Bounds.Area];
 
-            await Task.Run(() => Engine.Map.Terrain.Get(chunk.Span, ref chunkData));
+            Map.Terrain.Get(chunk.Bounds, ref chunkData);
 
-            SendMessage(new MapDataMessage(chunk.Span, chunkData));
+            SendMessage(new MapData(chunk.Bounds, chunkData));
         }
 
         #endregion
 
         #region IReceptor Implementation
-        public event Action<IOMessage> MessageSent;
 
+        /// <summary>
+        /// Sends a message to the client.
+        /// </summary>
+        internal void SendMessage(ServerMessage msg)
+            => Client.HandleMessage(msg);
 
-        internal void SendMessage(IOMessage msg)
+        public void StartPlaying()
         {
-            MessageSent?.Invoke(msg);
-        }
+            if(State != ReceptorState.Connecting)
+                return;
 
-        public void Disconnect()
-        {
-            Engine.Disconnect(Name);
-        }
+            SendHandshake(true);
+            State = ReceptorState.Playing;
 
-        public string GetDebugString() => Engine.DebugString;
-
-        public void Update(int msElapsed)
-        {
-            if (MainHero != null)
-            {
-                var moveOrder = MainHero.DefaultOrder as MoveDirection;
-                if(moveOrder == null)
-                    MainHero.DefaultOrder = moveOrder = new MoveDirection(MainHero);
-
-                //movement
-                if (Client.State.IsMoving)
-                    moveOrder.Angle = Client.State.MoveAngle;
-                else
-                    moveOrder.Angle = float.NaN;
-
-                //actions
-                MainHero.TryCastAbility(Client.State);
-            }
+            Scripts.Run(s => s.OnPlayerJoined(Player));
         }
 
         /// <summary>
-        /// Sends a chat message to the given player.
+        /// Disconnects the client
         /// </summary>
-        /// <param name="msg">The MSG.</param>
-        internal void SendSystemMessage(string msg)
+        public void Disconnect()
         {
-            SendMessage(new Shanism.Common.Message.Server.ChatMessage(msg, null));
+            if(State != ReceptorState.Playing)
+                return;
+
+            Engine.Disconnect(Name);
+
+            State = ReceptorState.Disconnected;
+            OnDisconnect?.Invoke(this);
         }
 
+        /// <summary>
+        /// Gets some kind of debug info.
+        /// </summary>
+        public string GetDebugString()
+            => Engine.DebugString;
 
+        public void Update(int msElapsed)
+        {
+            if(State != ReceptorState.Playing)
+                return;
+
+            if(MainHero == null)
+                return;
+
+            if(!(MainHero.DefaultOrder is MoveDirection move))
+                MainHero.DefaultOrder = move = new MoveDirection(MainHero);
+
+            // movement & actions
+            var curState = Client.PlayerState;
+            move.Angle = curState.IsMoving ? curState.MoveAngle : float.NaN;
+            MainHero.TryCastAbility(curState);
+        }
+
+        /// <summary>
+        /// Sends a chat message to the client.
+        /// </summary>
+        internal void SendSystemMessage(string msg)
+            => SendMessage(new ServerChat(null, msg));
+
+        /// <summary>
+        /// Sends a handshake to the client.
+        /// </summary>
+        /// <param name="isSuccessful"></param>
         internal void SendHandshake(bool isSuccessful)
         {
-            if (!isSuccessful)
+            if(!isSuccessful)
             {
-                SendMessage(HandshakeReplyMessage.Negative);
+                SendMessage(HandshakeReply.Negative);
                 return;
             }
 
-            var scConfig = Engine.Scenario.Config;
-            var msg = new HandshakeReplyMessage(Id, scConfig.SaveToBytes(), scConfig.ZipContent());
+            var scConfig = Scenario.Config;
+            var msg = new HandshakeReply(PlayerId, scConfig.SaveToBytes(), scConfig.ZipContent());
 
             SendMessage(msg);
         }

@@ -140,7 +140,8 @@ namespace Shanism.Engine
         /// </summary>
         /// <param name="receptor"></param>
         /// <param name="name"></param>
-        internal Player(ShanoReceptor receptor, string name) : this(name)
+        internal Player(ShanoReceptor receptor, string name) 
+            : this(name)
         {
             if (receptor == null) throw new ArgumentNullException(nameof(receptor));
 

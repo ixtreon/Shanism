@@ -1,70 +1,125 @@
-﻿using Shanism.Client.Input;
-using Shanism.Common;
+﻿using Shanism.Common;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Numerics;
 
 namespace Shanism.Client.UI
 {
-    class Slider : ProgressBar
+    /// <summary>
+    /// A UI slider that can be dragged by the user.
+    /// </summary>
+    public class Slider : ProgressBar
     {
-        public static readonly Vector DefaultSize = new Vector(0.4, 0.07);
+        public static readonly Vector2 DefaultSize = new Vector2(0.4f, 0.07f);
         bool sliding;
-        double value;
+        float value;
 
-        public int Decimals { get; set; } = 2;
+        float _step;
+        float _decimals;
 
-        public double MinValue { get; set; } = 0;
-        public double MaxValue { get; set; } = 1;
+        /// <summary>
+        /// Gets or sets the minimum change in this slider's value.
+        /// </summary>
+        public float Step
+        {
+            get => _step;
+            set
+            {
+                _step = value;
+                _decimals = getDecimals(_step);
+            }
+        }
+
+
+        static string getDecimals2(double val)
+        {
+            const double min = 1E-4;
+            const double max = 1E+4;
+            if (val < min || val > max)
+                return "0.####E0";
+
+            for (int i = 0; i < 4; i++)
+                if (Math.Abs((val + 1e-5 % Math.Pow(10, -i))) < 1E-5)
+                    return $"N{i}";
+
+            return "N0";
+        }
+
+        static int getDecimals(double val)
+        {
+            var str = val.ToString("#.########");
+            var dot = str.IndexOf('.');
+            if (dot < 0)
+                return 0;
+            return str.Length - dot - 1;
+        }
+
+        public float MinValue { get; set; } = 0;
+        public float MaxValue { get; set; } = 1;
 
         public event Action<Slider> ValueChanged;
 
-        public new Color ForeColor { get; set; } = Color.Goldenrod;
+        public new Color ForeColor { get; set; }
 
-        public double Value
+        public float Value
         {
-            get { return value; }
-            set { setVal(value); }
+            get => value;
+            set => SetValue(value);
         }
 
         public Slider()
         {
+            ForeColor = base.ForeColor;
             Size = DefaultSize;
 
-            MouseDown += (e) => { sliding = true; updateVal(e); };
-            MouseMove += (e) => { if (sliding) updateVal(e); };
-            MouseUp += (e) => sliding = false;
+            MouseDown += (o, e) => UpdateSlider(true, e.Position);
+            MouseMove += (o, e) => UpdateSlider(e.Position);
+            MouseUp += (o, e) => UpdateSlider(false, e.Position);
+            MouseScroll += (o, e) => SetValue(value - e.ScrollDelta * Step);
         }
 
-        void updateVal(MouseArgs e)
+        void UpdateSlider(Vector2 mousePos)
         {
-            var newVal = MinValue + e.Position.X / Size.X * (MaxValue - MinValue);
-            setVal(newVal);
+            if (sliding)
+            {
+                var ratio = mousePos.X / Size.X;
+                var newValue = MinValue + ratio * (MaxValue - MinValue);
+
+                SetValue(newValue);
+            }
         }
 
-        void setVal(double newVal)
+        void UpdateSlider(bool isSliding, Vector2 mousePos)
         {
+            sliding = isSliding;
+            UpdateSlider(mousePos);
+        }
+
+
+        void SetValue(float newVal)
+        {
+            newVal = (float)Math.Round(newVal / Step) * Step;
+            newVal = newVal.Clamp(MinValue, MaxValue);
             if (!MaxValue.Equals(0) && !newVal.Equals(value))
             {
-                value = newVal.Clamp(MinValue, MaxValue);
-                Progress = ((value - MinValue) / (MaxValue - MinValue));
-                Text = value.ToString($"N{Decimals}");
+                value = newVal;
+                Progress = ((value - MinValue + 1) / (MaxValue - MinValue + 1));
+                Text = value.ToString($"N{_decimals}");
 
                 ValueChanged?.Invoke(this);
             }
         }
 
-        protected override void OnUpdate(int msElapsed)
+        public override void Update(int msElapsed)
         {
-            if (HoverControl == this)
+            if (IsHoverControl)
                 base.ForeColor = ForeColor.Darken();
             else
                 base.ForeColor = ForeColor;
         }
 
-        public override void OnDraw(Canvas g)
+        public override void Draw(Canvas c)
         {
-            base.OnDraw(g);
+            base.Draw(c);
         }
 
     }

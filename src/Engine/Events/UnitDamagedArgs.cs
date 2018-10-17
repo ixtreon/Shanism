@@ -35,14 +35,14 @@ namespace Shanism.Engine.Events
         /// Gets the base amount of damage the attacker deals
         /// before any resistance or armor is factored in. 
         /// </summary>
-        public readonly double BaseDamage;
+        public readonly float BaseDamage;
 
         /// <summary>
         /// Gets the amount of damage ultimately received by the target. 
         /// </summary>
-        public readonly double FinalDamage;
+        public readonly float FinalDamage;
 
-        internal UnitDamagedArgs(Unit attacker, Unit receiver, DamageType type, DamageFlags flags, double baseAmount, double finalAmount)
+        internal UnitDamagedArgs(Unit attacker, Unit receiver, DamageType type, DamageFlags flags, float baseAmount, float finalAmount)
             : base(receiver)
         {
             BaseDamage = baseAmount;

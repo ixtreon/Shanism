@@ -1,11 +1,9 @@
-﻿using System;
+﻿using Ix.Math;
+using Shanism.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Shanism.Engine.Maps;
-using Shanism.Engine.Entities;
-using Shanism.Common;
+using System.Numerics;
 
 namespace Shanism.Engine.Entities
 {
@@ -102,7 +100,7 @@ namespace Shanism.Engine.Entities
         /// This method is run every time a projectile is updated. 
         /// </summary>
         /// <param name="msElapsed"></param>
-        public override void OnUpdate(int msElapsed)
+        protected override void OnUpdate(int msElapsed)
         {
             if (IsDestroyed)
                 return;
@@ -114,11 +112,8 @@ namespace Shanism.Engine.Entities
 
             //get valid targets
             var units = Map
-                .GetUnitsInRange(Position, (Scale + Constants.Entities.MaxSize) / 2 )
-                .Where(u => !u.IsDead
-                    && u.Owner.IsEnemyOf(Owner)
-                    && !unitsHit.Contains(u)
-                    && u.Position.DistanceTo(Position) < (u.Scale + Scale) / 2)
+                .GetUnitsInRange(new Ellipse(Position, Scale / 2))
+                .Where(u => !u.IsDead && u.Owner.IsEnemyOf(Owner) && !unitsHit.Contains(u))
                 .ToList();
 
             if (units.Any())

@@ -1,6 +1,6 @@
 ﻿using Shanism.Engine.Events;
 using Shanism.Common;
-using Shanism.Common.Message.Server;
+using Shanism.Common.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +18,28 @@ namespace Shanism.Engine.Entities
         public bool IsDead { get; private set; }
 
 
+        #region Virtual Methods
+
+        protected virtual void OnDeath(UnitDyingArgs e)
+            => Death?.Invoke(e);
+
+        protected virtual void OnDamageReceived(UnitDamagedArgs e)
+            => DamageReceived?.Invoke(e);
+
+        protected virtual void OnReceivingDamage(UnitDamagingArgs e)
+            => ReceivingDamage?.Invoke(e);
+
+        protected virtual void OnDealingDamage(UnitDamagingArgs obj)
+            => DealingDamage?.Invoke(obj);
+
+        protected virtual void OnDealtDamage(UnitDamagedArgs obj)
+            => DealtDamage?.Invoke(obj);
+
+        #endregion
+
+
+        #region Events
+
         /// <summary>
         /// The event fired when the unit gets killed by another unit. 
         /// </summary>
@@ -27,29 +49,21 @@ namespace Shanism.Engine.Entities
         /// The event executed right after a unit receives damage, but before it is eventually killed. 
         /// </summary>
         public event Action<UnitDamagedArgs> DamageReceived;
-
         /// <summary>
         /// The event executed right before the unit is dealt damage by someone else. 
         /// </summary>
         public event Action<UnitDamagingArgs> ReceivingDamage;
 
-
-
         /// <summary>
         /// The event executed right after the unit deals damage to a target. 
         /// </summary>
         public event Action<UnitDamagedArgs> DealtDamage;
-
         /// <summary>
         /// The event executed right before the unit deals damage to a target. 
         /// </summary>
         public event Action<UnitDamagingArgs> DealingDamage;
 
-        /// <summary>
-        /// Occurs when the unit is finally removed from the map, i.e. destroyed.
-        /// </summary>
-        public event Action<UnitArgs> Destroyed;
-
+        #endregion
 
         /// <summary>
         /// Gets the time it takes for an unit to attack as determined by <see cref="AttacksPerSecond"/>. 
@@ -74,7 +88,7 @@ namespace Shanism.Engine.Entities
         /// </example>
         float getArmorMultiplier(DamageType damageType)
         {
-            switch (damageType)
+            switch(damageType)
             {
                 case DamageType.Physical:
                     return 1 / (Constants.Units.DamageReductionPerDefense * Defense + 1);
@@ -90,9 +104,7 @@ namespace Shanism.Engine.Entities
         /// </summary>
         /// <returns></returns>
         public virtual int GetExperienceReward()
-        {
-            return Constants.Heroes.Experience.Base + Level * Constants.Heroes.Experience.LevelFactor;
-        }
+            => Constants.Heroes.Experience.BaseReward + Level * Constants.Heroes.Experience.PerLevelReward;
 
 
         /// <summary>
@@ -101,27 +113,21 @@ namespace Shanism.Engine.Entities
         /// <param name="killer">The killer of the unit or null if it is a suicide.</param>
         public void Kill(Unit killer = null)
         {
-            if (IsDead)
+            if(IsDead)
                 return;
 
             // update unit state
-            Life = 0;
+            LifePercentage = 0;
             IsDead = true;
             Buffs.Clear();
 
-
-            // give out rewards
-            if (killer != null)
-            {
-                // gold reward!
-
-                if (killer is Hero)
-                    ((Hero)killer).Experience += GetExperienceReward();
-            }
+            // give out XP
+            if(killer is Hero h)
+                h.Experience += GetExperienceReward();
 
             // raise the event
             var args = new UnitDyingArgs(this, killer ?? this);
-            Death?.Invoke(args);
+            OnDeath(args);
 
             //run the scripts
             Scripts.Run(s => s.OnUnitDeath(args));
@@ -136,56 +142,64 @@ namespace Shanism.Engine.Entities
         /// <param name="displayText">Whether to show damage text on the player screen.</param>
         /// <param name="flags">A DamageFlags instance specifying additional rules when dealing damage.</param>
         /// <returns></returns>
-        public bool DamageUnit(Unit target, DamageType dmgType, float amount, bool displayText = true, DamageFlags flags = DamageFlags.None)
+        public bool DamageUnit(Unit target, DamageType dmgType, float amount,
+            bool displayText = true,
+            DamageFlags flags = DamageFlags.None)
         {
-            //Check target alive
-            if (target.IsDead)
-                return false;
 
-            // Check target can take damage
-            if (dmgType == DamageType.Physical && target.StateFlags.HasFlag(StateFlags.PhysicalImmune))
-                return false;
-
-            if (dmgType == DamageType.Magical && target.StateFlags.HasFlag(StateFlags.MagicImmune))
-                return false;
-
-            // Check target dodging
-            var isDodge = !flags.HasFlag(DamageFlags.NoDodge) && (Rnd.Next(0, 100) < target.DodgeChance);
-            if(isDodge)
+            if(target.IsDead || isImmuneToDamage(target, dmgType) || tryEvadeDamage(target, flags))
                 return false;
 
             // TODO: Damage amplifiers (crit, +magic)
             // var isCrit = !flags.HasFlag(DamageFlags.NoCrit) && (Rnd.Next(0, 100) < target.CritChance);
 
-
-            // raise the pre-damage event
+            // pre-damage event
             var dmgArgs = new UnitDamagingArgs(this, target, dmgType, flags, amount);
-            target.ReceivingDamage?.Invoke(dmgArgs);
-            DealingDamage?.Invoke(dmgArgs);
+            target.OnReceivingDamage(dmgArgs);
+            this.OnDealingDamage(dmgArgs);
 
-            // Damage damping (armor, +magic def)
-            var finalDmg = target.GetFinalDamage(dmgArgs.BaseDamage, dmgArgs.DamageType);
+            // damage reduction (armor, magic def)
+            var finalDmg = target.getArmorMultiplier(dmgArgs.DamageType) * dmgArgs.BaseDamage;
+            var dmgAsPercentage = finalDmg / target.MaxLife;
 
-            //deal damage
-            target.Life -= finalDmg;
+            // deal damage
+            target.LifePercentage -= dmgAsPercentage;
 
-            // raise the post-damage event
+            // post-damage event
             var receiveArgs = new UnitDamagedArgs(this, target, dmgType, flags, amount, finalDmg);
-            target.DamageReceived?.Invoke(receiveArgs);
-            DealtDamage?.Invoke(receiveArgs);
+            target.OnDamageReceived(receiveArgs);
+            OnDealtDamage(receiveArgs);
 
-            //send a message yo
-            if (displayText)
+            // floating message
+            if(displayText)
             {
-                var eventMessage = new DamageEventMessage(target, dmgType, finalDmg, true);
+                var eventMessage = new DamageEvent(target, dmgType, finalDmg, true);
                 target.SendMessageToVisibles(eventMessage);
             }
 
-            //check for death
-            if (target.LifePercentage <= 0)
+            // target dead?
+            if(target.LifePercentage <= 0)
                 target.Kill(this);
 
             return true;
+        }
+
+        bool tryEvadeDamage(Unit target, DamageFlags dmgFlags)
+            => (dmgFlags & DamageFlags.NoDodge) == 0
+            && Rnd.Next(0, 100) < target.DodgeChance;
+
+        bool isImmuneToDamage(Unit target, DamageType dmgType)
+        {
+            switch(dmgType)
+            {
+                case DamageType.Magical:
+                    return (target.StateFlags & StateFlags.MagicImmune) != 0;
+
+                case DamageType.Physical:
+                    return (target.StateFlags & StateFlags.PhysicalImmune) != 0;
+            }
+
+            throw new ArgumentOutOfRangeException(nameof(dmgType), "Unexpected damage type!");
         }
 
         /// <summary>

@@ -1,25 +1,31 @@
-﻿using Shanism.Engine.Entities;
+﻿using Ix.Math;
 using Shanism.Common;
+using Shanism.Engine.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Shanism.Engine.Maps;
+using System.Numerics;
 
 namespace Shanism.Engine.Systems
 {
+    // TODO: this needs a rewrite
+
     /// <summary>
     /// Updates the unit's current movementstate. See <see cref="Unit.MovementState"/>.
     /// </summary>
     class MovementSystem : UnitSystem
     {
-        const string MoveAnimation = Shanism.Common.Constants.Animations.Move;
 
+        bool hasCollision()
+            => Type != MovementType.Flying
+            && (Owner.StateFlags & StateFlags.NoCollision) == 0;
+
+        bool canMoveTo(TerrainType tty)
+            => tty.IsGround()
+            || (tty.IsWater() && Type.CanSwim());
+
+
+        public MovementType Type { get; set; } = MovementType.Walking;
 
         readonly Unit Owner;
-
-        readonly List<Entity> nearbies = new List<Entity>();
 
         public MovementSystem(Unit owner)
         {
@@ -28,14 +34,13 @@ namespace Shanism.Engine.Systems
 
         public override void Update(int msElapsed)
         {
+            var baseMsMod = Owner.StateFlags.GetMoveSpeedMultiplier();
             var state = Owner.MovementState;
-            if (Owner.IsStunned || !Owner.CanMove || !state.IsMoving)
+            if (Type == MovementType.None || baseMsMod.Equals(0) || !state.IsMoving)
                 return;
 
-
             //get the suggested move position
-            var speed = Owner.MoveSpeed;
-            var dist = speed * msElapsed / 1000;
+            var dist = baseMsMod * Owner.MoveSpeed * msElapsed / 1000;
             if (state.HasMaxDistance)
                 dist = Math.Min(state.MaxDistance, dist);
 
@@ -43,31 +48,28 @@ namespace Shanism.Engine.Systems
             var finalPos = resolveStep(state.MoveDirection, dist);
 
             //only continue if we moved at least a bit.
-            var finalDist = (float)finalPos.DistanceTo(Owner.Position);
+            var finalDist = finalPos.DistanceTo(Owner.Position);
             var hasMovedMuch = finalDist / dist > 0.1;
 
             if (hasMovedMuch)
             {
                 Owner.Position = finalPos;
             }
-            else
-            {
-                if (Owner.Animation == MoveAnimation)
-                    Owner.ResetAnimation();
-            }
         }
 
-        Vector resolveStep(double angle, double dist)
+        Vector2 resolveStep(float angle, float dist)
         {
+            if (dist < 1e-5) // lets for 0.01sq/s @ 1000fps
+                return Owner.Position;
+
             var suggestedPos = Owner.Position.PolarProjection(angle, dist);
 
             if (Owner.StateFlags.HasFlag(StateFlags.NoCollision))
                 return suggestedPos;
 
             //check terrain
-            var terrainOk = checkTerrain(Owner.Map.Terrain, 
-                new Ellipse(suggestedPos, Owner.Scale / 2),
-                Owner.MovementType);
+            var pathingShape = new Ellipse(suggestedPos, Owner.Scale / 2);
+            var terrainOk = checkTerrain(pathingShape, angle);
 
             if (!terrainOk)
                 return Owner.Position;
@@ -76,45 +78,44 @@ namespace Shanism.Engine.Systems
             //    suggestedPos = Owner.Position;
 
 
-            //fix objects
-            if (!Owner.CanFly)
+            //check objects
+            if (hasCollision())
             {
-                nearbies.Clear();
-                Owner.Map.GetObjectsInRect(
-                    suggestedPos,
-                    new Vector((Owner.Scale + Constants.Entities.MaxSize) / 2),
-                    nearbies);
-
-                foreach (var obj in nearbies)
-                    if (obj != Owner 
-                        && obj.HasCollision 
-                        && obj.Position.DistanceTo(suggestedPos) * 2 <= (Owner.Scale + obj.Scale))
+                foreach (var obj in Owner.Map.GetObjectsInRange(new Ellipse(suggestedPos, Owner.Scale / 2)))
+                    if (obj != Owner && obj.HasCollision)
                         return Owner.Position;
             }
 
             return suggestedPos;
         }
 
-        static bool checkTerrain(ITerrainMap terrain, Ellipse e, MovementFlags flags)
+
+        bool checkTerrain(Ellipse e, float moveAngle)
         {
+            var terrain = Owner.Map.Terrain;
             var p1 = (e.Center - e.Radius).Floor();
             var p2 = (e.Center + e.Radius).Floor();
 
             for (int ix = p1.X; ix <= p2.X; ix++)
                 for (int iy = p1.Y; iy <= p2.Y; iy++)
                 {
-                    var px = ix < e.Center.X ? ix + 1 : ix;
-                    var py = iy < e.Center.Y ? iy + 1 : iy;
-                    if (e.IsInside(new Vector(px, py)))
+                    if (IsTileInEllipse(ix, iy))
                     {
-                        var p = new Point(ix, iy);
-                        var tty = terrain.Get(p);
-                        if (!isTileOk(tty, flags))
+                        var tty = terrain.Get(new Point(ix, iy));
+                        if (!canMoveTo(tty))
                             return false;
                     }
                 }
 
             return true;
+
+            bool IsTileInEllipse(int x, int y)
+                => e.Contains(ClosestPointInTile(x, y));
+
+            Vector2 ClosestPointInTile(int tileX, int tileY) => new Vector2(
+                (tileX < e.Center.X) ? tileX + 1 : tileX,
+                (tileY < e.Center.Y) ? tileY + 1 : tileY
+            );
         }
 
         //static Vector fixEntity(Vector suggestedPos, Entity obj, double r)
@@ -142,23 +143,5 @@ namespace Shanism.Engine.Systems
 
         //    return suggestedPos;
         //}
-
-        static bool isTileOk(TerrainType tt, MovementFlags moveType)
-        {
-            //no map
-            if (tt == TerrainType.None)
-                return false;
-
-            //flying
-            if (moveType == MovementFlags.All)
-                return true;
-
-            // water
-            if (tt == TerrainType.Water || tt == TerrainType.DeepWater)
-                return (moveType & MovementFlags.Water) == MovementFlags.Water;
-
-            // ground
-            return true;    //otherwise can just sit there..
-        }
     }
 }

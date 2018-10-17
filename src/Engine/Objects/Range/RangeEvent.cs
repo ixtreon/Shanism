@@ -17,16 +17,16 @@ namespace Shanism.Engine.Objects.Range
     public delegate void RangeEventCallback(Entity e, RangeEventTriggerType tty);
 
     /// <summary>
-    /// An event raised when one or all units cross a range boundary with 
+    /// An event raised when one or all units cross a range boundary.
     /// </summary>
     public class RangeEvent : IComparable<RangeEvent>
     {
-        internal readonly double RangeSquared;
+        internal readonly float RangeSquared;
 
         /// <summary>
         /// The range at which this constraint is triggered. 
         /// </summary>
-        public double Range { get; }
+        public float Range { get; }
 
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace Shanism.Engine.Objects.Range
         /// <param name="range">The distance at which this constraint is triggered. </param>
         /// <param name="target">The single entity that can trigger this constraint or null to track all entities. </param>
         /// <param name="eventHandler">The default handler for this event. </param>
-        public RangeEvent(double range, Entity target = null, RangeEventCallback eventHandler = null)
+        public RangeEvent(float range, Entity target = null, RangeEventCallback eventHandler = null)
         {
             if (range <= 0)
                 throw new ArgumentOutOfRangeException($"Distance must be more than 0.");
@@ -70,8 +70,7 @@ namespace Shanism.Engine.Objects.Range
         /// </summary>
         internal void Raise(Entity target, RangeEventTriggerType tty)
         {
-            if (Triggered != null
-                && (Target == null || Target == target))
+            if (Triggered != null && (Target == null || Target == target))
                 Triggered(target, tty);
         }
 

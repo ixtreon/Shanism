@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common;
 using Shanism.Engine.Objects.Items;
+using System.Numerics;
 
 namespace Shanism.Engine.Entities
 {
@@ -21,7 +21,7 @@ namespace Shanism.Engine.Entities
         /// <summary>
         /// Creates a new GameItem object containing the given item, on the point specified. 
         /// </summary>
-        public GameItem(Item item, Vector location)
+        public GameItem(Item item, Vector2 location)
         {
             Position = location;
             this.Item = item;

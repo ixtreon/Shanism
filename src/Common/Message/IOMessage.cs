@@ -1,38 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using ProtoBuf;
-using Shanism.Common.Message.Client;
-using Shanism.Common.Message.Server;
+﻿using ProtoBuf;
 
-namespace Shanism.Common.Message
+namespace Shanism.Common.Messages
 {
     /// <summary>
-    /// Represents any command or message sent between the server and the client. 
+    /// Represents any command or message sent by the server to the client. 
     /// 
     /// Implements (de)serialization using ProtoBuf on registered classes. 
     /// </summary>
     [ProtoContract(SkipConstructor = true)]
-
-    //client
-    [ProtoInclude((int)MessageType.HandshakeInit, typeof(HandshakeInitMessage))]
-    [ProtoInclude((int)MessageType.MapRequest, typeof(MapRequestMessage))]
-    [ProtoInclude((int)MessageType.ClientChat, typeof(Client.ChatMessage))]
-
-    //server
-    [ProtoInclude((int)MessageType.HandshakeReply, typeof(HandshakeReplyMessage))]
-    [ProtoInclude((int)MessageType.PlayerStatusUpdate, typeof(PlayerStatusMessage))]
-    [ProtoInclude((int)MessageType.MapReply, typeof(MapDataMessage))]
-    [ProtoInclude((int)MessageType.DamageEvent, typeof(DamageEventMessage))]
-    [ProtoInclude((int)MessageType.ServerChat, typeof(Server.ChatMessage))]
-    [ProtoInclude((int)MessageType.Disconnected, typeof(DisconnectedMessage))]
-
-    //common?
-
-    public abstract class IOMessage
+    [ProtoInclude((int)ServerMessageType.HandshakeReply, typeof(HandshakeReply))]
+    [ProtoInclude((int)ServerMessageType.PlayerStatus, typeof(PlayerStatus))]
+    [ProtoInclude((int)ServerMessageType.MapData, typeof(MapData))]
+    [ProtoInclude((int)ServerMessageType.DamageEvent, typeof(DamageEvent))]
+    [ProtoInclude((int)ServerMessageType.Chat, typeof(ServerChat))]
+    [ProtoInclude((int)ServerMessageType.Disconnected, typeof(Disconnected))]
+    public abstract class ServerMessage
     {
-        public abstract MessageType Type { get; }
+        public abstract ServerMessageType Type { get; }
+    }
+
+
+    /// <summary>
+    /// Represents any command or message sent by the client to the server. 
+    /// 
+    /// Implements (de)serialization using ProtoBuf on registered classes. 
+    /// </summary>
+    [ProtoContract(SkipConstructor = true)]
+    [ProtoInclude((int)ClientMessageType.HandshakeInit, typeof(HandshakeInit))]
+    [ProtoInclude((int)ClientMessageType.MapRequest, typeof(MapRequest))]
+    [ProtoInclude((int)ClientMessageType.Chat, typeof(ClientChat))]
+    public abstract class ClientMessage
+    {
+        public abstract ClientMessageType Type { get; }
     }
 
 }

@@ -1,17 +1,12 @@
 ﻿using Shanism.Common;
-using Shanism.Engine.Entities;
-using Shanism.Engine.Maps;
-using Shanism.Engine.Objects.Range;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+using Shanism.Engine.Models.Systems;
 
-namespace Shanism.Engine.GameSystems
+namespace Shanism.Engine.Systems
 {
     /// <summary>
-    /// Raises the events of type <see cref="RangeEvent"/> defined for all units on the provided game map. 
+    /// Raises the events of type 
+    /// <see cref="Objects.Range.RangeEvent"/> 
+    /// for all units on the provided game map. 
     /// </summary>
     class RangeSystem : GameSystem
     {
@@ -20,7 +15,7 @@ namespace Shanism.Engine.GameSystems
         //10 updates per second should be perfectly fine.
         const int MaxFPS = 10;
 
-        public override string SystemName => "Range Events";
+        public override string Name => "Range Events";
 
 
         readonly MapSystem map;
@@ -35,12 +30,11 @@ namespace Shanism.Engine.GameSystems
 
         internal override void Update(int msElapsed)
         {
-            if (updateCounter.Tick(msElapsed))
-            {
-                //query tree for range events
-                foreach (var u in map.Units)
-                    u.range.FireEvents();
-            }
+            if(!updateCounter.Tick(msElapsed))
+                return;
+
+            foreach(var u in map.Units)
+                u.range.FireEvents();
         }
     }
 }

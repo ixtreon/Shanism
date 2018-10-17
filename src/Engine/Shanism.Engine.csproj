@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>7.3</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\Ix.Core\src\Ix.Core.csproj" />
+    <ProjectReference Include="..\..\lib\Ix.Core\src\Ix.Core.csproj" />
+    <ProjectReference Include="..\..\lib\VelcroPhysics\VelcroPhysics\VelcroPhysics.csproj" />
+    <ProjectReference Include="..\Common\Shanism.Common.csproj" />
+    <ProjectReference Include="..\Network\Shanism.Network.csproj" />
+    <ProjectReference Include="..\Scenario\Shanism.Scenario.csproj" />
+  </ItemGroup>
+
+</Project>

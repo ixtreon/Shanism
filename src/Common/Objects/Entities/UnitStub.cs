@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Shanism.Common.Interfaces.Entities;
-using Shanism.Common.Interfaces.Objects;
+using Shanism.Common.Entities;
+using Shanism.Common.Objects;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 
-namespace Shanism.Common.StubObjects
+namespace Shanism.Common.ObjectStubs
 {
     public class UnitStub : EntityStub, IUnit
     {
@@ -21,15 +21,15 @@ namespace Shanism.Common.StubObjects
         public readonly List<IBuffInstance> Buffs = new List<IBuffInstance>();
         public readonly List<IAbility> Abilities = new List<IAbility>();
 
-        readonly UnitStats currentStats = new UnitStats();
-        readonly UnitStats baseStats = new UnitStats();
+        readonly UnitStats currentStats = new UnitStats(0);
+        readonly UnitStats baseStats = new UnitStats(0);
 
         IReadOnlyCollection<IBuffInstance> IUnit.Buffs => Buffs;
 
         IReadOnlyCollection<IAbility> IUnit.Abilities => Abilities;
 
-        public IUnitStats Stats { get; set; } = new UnitStats();
-        public IUnitStats BaseStats { get; set; } = new UnitStats();
+        public IUnitStats Stats { get; set; } = new UnitStats(0);
+        public IUnitStats BaseStats { get; set; } = new UnitStats(0);
 
         public uint OwnerId { get; set; }
 

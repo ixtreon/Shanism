@@ -1,84 +1,105 @@
 ﻿using Shanism.Common;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Numerics;
 
 namespace Shanism.Client.UI
 {
-    class ScrollBar : Control
+    public class ScrollBar : Control
     {
-        public static readonly double DefaultWidth = 0.06;
+        const float MinHandleSize = 0.02f;
 
-        double _span = 0.2, _total = 1, _start = 0;
-
-        public double Total
-        {
-            get { return _total; }
-            set { _total = value; }
-        }
-
-        public double Span
-        {
-            get { return _span; }
-            set { _span = value; }
-        }
-
-        public double Start
-        {
-            get { return _start; }
-            set { _start = value; }
-        }
+        public static readonly float DefaultWidth = 0.06f;
 
         readonly Control slider;
 
-        Vector? sliderDragPt;
+        Vector2? dragOffset;
+
+        public float Min { get; set; } = 0;
+        public float Max { get; set; } = 1;
+        public float WindowSize { get; set; } = 0;
+        public float Start { get; set; } = 0;
+
+        /// <summary>
+        /// Gets the span of this scroll bar, 
+        /// that is the difference between the maximum and the minimum value.
+        /// </summary>
+        public float Span => (Max - Min);
+
+        float _sliderSize => WindowSize / Span;
+
+        float _sliderPos 
+        {
+            get => (Start - Min) / Span;
+            set => Start = value * Span + Min;
+        }
+
+        public Axis Direction { get; set; } = Axis.Vertical;
+
+        /// <summary>
+        /// Gets or sets the color of the slider.
+        /// </summary>
+        public Color SliderColor
+        {
+            get => slider.BackColor;
+            set => slider.BackColor = value;
+        }
 
         public ScrollBar()
         {
-            Size = new Vector(DefaultWidth, 0.6);
-            BackColor = Color.Black.SetAlpha(100);
+            Size = new Vector2(DefaultWidth, 0.6f);
+            BackColor = UiColors.ControlBackground;
 
-            SizeChanged += (c) => updateSlider();
+            Add(slider = new Button());
 
-            Add(slider = new Button
-            {
-                BackColor = Color.Black.SetAlpha(100),
-            });
-            updateSlider();
-
-            slider.MouseDown += startScrolling;
+            slider.MouseDown += (o, e) => dragOffset = e.Position;
+            slider.MouseUp += (o, e) => dragOffset = null;
             slider.MouseMove += continueScrolling;
-            slider.MouseUp += endScrolling;
+
+            this.MouseScroll += onMouseScroll;
+            slider.MouseScroll += onMouseScroll;
         }
 
-        void updateSlider()
+        void onMouseScroll(Control sender, MouseScrollArgs e)
         {
-            slider.Size = new Vector(Size.X, _span / _total * Size.Y);
-            slider.Location = new Vector(0, _start / _total * Size.Y);
+            Start += e.ScrollDelta * 0.1f;
         }
 
-        void continueScrolling(Input.MouseArgs e)
+        public override void Update(int msElapsed)
         {
-            if (sliderDragPt == null)
+            Start = Start.Clamp(Min, Max - WindowSize);
+
+            switch (Direction)
+            {
+                case Axis.Vertical:
+                    slider.Size = new Vector2(1, _sliderSize) * Size;
+                    slider.Location = new Vector2(0, _sliderPos) * Size;
+                    break;
+
+                case Axis.Horizontal:
+                    slider.Size = new Vector2(_sliderSize, 1) * Size;
+                    slider.Location = new Vector2(_sliderPos, 0) * Size;
+                    break;
+            }
+        }
+
+        void continueScrolling(Control sender, MouseArgs e)
+        {
+            if (dragOffset == null)
                 return;
 
-            var d = e.Position - sliderDragPt.Value;
-            var newPos = (slider.Location.Y + d.Y) / Size.Y * _total;
+            var dSlide = (e.Position - dragOffset.Value) * (Max - Min) / Size;
 
-            Start = newPos.Clamp(0, _total - _span);
-            updateSlider();
+            Start += dSlide.Get(Direction);
         }
 
-        void endScrolling(Input.MouseButtonArgs e)
+        void endScrolling(MouseButtonArgs e)
         {
-            sliderDragPt = null;
+            dragOffset = null;
         }
 
-        void startScrolling(Input.MouseButtonArgs e)
+        void startScrolling(MouseButtonArgs e)
         {
-            sliderDragPt = e.Position;
+            dragOffset = e.Position;
         }
     }
 }

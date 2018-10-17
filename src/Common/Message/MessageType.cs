@@ -4,77 +4,63 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shanism.Common.Message
+namespace Shanism.Common.Messages
 {
     /// <summary>
-    /// An enumeration of all message or command types. 
-    /// Enum integer values start from 2 onwards, to satisfy ProtoBuf requirements for the IOMessage class. 
+    /// An enumeration of all message types sent by the server.
     /// </summary>
-    public enum MessageType
+    public enum ServerMessageType
     {
-
-        /// -=-=-=-=-=- Client -> Server -=-=-=-=-=- 
-
         /// <summary>
-        /// A message sent by the client to the server to initiate a handshake. 
+        /// A response to a player's request to join the game.
         /// </summary>
-        HandshakeInit = 1,
+        HandshakeReply = 1,
 
         /// <summary>
-        /// A message sent by the client to request a map chunk. 
+        /// Contains updated player status (observer, player) and main hero ID, if available.
         /// </summary>
-        MapRequest,
+        PlayerStatus,
 
         /// <summary>
-        /// A message sent by the client to relay chat messages. 
+        /// Contains map data about a requested map chunk.
         /// </summary>
-        ClientChat,
-
-
-        /// -=-=-=-=-=- Server -> Client -=-=-=-=-=- 
+        MapData,
 
         /// <summary>
-        /// A message sent by the server in reply to a client's hanshake message. See <see cref="HandshakeInit"/>. 
-        /// </summary>
-        HandshakeReply,
-
-        /// <summary>
-        /// A message sent by the server to inform the player of his status (i.e. if a player has a hero). 
-        /// </summary>
-        PlayerStatusUpdate,
-
-        /// <summary>
-        /// A message sent by the server in reply to a client's map request. 
-        /// If the request is valid the response contains data for the specified chunk. 
-        /// </summary>
-        MapReply,
-
-        /// <summary>
-        /// A message sent by the server to inform of a nearby unit being damaged. 
+        /// Informs a player of a nearby damage event.
         /// </summary>
         DamageEvent,
 
         /// <summary>
-        /// A message sent by the server to relay chat messages. 
+        /// A chat message sent by a player or the game server.
         /// </summary>
-        ServerChat,
+        Chat,
 
         /// <summary>
-        /// A message sent by the server when an object changes its animation. 
-        /// </summary>
-        ObjectAnimation,
-
-        /// <summary>
-        /// A message sent by the server to inform a client they were disconnected. 
+        /// Informs a player they are no longer part of the game.
         /// </summary>
         Disconnected,
+    }
 
-
-        /// -=-=-=-=-=- Common -=-=-=-=-=- 
+    /// <summary>
+    /// An enumeration of all message types sent by the client.
+    /// </summary>
+    public enum ClientMessageType
+    {
 
         /// <summary>
-        /// A message send by both the client and the server. A generic frame. 
+        /// An initial request to join some server.
         /// </summary>
-        GameFrame,
+        HandshakeInit = 1,
+
+        /// <summary>
+        /// A request for a given map chunk.
+        /// </summary>
+        MapRequest,
+
+        /// <summary>
+        /// A chat message from the player.
+        /// </summary>
+        Chat,
     }
 }

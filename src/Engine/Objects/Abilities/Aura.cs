@@ -46,12 +46,15 @@ namespace Shanism.Engine.Objects.Abilities
 
     public class Aura : Ability
     {
-        public static readonly double DefaultRange = 10;
+        /// <summary>
+        /// The default range of a newly-created aura. 
+        /// </summary>
+        public static readonly float DefaultRange = 10;
 
 
-        readonly Dictionary<Unit, BuffInstance> infectedUnits = new Dictionary<Unit, BuffInstance>();
+        readonly Dictionary<Unit, BuffInstance> affectedUnits = new Dictionary<Unit, BuffInstance>();
 
-        double _auraRange;
+        float _auraRange;
         RangeEvent rangeEvent;
 
         /// <summary>
@@ -62,23 +65,20 @@ namespace Shanism.Engine.Objects.Abilities
         /// <summary>
         /// Gets or sets the range of the aura.
         /// </summary>
-        public double AuraRange
+        public float AuraRange
         {
-            get { return _auraRange; }
+            get => _auraRange;
             set
             {
-                if (!_auraRange.Equals(value))
+                _auraRange = value;
+                if (Math.Abs(_auraRange - value) > 0.001 && Owner != null)
                 {
-                    if (Owner != null)
-                    {
-                        Owner.range.RemoveEvent(rangeEvent);
-                        rangeEvent = new RangeEvent(value, null, somethingAround);
-                        Owner.range.AddEvent(rangeEvent);
-                    }
-                    _auraRange = value;
+                    Owner.range.RemoveEvent(rangeEvent);
+                    rangeEvent = new RangeEvent(value, null, somethingAround);
+                    Owner.range.AddEvent(rangeEvent);
                 }
-
             }
+
         }
 
         /// <summary>
@@ -114,19 +114,19 @@ namespace Shanism.Engine.Objects.Abilities
             if (tty == RangeEventTriggerType.Enter)
             {
                 BuffInstance buff;
-                if (!infectedUnits.TryGetValue(u, out buff))
+                if (!affectedUnits.TryGetValue(u, out buff))
                 {
                     buff = u.Buffs.Apply(Owner, AuraEffect);
-                    infectedUnits.Add(u, buff);
+                    affectedUnits.Add(u, buff);
                 }
             }
             else
             {
                 BuffInstance buff;
-                if (infectedUnits.TryGetValue(u, out buff))
+                if (affectedUnits.TryGetValue(u, out buff))
                 {
                     u.Buffs.Remove(buff);
-                    infectedUnits.Remove(u);
+                    affectedUnits.Remove(u);
                 }
             }
         }

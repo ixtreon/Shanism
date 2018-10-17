@@ -1,4 +1,4 @@
-﻿using Shanism.Common.Interfaces.Objects;
+﻿using Shanism.Common.Objects;
 using System;
 using System.Collections.Generic;
 using System.IO;

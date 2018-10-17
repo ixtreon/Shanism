@@ -1,1 +1,3 @@
-
+[submodule "lib/ix.core"]
+	path = lib/Ix.Core
+	url = https://gitlab.com/ixtreon/ix.core.git

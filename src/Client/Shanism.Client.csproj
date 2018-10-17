@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MonoGame.Content.Builder" Version="3.7.0.4" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL.Core" Version="3.7.0.7" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0005" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\Ix.Core\src\Ix.Core.csproj" />
+    <ProjectReference Include="..\..\lib\Ix.Logging\Ix.Logging.csproj" />
+    <ProjectReference Include="..\Common\Shanism.Common.csproj" />
+    <ProjectReference Include="..\Scenario\Shanism.Scenario.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <MonoGameContentReference Include="**\*.mgcb" /> 
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Content\Fonts\FiraSans-Regular.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Content\Fonts\freud.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Content\scenario.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="CreateDefaultContent" BeforeTargets="BeforeBuild">
+    <!-- build and run the "ContentBuilder" project -->
+    <Exec Command="dotnet run &quot;$(MSBuildThisFileDirectory)Content\" WorkingDirectory="$(MSBuildThisFileDirectory)..\ContentBuilder\" />
+  </Target>
+  
+</Project>

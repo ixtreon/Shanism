@@ -1,10 +1,6 @@
-﻿using Shanism.Engine.Events;
-using Shanism.Engine.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Shanism.Common;
+﻿using Shanism.Engine.Entities;
 using System.Diagnostics;
+using System.Numerics;
 
 namespace Shanism.Engine.Objects.Orders
 {
@@ -68,8 +64,8 @@ namespace Shanism.Engine.Objects.Orders
             //re-add all visible entities to the aggro table
             Aggravate.ResetTable();
 
-            //reset life?!
-            Owner.Life = Owner.MaxLife;
+            //reset life
+            Owner.LifePercentage = 1;
         }
 
         private void ReturnBehaviour_OnReturnStarted()

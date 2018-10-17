@@ -1,0 +1,22 @@
+
+{
+    "solution": "${workspaceRoot}/RoslynConv.sln",
+    "variables": {
+        "MSBUILD": "C:/Program Files (x86)/Microsoft Visual Studio/2017/Enterprise/MSBuild/15.0/Bin/MSBuild.exe",
+        "DEVENV": "C:/Program Files (x86)/Microsoft Visual Studio/2017/Enterprise/Common7/IDE/devenv.com"
+    },
+    "debugConfigurations": [
+        {
+            "name": "Game",
+            "cwd": "${workspaceRoot}",
+            "program": "${workspaceRoot}/src/Client.Game/bin/Debug/Shanism.exe",
+            "args": []
+        },
+        {
+            "name": "Editor",
+            "cwd": "${workspaceRoot}",
+            "program": "${workspaceRoot}/src/Client.Editor/bin/Debug/Shanism.Editor.exe",
+            "args": []
+        }
+    ] 
+}

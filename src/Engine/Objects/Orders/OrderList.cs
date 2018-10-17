@@ -11,7 +11,7 @@ namespace Shanism.Engine.Objects.Orders
 {
     class OrderList : Order, IEnumerable<Order>
     {
-        protected List<Order> Behaviours = new List<Order>();
+        protected List<Order> Behaviours { get; } = new List<Order>();
 
         public Order CurrentBehaviour { get; protected set; }
 

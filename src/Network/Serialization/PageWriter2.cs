@@ -8,19 +8,19 @@ using System.Diagnostics;
 
 namespace Shanism.Network.Serialization
 {
-    public class PageWriter2
+    public class PageBase2
     {
-        const int BitsPerLevel = 64;
-        const int BitPerLevelShift = 6;     //log2(BitsPerLine)
+        public const int BitsPerLevel = 64;
+        public const int BitPerLevelShift = 6;     //log2(BitsPerLine)
 
-        readonly int levels;
-        readonly int[] levelSize;
-        readonly ulong[][] lines;
+        protected readonly int levels;
+        protected readonly int[] levelSize;
+        protected readonly ulong[][] lines;
 
         int next(int sz)
             => (int)Math.Ceiling(sz / (decimal)BitsPerLevel);   // round up
 
-        public PageWriter2(int nBits)
+        public PageBase2(int nBits)
         {
             levels = (int)Math.Ceiling(Math.Log(nBits, BitsPerLevel));
             levelSize = new int[levels];
@@ -39,6 +39,13 @@ namespace Shanism.Network.Serialization
             }
 
             Debug.WriteLine($"Input: {nBits}\tLevels: {levels}\t[{string.Join(", ", levelSize)}]");
+        }
+    }
+
+    public class PageWriter2 : PageBase2
+    {
+        public PageWriter2(int nBits) : base(nBits)
+        {
         }
 
         public void Add(int id)

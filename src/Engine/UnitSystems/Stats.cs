@@ -3,6 +3,7 @@ using Shanism.Engine.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,12 +26,12 @@ namespace Shanism.Engine.Systems
         /// <param name="msElapsed"></param>
         public override void Update(int msElapsed)
         {
-            if (Owner.IsDead)
+            if(Owner.IsDead)
                 return;
 
             updateStats(Owner);
-            if (Owner is Hero)
-                updateHeroStats((Hero)Owner);
+            if(Owner is Hero h)
+                updateHeroStats(h);
 
             regenLife(Owner, msElapsed);
         }
@@ -43,7 +44,7 @@ namespace Shanism.Engine.Systems
             var newLife = Math.Min(target.LifePercentage + lifeDelta, 1);
 
             // can die by HP degen
-            if (lifeDelta < 0 && newLife < 0)
+            if(lifeDelta < 0 && newLife < 0)
             {
                 target.LifePercentage = 0;
 
@@ -53,7 +54,7 @@ namespace Shanism.Engine.Systems
             }
 
             //mana regen in % of max mana
-            if (target.MaxMana > 0)
+            if(target.MaxMana > 0)
             {
                 var manaDelta = (target.ManaRegen / target.MaxMana) * msElapsed / 1000;
                 var newMana = (target.ManaPercentage + manaDelta).Clamp(0, 1);
@@ -68,40 +69,49 @@ namespace Shanism.Engine.Systems
         /// </summary>
         static void updateStats(Unit target)
         {
-            //stats affected by buffs
-            target.refreshStats();
+            var baseStats = target.baseStats;
+            var curStats = target.stats;
 
-            //percentage
+            // MoveSpeed, AttackSpeed - summing percentage bonus
             var bonusMoveSpeed = 1f;
             var bonusAtkSpeed = 1f;
-            //negative percentage
+            // Dodge, Critical Strike -> product of negative percentages
             var negativeDodgeChance = (100 - target.BaseDodgeChance);
             var negativeCritChance = (100 - target.BaseCritChance);
-            //flags
+            // State Flags -> 'or' together
             var states = target.BaseStates;
+            // Others -> sum
+            curStats.Set(baseStats);
 
             //per-buff values
-            foreach (var b in target.Buffs)
+            var buffs = target.Buffs;
+            for(int i = 0; i < buffs.Count; i++)
             {
-                //sum of percentages
+                var b = buffs[i];
+
+                // perc bonus -> sum
                 bonusMoveSpeed += (b.Prototype.MoveSpeedPercentage / 100f);
                 bonusAtkSpeed += (b.Prototype.AttackSpeedPercentage / 100f);
-                //product of (negative) percentage
+                // neg perc -> product
                 negativeDodgeChance = negativeDodgeChance * (100 - b.Prototype.Dodge) / 100;
-                //OR-ed together
+                // flags -> OR
                 states |= b.Prototype.StateFlags;
+                // rest -> sum
+                curStats.Add(b.Prototype.unitStats);
             }
 
-            target.stats[UnitStat.MoveSpeed] *= bonusMoveSpeed;
-            target.stats[UnitStat.AttacksPerSecond] *= bonusAtkSpeed;
-
+            // perc bonus
+            curStats[UnitField.MoveSpeed]        = baseStats[UnitField.MoveSpeed] * Math.Max(0, bonusMoveSpeed);
+            curStats[UnitField.AttacksPerSecond] = baseStats[UnitField.AttacksPerSecond] * Math.Max(0, bonusAtkSpeed);
+            // neg perc
             target.DodgeChance = 100 - negativeDodgeChance;
             target.CritChance = 100 - negativeCritChance;
-
+            // flags
             target.StateFlags = states;
+            // rest is set
         }
 
-        static readonly float[] statModMults =
+        static readonly UnitStats statMultipliers = new UnitStats(new[]
         {
             Constants.Heroes.Attributes.LifePerVitality,
             Constants.Heroes.Attributes.ManaPerVitality,
@@ -113,11 +123,11 @@ namespace Shanism.Engine.Systems
             Constants.Heroes.Attributes.DamagePerStrength,
             Constants.Heroes.Attributes.DamagePerStrength,
             Constants.Heroes.Attributes.DefensePerStrength,
-            
+
             0,
             Constants.Heroes.Attributes.AtkSpeedPerAgility,
             Constants.Heroes.Attributes.DodgePerAgility,
-        };
+        });
 
         static readonly HeroAttribute[] statModTypes =
         {
@@ -137,15 +147,21 @@ namespace Shanism.Engine.Systems
             HeroAttribute.Agility,
         };
 
-        static void updateHeroStats(Hero target)
+        readonly UnitStats attrStatsTemp = new UnitStats(0);
+
+        void updateHeroStats(Hero target)
         {
             target.updateHeroStats();
 
-            for (int i = 0; i < Enum<UnitStat>.Count; i++)
-            {
-                var attrMod = target.attributes[statModTypes[i]] * statModMults[i];
-                target.stats.Add(i, attrMod);
-            }
+            // load the VIT/INT/STR/AGI stats for the hero
+            for(var i = 0; i < statModTypes.Length; i++)
+                attrStatsTemp.Get((UnitField)i) = target.attributes[statModTypes[i]];
+
+            // multiply by the modifier constants to get HP/MANA/HPREG/...
+            attrStatsTemp.Multiply(statMultipliers);
+
+            // add HP/MANA/HPREG/... modifiers to cur stats
+            target.stats.Add(attrStatsTemp);
         }
 
 
@@ -153,21 +169,24 @@ namespace Shanism.Engine.Systems
         {
             //get life degen from each source
             var dmgs = new Dictionary<Unit, double>();
-            foreach (var b in target.Buffs)
+            for(int i = 0; i < target.Buffs.Count; i++)
+            {
+                var b = target.Buffs[i];
                 dmgs[b.Caster ?? target] -= b.Prototype.LifeRegen;
+            }
 
             //leave only positive degeneration
-            foreach (var kvp in dmgs.Where(kvp => kvp.Value < 0).ToList())
+            foreach(var kvp in dmgs.Where(kvp => kvp.Value < 0).ToList())
                 dmgs.Remove(kvp.Key);
 
             //get their sum
             var sum = dmgs.Values.Sum();
             var roll = Rnd.NextDouble(0, sum);
 
-            foreach (var kvp in dmgs)
+            foreach(var kvp in dmgs)
             {
                 roll -= kvp.Value;
-                if (roll < 0)
+                if(roll < 0)
                     return kvp.Key;
             }
 

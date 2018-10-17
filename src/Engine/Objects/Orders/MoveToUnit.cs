@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shanism.Common;
+using System.Numerics;
 
 namespace Shanism.Engine.Objects.Orders
 {
@@ -15,7 +16,7 @@ namespace Shanism.Engine.Objects.Orders
     {
         public new Unit Target { get; set; }
 
-        public MoveToUnit(Unit u) : base(u, Vector.Zero) { }
+        public MoveToUnit(Unit u) : base(u, Vector2.Zero) { }
 
         public MoveToUnit(Unit u, Unit target) : this(u)
         {

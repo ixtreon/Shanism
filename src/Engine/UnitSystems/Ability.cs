@@ -8,6 +8,7 @@ using Shanism.Common;
 using Shanism.Engine.Objects.Abilities;
 using System.Threading;
 using System.Diagnostics;
+using System.Numerics;
 
 namespace Shanism.Engine.Systems
 {
@@ -195,7 +196,7 @@ namespace Shanism.Engine.Systems
             return true;
         }
 
-        public bool BeginCasting(Ability ability, Vector p)
+        public bool BeginCasting(Ability ability, Vector2 p)
         {
             throwIfAbilityNotOurs(ability);
 

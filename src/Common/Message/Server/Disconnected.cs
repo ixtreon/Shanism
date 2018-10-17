@@ -5,19 +5,22 @@ using System.Text;
 using System.Threading.Tasks;
 using ProtoBuf;
 
-namespace Shanism.Common.Message.Server
+namespace Shanism.Common.Messages
 {
     [ProtoContract]
-    public class DisconnectedMessage : IOMessage
+    public class Disconnected : ServerMessage
     {
-        public override MessageType Type => MessageType.Disconnected;
+        public override ServerMessageType Type => ServerMessageType.Disconnected;
 
+        /// <summary>
+        /// The reason for disconnecting.
+        /// </summary>
         [ProtoMember(1)]
         public DisconnectReason Reason { get; set; }
 
-        DisconnectedMessage() { }
+        Disconnected() { }
 
-        public DisconnectedMessage(DisconnectReason reason)
+        public Disconnected(DisconnectReason reason)
         {
             Reason = reason;
         }

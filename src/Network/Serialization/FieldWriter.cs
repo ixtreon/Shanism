@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shanism.Common;
+using System.Numerics;
 
 namespace Shanism.Network.Serialization
 {
@@ -20,68 +21,65 @@ namespace Shanism.Network.Serialization
 
         public void WriteInt(int oldVal, int newVal, int nBits = 32)
         {
-            var areEqual = (oldVal == newVal);
-            Message.Write(areEqual);
+            var hasChanged = (oldVal != newVal);
 
-            if (areEqual)
-                return;
-
-            Message.Write(newVal - oldVal, nBits);
+            Message.Write(hasChanged);
+            if (hasChanged)
+                Message.Write(newVal - oldVal, nBits);
         }
 
         public void WriteVarInt(int oldVal, int newVal)
         {
-            var areEqual = (oldVal == newVal);
-            Message.Write(areEqual);
+            var hasChanged = (oldVal != newVal);
 
-            if (areEqual)
-                return;
+            Message.Write(hasChanged);
+            if (hasChanged)
+                Message.WriteVariableInt32(newVal - oldVal);
+        }
 
-            Message.WriteVariableInt32(newVal - oldVal);
+        public void WriteVarUInt(uint oldVal, uint newVal)
+        {
+            var hasChanged = (oldVal != newVal);
+
+            Message.Write(hasChanged);
+            if (hasChanged)
+                Message.WriteVariableUInt32(newVal - oldVal);
         }
 
         public void WriteByte(byte oldVal, byte newVal)
         {
-            var areEqual = (oldVal == newVal);
-            Message.Write(areEqual);
+            var hasChanged = (oldVal != newVal);
 
-            if (areEqual)
-                return;
-
-            Message.Write((byte)(newVal - oldVal));
+            Message.Write(hasChanged);
+            if (hasChanged)
+                Message.Write((byte)(newVal - oldVal));
         }
 
         public void WriteFloat(float oldVal, float newVal)
         {
-            var areEqual = oldVal.Equals(newVal);
-            Message.Write(areEqual);
+            var hasChanged = !oldVal.Equals(newVal);
 
-            if (areEqual)
-                return;
-
-            Message.Write(newVal - oldVal);
+            Message.Write(hasChanged);
+            if (hasChanged)
+                Message.Write(newVal - oldVal);
         }
 
         public void WriteString(string oldVal, string newVal)
         {
-            var areEqual = oldVal == newVal;
-            Message.Write(areEqual);
+            var hasChanged = (oldVal != newVal);
 
-            if (areEqual)
-                return;
-
-            Message.Write(newVal);
+            Message.Write(hasChanged);
+            if (hasChanged)
+                Message.Write(newVal);
         }
 
         public void WriteColor(Color oldVal, Color newVal)
         {
-            var areEqual = oldVal.Equals(newVal);
-            Message.Write(areEqual);
+            var hasChanged = !oldVal.Equals(newVal);
 
-            if (areEqual)
-                return;
-
-            Message.Write(newVal.Pack());
+            Message.Write(hasChanged);
+            if (hasChanged)
+                Message.Write(newVal.Pack());
         }
 
         public void WriteBool(bool oldVal, bool newVal)
@@ -94,10 +92,10 @@ namespace Shanism.Network.Serialization
             Message.WritePadBits();
         }
 
-        public void WriteVector(Vector oldVal, Vector newVal)
+        public void WriteVector(Vector2 oldVal, Vector2 newVal)
         {
-            WriteFloat((float)oldVal.X, (float)newVal.X);
-            WriteFloat((float)oldVal.Y, (float)newVal.Y);
+            WriteFloat(oldVal.X, newVal.X);
+            WriteFloat(oldVal.Y, newVal.Y);
         }
 
         public void WriteShort(short oldVal, short newVal)
@@ -105,30 +103,20 @@ namespace Shanism.Network.Serialization
             WriteVarInt(oldVal, newVal);
         }
 
-        public void WriteVarUInt(uint oldVal, uint newVal)
-        {
-            var areEqual = (oldVal == newVal);
-            Message.Write(areEqual);
-
-            if (areEqual)
-                return;
-
-            Message.WriteVariableUInt32(newVal - oldVal);
-        }
         public void WriteStats(IUnitStats oldVals, IUnitStats newVals)
         {
-            for (int i = 0; i < newVals.RawStats.Length; i++)
+            for (int i = 0; i < newVals.Count; i++)
                 WriteFloat(oldVals.RawStats[i], newVals.RawStats[i]);
         }
+
         public void WriteAttributes(IHeroAttributes oldVals, IHeroAttributes newVals)
         {
-            for (int i = 0; i < newVals.RawStats.Length; i++)
+            for (int i = 0; i < newVals.Count; i++)
                 WriteFloat(oldVals.RawStats[i], newVals.RawStats[i]);
         }
 
         public void WriteMovementState(MovementState oldVal, MovementState newVal)
         {
-            //Console.WriteLine($"Written ms: {newVal.GetDirectionByte()}");
             WriteByte(oldVal.GetDirectionByte(), newVal.GetDirectionByte());
         }
     }

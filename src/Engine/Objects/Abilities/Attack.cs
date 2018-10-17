@@ -1,11 +1,9 @@
-﻿using System;
-using System.Linq;
-using Shanism.Engine.Systems;
-using Shanism.Engine.Objects;
-using Shanism.Engine;
+﻿using Ix.Math;
 using Shanism.Common;
 using Shanism.Engine.Entities;
 using Shanism.Engine.Events;
+using System.Linq;
+using System.Numerics;
 
 namespace Shanism.Engine.Objects.Abilities
 {
@@ -22,6 +20,12 @@ namespace Shanism.Engine.Objects.Abilities
         /// Gets or sets a value indicating whether projectiles are destroyed whenever they hit the first unit.
         /// </summary>
         public bool DestroyOnCollision { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets the speed of the projectile in squares per second. 
+        /// Makes sense only if this unit's attack is ranged (see <see cref="Unit.HasRangedAttack"/>).
+        /// </summary>
+        public float ProjectileSpeed { get; set; } = 20;
 
         public Attack()
         {
@@ -42,16 +46,16 @@ namespace Shanism.Engine.Objects.Abilities
         bool rangedAttack(AbilityCastArgs e)
         {
             var targetLoc = e.TargetLocation;
-            var damageRoll = Owner.DamageRoll();
+            var damageRoll = Owner.DamageRoll();    // roll the damage now - stats may change!
             var proj = new Projectile(Owner)
             {
                 Position = Owner.Position,
                 Model = "objects/arrowz",
                 Scale = 2.5f,
 
-                Direction = (float)Owner.Position.AngleTo(targetLoc),
-                Speed = 20,
-                MaxRange = (float)CastRange,
+                Direction = Owner.Position.AngleTo(targetLoc),
+                Speed = ProjectileSpeed,
+                MaxRange = CastRange,
 
                 DestroyOnCollision = DestroyOnCollision,
             };
@@ -64,15 +68,11 @@ namespace Shanism.Engine.Objects.Abilities
 
         bool meleeAttack(AbilityCastArgs e)
         {
-            Unit target;
-            if (e.TargetEntity is Unit)
-                target = (Unit)e.TargetEntity;
-            else
+            if (!(e.TargetEntity is Unit target))
             {
-                target = Map.GetUnitsInRange(Owner.Position, CastRange + Constants.Entities.MaxSize)
+                target = Map.GetUnitsInRange(new Ellipse(Owner.Position, CastRange))
                     .Where(Owner.Owner.IsEnemyOf)
-                    .OrderBy(u => u.Position.DistanceTo(e.TargetLocation))
-                    .Where(u => u.Position.DistanceTo(e.TargetLocation) < (CastRange + (u.Scale + Owner.Scale) / 2))
+                    .OrderBy(u => u.Position.DistanceToSquared(e.TargetLocation))
                     .FirstOrDefault();
 
                 if (target == null)

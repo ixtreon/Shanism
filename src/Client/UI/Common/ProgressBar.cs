@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Shanism.Common;
+﻿using Shanism.Common;
+using System.Numerics;
 
 namespace Shanism.Client.UI
 {
     /// <summary>
     /// A progress bar that exposes a value between 0 and 1, and some text. 
     /// </summary>
-    class ProgressBar : Control
+    public class ProgressBar : Control
     {
-        double _progress;
+        float _progress;
+
+        public Color ForeColor { get; set; }
 
         public bool ShowText { get; set; } = true;
 
@@ -19,38 +19,34 @@ namespace Shanism.Client.UI
         /// <summary>
         /// Gets or sets the progress as a value in the range from 0.0 to 1.0. 
         /// </summary>
-        public double Progress
+        public float Progress
         {
-            get { return _progress; }
-            set { _progress = value.Clamp(0.0, 1.0); }
+            get => _progress;
+            set => _progress = value.Clamp(0, 1);
         }
 
-        public Color ForeColor { get; set; } = Color.Goldenrod;
 
         public ProgressBar()
         {
-            BackColor = new Color(64, 64, 64, 64);
             CanHover = true;
+            BackColor = UiColors.ControlBackground;
+            ForeColor = UiColors.Button;
         }
 
-        public override void OnDraw(Canvas g)
+        public override void Draw(Canvas c)
         {
-            //background
-            g.Draw(Content.Textures.Blank, Vector.Zero, Size, BackColor);
+            base.Draw(c);
 
             //value
             if(Progress > 0)
             {
-                var borderSize = new Vector(Size.Y / 10);
-                var fullSize = Size - borderSize * 2;
-                var valSize = fullSize * new Vector(Progress, 1);
-
-                g.Draw(Content.Textures.Blank, borderSize, valSize, ForeColor);
+                var valSize = ClientBounds.Size * new Vector2(Progress, 1);
+                c.FillRectangle(ClientBounds.Position, valSize, ForeColor);
             }
 
             //text
             if(ShowText && !string.IsNullOrEmpty(Text))
-                g.DrawString(Content.Fonts.NormalFont, Text, Color.White, Size / 2, 0.5f, 0.5f);
+                c.DrawString(Content.Fonts.NormalFont, Text, Size / 2, UiColors.Text, anchor: AnchorPoint.Center);
         }
     }
 }

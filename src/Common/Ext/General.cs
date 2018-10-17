@@ -22,9 +22,9 @@ namespace Shanism.Common
         }
 
         public static double RoundToNearest(this double d, double val)
-        {
-            var div = Math.Round(d / val);
-            return div * val;
-        }
+            => Math.Round(d / val) * val;
+
+        public static float RoundToNearest(this float d, float val)
+            => (float)Math.Round(d / val) * val;
     }
 }

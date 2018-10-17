@@ -9,51 +9,50 @@ using Shanism.Engine.Events;
 namespace Shanism.Engine.Systems
 {
     /// <summary>
+    /// Keeps a <see cref="RangeEvent"/> object 
+    /// which is in sync with its owner's <see cref="Unit.VisionRange"/>. 
+    /// <para>
+    /// Calls into the appropriate methods of the Unit class which "see" and "unsee" other entities.
+    /// </para>
     /// </summary>
     class VisionSystem : UnitSystem
     {
-        readonly Unit Owner;
+        RangeEvent @event;
 
-        /// <summary>
-        /// Gets or sets the RangeEvent that is fired whenever an object approaches this unit. 
-        /// </summary>
-        RangeEvent ObjectVisionRangeEvent;
-
-
-        public VisionSystem(Unit u)
+        public VisionSystem(Unit owner)
         {
-            Owner = u;
-            u.VisionRangeChanged += ourVisionRangeChanged;
-            u.Death += onOurDeath;
-            ourVisionRangeChanged(u);
+            owner.VisionRangeChanged += ourVisionRangeChanged;
+            owner.Death += onOurDeath;
+
+            ourVisionRangeChanged(owner);
         }
 
         void onOurDeath(UnitArgs e)
         {
-            Owner.unseeAll();
+            e.TriggerUnit.UnseeAll();
         }
-        
-        void ourVisionRangeChanged(Unit u)
+
+        void ourVisionRangeChanged(Unit owner)
         {
             //remove old handler
-            if (ObjectVisionRangeEvent != null)
+            if(@event != null)
             {
-                ObjectVisionRangeEvent.Triggered -= onObjectInOurRange;
-                Owner.range.RemoveEvent(ObjectVisionRangeEvent);
+                @event.Triggered -= onObjectInOurRange;
+                owner.range.RemoveEvent(@event);
             }
 
             //add a new handler
-            ObjectVisionRangeEvent = new RangeEvent(u.VisionRange);
-            ObjectVisionRangeEvent.Triggered += onObjectInOurRange;
-            Owner.range.AddEvent(ObjectVisionRangeEvent);
-        }
+            @event = new RangeEvent(owner.VisionRange);
+            @event.Triggered += onObjectInOurRange;
+            owner.range.AddEvent(@event);
 
-        void onObjectInOurRange(Entity e, RangeEventTriggerType tty)
-        {
-            if (tty == RangeEventTriggerType.Enter)
-                Owner.see(e);
-            else
-                Owner.unsee(e);
+            void onObjectInOurRange(Entity e, RangeEventTriggerType tty)
+            {
+                if(tty == RangeEventTriggerType.Enter)
+                    owner.See(e);
+                else
+                    owner.Unsee(e);
+            }
         }
     }
 }

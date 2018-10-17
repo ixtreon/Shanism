@@ -1,19 +1,14 @@
-﻿using Shanism.Engine.Maps;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Shanism.Engine.Models.Systems;
 
-namespace Shanism.Engine.GameSystems
+namespace Shanism.Engine.Systems
 {
     /// <summary>
     /// Calls <see cref="Entity.Update(int)"/> for all entities on the map.
     /// </summary>
-    /// <seealso cref="Shanism.Engine.GameSystem" />
+    /// <seealso cref="GameSystem" />
     class EntitiesSystem : GameSystem
     {
-        public override string SystemName { get; } = "Entities";
+        public override string Name { get; } = "Entities";
 
         readonly MapSystem map;
 
@@ -24,9 +19,7 @@ namespace Shanism.Engine.GameSystems
 
         internal override void Update(int msElapsed)
         {
-            //update the entities
-            foreach (var e in map.Entities.ToList())
-                e.Update(msElapsed);
+
         }
     }
 }

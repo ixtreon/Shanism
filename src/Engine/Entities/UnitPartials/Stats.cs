@@ -1,5 +1,6 @@
-﻿using Shanism.Common;
-using Shanism.Common.Interfaces.Entities;
+﻿using Ix.Math;
+using Shanism.Common;
+using Shanism.Common.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +11,8 @@ namespace Shanism.Engine.Entities
 {
     partial class Unit
     {
-        internal readonly UnitStats baseStats = new UnitStats();
-        internal readonly UnitStats stats = new UnitStats();
+        internal readonly UnitStats baseStats = new UnitStats(0);
+        internal readonly UnitStats stats = new UnitStats(0);
         int _baseDodge, _baseCrit;
 
 
@@ -20,8 +21,10 @@ namespace Shanism.Engine.Entities
 
 
         #region Base Stats
+
         /// <summary>
         /// Gets or sets the base dodge chance of the unit. 
+        /// This value is always in the range [0; 100].
         /// </summary>
         public int BaseDodgeChance
         {
@@ -30,6 +33,7 @@ namespace Shanism.Engine.Entities
         }
         /// <summary>
         /// Gets or sets the base chance of dealing a critical strike for this unit. 
+        /// This value is always in the range [0; 100].
         /// </summary>
         public int BaseCritChance
         {
@@ -40,97 +44,54 @@ namespace Shanism.Engine.Entities
         /// <summary>
         /// Gets or sets the base hit points (life) of the unit. 
         /// </summary>
-        public float BaseMaxLife
-        {
-            get { return baseStats[UnitStat.MaxLife]; }
-            set { baseStats[UnitStat.MaxLife] = value; }
-        }
+        public ref float BaseMaxLife => ref baseStats.Get(UnitField.MaxLife);
         /// <summary>
         /// Gets or sets the base hit points (life) of the unit. 
         /// </summary>
-        public float BaseLifeRegen
-        {
-            get { return baseStats[UnitStat.LifeRegen]; }
-            set { baseStats[UnitStat.LifeRegen] = value; }
-        }
+        public ref float BaseLifeRegen => ref baseStats.Get(UnitField.LifeRegen);
         /// <summary>
         /// Gets or sets the base mana of the unit. 
         /// </summary>
-        public float BaseMaxMana
-        {
-            get { return baseStats[UnitStat.MaxMana]; }
-            set { baseStats[UnitStat.MaxMana] = value; }
-        }
+        public ref float BaseMaxMana => ref baseStats.Get(UnitField.MaxMana);
         /// <summary>
         /// Gets or sets the base hit points (life) of the unit. 
         /// </summary>
-        public float BaseManaRegen
-        {
-            get { return baseStats[UnitStat.ManaRegen]; }
-            set { baseStats[UnitStat.ManaRegen] = value; }
-        }
+        public ref float BaseManaRegen => ref baseStats.Get(UnitField.ManaRegen);
 
         /// <summary>
         /// Gets or sets the base minimum damage inflicted by the unit. 
         /// </summary>
-        public float BaseMinDamage
-        {
-            get { return baseStats[UnitStat.MinDamage]; }
-            set { baseStats[UnitStat.MinDamage] = value; }
-        }
+        public ref float BaseMinDamage => ref baseStats.Get(UnitField.MinDamage);
         /// <summary>
         /// Gets or sets the base maximum damage inflicted by the unit. 
         /// </summary>
-        public float BaseMaxDamage
-        {
-            get { return baseStats[UnitStat.MaxDamage]; }
-            set { baseStats[UnitStat.MaxDamage] = value; }
-        }
+        public ref float BaseMaxDamage => ref baseStats.Get(UnitField.MaxDamage);
         /// <summary>
         /// Gets or sets the base magic damage of the unit. 
         /// </summary>
-        public float BaseMagicDamage
-        {
-            get { return baseStats[UnitStat.MagicDamage]; }
-            set { baseStats[UnitStat.MagicDamage] = value; }
-        }
+        public ref float BaseMagicDamage => ref baseStats.Get(UnitField.MagicDamage);
         /// <summary>
         /// Gets or sets the base defense of the unit. 
         /// </summary>
-        public float BaseDefense
-        {
-            get { return baseStats[UnitStat.Defense]; }
-            set { baseStats[UnitStat.Defense] = value; }
-        }
+        public ref float BaseDefense => ref baseStats.Get(UnitField.Defense);
 
         /// <summary>
         /// Gets or sets the base movement speed of the unit in squares per second. 
         /// </summary>
-        public float BaseMoveSpeed
-        {
-            get { return baseStats[UnitStat.MoveSpeed]; }
-            set { baseStats[UnitStat.MoveSpeed] = value; }
-        }
+        public ref float BaseMoveSpeed => ref baseStats.Get(UnitField.MoveSpeed);
         /// <summary>
         /// Gets or sets the base rate of attack of the unit measured in attacks per second. 
         /// </summary>
-        public float BaseAttacksPerSecond
-        {
-            get { return baseStats[UnitStat.AttacksPerSecond]; }
-            set { baseStats[UnitStat.AttacksPerSecond] = value; }
-        }
+        public ref float BaseAttacksPerSecond => ref baseStats.Get(UnitField.AttacksPerSecond);
         /// <summary>
         /// Gets or sets the base magic damage of the unit. 
         /// </summary>
-        public float BaseAttackRange
-        {
-            get { return baseStats[UnitStat.AttackRange]; }
-            set { baseStats[UnitStat.AttackRange] = value; }
-        }
+        public ref float BaseAttackRange => ref baseStats.Get(UnitField.AttackRange);
         #endregion
 
 
         #region Current Stats
+
         /// <summary>
         /// Gets the unit's chance to dodge an attack, in the range 0 to 100. 
         /// </summary>
@@ -145,77 +106,77 @@ namespace Shanism.Engine.Entities
         /// <summary>
         /// Gets the maximum life of the unit. 
         /// </summary>
-        public float MaxLife => stats[UnitStat.MaxLife];
+        public float MaxLife => stats[UnitField.MaxLife];
         /// <summary>
         /// Gets the current life regeneration rate of the unit, in life points per second.  
         /// </summary>
-        public float LifeRegen => stats[UnitStat.LifeRegen];
+        public float LifeRegen => stats[UnitField.LifeRegen];
         /// <summary>
         /// Gets the maximum mana of the unit. 
         /// </summary>
-        public float MaxMana => stats[UnitStat.MaxMana];
+        public float MaxMana => stats[UnitField.MaxMana];
         /// <summary>
         /// Gets the current mana regeneration rate of the unit, in mana points per second.  
         /// </summary>
-        public float ManaRegen => stats[UnitStat.ManaRegen];
+        public float ManaRegen => stats[UnitField.ManaRegen];
 
         /// <summary>
         /// Gets the minimum damage of the unit's attack. 
         /// </summary>
-        public float MinDamage => stats[UnitStat.MinDamage];
+        public float MinDamage => stats[UnitField.MinDamage];
         /// <summary>
         /// Gets the maximum damage of the unit's attack. 
         /// </summary>
-        public float MaxDamage => stats[UnitStat.MaxDamage];
+        public float MaxDamage => stats[UnitField.MaxDamage];
         /// <summary>
         /// Gets the base bonus magic damage of the unit. 
         /// </summary>
-        public float MagicDamage => stats[UnitStat.MagicDamage];
+        public float MagicDamage => stats[UnitField.MagicDamage];
         /// <summary>
         /// Gets the current defense of the unit which provides reduction
         /// against physical damage. 
         /// </summary>
-        public float Defense => stats[UnitStat.Defense];
+        public float Defense => stats[UnitField.Defense];
 
         /// <summary>
         /// Gets the current movement speed of the unit. 
         /// </summary>
-        public float MoveSpeed => stats[UnitStat.MoveSpeed];
+        public float MoveSpeed => stats[UnitField.MoveSpeed];
         /// <summary>
         /// Gets the time this unit takes between successive attacks. 
         /// </summary>
-        public float AttacksPerSecond => stats[UnitStat.AttacksPerSecond];
+        public float AttacksPerSecond => stats[UnitField.AttacksPerSecond];
         /// <summary>
         /// Gets the current attack range of the unit. 
         /// </summary>
-        public float AttackRange => stats[UnitStat.AttackRange];
+        public float AttackRange => stats[UnitField.AttackRange];
 
         #endregion
 
 
         void initStats()
         {
-            baseStats[UnitStat.MaxLife] = 10;
-            baseStats[UnitStat.MaxMana] = 0;
+            BaseMaxLife = 10;
+            BaseMaxMana = 0;
 
-            baseStats[UnitStat.LifeRegen] = 0.1f;
-            baseStats[UnitStat.ManaRegen] = 0;
-            baseStats[UnitStat.MagicDamage] = 0;
+            BaseLifeRegen = 0.1f;
+            BaseManaRegen = 0.1f;
+            BaseMagicDamage = 0;
 
-            baseStats[UnitStat.MinDamage] = 1;
-            baseStats[UnitStat.MaxDamage] = 2;
-            baseStats[UnitStat.Defense] = 0;
+            BaseMinDamage = 1;
+            BaseMaxDamage = 2;
+            BaseDefense = 0;
 
-            baseStats[UnitStat.MoveSpeed] = 10;
-            baseStats[UnitStat.AttacksPerSecond] = 0.6f;
-            baseStats[UnitStat.AttackRange] = 2.5f;
+            BaseMoveSpeed = 10;
+            BaseAttacksPerSecond = 2f / 3;
+            BaseAttackRange = 2.5f;
         }
 
         internal void refreshStats()
         {
             stats.Set(baseStats);
-            foreach (var b in Buffs)
-                stats.Add(b.Prototype.unitStats);
+            for(int i = Buffs.Count - 1; i >= 0; i--)
+                stats.Add(Buffs[i].Prototype.unitStats);
         }
     }
 }

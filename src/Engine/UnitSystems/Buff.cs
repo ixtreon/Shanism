@@ -1,7 +1,5 @@
 ﻿using Shanism.Engine.Entities;
 using Shanism.Engine.Objects.Buffs;
-using Shanism.Engine.Systems;
-using Shanism.Common.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,64 +16,71 @@ namespace Shanism.Engine.Systems
     /// </summary>
     class BuffSystem : UnitSystem, IUnitBuffs
     {
-        HashSet<BuffInstance> buffs { get; } = new HashSet<BuffInstance>();
+
+        readonly List<BuffInstance> buffList = new List<BuffInstance>();
+        readonly Dictionary<BuffInstance, int> buffSet = new Dictionary<BuffInstance, int>();
 
         readonly Unit Owner;
 
-        //used exclusively by the update() method
-        readonly List<BuffInstance> buffsToRemove = new List<BuffInstance>();
 
         public BuffSystem(Unit target)
         {
             Owner = target;
         }
 
-        public int Count => buffs.Count;
+        public int Count => buffList.Count;
+
+        public BuffInstance this[int id] => buffList[id];
 
         public override void Update(int msElapsed)
         {
             //update buffs, remove expired ones
-            foreach (var b in buffs)
+            for(int i = 0; i < buffList.Count; i++)
             {
-                b.Update(msElapsed);
-                if (b.HasExpired || b.IsDestroyed)
-                    buffsToRemove.Add(b);
-            }
+                var b = buffList[i];
 
-            if (buffsToRemove.Any())
-            {
-                foreach (var b in buffsToRemove)
-                    buffs.Remove(b);
-                buffsToRemove.Clear();
+                b.Update(msElapsed);
+
+                if(b.HasExpired || b.IsDestroyed)
+                    remove(b, i--);
             }
         }
 
         /// <summary>
         /// Applies the given buff to the unit. 
         /// </summary>
-        /// <param name="buff">The buff to apply. </param>
+        /// <param name="prototype">The buff to apply. </param>
         /// <param name="caster">The caster of the buff. </param>
-        public BuffInstance Apply(Unit caster, Buff buff)
+        public BuffInstance Apply(Unit caster, Buff prototype)
         {
-            if (buff == null)
+            if(prototype == null)
                 return null;
 
-            var newBuff = new BuffInstance(buff, caster, Owner);
-            buffs.Add(newBuff);
-            buff.OnApplied(newBuff);
+            // remove stacks
+            if(prototype.MaxStacks > 0)
+            {
+                //throw new Exception("You can't debug me!");
 
-            var existingBuffs = buffs
-                .Where(oldBuff => oldBuff.Equals(newBuff))
-                .OrderBy(b => b.DurationLeft)
-                .ToList();
+                var curStacks = countBuffsOfType(prototype);
+                var stacksToRemove = prototype.MaxStacks - curStacks;
 
-            //remove a stack if need be
-            if (buff.MaxStacks > 0 && existingBuffs.Count > buff.MaxStacks)
-                buffs.Remove(existingBuffs.First());
+                while(stacksToRemove > 0 && tryFindShortestTimeLeft(prototype, out var id, out var buff))
+                {
+                    remove(buff, id);
+                    stacksToRemove--;
+                }
+            }
 
-            if (buff.StackType == BuffStackType.Refresh)
-                foreach (var bi in existingBuffs)
-                    bi.RefreshDuration();
+            //refresh durations
+            if(prototype.StackType == BuffStackType.Refresh)
+                for(int i = 0; i < buffList.Count; i++)
+                    if(buffList[i].Equals(prototype))
+                        buffList[i].RefreshDuration();
+
+            // apply the buff
+            var newBuff = new BuffInstance(prototype, caster, Owner);
+            add(newBuff);
+            prototype.OnApplied(newBuff);
 
             return newBuff;
         }
@@ -83,41 +88,45 @@ namespace Shanism.Engine.Systems
         /// <summary>
         /// Removes all instances of the given buff. 
         /// </summary>
-        /// <param name="buffType">The buff prototype to remove instances of. </param>
-        public void Remove(Buff buffType)
-        {
-            var toRemove = buffs
-                .Where(b => b.Prototype.Equals(buffType))
-                .ToList();
-
-            foreach (var b in toRemove)
-                buffs.Remove(b);
-        }
+        /// <param name="prototype">The buff prototype to remove instances of. </param>
+        /// <returns>The number of stacks of the buff that were removed.</returns>
+        public int Remove(Buff prototype)
+            => Remove(prototype, buffList.Count);
 
         /// <summary>
         /// Removes a specified number of instances of the given buff from this unit's buffs. 
         /// </summary>
-        /// <param name="buffType">The buff prototype to remove instances of. </param>
-        /// <param name="nStacks">The maximum number of stacks of this buff to remove. </param>
-        public void Remove(Buff buffType, int nStacks)
+        /// <param name="prototype">The buff prototype to remove instances of. </param>
+        /// <param name="stacksToRemove">The maximum number of stacks of this buff to remove. </param>
+        /// <returns>The number of stacks of the buff that were removed.</returns>
+        public int Remove(Buff prototype, int stacksToRemove)
         {
-            var toRemove = buffs
-                .Where(b => b.Prototype.Equals(buffType))
-                .Take(nStacks)
-                .ToList();
+            var stacksRemoved = 0;
+            for(int i = 0; i < buffList.Count && stacksToRemove > 0; i++)
+            {
+                var b = buffList[i];
+                if(b.Prototype.Id == prototype.Id)
+                {
+                    remove(b, i--);
+                    stacksToRemove--;
+                    stacksRemoved++;
+                }
+            }
 
-            foreach (var b in toRemove)
-                buffs.Remove(b);
+            return stacksRemoved;
         }
 
         /// <summary>
         /// Removes the given buff instance from this unit. 
         /// </summary>
         /// <param name="buff"></param>
-        public void Remove(BuffInstance buff)
+        public bool Remove(BuffInstance buff)
         {
-            if(buff != null)
-                buffs.Remove(buff);
+            if(!buffSet.TryGetValue(buff, out var id))
+                return false;
+
+            remove(buff, id);
+            return true;
         }
 
         /// <summary>
@@ -125,24 +134,62 @@ namespace Shanism.Engine.Systems
         /// </summary>
         public void Clear()
         {
-            buffs.Clear();
+            buffList.Clear();
+            buffSet.Clear();
         }
 
-        public bool Contains(BuffInstance buff) => buffs.Contains(buff);
-
-        public bool Contains(Buff b) => buffs.Any(i => i.Prototype.Equals(b));
-
-
-        #region IEnumerable<Buff> Implementation
-        public IEnumerator<BuffInstance> GetEnumerator()
+        public bool Contains(Buff b)
         {
-            return buffs.GetEnumerator();
+            for(int i = 0; i < buffList.Count; i++)
+                if(buffList[i].Prototype.Id == b.Id)
+                    return true;
+            return false;
+        }
+        public bool Contains(BuffInstance b)
+            => buffSet.ContainsKey(b);
+
+        int countBuffsOfType(Buff b)
+        {
+            var count = 0;
+            for(int i = 0; i < buffList.Count; i++)
+                if(buffList[i].Prototype.Id == b.Id)
+                    count++;
+            return count;
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        bool tryFindShortestTimeLeft(Buff prototype, out int id, out BuffInstance buff)
         {
-            return buffs.GetEnumerator();
+            id = -1;
+            buff = null;
+            float duration = float.MaxValue;
+            BuffInstance curBuff;
+            for(int i = 0; i < buffList.Count; i++)
+                if((curBuff = buffList[i]).Prototype.Id == prototype.Id)
+                    if(curBuff.DurationLeft < duration)
+                    {
+                        id = i;
+                        buff = curBuff;
+                        duration = curBuff.DurationLeft;
+                    }
+            return buff != null;
         }
-        #endregion
+
+        void add(BuffInstance b)
+        {
+            buffSet.Add(b, buffList.Count);
+            buffList.Add(b);
+        }
+
+        void remove(BuffInstance b, int id)
+        {
+            buffList.RemoveAtFast(id);
+            buffSet.Remove(b);
+            if(id < buffList.Count)
+                buffSet[buffList[id]] = id;
+        }
+
+        public IEnumerator<BuffInstance> GetEnumerator() => buffList.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

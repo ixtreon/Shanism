@@ -1,86 +1,140 @@
-﻿using Shanism.Client.Drawing;
+﻿using Shanism.Common;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using Shanism.Common;
+using System.Numerics;
 
 namespace Shanism.Client.UI
 {
+
     /// <summary>
     /// Displays a simple label. 
     /// </summary>
-    class Label : Control
+    public class Label : Control
     {
-        public static TextureFont DefaultFont => Content.Fonts.FancyFont;
+        public static Font DefaultFont => Content.Fonts.FancyFont;
 
         string _text = string.Empty;
-        TextureFont font;
+        Font _font;
+        LabelSizeMode _sizeMode = LabelSizeMode.Manual;
+        int _lineHeight = 0;
+
+        public Color TextColor { get; set; }
 
         public string Text
         {
-            get { return _text; }
-            set
-            {
-                _text = value;
-                resize();
-            }
+            get => _text;
+            set { _text = value; resize(); }
         }
 
-        void resize()
+        public Font Font
         {
-            if (AutoSize && Screen != null)
-                Size = Font.MeasureString(Text) + new Vector(Padding * 2) + 1E-5;
-        }
-
-        public Color TextColor { get; set; } = Color.Goldenrod;
-
-        public TextureFont Font
-        {
-            get { return font; }
-            set
-            {
-                font = value;
-                resize();
-            }
+            get => _font;
+            set { _font = value; resize(); }
         }
 
         /// <summary>
         /// Gets or sets whether this label automatically fits to the text inside it. 
         /// </summary>
-        public bool AutoSize { get; set; } = true;
+        public bool AutoSize
+        {
+            get => _sizeMode == LabelSizeMode.Automatic;
+            set
+            {
+                _sizeMode = value ? LabelSizeMode.Automatic : LabelSizeMode.Manual;
+                resize();
+            }
+        }
 
         /// <summary>
-        /// Gets or sets the X-align of the text. Recommended values are 0 (left), 0.5 (center) and 1 (right). 
+        /// When <see cref="AutoSize"/> is set to true, sets the maximum width of the label.
         /// </summary>
-        public float TextXAlign { get; set; }
+        public float? MaxWidth { get; set; }
 
-        public float TextScale { get; set; } = 1;
+        /// <summary>
+        /// Gets or sets the height of the labels in terms of its font size.
+        /// <para>
+        /// Throws an exception if the <see cref="Font"/> property is null.
+        /// </para>
+        /// </summary>
+        public int LineHeight
+        {
+            get => _lineHeight;
+            set
+            {
+                _lineHeight = value;
+                _sizeMode = LabelSizeMode.FixedLineCount;
+                resize();
+            }
+        }
 
-        public int? LineHeight { get; set; } = null;
+        /// <summary>
+        /// Gets or sets the position of the text within the control.
+        /// </summary>
+        public AnchorPoint TextAlign { get; set; } = AnchorPoint.CenterLeft;
+
+
+        float? MaxTextWidth;
 
         public Label()
         {
-            BackColor = Color.Transparent;
-            Size = new Vector(0.4, 0.1);
-            font = DefaultFont;
+            TextColor = UiColors.TextTitle;
+
+            Size = new Vector2(0.4f, 0.1f);
+            Font = DefaultFont;
 
             CanHover = true;
         }
-        protected override void OnUpdate(int msElapsed)
-        {
-            if(Screen != null && LineHeight != null)
-                Height = LineHeight.Value * font.HeightUi + (LineHeight.Value - 1) * Padding;
 
-            base.OnUpdate(msElapsed);
+        public Label(string text, bool autoSize = true)
+        {
+            Text = text;
+            TextColor = UiColors.TextTitle;
+            Font = DefaultFont;
+
+            CanHover = true;
+            Size = new Vector2(0.4f, 0.1f);
+            AutoSize = autoSize;
         }
 
-        public override void OnDraw(Canvas g)
+        void resize()
         {
-            var maxTextLen = Size.X - 2 * Padding;
-            var textPos = new Vector(Padding + maxTextLen * TextXAlign, Size.Y / 2);
+            switch(_sizeMode)
+            {
+                case LabelSizeMode.Manual:
+                    MaxTextWidth = ClientBounds.Width;
+                    return;
 
-            g.Draw(Content.Textures.Blank, Vector.Zero, Size, BackColor);
-            g.DrawString(Font, Text, TextColor, textPos, TextXAlign, 0.5f, maxTextLen);
+                case LabelSizeMode.FixedLineCount:
+                    MaxTextWidth = ClientBounds.Width;
+                    Height = LineHeight * _font.Height + 2 * Padding;
+                    return;
+
+                case LabelSizeMode.Automatic:
+                    ResizeAnchor = ParentAnchor;
+                    MaxTextWidth = null;
+
+                    // account for MaxWidth when type = Auto
+                    Vector2 stringSize;
+                    if(MaxWidth != null)
+                        stringSize = Font.MeasureString(_text, MaxWidth.Value);
+                    else
+                        stringSize = Font.MeasureString(_text);
+
+                    Size = stringSize + new Vector2(2 * Padding + 1E-5f);
+                    return;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public override void Draw(Canvas c)
+        {
+            base.Draw(c);
+
+            if(_text == null)
+                return;
+
+            c.DrawString(Font, _text, TextColor, ClientBounds, TextAlign);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Shanism.Network
     public abstract class NPeer
     {
         public const string AppIdentifier = "ShanoRpg";
-        public const int NetworkPort = 6969;
+        public const int DefaultPort = 6969;
 
         internal NetPeer peer;
 
@@ -45,13 +45,13 @@ namespace Shanism.Network
             {
                 case NetIncomingMessageType.VerboseDebugMessage:
                 case NetIncomingMessageType.DebugMessage:
-                    Log.Default.Debug(msg.ReadString());
+                    NetLog.Default.Debug(msg.ReadString());
                     break;
                 case NetIncomingMessageType.WarningMessage:
-                    Log.Default.Warning(msg.ReadString());
+                    NetLog.Default.Warning(msg.ReadString());
                     break;
                 case NetIncomingMessageType.ErrorMessage:
-                    Log.Default.Error(msg.ReadString());
+                    NetLog.Default.Error(msg.ReadString());
                     break;
 
                 // data messages
@@ -68,12 +68,11 @@ namespace Shanism.Network
                     else if (status == NetConnectionStatus.Disconnected)
                         OnDisconnected(msg.SenderConnection);
 
-                    string reason = msg.ReadString();
-                    Log.Default.Info($"{status}: {reason}");
+                    NetLog.Default.Info($"{status}: {msg.ReadString()}");
                     break;
 
                 default:
-                    Log.Default.Warning("Unhandled message type: {0} ({1} bytes)", msg.MessageType, msg.LengthBytes);
+                    NetLog.Default.Warning($"Unhandled message type: {msg.MessageType} ({msg.LengthBytes} bytes)");
                     break;
             }
         }

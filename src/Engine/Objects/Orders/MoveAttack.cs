@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Ix.Math;
 using Shanism.Engine.Entities;
-using Shanism.Common;
+using System;
+using System.Numerics;
 
 namespace Shanism.Engine.Objects.Orders
 {
@@ -13,15 +10,15 @@ namespace Shanism.Engine.Objects.Orders
         readonly Aggro aggro;
         readonly MoveToGround move;
 
-        readonly Vector startPosition;
-        readonly Vector targetPosition;
+        readonly Vector2 startPosition;
+        readonly Vector2 targetPosition;
 
-        private double RetreatDistance = 20;
-        private double RetreatStopDistance = 10;
+        float RetreatDistance = 20;
+        float RetreatStopDistance = 10;
 
         bool isRetreating;
 
-        public MoveAttack(Unit owner, Vector target) : base(owner)
+        public MoveAttack(Unit owner, Vector2 target) : base(owner)
         {
             startPosition = owner.Position;
             targetPosition = target;
@@ -60,7 +57,7 @@ namespace Shanism.Engine.Objects.Orders
             base.Update(msElapsed);
         }
 
-        static double PointLineDist(Vector la, Vector lb, Vector p)
+        static double PointLineDist(Vector2 la, Vector2 lb, Vector2 p)
         {
             var d = la.DistanceTo(lb);
             var area = Math.Abs((lb.Y - la.Y) * p.X - (lb.X - la.X) * p.Y + lb.X * la.Y - lb.Y * la.X);

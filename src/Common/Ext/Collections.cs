@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ namespace Shanism.Common
             where TVal : class
         {
             TVal result;
-            if (key == null || !dict.TryGetValue(key, out result))
+            if(key == null || !dict.TryGetValue(key, out result))
                 return null;
             return result;
         }
@@ -38,11 +39,12 @@ namespace Shanism.Common
         /// <typeparam name="TVal"></typeparam>
         /// <param name="dict">The dictionary to perform the operation on. </param>
         /// <param name="key">The key whose value should be returned. </param>
+        [Obsolete]
         public static TVal? TryGetVal<TKey, TVal>(this IDictionary<TKey, TVal> dict, TKey key)
             where TVal : struct
         {
             TVal result;
-            if (key == null || !dict.TryGetValue(key, out result))
+            if(key == null || !dict.TryGetValue(key, out result))
                 return null;
             return result;
         }
@@ -63,7 +65,7 @@ namespace Shanism.Common
         public static IEnumerable<T> Prepend<T>(this IEnumerable<T> e, T item)
         {
             yield return item;
-            foreach (var eItem in e)
+            foreach(var eItem in e)
                 yield return eItem;
         }
 
@@ -71,9 +73,9 @@ namespace Shanism.Common
         public static int? IndexOf<T>(this IEnumerable<T> e, T item)
         {
             int id = 0;
-            foreach (var it in e)
+            foreach(var it in e)
             {
-                if (it.Equals(item))
+                if(it.Equals(item))
                     return id;
                 id++;
             }
@@ -109,12 +111,12 @@ namespace Shanism.Common
         {
             //len = 0
             var e = ie.GetEnumerator();
-            if (!e.MoveNext()) throw new InvalidOperationException("Sequence has no elements.");
+            if(!e.MoveNext()) throw new InvalidOperationException("Sequence has no elements.");
 
             //len = 1
             TSrc maxElem = e.Current;
             TArg maxVal = func(maxElem);
-            if (!e.MoveNext()) return maxElem;
+            if(!e.MoveNext()) return maxElem;
 
             //len > 1
             TSrc curElemm;
@@ -123,13 +125,13 @@ namespace Shanism.Common
             {
                 curElemm = e.Current;
                 curVal = func(curElemm);
-                if (comparer(curVal, maxVal) > 0)
+                if(comparer(curVal, maxVal) > 0)
                 {
                     maxElem = curElemm;
                     maxVal = curVal;
                 }
             }
-            while (e.MoveNext());
+            while(e.MoveNext());
 
             return maxElem;
         }
@@ -140,6 +142,10 @@ namespace Shanism.Common
 
         static int argMinHelper<T>(T a, T b) where T : IComparable<T>
             => b.CompareTo(a);
+
+
+        public static HashSet<T> ToHashSet<T>(this IEnumerable<T> e)
+            => new HashSet<T>(e);
         #endregion
 
 
@@ -155,6 +161,48 @@ namespace Shanism.Common
         }
 
         /// <summary>
+        /// Removes the last element of the list. 
+        /// </summary>
+        public static void RemoveLast<T>(this IList<T> l) => l.Pop();
+
+        /// <summary>
+        /// Moves the last item to the given index 
+        /// and then drops the last item of the collection.
+        /// <para>
+        /// IF ITERATING DO NOT FORGET TO SUBTRACT 1 FROM THE COUNTER.
+        /// </para>
+        /// </summary>
+        public static void RemoveAtFast<T>(this List<T> l, int id)
+        {
+            var lastId = l.Count - 1;
+            if(id < lastId)
+                l[id] = l[lastId];
+            l.RemoveAt(lastId);
+        }
+
+        public static void InsertSorted<T>(this List<T> l, T val)
+        {
+            var index = l.BinarySearch(val);
+            if (index < 0) index = ~index;
+            l.Insert(index, val);
+        }
+
+        public static void InsertSorted<T>(this List<T> l, T val, IComparer<T> comparer)
+        {
+            var index = l.BinarySearch(val, comparer);
+            if (index < 0) index = ~index;
+            l.Insert(index, val);
+        }
+
+        public static void Swap<T>(this IList<T> l, int i, int j)
+        {
+            var temp = l[i];
+            l[i] = l[j];
+            l[j] = temp;
+        }
+
+
+        /// <summary>
         /// Moves the given item to the end of the list. 
         /// Returns whether the control was found in the list. 
         /// </summary>
@@ -164,11 +212,11 @@ namespace Shanism.Common
         public static bool MoveToLast<T>(this IList<T> l, T item)
         {
             var oldPos = l.IndexOf(item);
-            if (oldPos < 0)
+            if(oldPos < 0)
                 return false;
 
             var lastId = l.Count - 1;
-            for (var i = oldPos; i < lastId; i++)
+            for(var i = oldPos; i < lastId; i++)
                 l[i] = l[i + 1];
             l[lastId] = item;
 
@@ -185,10 +233,10 @@ namespace Shanism.Common
         public static bool MoveToFirst<T>(this IList<T> l, T item)
         {
             var oldPos = l.IndexOf(item);
-            if (oldPos < 0)
+            if(oldPos < 0)
                 return false;
 
-            for (var i = oldPos; i > 0; i--)
+            for(var i = oldPos; i > 0; i--)
                 l[i] = l[i - 1];
             l[0] = item;
 

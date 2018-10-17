@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Shanism.Common.Interfaces.Objects;
+using Shanism.Common.Objects;
 
-namespace Shanism.Common.Interfaces.Entities
+namespace Shanism.Common.Entities
 {
 
     /// <summary>

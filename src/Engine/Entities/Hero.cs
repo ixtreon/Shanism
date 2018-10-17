@@ -1,16 +1,11 @@
-﻿using Shanism.Engine.Systems;
-using Shanism.Common;
+﻿using Shanism.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Shanism.Engine.Entities;
-using Shanism.Common.Message.Client;
-using Shanism.Common.StubObjects;
-using Shanism.Common.Util;
-using Shanism.Common.Interfaces.Entities;
-using Shanism.Engine.Objects.Orders;
+using Shanism.Common.Entities;
+using Ix.Math;
 
 namespace Shanism.Engine.Entities
 {
@@ -20,9 +15,6 @@ namespace Shanism.Engine.Entities
     /// </summary>
     public class Hero : Unit, IHero
     {
-        //multiplied by _level to obtain the Xp needed to level up. 
-        const int XpPerLevel = 100;
-
         /// <summary>
         /// Gets the object type of this hero. 
         /// Always has a value of <see cref="ObjectType.Hero"/>. 
@@ -31,7 +23,7 @@ namespace Shanism.Engine.Entities
 
 
         readonly HeroAttributes baseAttributes = new HeroAttributes(10);
-        internal readonly HeroAttributes attributes = new HeroAttributes();
+        internal readonly HeroAttributes attributes = new HeroAttributes(0);
 
 
         IHeroAttributes IHero.BaseAttributes => baseAttributes;
@@ -45,14 +37,15 @@ namespace Shanism.Engine.Entities
         /// <summary>
         /// Gets the experience needed to reach the next level. 
         /// </summary>
-        public int ExperienceNeeded => XpPerLevel * Level;
+        public int ExperienceNeeded 
+            => Constants.Heroes.Experience.BaseRequired + Constants.Heroes.Experience.PerLevelRequired * Level;
 
         /// <summary>
         /// The current experience of the hero.
         /// </summary>
         public int Experience
         {
-            get { return _experience; }
+            get => _experience; 
             set
             {
                 if (value < _experience)
@@ -71,35 +64,20 @@ namespace Shanism.Engine.Entities
         /// <summary>
         /// Gets or sets the base strength of the hero. 
         /// </summary>
-        public float BaseStrength
-        {
-            get { return baseAttributes[HeroAttribute.Strength]; }
-            set { baseAttributes[HeroAttribute.Strength] = value; }
-        }
+        public ref float BaseStrength => ref baseAttributes.Get(HeroAttribute.Strength);
         /// <summary>
         /// Gets or sets the base vitality of the hero. 
         /// </summary>
-        public float BaseVitality
-        {
-            get { return baseAttributes[HeroAttribute.Vitality]; }
-            set { baseAttributes[HeroAttribute.Vitality] = value; }
-        }
+        public ref float BaseVitality => ref baseAttributes.Get(HeroAttribute.Vitality);
         /// <summary>
-        /// Gets or sets the base intellect of the hero. 
+        /// Gets a reference to this hero's base intellect.
         /// </summary>
-        public float BaseIntellect
-        {
-            get { return baseAttributes[HeroAttribute.Intellect]; }
-            set { baseAttributes[HeroAttribute.Intellect] = value; }
-        }
+        public ref float BaseIntellect => ref baseAttributes.Get(HeroAttribute.Intellect);
+
         /// <summary>
         /// Gets or sets the base agility of the hero. 
         /// </summary>
-        public float BaseAgility
-        {
-            get { return baseAttributes[HeroAttribute.Agility]; }
-            set { baseAttributes[HeroAttribute.Agility] = value; }
-        }
+        public ref float BaseAgility => ref baseAttributes.Get(HeroAttribute.Agility);
         #endregion
 
         #region Current Stats
@@ -141,8 +119,8 @@ namespace Shanism.Engine.Entities
         internal void updateHeroStats()
         {
             attributes.Set(baseAttributes);
-            foreach (var b in Buffs)
-                attributes.Add(b.Prototype.heroStats);
+            for(int i = Buffs.Count - 1; i >= 0; i--)
+                attributes.Add(Buffs[i].Prototype.heroStats);
         }
 
         protected virtual void OnLevelUp() { }

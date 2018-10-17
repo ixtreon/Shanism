@@ -10,6 +10,8 @@ namespace Shanism.Common
 {
     public static class StringsExt
     {
+        static readonly Regex formatRegex = new Regex(@"{(\w+):([^}\s]*)?}");
+
         /// <summary>
         /// You are a guy with name Pesho and height of 1.72? 
         /// 
@@ -23,32 +25,25 @@ namespace Shanism.Common
         /// </summary>
         public static string FormatWith<T>(this string s, T obj)
         {
-            if (string.IsNullOrEmpty(s))
+            MatchCollection patterns;
+            if(s == null || (patterns = formatRegex.Matches(s)).Count == 0)
                 return s;
 
-            var patterns = Regex.Matches(s, @"{(\w+)(:[^}\s]*)?}");
-            if (patterns.Count == 0)
-                return s;
-
-            var t = typeof(T);
-
-            var output = s;
-            foreach (Match m in patterns)
+            var output = new StringBuilder(s);
+            foreach(Match m in patterns)
             {
                 var name = m.Groups[1].Value.ToLower();
                 var format = m.Groups[2].Value;
-                var pi = t.GetProperty(name, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-                if (pi != null)
+                var pi = typeof(T).GetProperty(name, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                if(pi != null)
                 {
-                    var ty = pi.PropertyType;
-                    var val = pi.GetValue(obj).ToString();
-                    if (ty == typeof(int))
-                        val = string.Format("{0" + format + "}", pi.GetValue(obj));
-                    output = output.Replace(m.Value, val);
+                    var val = string.Format($"{{0:{format}}}", pi.GetValue(obj));
+
+                    output.Replace(m.Value, val);
                 }
             }
 
-            return output;
+            return output.ToString();
         }
     }
 }

@@ -1,0 +1,3 @@
+﻿# remove regeneratable files
+/Content/scenario.json
+/Content/Textures/icons.png

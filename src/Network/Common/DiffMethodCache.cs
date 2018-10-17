@@ -16,9 +16,6 @@ namespace Shanism.Network.Common
 
     public class MethodCache<TWriter, TReader>
     {
-        Type writerType => typeof(TWriter);
-        Type readerType => typeof(TReader);
-
         public Dictionary<Type, MethodInfo> Reads { get; } = new Dictionary<Type, MethodInfo>();
         public Dictionary<Type, MethodInfo> Writes { get; } = new Dictionary<Type, MethodInfo>();
 
@@ -31,21 +28,16 @@ namespace Shanism.Network.Common
         public void FindWriteMethods()
         {
             Debug.WriteLine("Finding write methods...");
+
             Writes.Clear();
-
-            var mis = writerType.GetMethods();
-            foreach (var m in mis)
+            foreach (var m in typeof(TWriter).GetMethods())
             {
-                var mParams = m.GetParameters();
-                if (mParams.Length != 2)
-                    continue;
-
-                var paramType = mParams[0].ParameterType;
-                if (paramType == mParams[1].ParameterType)
-                {
-                    Writes.Add(paramType, m);
-                }
+                var ps = m.GetParameters();
+                var p0 = ps[0].ParameterType;
+                if (ps.Length == 2 && p0 == ps[1].ParameterType)
+                    Writes.Add(p0, m);
             }
+
             Debug.WriteLine($"Added write methods for: {string.Join(", ", Writes.Keys.Select(t => t.Name))}");
         }
 
@@ -53,22 +45,17 @@ namespace Shanism.Network.Common
         public void FindReadMethods()
         {
             Debug.WriteLine("Finding read methods...");
+
             Reads.Clear();
-
-            var mis = readerType.GetMethods();
-            foreach (var m in mis)
+            foreach (var m in typeof(TReader).GetMethods())
             {
-                var mParams = m.GetParameters();
-                if (mParams.Length != 1)
-                    continue;
-
-                var paramType = mParams[0].ParameterType;
-                if (paramType == m.ReturnType)
-                {
-                    Reads.Add(paramType, m);
-                }
+                var ps = m.GetParameters();
+                var p0 = ps[0].ParameterType;
+                if (ps.Length == 1 && p0 == m.ReturnType)
+                    Reads.Add(p0, m);
             }
-            Debug.WriteLine($"Added write methods for: {string.Join(", ", Reads.Keys.Select(t => t.Name))}");
+
+            Debug.WriteLine($"Added read methods for: {string.Join(", ", Reads.Keys.Select(t => t.Name))}");
         }
     }
 }

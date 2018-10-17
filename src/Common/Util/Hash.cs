@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 
 namespace Shanism.Common.Util
 {
@@ -11,52 +10,28 @@ namespace Shanism.Common.Util
     /// </summary>
     public static class Hash
     {
-        static readonly HashAlgorithm hashGuy = new MD5CryptoServiceProvider();
-
-        static Hash()
+        public static int GetInt(params int[] vals)
         {
-            hashGuy.Initialize();
-        }
+            if (vals == null || vals.Length == 0)
+                return 0;
 
-        public static int GetSlow(params int[] vals)
-            => getHash(BitConverter.GetBytes, vals);
-
-        public static int Get(params int[] vals)
-        {
+            var ans = vals[0].GetHashCode();
             unchecked
             {
-                int hash = 17;
-                for (int i = 0; i < vals.Length; i++)
-                    hash = hash * 23 + vals[i];
-                return hash;
+                for (int i = 1; i < vals.Length; i++)
+                {
+                    uint rol5 = ((uint)ans << 5) | ((uint)ans >> 27);
+                    ans = ((int)rol5 + ans) ^ vals[i].GetHashCode();
+                }
             }
+            return ans;
         }
 
 
         public static double GetDouble(params int[] ints)
-            => (double)Math.Abs(GetSlow(ints)) / int.MaxValue;
+            => (double)Math.Abs(GetInt(ints)) / int.MaxValue;
 
-
-        static int getHash<T>(Func<T, byte[]> f, params T[] vals)
-        {
-            if (vals.Length == 0)
-                throw new ArgumentNullException();
-
-            byte[] buffer;
-            using (var ms = new MemoryStream())
-            {
-                foreach (var el in vals)
-                {
-                    var iBytes = f(el);
-                    ms.Write(iBytes, 0, iBytes.Length);
-                }
-
-                buffer = ms.ToArray();
-            }
-
-            var hashCode = hashGuy.ComputeHash(buffer);
-            var val = BitConverter.ToInt32(hashCode, 0);
-            return val;
-        }
+        public static float GetFloat(params int[] ints)
+            => (float)Math.Abs(GetInt(ints)) / int.MaxValue;
     }
 }

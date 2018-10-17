@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Shanism.Common.StubObjects;
-using Shanism.Common.Util;
 using Shanism.Common;
-using Shanism.Common.Interfaces.Entities;
+using Shanism.Common.Entities;
+using System.Numerics;
 
 namespace Shanism.Engine.Entities
 {
@@ -24,7 +23,7 @@ namespace Shanism.Engine.Entities
         /// <summary>
         /// Gets the offset of this effect relative to the object it is attached to. 
         /// </summary>
-        public Vector AttachOffset { get; set; }
+        public Vector2 AttachOffset { get; set; }
 
         /// <summary>
         /// Gets or sets whether this effect is attached to a particular GameObject. 
@@ -53,10 +52,10 @@ namespace Shanism.Engine.Entities
         /// </summary>
         /// <param name="anchor">The entity to attach to. </param>
         /// <param name="attachOffset">The offset from the entity to attach the effect at. </param>
-        public Effect(Entity anchor, Vector? attachOffset = null)
+        public Effect(Entity anchor, Vector2? attachOffset = null)
         {
             AttachedTo = anchor;
-            AttachOffset = attachOffset ?? Vector.Zero;
+            AttachOffset = attachOffset ?? Vector2.Zero;
         }
 
         /// <summary>

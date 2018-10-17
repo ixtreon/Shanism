@@ -1,5 +1,5 @@
 ﻿using Shanism.Engine.Objects;
-using Shanism.Common.Message;
+using Shanism.Common.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +13,6 @@ namespace Shanism.Engine.Systems
     /// </summary>
     abstract class UnitSystem
     {
-
         public virtual void Update(int msElapsed) { }
     }
 }

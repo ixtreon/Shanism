@@ -9,43 +9,23 @@ namespace Shanism.Engine
     {
         //most of these are self-explanatory
 
-        public static class Engine
-        {
-            public const bool UseMultithreading = false;
-
-            /// <summary>
-            /// The size of a single chunk of the entity map in in-game units. 
-            /// </summary>
-            public const int MapChunkSize = 2;
-        }
-
-        public static class Entities
+        public static class Map
         {
             /// <summary>
-            /// The default size of a unit. 
+            /// The minimum size of a quadtree chunk.
             /// </summary>
-            public const float DefaultSize = 2.5f;
-
-            /// <summary>
-            /// The minimum size of an entity. 
-            /// </summary>
-            public const float MinSize = 0.1f;
-
-            /// <summary>
-            /// The maximum size of an entity. 
-            /// </summary>
-            public const float MaxSize = 20;
+            public const int ChunkMinSize = 2;
         }
+
 
         public static class Units
         {
-            public const double BaseLifeRegen = 0.5;
-            public const double BaseManaRegen = 2;
-            public const double BaseMagicDamage = 0;
-
-
             /// <summary>
-            /// The damage reduction per point of defense. 
+            /// The increase in damage reduction per point of defense.
+            /// <para/>
+            /// Incoming physical damage is divided by the current 
+            /// reduction factor to calculate the final damage.
+            /// Units with 0 defense have a reduction factor of 1. 
             /// </summary>
             public const float DamageReductionPerDefense = 0.05f;
         }
@@ -78,12 +58,16 @@ namespace Shanism.Engine
                 /// <summary>
                 /// The base experience needed to reach a new level. 
                 /// </summary>
-                public const int Base = 10;
+                public static int BaseReward { get; } = 9;
 
                 /// <summary>
-                /// The bonus experience needed to reach each consecutive new level. 
+                /// The extra experience needed to reach each consecutive level. 
                 /// </summary>
-                public const int LevelFactor = 15;
+                public static int PerLevelReward { get; } = 1;
+
+                public static int BaseRequired { get; } = 53;
+
+                public static int PerLevelRequired { get; } = 153;
             }
         }
 

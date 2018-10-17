@@ -1,31 +1,24 @@
-﻿using Shanism.Engine.Entities;
+﻿using Ix.Math;
 using Shanism.Common;
-using Shanism.Common.Content;
-using Shanism.Common.StubObjects;
-using Shanism.Common.Util;
-using System;
+using Shanism.Common.Entities;
+using Shanism.Engine.Entities;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Shanism.Common.Interfaces.Entities;
+using System.Numerics;
+using static Shanism.Common.Constants.Entities;
 
 namespace Shanism.Engine
 {
+
     /// <summary>
     /// A base class for all objects that show on the game map. 
     /// Currently this includes effects, doodads, units and heroes. 
     /// </summary>
     public abstract class Entity : GameObject, IEntity
     {
-        /// <summary>
-        /// The size of the *texture*. 
-        /// TODO: make it a Vector. 
-        /// </summary>
-        float _scale = Constants.Entities.DefaultSize;
 
+        Vector2 position;
+        float scale = DefaultScale;
+        RectangleF bounds;
 
         /// <summary>
         /// Gets the list of units that see this entity. 
@@ -41,28 +34,38 @@ namespace Shanism.Engine
 
 
         /// <summary>
-        /// Gets or sets the scale of this entity, also the size of its texture. 
-        /// The size must be positive and less than <see cref="Constants.Entities.MaxSize"/>. 
+        /// Gets or sets the location of the center of this game object. 
+        /// </summary>
+        public Vector2 Position
+        {
+            get => position;
+            set
+            {
+                position = value;
+                bounds = new RectangleF(position - new Vector2(scale / 2), new Vector2(scale));
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the scale of this entity, also the bounding box for its pathing rect. 
+        /// The size must be positive and less than <see cref="Common.MaxSize"/>. 
         /// </summary>
         public float Scale
         {
-            get { return _scale; }
+            get => scale;
             set
             {
-                _scale = value.Clamp(Constants.Entities.MinSize, Constants.Entities.MaxSize);
+                scale = value.Clamp(MinScale, MaxScale);
+                bounds = new RectangleF(position - new Vector2(scale / 2), new Vector2(scale));
             }
         }
+
+        public RectangleF Bounds => bounds;
 
         /// <summary>
         /// Gets a value indicating whether this collides with other entities on the map. 
         /// </summary>
         public abstract bool HasCollision { get; }
-
-        /// <summary>
-        /// Gets the object type of this entity.
-        /// </summary>
-        public abstract override ObjectType ObjectType { get; }
-
 
         /// <summary>
         /// Gets the orientation of the object. 
@@ -73,13 +76,6 @@ namespace Shanism.Engine
         /// Gets or sets the custom data for this entity. 
         /// </summary>
         public object Data { get; set; }
-
-        /// <summary>
-        /// Gets or sets the location of the center of this game object. 
-        /// </summary>
-        public Vector Position { get; set; }
-
-        internal Vector MapPosition { get; set; }
 
         /// <summary>
         /// Gets or sets the default tint color of this entity. 
@@ -98,21 +94,9 @@ namespace Shanism.Engine
         public string Model { get; set; }
 
         /// <summary>
-        /// Gets or sets the animation suffix of this entity. 
-        /// The resulting animation may not actually be present on the client. 
-        /// </summary>
-        public string Animation { get; private set; }
-
-        public bool LoopAnimation { get; private set; }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="Entity"/> class.
         /// </summary>
-        protected Entity()
-        {
-
-        }
-
+        protected Entity() { }
 
         /// <summary>
         /// Creates a new <see cref="Entity"/> that is a clone of the given <see cref="Entity"/>. 
@@ -124,44 +108,25 @@ namespace Shanism.Engine
             Name = @base.Name;
             Position = @base.Position;
             Model = @base.Model;
-            Animation = @base.Animation;
             Scale = @base.Scale;
         }
 
         /// <summary>
-        /// Resets this entity's current animation suffix to the default animation name. 
+        /// Updates the entity and calls the <see cref="OnUpdate(int)"/> method. 
         /// </summary>
-        public void ResetAnimation()
-        {
-            Animation = Shanism.Common.Constants.Content.DefaultValues.Animation;
-            LoopAnimation = true;
-        }
-
-        public void PlayAnimation(string animation, bool loop)
-        {
-            Animation = animation;
-            LoopAnimation = loop;
-        }
-
-        /// <summary>
-        /// Calls the <see cref="OnUpdate(int)"/> method. 
-        /// </summary>
-        /// <param name="msElapsed"></param>
         internal override void Update(int msElapsed)
         {
             OnUpdate(msElapsed);
-            if (false)
-                Scripts.Enqueue(() => OnUpdate(msElapsed));
         }
 
         /// <summary>
         /// Override to implement custom update functionality. 
         /// </summary>
-        public virtual void OnUpdate(int msElapsed) { }
+        protected virtual void OnUpdate(int msElapsed) { }
 
         /// <summary>
         /// Override to implement custom functionality on entity creation. 
         /// </summary>
-        public virtual void OnSpawned() { }
+        protected internal virtual void OnSpawned() { }
     }
 }

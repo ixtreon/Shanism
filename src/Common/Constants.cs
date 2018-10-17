@@ -1,76 +1,89 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Ix.Math;
 
 namespace Shanism.Common
 {
     public static class Constants
     {
+        /// <summary>
+        /// Info about terrain, textures, icon, animation files.
+        /// </summary>
         public static class Content
         {
             public static class DefaultValues
             {
-                public const string UnitName = "Dummy Unit";
 
                 /// <summary>
                 /// Gets the name of a default object texture that is always defined. 
                 /// </summary>
-                public const string ObjectTexture = "dummy";
+                public static string ObjectTexture { get; } = "dummy";
 
                 /// <summary>
                 /// Gets the name of a default model that is always defined and uses the default object texture. 
                 /// </summary>
-                public const string ModelName = "dummy";
+                public static string ModelName { get; } = "dummy";
 
                 /// <summary>
                 /// Gets the path to the default model's texture on the client. 
                 /// </summary>
-                public const string ModelTexture = "objects/dummy.png";
+                public static string ModelTexture { get; } = "objects/dummy.png";
 
-
-                public const string Icon = "default";
+                /// <summary>
+                /// Gets the name of the placeholder icon.
+                /// </summary>
+                public static string Icon { get; } = "default";
 
                 /// <summary>
                 /// The name of the animation used by default with all models. 
                 /// </summary>
-                public const string Animation = "";
+                public static string Animation { get; } = "";
             }
 
-            public const string TextureExtension = ".png";
+            public static string TextureExtension { get; } = ".png";
 
             /// <summary>
             /// The sub-directory in the scenario folder where textures are kept. 
             /// </summary>
-            public const string TexturesDirectory = "Textures";
+            public static string TexturesDirectory { get; } = "Textures";
+        }
 
-            public const string TerrainFile = "terrain";
-
-            /* describe the size of the terrain file */
-            public const int TerrainFileSplitsX = 8;
-            public const int TerrainFileSplitsY = 8;
-
+        public static class Terrain
+        {
+            public static string FileName { get; } = "terrain";
+            public static Point LogicalSize { get; } = new Point(8, 8);
         }
 
         public static class Animations
         {
-            public const string Move = "move";
-            public const string Cast = "cast";
-
+            public static string Move { get; } = "move";
+            public static string Cast { get; } = "cast";
         }
 
         public static class Client
         {
-            //5184
-            public const int WindowWidth = 96;
-            public const int WindowHeight = 54;
-
-            public static readonly Point WindowSize = new Point(WindowWidth, WindowHeight);
+            //TODO: dependant on default zoom?
 
             /// <summary>
             /// The size of the terrain chunks requested by the client. 
             /// </summary>
-            public static readonly int ChunkSize = WindowHeight / 2;
+            public static int TerrainChunkSize { get; } = 32;
+        }
+
+        public static class Entities
+        {
+            /// <summary>
+            /// The default size of a unit. 
+            /// </summary>
+            public static float DefaultScale { get; } = 2.5f;
+
+            /// <summary>
+            /// The minimum size of an entity. 
+            /// </summary>
+            public static float MinScale { get; } = 0.1f;
+
+            /// <summary>
+            /// The maximum size of an entity. 
+            /// </summary>
+            public static float MaxScale { get; } = 20;
         }
     }
 }

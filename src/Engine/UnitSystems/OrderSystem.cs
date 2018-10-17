@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shanism.Engine.Entities;
-using Shanism.Common.Message;
 using Shanism.Engine.Objects.Orders;
+using Shanism.Common;
 
 namespace Shanism.Engine.Systems
 {
@@ -20,41 +20,30 @@ namespace Shanism.Engine.Systems
 
         public override void Update(int msElapsed)
         {
-            if (Owner.IsDead) return;
+            if(Owner.IsDead) 
+                return;
 
             //try current order
-            if (tryTakeControl(Owner.CurrentOrder, msElapsed))
+            if(tryUpdate(msElapsed, Owner.CurrentOrder))
                 return;
 
             //otherwise revert to default
             Owner.CurrentOrder = null;
-            if (tryTakeControl(Owner.DefaultOrder, msElapsed))
+            if(tryUpdate(msElapsed, Owner.DefaultOrder))
                 return;
 
             //or don't do anything
-            if (Owner.MovementState.IsMoving)
-                Owner.MovementState = Shanism.Common.MovementState.Stand;
+            Owner.MovementState = MovementState.Stand;
         }
 
-        bool tryTakeControl(Order ord, int msElapsed)
+        bool tryUpdate(int msElapsed, Order order)
         {
-            if (ord == null || !ord.TakeControl())
+            if(order == null || !order.TakeControl())
                 return false;
 
-            ord.Update(msElapsed);
-            Owner.MovementState = ord.CurrentState;
+            order.Update(msElapsed);
+            Owner.MovementState = order.CurrentState;
             return true;
-        }
-
-        bool? updateOrder(Order o, int msElapsed)
-        {
-            if (o == null)
-                return null;
-
-            var takeControl = o.TakeControl();
-            if (takeControl == true)
-                o.Update(msElapsed);
-            return takeControl;
         }
     }
 }

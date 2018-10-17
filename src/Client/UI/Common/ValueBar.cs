@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Shanism.Common;
+﻿using Shanism.Common;
 
 namespace Shanism.Client.UI
 {
     /// <summary>
     /// A progress bar representing the current value of a property relative to the maximum value of that property. 
     /// </summary>
-    class ValueBar : ProgressBar
+    public class ValueBar : ProgressBar
     {
-        public double Value;
+        public float Value;
 
-        public double MaxValue;
+        public float MaxValue;
 
         public ValueBar()
         {
@@ -20,7 +17,7 @@ namespace Shanism.Client.UI
             CanHover = true;
         }
 
-        protected override void OnUpdate(int msElapsed)
+        public override void Update(int msElapsed)
         {
             if (MaxValue > 0)
             {

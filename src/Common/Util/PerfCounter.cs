@@ -11,15 +11,41 @@ namespace Shanism.Common.Util
     /// </summary>
     public class PerfCounter
     {
-        public const int DefaultBarLength = 20;
-
-        static readonly Stopwatch timer = Stopwatch.StartNew();
+        public const int BarLength = 20;
 
 
         readonly Dictionary<string, double> stats = new Dictionary<string, double>();
 
-        string category;
-        TimeSpan? catStart;
+        PerfNode? curItem;
+        double totalMsTaken;
+
+        struct PerfNode
+        {
+            public long Start { get; }
+            public string Name { get; }
+
+            public PerfNode(long start, string name)
+            {
+                Start = start;
+                Name = name;
+            }
+
+            public long CalcDeltaT(long now)
+                => 1000 * (now - Start) / Stopwatch.Frequency;
+        }
+
+
+        public double this[string category]
+        {
+            get => stats[category];
+        }
+
+        public string Name { get; }
+
+        public PerfCounter(string name)
+        {
+            Name = name;
+        }
 
 
         /// <summary>
@@ -28,60 +54,78 @@ namespace Shanism.Common.Util
         public void Reset()
         {
             stats.Clear();
-        }
-
-        /// <summary>
-        /// Logs the time taken to run the given benchmarked category. 
-        /// </summary>
-        public void Log(string category, double timeTaken)
-        {
-            double t;
-            if (!stats.TryGetValue(category, out t))
-                t = 0;
-            stats[category] = t + timeTaken;
+            totalMsTaken = 0;
         }
 
 
         public void Start(string catName)
         {
-            if (catStart != null)
-                Log(category, (timer.Elapsed - catStart.Value).TotalMilliseconds);
+            var t = Stopwatch.GetTimestamp();
+            
+            if(curItem != null)
+                end(t);
 
-            catStart = timer.Elapsed;
-            category = catName;
+            curItem = new PerfNode(t, catName);
         }
 
-        public void End()
+        /// <summary>
+        /// Logs the time taken to run the given benchmarked category. 
+        /// </summary>
+        void end(long now)
         {
-            Log(category, (timer.Elapsed - catStart.Value).TotalMilliseconds);
+            if(curItem == null)
+                throw new InvalidOperationException($"Start was not called!");
 
-            catStart = null;
-            category = null;
+            var n = curItem.Value;
+            if(!stats.TryGetValue(n.Name, out var oldT))
+                oldT = 0;
+            var newT = n.CalcDeltaT(now);
+
+            stats[n.Name] = oldT + newT;
+            totalMsTaken += newT;
+
+            curItem = null;
         }
 
-        public string GetPerformanceData(int barLength = DefaultBarLength)
+        public void End() => end(Stopwatch.GetTimestamp());
+
+        public string GetPerformanceData(float timePeriod)
         {
-            var totalTimeTaken = stats.Sum(s => s.Value);
-            var lines = stats
-                .OrderByDescending(kvp => kvp.Key)
-                .Select(kvp => $"{kvp.Value:000000.00} [{writeBar(kvp.Value, totalTimeTaken, barLength)}] {kvp.Key}");
-
-            var logData = string.Join("\n", lines);
-
-            return $"Total: {totalTimeTaken:0.00}\n{logData}";
-        }
-
-        static string writeBar(double curT, double totalT, int totalLength)
-        {
-            if (totalT <= 0)
-                return new string('-', totalLength);
             var sb = new StringBuilder();
-            var pluses = (int)(curT / totalT * totalLength);
 
-            sb.Append('+', pluses);
-            sb.Append('-', totalLength - pluses);
+            sb.Append($"# {Name}: {(totalMsTaken / timePeriod * 100):00.00}%");
+
+            sb.AppendLine();
+
+            foreach(var kvp in stats.OrderBy(kvp => kvp.Key))
+            {
+                var name = kvp.Key;
+                var percTotalPeriod = kvp.Value / timePeriod * 100;
+                var percThisInstance = kvp.Value / totalMsTaken * 100;
+
+                sb.Append($"{percTotalPeriod:00.000}%");
+                sb.Append(' ');
+                writeBar(sb, percThisInstance);
+                sb.Append(' ');
+                sb.Append(name);
+
+                sb.AppendLine();
+            }
 
             return sb.ToString();
+        }
+
+        void writeBar(StringBuilder sb, double t)
+        {
+            if(totalMsTaken > 0)
+            {
+                var nPluses = (int)(t * BarLength / 100);
+
+                sb.Append(" [");
+                sb.Append('!', nPluses);
+                sb.Append('.', BarLength - nPluses);
+                sb.Append("] ");
+            }
         }
     }
 }

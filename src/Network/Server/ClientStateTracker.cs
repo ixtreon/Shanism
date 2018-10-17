@@ -1,6 +1,6 @@
 ﻿using Lidgren.Network;
-using Shanism.Common.Interfaces.Objects;
-using Shanism.Common.StubObjects;
+using Shanism.Common.Objects;
+using Shanism.Common.ObjectStubs;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -74,6 +74,8 @@ namespace Shanism.Network.Server
 
 
             var diff = Diffs[ack];
+
+            // clear all diffs: they are based on an older ack
             Diffs.Clear();
 
             //update all objects in VisibleObjects, recreating them if necessary

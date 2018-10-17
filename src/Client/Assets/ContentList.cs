@@ -1,133 +1,71 @@
-﻿using Shanism.Client.Drawing;
-using Shanism.Common.Content;
-using Shanism.Common.Message.Server;
-using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Shanism.Client.IO;
+using Shanism.Client.Systems;
 using Shanism.ScenarioLib;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Shanism.Common.Util;
+using System.Text;
 
-namespace Shanism.Client
+namespace Shanism.Client.Assets
 {
-    /// <summary>
-    /// A list of the loaded game assets: textures, animations, fonts.  
-    /// </summary>
-    class ContentList
+    public class ContentList
     {
-        public const string DefaultContentFile = @"scenario.json";
 
-        public const string ScenarioDir = @"Scenario/Content";
+        public CircleCache Circles { get; }
 
+        public ShaderCache Shaders { get; }
+        public Text.FontCache Fonts { get; }
 
+        public TextureDict Textures { get; }
+        public AnimationDict Animations { get; }
 
-        readonly Dictionary<string, AnimationDef> animations = new Dictionary<string, AnimationDef>();
-
-
-        public AnimationDef DefaultAnimation { get; private set; }
-
-        public TextureCache Textures { get; } = new TextureCache();
-
-        /// <summary>
-        /// Gets a list of the currently loaded animations. 
-        /// </summary>
-        public IReadOnlyDictionary<string, AnimationDef> Animations => animations;
-
-        public ContentManager ContentManager { get; }
-
-        /// <summary>
-        /// Gets the currently loaded fonts. 
-        /// </summary>
-        public FontCache Fonts { get; private set; }
-
-        public TerrainCache Terrain { get; private set; }
-
-        public UiCache UI { get; private set; }
-
-        public IconCache Icons { get; private set; }
-
-        public CircleDict Circles { get; }
-
-        public ShaderContainer Shaders { get; private set; }
+        public IconCache Icons { get; }
+        public UICache UI { get; }
 
 
-        public ContentList(GraphicsDevice graphics, ContentManager contentManager)
+        public ContentList(ScreenSystem screen,
+            Text.FontCache fonts,
+            GraphicsDevice device,
+            ContentManager manager,
+            ScenarioConfig scenario)
+            : this(screen, fonts, device, manager, scenario.BaseDirectory, scenario.Content)
         {
-            ContentManager = contentManager;
-
-            Circles = new CircleDict(graphics, 65600, 8);
-        }
-
-        public bool LoadDefault()
-        {
-            Shaders = new ShaderContainer(ContentManager);
-
-            string errors;
-            var sc = ScenarioConfig.LoadFromDisk(".", out errors);
-            if (sc == null)
-            {
-                Console.WriteLine($"Unable to load the default content: {errors}");
-                return false;
-            }
-
-            loadConfig(sc.Content, "Textures");
-
-            DefaultAnimation = animations["dummy"];
-
-            return true;
+            // empty
         }
 
 
-        public bool LoadScenario(HandshakeReplyMessage msg)
+        public ContentList(ScreenSystem screen,
+            Text.FontCache fonts,
+            GraphicsDevice device,
+            ContentManager manager,
+            string path,
+            ContentConfig config
+        )
         {
-            var sc = ScenarioConfig.LoadFromBytes(msg.ScenarioData);
-            if (sc == null)
-                Console.WriteLine($"Unable to read the received scenario: invalid data. ");
+            Circles = new CircleCache(device, 2048, x => 8, preload: true);
+            Shaders = new ShaderCache(manager, path);
+            Fonts = fonts;
 
-            try
-            {
-                unzipMessage(msg, ScenarioDir);
-                loadConfig(sc.Content, ScenarioDir);
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Unable to read the received scenario. The error was: {e.Message}. ");
-                return false;
-            }
+            Textures = new TextureDict(device, path, config.Textures);
+            Animations = new AnimationDict(Textures, config.Animations);
+
+            Icons = new IconCache(Animations, "icons/", "uncertainty");
+            UI = new UICache(Animations, "ui/");
         }
 
-        void loadConfig(ContentConfig config, string textureDir)
+        public ContentList(ContentList first, ContentList second)
         {
-            //load textures
-            ContentManager.RootDirectory = textureDir;
-            Textures.Load(ContentManager, textureDir, config.Textures);
+            Circles = first.Circles;
+            Shaders = first.Shaders;
+            Fonts = first.Fonts;
 
-            //load animations
-            foreach (var a in config.Animations)
-                animations[ShanoPath.Normalize(a.Name)] = a;
+            Textures = new TextureDict(first.Textures.Concat(second.Textures));
+            Animations = new AnimationDict(first.Animations.Concat(second.Animations));
 
-            //reload terrain, fonts, icons, ui elems
-            Terrain = new TerrainCache(Textures);
-            Fonts = new FontCache(ContentManager);
-            UI = new UiCache(this);
-            Icons = new IconCache(this);
+            Icons = new IconCache(Animations, "icons/", "uncertainty");
+            UI = new UICache(Animations, "ui/");
         }
-
-        static void unzipMessage(HandshakeReplyMessage msg, string outDir)
-        {
-            outDir = Path.GetFullPath(outDir);
-
-            //clear scenario dir
-            if (Directory.Exists(outDir))
-                Directory.Delete(outDir, true);
-
-            //unzip to temp dir
-            Directory.CreateDirectory(outDir);
-            ScenarioConfig.UnzipContent(msg.ContentData, outDir);
-        }
-
     }
 }

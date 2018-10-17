@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Shanism.Engine.Systems
 {
-    public interface IUnitBuffs : IReadOnlyCollection<BuffInstance>
+    public interface IUnitBuffs : IReadOnlyList<BuffInstance>
     {
 
         /// <summary>
@@ -23,23 +23,30 @@ namespace Shanism.Engine.Systems
         /// Removes the given buff instance from this unit. 
         /// </summary>
         /// <param name="buff"></param>
-        void Remove(BuffInstance buff);
+        bool Remove(BuffInstance buff);
 
         /// <summary>
         /// Removes all instances of the given buff. 
         /// </summary>
         /// <param name="buffType">The buff prototype to remove instances of. </param>
-        void Remove(Buff buffType);
+        int Remove(Buff buffType);
 
         /// <summary>
         /// Removes a specified number of instances of the given buff from this unit's buffs. 
         /// </summary>
         /// <param name="buffType">The buff prototype to remove instances of. </param>
         /// <param name="nStacks">The maximum number of stacks of this buff to remove. </param>
-        void Remove(Buff buffType, int nStacks);
+        int Remove(Buff buffType, int nStacks);
 
+        /// <summary>
+        /// Gets whether the unit is affected by this buff instance.
+        /// </summary>
         bool Contains(BuffInstance b);
 
+        /// <summary>
+        /// Gets whether the unit is affected by an instance of this buff type.
+        /// </summary>
         bool Contains(Buff b);
+
     }
 }

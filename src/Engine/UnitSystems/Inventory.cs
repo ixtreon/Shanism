@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Shanism.Common;
 using Shanism.Engine.Entities;
 using Shanism.Engine.Objects.Items;
-using Shanism.Engine.Maps;
+using System.Numerics;
+using Shanism.Engine.Systems;
 
 namespace Shanism.Engine.Systems
 {
@@ -14,7 +13,7 @@ namespace Shanism.Engine.Systems
     class InventorySystem : UnitSystem, IUnitInventory
     {
 
-        static void CreateItemOnGround(IGameMap map, Vector pos, Item it)
+        static void CreateItemOnGround(IGameMap map, Vector2 pos, Item it)
             => map.Add(new GameItem(it, pos));
 
 

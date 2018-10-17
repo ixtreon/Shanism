@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Shanism.Common.Interfaces.Objects
+namespace Shanism.Common.Objects
 {
     /// <summary>
     /// The static data of a buff. 
