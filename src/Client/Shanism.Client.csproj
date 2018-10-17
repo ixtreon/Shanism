@@ -33,10 +33,5 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
-  <Target Name="CreateDefaultContent" BeforeTargets="BeforeBuild">
-    <!-- build and run the "ContentBuilder" project -->
-    <Exec Command="dotnet run &quot;$(MSBuildThisFileDirectory)Content\" WorkingDirectory="$(MSBuildThisFileDirectory)..\ContentBuilder\" />
-  </Target>
   
 </Project>

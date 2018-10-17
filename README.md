@@ -13,13 +13,14 @@ Requires .NET Core 2.1
 
 1. Grab the source code from Github.
 2. Initialize all submodules.
-3. Open the `Shanism.sln` file in Visual Studio, hit Build/Debug. Alternatively use `dotnet run` or `dotnet publish` from the command-line.
+3. Run the `build-content.cmd` script to create the game content files.
+3. Open the `Shanism.sln` file in Visual Studio and hit Build/Debug. Alternatively use `dotnet run` or `dotnet publish` from the command-line.
 
 When compiling in Release mode, binaries can be found in the `/bin` folder. 
 
 ### Other Platforms
 
-Let me know if you get the build running on other platforms, such as MacOS or Linux. 
+While all dependencies use .NET Core which should cross-platform, all the dev work was done on a Windows box.
 
 ## Screenshots
 
